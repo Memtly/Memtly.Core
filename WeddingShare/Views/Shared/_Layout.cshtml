@@ -3,6 +3,7 @@
 @inject WeddingShare.Helpers.IConfigHelper _config
 @inject WeddingShare.Helpers.ILanguageHelper _language
 @inject WeddingShare.Helpers.Database.IDatabaseHelper _database
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostEnvironment
 
 @{
     var galleryIdentifier = (!string.IsNullOrWhiteSpace(ViewBag?.GalleryIdentifier) && !ViewBag.GalleryIdentifier.Equals("All", StringComparison.OrdinalIgnoreCase)) ? ViewBag.GalleryIdentifier.ToLower() : "default";
@@ -48,26 +49,6 @@
         if (string.IsNullOrEmpty(culture))
         {
             culture = await _language.GetOrFallbackCulture(string.Empty, await _settings.GetOrDefault(Settings.Languages.Default, "en-GB"));
-
-            <script>
-                (function () {
-                    document.addEventListener('DOMContentLoaded', function () {
-                        let culture = window.navigator.language;
-                        if (culture !== undefined && culture.length > 0) {
-                            $.ajax({
-                                type: "POST",
-                                url: '/Language/ChangeDisplayLanguage',
-                                data: { culture: culture },
-                                success: function (data) {
-                                    if (data.success) {
-                                        window.location.reload();
-                                    }
-                                }
-                            });
-                        }
-                    });
-                })();
-            </script>
         }
     }
     catch
@@ -87,39 +68,22 @@
         <title>@title</title>
         
         <link rel="icon" type="image/png" href="@logo" />
-        <link rel="stylesheet" href="~/css/bootstrap-icons.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/template.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/media-viewer.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/jquery.loading.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/fontawesome.min.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/fontawesome.regular.min.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/fontawesome.solid.min.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/fontawesome.brands.min.css" asp-append-version="true" />
-        @if (!string.Equals("default", theme, StringComparison.OrdinalIgnoreCase))
-        {
-            <link rel="stylesheet" href="~/css/themes/@(theme).css" asp-append-version="true" />
-        }
-        
-        <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
-        <script src="~/lib/jquery-loading/jquery.loading.min.js" asp-append-version="true"></script>
-        <script src="~/lib/jquery-qrcode/jquery.qrcode.min.js" asp-append-version="true"></script>
-        <script src="~/lib/fontawesome/fontawesome.regular.min.js" asp-append-version="true"></script>
-        <script src="~/lib/fontawesome/fontawesome.solid.min.js" asp-append-version="true"></script>
-        <script src="~/lib/fontawesome/fontawesome.brands.min.js" asp-append-version="true"></script>
-        <script src="~/js/lang/localization.js" asp-append-version="true"></script>
-        <script src="~/js/lang/@(culture).js" asp-append-version="true"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-        <script src="~/js/popup.js" asp-append-version="true"></script>
-        <script src="~/js/media-viewer.js" asp-append-version="true"></script>
 
-        @if (User?.Identity != null && User.Identity.IsAuthenticated)
+        @* <script src="~/js/lang/localization.js" asp-append-version="true"></script>
+        <script src="~/js/lang/@(culture).js" asp-append-version="true"></script> *@
+        
+        @if (HostEnvironment.IsDevelopment())
         {
-            <script src="~/js/account.js" asp-append-version="true"></script>
+            <link rel="stylesheet" href="~/dist/main.css" asp-append-version="true" />
+            <link rel="stylesheet" href="~/dist/themes/@(theme).css" asp-append-version="true" />
+        }
+        else
+        {
+            <link rel="stylesheet" href="~/dist/main.min.css" asp-append-version="true" />
+            <link rel="stylesheet" href="~/dist/themes/@(theme).min.css" asp-append-version="true" />
         }
     </head>
-    <body>
+    <body data-theme="@theme">
         <!-- Navigation -->
         <nav class="navbar navbar-expand-lg">
             <div class="container px-3 px-lg-5 @(viewMode == ViewMode.Presentation || viewMode == ViewMode.Slideshow ? "justify-content-center" : string.Empty)">
@@ -130,7 +94,7 @@
                 
                 @if (viewMode != ViewMode.Presentation && viewMode != ViewMode.Slideshow)
                 {
-                    <div class="presentation-hidden">
+                    <div class="navbar-options presentation-hidden">
                         <div class="mx-0 mx-lg-4 my-1 float-start">
                             @if (await _settings.GetOrDefault(Settings.Languages.Enabled, true))
                             {
@@ -169,30 +133,6 @@
                         </div>
                     </div>
                 }
-                else
-                {
-                    <script>
-                        (function () {
-                            document.addEventListener('DOMContentLoaded', function () {
-                                var presentationTimeout = setTimeout(function () {
-                                    $('.presentation-hidden').fadeOut(500);
-                                    $('body').css('cursor', 'none');
-                                }, 1000);
-
-                                $(document).off('mousemove').on('mousemove', function () {
-                                    $('.presentation-hidden').fadeIn(200);
-                                    $('body').css('cursor', 'default');
-
-                                    clearTimeout(presentationTimeout);
-                                    presentationTimeout = setTimeout(function () {
-                                        $('.presentation-hidden').fadeOut(500);
-                                        $('body').css('cursor', 'none');
-                                    }, 1000);
-                                });
-                            });
-                        })();
-                    </script>
-                }
             </div>
         </nav>
 
@@ -227,10 +167,9 @@
             @RenderBody()
         </div>
 
-        <partial name="~/Views/Shared/_Modals.cshtml" model="null" />
-        <partial name="~/Views/Shared/_2FA.cshtml" model="null" />
+        @*<partial name="~/Views/Shared/_2FA.cshtml" model="null" />*@
 
-        @if (await _settings.GetOrDefault(Settings.IdentityCheck.Enabled, true) && await _settings.GetOrDefault(Settings.IdentityCheck.ShowOnPageLoad, true) && string.IsNullOrWhiteSpace(Context?.Session?.GetString(SessionKey.ViewerIdentity)))
+       @*  @if (await _settings.GetOrDefault(Settings.IdentityCheck.Enabled, true) && await _settings.GetOrDefault(Settings.IdentityCheck.ShowOnPageLoad, true) && string.IsNullOrWhiteSpace(Context?.Session?.GetString(SessionKey.ViewerIdentity)))
         {
             var nameRequired = await _settings.GetOrDefault(Settings.IdentityCheck.RequireName, false);
             var emailRequired = await _settings.GetOrDefault(Settings.IdentityCheck.RequireEmail, false);
@@ -238,7 +177,7 @@
             <script>
                 displayIdentityCheck(@((nameRequired || emailRequired).ToString().ToLower()));
             </script>
-        }
+        } *@
 
         <!-- Footer -->
         <footer class="py-1">
@@ -248,8 +187,8 @@
                         <a class="text-link text-light" href="https://github.com/Cirx08/WeddingShare" title="Copyright Cirx08" target="_blank"><i class="fa-brands fa-github"></i> WeddingShare v@(await _settings.GetReleaseVersion(3)) &copy; Cirx08 @DateTime.UtcNow.Year</a>
                     </span>
                     <span class="float-end">
-                        <a class="text-link text-light" href="https://github.com/sponsors/Cirx08" title="GitHub Sponsors" target="_blank"><img class="fa-brands fa-sponsor-badge" src="/images/github.png" /></a>
-                        <a class="text-link text-light" href="https://buymeacoffee.com/cirx08" title="BuyMeACoffee" target="_blank"><img class="fa-brands fa-sponsor-badge" src="/images/buymeacoffee.gif" /></a>
+                        <a class="text-link text-light" href="https://github.com/sponsors/Cirx08" title="GitHub Sponsors" target="_blank"><img class="fa-sponsor-badge" src="/images/github.png" /></a>
+                        <a class="text-link text-light" href="https://buymeacoffee.com/cirx08" title="BuyMeACoffee" target="_blank"><img class="fa-sponsor-badge" src="/images/buymeacoffee.gif" /></a>
                     </span>
                 </p>
             </div>
@@ -258,9 +197,21 @@
         <partial name="_CookieConsentPartial" />
 
         <!-- Sponsors Button -->
-        <i id="btn-show-sponsors" class="fa-solid fa-bolt"></i>
+        <i class="btn-show-sponsors fa-solid fa-bolt"></i>
         
         <!-- JS -->
+        @if (HostEnvironment.IsDevelopment())
+        {
+            <script src="~/dist/main.bundle.js" asp-append-version="true"></script>
+        }
+        else
+        {
+            <script src="~/dist/main.bundle.min.js" asp-append-version="true"></script>
+        }
+        @* @if (User?.Identity != null && User.Identity.IsAuthenticated)
+        {
+            <script src="~/js/account.js" asp-append-version="true"></script>
+        } *@
         @await RenderSectionAsync("Scripts", required: false)
 
     </body>

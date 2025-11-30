@@ -1,4 +1,5 @@
 @using WeddingShare.Constants
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostEnvironment
 
 @{
     var title = await _settings.GetOrDefault(Settings.Basic.Title, "WeddingShare");
@@ -13,6 +14,24 @@
     {
         logo = "/images/logo.png";
     }
+
+    string theme = "default";
+    try
+    {
+        var selected = Context?.Request?.Cookies["Theme"]?.Trim() ?? await _settings.GetOrDefault(Settings.Themes.Default, "default");
+        foreach (Themes t in Enum.GetValues(typeof(Themes)))
+        {
+            if (selected.Equals(t.ToString(), StringComparison.OrdinalIgnoreCase))
+            {
+                theme = t.ToString().ToLower();
+                break;
+            }
+        }
+    }
+    catch
+    {
+        theme = "default";
+    }
 }
 
 <!DOCTYPE html>
@@ -26,26 +45,20 @@
         <title>@title</title>
         
         <link rel="icon" type="image/png" href="@logo" />
-        <link rel="stylesheet" href="~/css/bootstrap-icons.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/template.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/media-viewer.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/jquery.loading.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/fontawesome.min.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/fontawesome.regular.min.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/fontawesome.solid.min.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/fontawesome.brands.min.css" asp-append-version="true" />
+
+        @* <script src="~/js/lang/localization.js" asp-append-version="true"></script>
+        <script src="~/js/lang/@(culture).js" asp-append-version="true"></script> *@
         
-        <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
-        <script src="~/lib/jquery-loading/jquery.loading.min.js" asp-append-version="true"></script>
-        <script src="~/lib/jquery-qrcode/jquery.qrcode.min.js" asp-append-version="true"></script>
-        <script src="~/lib/fontawesome/fontawesome.regular.min.js" asp-append-version="true"></script>
-        <script src="~/lib/fontawesome/fontawesome.solid.min.js" asp-append-version="true"></script>
-        <script src="~/lib/fontawesome/fontawesome.brands.min.js" asp-append-version="true"></script>
-        <script src="~/js/lang/localization.js" asp-append-version="true"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-        <script src="~/js/popup.js" asp-append-version="true"></script>
+        @if (HostEnvironment.IsDevelopment())
+        {
+            <link rel="stylesheet" href="~/dist/main.css" asp-append-version="true" />
+            <link rel="stylesheet" href="~/dist/themes/@(theme).css" asp-append-version="true" />
+        }
+        else
+        {
+            <link rel="stylesheet" href="~/dist/main.min.css" asp-append-version="true" />
+            <link rel="stylesheet" href="~/dist/themes/@(theme).min.css" asp-append-version="true" />
+        }
     </head>
     <body>
         <!-- Navigation -->
@@ -90,6 +103,14 @@
         </footer>
 
         <!-- JS -->
+        @if (HostEnvironment.IsDevelopment())
+        {
+            <script src="~/dist/main.bundle.js" asp-append-version="true"></script>
+        }
+        else
+        {
+            <script src="~/dist/main.bundle.min.js" asp-append-version="true"></script>
+        }
         @await RenderSectionAsync("Scripts", required: false)
 
     </body>

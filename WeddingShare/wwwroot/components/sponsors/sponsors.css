@@ -1,0 +1,55 @@
+﻿.btn-show-sponsors {
+    width: 15px;
+    height: 15px;
+    font-size: 15px;
+    color: #FFFFFF;
+    background-color: #e8c817;
+    border-radius: 100px;
+    border: 1px solid #FFFFFF;
+    margin: 0px;
+    padding: 5px;
+    position: fixed;
+    bottom: 35px;
+    left: 10px;
+}
+
+    .btn-show-sponsors:hover {
+        background-color: #c8ad16;
+        cursor: pointer;
+    }
+
+.sponsor-card, .sponsor-card:active, .sponsor-card:visited {
+    color: #000000 !important;
+    text-align: center;
+    text-decoration: none;
+    margin: 20px 0px 20px;
+    padding: 0px;
+    clear: both;
+    display: inline-block;
+}
+
+    .sponsor-card .sponsor-card-logo {
+        width: 45px;
+        height: 45px;
+        margin: 0px 5px 0px 0px;
+        padding: 0px;
+        display: inline-block;
+        border-radius: 100px;
+        border: 2px solid rgba(0, 0, 0, 0.3);
+    }
+
+    .sponsor-card .sponsor-card-name {
+        font-size: 16px;
+        margin: 0px 30px 0px 0px;
+        padding: 0px;
+        display: inline-block;
+    }
+
+.sponsor-card-small {
+    margin: 20px 0px 0px !important;
+}
+
+    .sponsor-card-small .sponsor-card-logo {
+        width: 35px !important;
+        height: 35px !important;
+    }

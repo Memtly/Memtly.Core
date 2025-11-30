@@ -8,6 +8,16 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
+  <Target Name="NpmBuildDev" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug'">
+    <Message Importance="high" Text="Running webpack in development mode..." />
+    <Exec Command="npm run development" WorkingDirectory="$(ProjectDir)" />
+  </Target>
+
+  <Target Name="NpmBuildProd" BeforeTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <Message Importance="high" Text="Running webpack in production mode..." />
+    <Exec Command="npm run build" WorkingDirectory="$(ProjectDir)" />
+  </Target>
+  
   <ItemGroup>
     <Content Remove="Resources\Templates\Basic.cshtml" />
   </ItemGroup>
@@ -128,7 +138,6 @@
   <ItemGroup>
     <Folder Include="config\" />
     <Folder Include="wwwroot\custom_resources\" />
-    <Folder Include="wwwroot\lib\jquery-qrcode\" />
     <Folder Include="wwwroot\temp\" />
     <Folder Include="wwwroot\thumbnails\" />
     <Folder Include="wwwroot\uploads\" />
@@ -866,5 +875,4 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>
