@@ -18,11 +18,11 @@ COPY ["WeddingShare/WeddingShare.csproj", "WeddingShare/"]
 RUN dotnet restore -a $TARGETARCH "./WeddingShare/./WeddingShare.csproj"
 COPY . .
 WORKDIR "/src/WeddingShare"
-RUN dotnet build "./WeddingShare.csproj" -a $TARGETARCH -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./WeddingShare.csproj" -a $TARGETARCH -c $BUILD_CONFIGURATION -o /app/build /p:CI=true
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./WeddingShare.csproj" -a $TARGETARCH -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./WeddingShare.csproj" -a $TARGETARCH -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false /p:CI=true
 
 FROM base AS final
 WORKDIR /app
