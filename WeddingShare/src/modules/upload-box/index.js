@@ -240,10 +240,7 @@ class UploadBox {
                 formData.append(dataRefs.files[i].name, dataRefs.files[i]);
 
                 displayLoader(
-                    `${localization.translate('Upload_Progress', {
-                        index: i + 1,
-                        count: dataRefs.files.length
-                    })} <br/><br/><span id="file-upload-progress">0%</span>`
+                    `${localization.translate('Upload_Progress')} ${i + 1}/${dataRefs.files.length}...<br/><br/><span id="file-upload-progress">0%</span>`
                 );
 
                 $.ajax({
@@ -315,7 +312,7 @@ class UploadBox {
         } else if (requiresReview) {
             displayMessage(
                 localization.translate('Upload'),
-                localization.translate('Upload_Success_Pending_Review', { count: uploadedCount }),
+                localization.translate('Upload_Success_Pending_Review'),
                 errors
             );
 
@@ -323,7 +320,7 @@ class UploadBox {
         } else {
             displayMessage(
                 localization.translate('Upload'),
-                localization.translate('Upload_Success', { count: uploadedCount }),
+                localization.translate('Upload_Success'),
                 errors,
                 () => this.refreshGalleryPage()
             );

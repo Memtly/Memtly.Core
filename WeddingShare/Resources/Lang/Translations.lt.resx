@@ -74,7 +74,7 @@
     <value>2FA nustatymai</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Jūs tikrai norite išvalyti 2FA vartotojui '{name}'?</value>
+    <value>Tu tikrai nori išvalyti 2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>NAME OF TRANSLATORS</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Trinti</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Jūs tikrai norite ištrinti?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Jūs tikrai norite ištrinti šią galeriją?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Id negali būti tuščias</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Jūs tikrai norite ištrinti '{vardas}'?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Sėkmingai pašalintas elementas</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Nepavyko ištrinti galerijos</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Jūs tikrai norite ištrinti galeriją '{vardas}'?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Sėkmingai pašalinta galerija</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Nepavyko ištrinti galerijos</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Jūs tikrai norite ištrinti galeriją {vardas}?</value>
+    <value>Tikrai norite išvalyti galeriją?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>@ info: tooltip</value>
@@ -1733,10 +1730,10 @@
     <value>Failų nebuvo aptikta</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Siunčiamas {indeksas} iš {skaičius}...</value>
+    <value>Siunčiamas elementas</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Sėkmingai įkeltas {skaičius} elementas (-ai)</value>
+    <value>Sėkmingai įkelti elementai</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
     <value>@ info: status</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Nepavyko ištrinti naudotojo</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Jūs tikrai norite ištrinti naudotoją '{name}'?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Sėkmingai pašalintas naudotojas</value>

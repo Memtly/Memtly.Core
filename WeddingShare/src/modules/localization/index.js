@@ -19,7 +19,6 @@ export class Localization {
         if (cultureCookie === undefined || cultureCookie.length === 0) {
             const urlParams = new URLSearchParams(window.location.search);
             const culture = urlParams.get('culture') || window.navigator.language;
-
             changeSelectedLanguage(culture);
         }
 

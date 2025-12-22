@@ -74,7 +74,7 @@
     <value>2FAセットアップ</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>2FA をユーザの '{name}' で拭きたいですか?</value>
+    <value>2FAを拭きたいですか?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>この問題が解決しない場合は、Web管理者に連絡してください</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>削除</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>削除したいですか?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>このギャラリーを削除したいですか?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>空に入らない</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>'{name}'を削除したいですか?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>完全に削除された項目</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>ギャラリーを削除できない</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>ギャラリー「{name}'を削除したいですか?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>完全に削除されたギャラリー</value>
   </data>
@@ -662,7 +659,7 @@
     <value>ギャラリーを拭き取らない</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>ギャラリー「{name}'を拭きたいですか?</value>
+    <value>ギャラリーを拭いたいのですが?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>すっかり拭いたギャラリー</value>
@@ -1733,13 +1730,13 @@
     <value>アップロードするファイルが見つかりませんでした</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>{count} の項目 {index} をアップロード...</value>
+    <value>アイテムのアップロード</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>うまくアップロードされた{count}項目</value>
+    <value>投稿された商品</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>うまくアップロードされた {count} 項目(s) 終了レビュー</value>
+    <value>うまくアップロードされたアイテムの終了レビュー</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>アップロード バイ</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>ユーザを削除できない</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>ユーザ '{name}' を削除したいですか?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>完全に削除されたユーザー</value>

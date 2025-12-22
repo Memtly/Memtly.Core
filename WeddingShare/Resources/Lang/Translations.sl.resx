@@ -74,7 +74,7 @@
     <value>Nastavitve 2FA</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Ste prepričani, da želite zbrisati 2FA za uporabnika '{name}'?</value>
+    <value>Ste prepričani, da želite obrisati 2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Če se to vprašanje nadaljuje, se obrnite na spletnega administratorja</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Zbriši</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Ali res želite zbrisati?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Ali res želite zbrisati to galerijo?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Id ne more biti prazna</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Ali res želite zbrisati » {ime} «?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Uspešno izbrisana postavka</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Ni uspelo zbrisati galerije</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Ste prepričani, da želite zbrisati galerijo » {ime} «?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Uspešno izbrisana galerija</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Ni uspelo brisati galerije</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Si prepričan, da želiš izbrisati galerijo 'Ime'?</value>
+    <value>Si prepričan, da želiš brisati galerijo?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Uspešno izbrisana galerija</value>
@@ -1733,13 +1730,13 @@
     <value>Ni bilo zaznanih datotek za pošiljanje</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Nalaganje predmeta {indeks} od {preštevanje}...</value>
+    <value>Nalaganje</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Uspešno naložen( e) predmet( e) {preštevanje}</value>
+    <value>Uspešno naloženi predmeti</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Uspešno naložen( e) predmet( e)</value>
+    <value>Uspešno naložene postavke v pričakovanju pregleda</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Poslano od</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Ni uspelo zbrisati uporabnika</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Ali zares želite zbrisati uporabniško » {ime} «?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Uspešno izbrisan uporabnik</value>

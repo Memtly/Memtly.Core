@@ -74,7 +74,7 @@
     <value>2FA орнотуу</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>"Эгерде сиз ""2FA"" деген сөздү колдонсоңуз, анда ""2FA"" деген сөздү колдонсоңуз болот."?</value>
+    <value>Сиз 2FA тазалоону каалайсызбы?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Эгерде бул маселе улана берсе, анда веб-администратор менен байланышыңыз</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Жок кылуу</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Жок кылгыңар келеби?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Бул галереяны өчүргүңүз келерине толук ишенесизби?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Id бош болушу мүмкүн эмес</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>"Атын" жокко чыгарууну каалайсызбы?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Ийгилик менен алынып салынган пункт</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Галереяны өчүрө алган жок</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Сиз галереяны жокко чыгарууну каалайсызбы?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Ийгилик менен өчүрүлгөн галерея</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Галереяны өчүрө албай калды</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Сиз галереяны сүрткүңүз келеби?</value>
+    <value>Сиз галереяны сүрткүңүз келерине толук ишенесизби?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Галерея ийгиликтүү сүртүлгөн</value>
@@ -1733,13 +1730,13 @@
     <value>Жүктөө үчүн эч кандай файлдар аныкталган эмес</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>{count} жүктөө пункту {index}...</value>
+    <value>Жүк ташуучу буюм</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Ийгиликтүү жүктөлгөн {count} пункту (лары)</value>
+    <value>Ийгиликтүү жүктөлгөн буюмдар</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Кайра карап чыгууга чейин ийгиликтүү жүктөлгөн {count} пункту (лары)</value>
+    <value>Кайра карап чыгууга чейин ийгиликтүү жүктөлгөн буюмдар</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Жүк ташуу</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Колдонуучуну өчүрө алган жок</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Колдонуучунун "атын" жокко чыгарууну каалайсызбы?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Ийгиликтүү өчүрүлгөн колдонуучу</value>

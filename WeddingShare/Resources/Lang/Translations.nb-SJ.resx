@@ -74,7 +74,7 @@
     <value>2FA-oppsett</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Er du sikker på at du vil tørke 2FA for brukeren «{name}»?</value>
+    <value>Er du sikker på at du vil tørke 2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Hvis dette problemet varer, vennligst kontakt webadministratoren</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Slett</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Er du sikker på at du vil slette?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Er du sikker på at du vil slette dette galleriet?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Id kan ikke være tomt</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Er du sikker på at du vil slette \'{name}\'?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Vellykket slettet element</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Klarte ikke slette galleri</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Er du sikker på at du vil slette galleriet «{name}»?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Vellykket slettet galleri</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Klarte ikke å tørke galleri</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Er du sikker på at du vil tørke galleri \'{name}\'?</value>
+    <value>Er du sikker på at du vil tørke galleri?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Vellykket slettet galleri</value>
@@ -1733,13 +1730,13 @@
     <value>Ingen filer ble oppdaget for å laste opp</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Laster opp element {index} av {count}...</value>
+    <value>Laster opp element</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Vellykket opplastet {count}-element(er)</value>
+    <value>Vellykket lastet opp elementer</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Vellykket opplastet {count} element(er) avventende gjennomgang</value>
+    <value>Vellykket lastet opp elementer som venter på anmeldelse</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Lastet opp av</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Klarte ikke å slette bruker</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Er du sikker på at du vil slette brukeren «{name}»?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Vellykket slettet bruker</value>

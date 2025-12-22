@@ -74,7 +74,7 @@
     <value>۲ ایف‌اپ</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>کیا آپ یقینی طور پر صارف کے لیے 2FA مٹانا چاہتے ہیں؟?</value>
+    <value>کیا آپ واقعی 2FA کو ختم کرنا چاہتے ہیں؟?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>اگر یہ مسئلہ مستقل طور پر ویب ایڈمنسٹریشن سے رابطہ کرے تو</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>حذف</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>کیا آپ واقعی حذف کرنا چاہتے ہیں؟?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>کیا آپ واقعی اس گیلری کو حذف کرنا چاہتے ہیں؟?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>محفوظ نہیں کیا جاسکتا</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>کیا آپ واقعی '%s' کو حذف کرنا چاہتے ہیں؟?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>کامیاب طریقے سے آئٹم حذف کیا گیا</value>
@@ -567,9 +567,6 @@
   </data>
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>گیلری کو حذف کرنے میں ناکامی</value>
-  </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>کیا آپ یقینی طور پر گیلری '%sname' کو حذف کرنا چاہتے ہیں؟?</value>
   </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>کامیاب حالت میں گیلری</value>
@@ -1733,13 +1730,13 @@
     <value>فائل لوڈ کرنے کے لیے کوئی فائل نہیں رکھی گئی تھی</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>پلگ انس کو دوبارہ لوڈ کرنا.</value>
+    <value>آئٹم لوڈ کیا جارہا ہے</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>فلاحی طور پر پلگ انس آئٹمس (s)</value>
+    <value>کامیابی سے اوپر کی چیزوں کی تجدید</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>کامیاب طور پر اپ لوڈ کردہ پلگ انس آئٹمس (s) پینگ تجزیے</value>
+    <value>کامیابی سے تیارکردہ چیزوں کا جائزہ</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>قسم</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>صارف کو حذف کرنے میں ناکامی</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>کیا آپ واقعی صارف کو '%s' حذف کرنا چاہتے ہیں؟?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>کامیاب صارف</value>

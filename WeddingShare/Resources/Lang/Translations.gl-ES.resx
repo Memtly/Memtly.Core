@@ -74,7 +74,7 @@
     <value>2FA Setup</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Estás seguro de que queres borrar 2FA para o usuario?</value>
+    <value>Estás seguro de que queres facer 2oB?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Se este problema persiste, póñase en contacto co administrador web</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Eliminar</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Estás seguro de que queres eliminar?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Estás seguro de que queres eliminar esta galería?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Non se pode estar baleiro</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Estás seguro de que queres eliminar o nome?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Elemento eliminado con éxito</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Non se pode borrar a galería</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Estás seguro de que queres eliminar a galería ?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Galería eliminada con éxito</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Non se pode borrar a galería</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Estás seguro de que queres borrar a galería?</value>
+    <value>Estás seguro de que queres facer unha galería?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Galería limpa con éxito</value>
@@ -1733,13 +1730,13 @@
     <value>Non se detectaron ficheiros para subir</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>{index} de {count}.</value>
+    <value>Subir item</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Cargado {count} item(s)</value>
+    <value>Artigos cargados con éxito</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>{count} elemento(s) pendente revisión</value>
+    <value>Artigos cargados con éxito pendente de revisión</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Cargado por</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Fallo de usuario</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Estás seguro de que queres eliminar o nome de usuario?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Usuario eliminado con éxito</value>

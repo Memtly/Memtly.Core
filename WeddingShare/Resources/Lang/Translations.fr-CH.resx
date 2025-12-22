@@ -74,7 +74,7 @@
     <value>Configuration 2FA</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Voulez-vous vraiment supprimer la vérification en 2 étapes (2FA) pour l'utilisateur « {name} » ?</value>
+    <value>Voulez-vous vraiment essuyer 2FA ?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Si ce problème persiste, veuillez contacter l'administrateur web</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Supprimer</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Voulez-vous vraiment supprimer ?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Voulez-vous vraiment supprimer cette galerie ?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>L'ID ne peut pas être vide</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Voulez-vous vraiment supprimer « {nom} » ?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Élément supprimé avec succès</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Impossible de supprimer la galerie</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Voulez-vous vraiment supprimer la galerie « {name} » ?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Galerie supprimée avec succès</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Échec lors de l'effacement de la galerie</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Voulez-vous vraiment effacer la galerie « {nom} » ?</value>
+    <value>Tu es sûr de vouloir essuyer la galerie ?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Galerie effacée avec succès</value>
@@ -1733,13 +1730,13 @@
     <value>Aucun fichier à télécharger n'a été détecté</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Envoi de l'élément {index} sur {count}...</value>
+    <value>Envoi</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Produit(s) téléchargé(s) avec succès</value>
+    <value>Éléments téléchargés avec succès</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Produit(s) en attente d'examen</value>
+    <value>Éléments téléchargés avec succès en attente d ' examen</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Téléchargé par</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Impossible de supprimer l'utilisateur</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Voulez-vous vraiment supprimer l'utilisateur « {nom} » ?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Utilisateur supprimé avec succès</value>

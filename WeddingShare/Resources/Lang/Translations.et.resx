@@ -74,7 +74,7 @@
     <value>2FA seadistamine</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Are you sure you want to Clean 2FA for user '{name}'?</value>
+    <value>Oled kindel, et tahad 2FA ära pühkida?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Kui see probleem püsib, võtke ühendust veebiadministraatoriga</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Kustuta</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Kas tõesti kustutada?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Kas tõesti kustutada see galerii?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Id ei saa olla tühi</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Kas tõesti kustutada '{name}'?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Edukalt kustutatud element</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Galerii kustutamine nurjus</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Kas tõesti kustutada galerii '{name}'?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Edukalt kustutatud galerii</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Galerii pühkimine nurjus</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Kas oled kindel, et soovid galerii '{name}' pühkida?</value>
+    <value>Oled kindel, et tahad galeriid pühkida?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Edukalt pühitud galerii</value>
@@ -1733,13 +1730,13 @@
     <value>Üleslaadimiseks ei leitud ühtegi faili</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>{count} elemendi {index} üleslaadimine...</value>
+    <value>Elemendi üleslaadimine</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Edukalt üleslaaditud {count} element( d)</value>
+    <value>Edukalt üleslaaditud elemendid</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Edukalt üleslaaditud {count} element(id) ootel läbivaatamine</value>
+    <value>Ülevaatamist ootavad edukalt üleslaaditud elemendid</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Üleslaaditud</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Kasutaja kustutamine nurjus</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Kas tõesti kustutada kasutaja '{name}'?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Edukalt kustutatud kasutaja</value>

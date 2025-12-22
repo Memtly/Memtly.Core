@@ -74,7 +74,7 @@
     <value>Configurar 2FA</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Você tem certeza de que deseja limpar a 2FA para o usuário '{name}'?</value>
+    <value>Tem certeza que quer limpar 2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Se este problema persistir, entre em contato com o administrador da web</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Excluir</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Tem certeza que quer deletar?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Tem certeza de que deseja excluir esta galeria?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>ID não pode ser vazio</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Tens certeza que quer apagar '{name}'?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Item excluído com sucesso</value>
@@ -567,9 +567,6 @@
   </data>
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>falha ao excluir galeria</value>
-  </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Tem certeza de que deseja excluir a galeria '{name}'?</value>
   </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Galeria excluída</value>
@@ -1733,13 +1730,13 @@
     <value>Nenhum arquivo foi detectado para enviar</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Carregando imagem {index} de {count}...</value>
+    <value>Enviando item</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>{conta} imagens enviadas</value>
+    <value>Itens carregados com sucesso</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>{count} imagens enviadas. Estão pendentes de revisão</value>
+    <value>Itens carregados com sucesso aguardando revisão</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Carregado por</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Falha ao excluir o usuário</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Tem certeza de que deseja excluir o usuário '{name}'?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Usuário excluído</value>

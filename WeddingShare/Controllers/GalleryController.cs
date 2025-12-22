@@ -143,11 +143,11 @@ namespace WeddingShare.Controllers
                 {
                     try
                     {
-                        HttpContext.Session.SetString(SessionKey.SelectedLanguage, culture);
+                        HttpContext.Session.SetString(SessionKey.Language.Selected, culture);
                         Response.Cookies.Append(
                             CookieRequestCultureProvider.DefaultCookieName,
                             CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-                            new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+                            new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1), IsEssential = true }
                         );
                     }
                     catch { }
@@ -162,11 +162,11 @@ namespace WeddingShare.Controllers
                     ViewBag.ViewMode = ViewMode.Default;
                 }
 
-                var deviceType = HttpContext.Session.GetString(SessionKey.DeviceType);
+                var deviceType = HttpContext.Session.GetString(SessionKey.Device.Type);
                 if (string.IsNullOrWhiteSpace(deviceType))
                 {
                     deviceType = (await _deviceDetector.ParseDeviceType(Request.Headers["User-Agent"].ToString())).ToString();
-                    HttpContext.Session.SetString(SessionKey.DeviceType, deviceType ?? "Desktop");
+                    HttpContext.Session.SetString(SessionKey.Device.Type, deviceType ?? "Desktop");
                 }
 
                 ViewBag.IsMobile = !string.Equals("Desktop", deviceType, StringComparison.OrdinalIgnoreCase);
@@ -340,8 +340,8 @@ namespace WeddingShare.Controllers
                         return Json(new { success = false, uploaded = 0, errors = new List<string>() { _localizer["Invalid_Secret_Key_Warning"].Value } });
                     }
 
-                    string uploadedBy = HttpContext.Session.GetString(SessionKey.ViewerIdentity)?.Trim() ?? "Anonymous";
-                    string uploaderEmail = HttpContext.Session.GetString(SessionKey.ViewerEmailAddress)?.Trim() ?? "Anonymous";
+                    string uploadedBy = HttpContext.Session.GetString(SessionKey.Viewer.Identity)?.Trim() ?? "Anonymous";
+                    string uploaderEmail = HttpContext.Session.GetString(SessionKey.Viewer.EmailAddress)?.Trim() ?? "Anonymous";
                 
                     var files = Request?.Form?.Files;
                     if (files != null && files.Count > 0)
@@ -481,7 +481,7 @@ namespace WeddingShare.Controllers
                         return Json(new { success = false, uploaded = 0, errors = new List<string>() { _localizer["Invalid_Secret_Key_Warning"].Value } });
                     }
 
-                    var uploadedBy = HttpContext.Session.GetString(SessionKey.ViewerIdentity) ?? "Anonymous";
+                    var uploadedBy = HttpContext.Session.GetString(SessionKey.Viewer.Identity) ?? "Anonymous";
 
                     var galleryOwner = await _database.GetUser(gallery.Owner);
                     var isFreeGallery = gallery.Owner > 0 && (galleryOwner?.Level ?? UserLevel.Free) == UserLevel.Free;

@@ -74,7 +74,7 @@
     <value>2FA</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>آیا مطمئن هستید که می خواهید 2FA را برای کاربر “نام” پاک کنید؟?</value>
+    <value>آیا می خواهید 2FA را پاک کنید؟?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>اگر این موضوع ادامه داشته باشد، لطفا با مدیر وب تماس بگیرید</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>حذف</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>آیا مطمئن هستید که می خواهید حذف کنید؟?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>آیا می خواهید این گالری را حذف کنید؟?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>نمی توانم خالی باشم</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>آیا می خواهید «نام» را حذف کنید؟?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>خرید موفق</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>شکست برای حذف گالری</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>آیا مطمئن هستید که می خواهید گالری '{name} را حذف کنید؟?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>موفق به حذف گالری</value>
   </data>
@@ -662,7 +659,7 @@
     <value>شکست برای حذف گالری</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>آیا مطمئن هستید که می خواهید گالری «نام» را پاک کنید؟?</value>
+    <value>آیا مطمئن هستید که می خواهید گالری را تمیز کنید؟?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>موفق به حذف گالری</value>
@@ -1733,13 +1730,13 @@
     <value>هیچ فایلی برای آپلود شناسایی نشد</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>ارسال آیتم {index}.</value>
+    <value>بارگذاری آیتم</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>{count} Case(s)</value>
+    <value>موفق به آپلود موارد</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>به صورت موفقیت آمیز (count) را آپلود کنید</value>
+    <value>موفق به آپلود موارد در انتظار بررسی</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>آپلود شده توسط</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>شکست برای حذف کاربر</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>آیا مطمئن هستید که می خواهید “نام کاربری” را حذف کنید؟?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>کاربران موفق حذف شده</value>

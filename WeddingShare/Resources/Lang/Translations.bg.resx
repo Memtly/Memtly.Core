@@ -74,7 +74,7 @@
     <value>Настройка на 2FA</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Сигурна ли си, че искаш да изтриеш 2FA за потребителско име?</value>
+    <value>Сигурна ли си, че искаш да изтриеш 2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Ако този проблем продължи, моля свържете се с уеб администратор</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Изтриване</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Сигурна ли си, че искаш да изтриеш?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Сигурен ли си, че искаш да изтриеш галерията?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Не може да е празен</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Сигурен ли си, че искаш да изтриеш името?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Успешно изтрит елемент</value>
@@ -567,9 +567,6 @@
   </data>
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Грешка при изтриване на галерията</value>
-  </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Сигурен ли си, че искаш да изтриеш галерията?</value>
   </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Успешно изтрита галерия</value>
@@ -1733,13 +1730,13 @@
     <value>Не са открити файлове за качване</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Качване на елемент {index} на {count}...</value>
+    <value>Качване на елемент</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Успешно качени {count} артикул(s)</value>
+    <value>Успешно качени елементи</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Успешно качени {count} точка(s) в очакване на преразглеждане</value>
+    <value>Успешно качени артикули в очакване на преразглеждане</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Качване от</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Грешка при изтриване на потребител</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Сигурна ли си, че искаш да изтриеш потребителското име?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Успешно изтрит потребител</value>

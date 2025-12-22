@@ -74,7 +74,7 @@
     <value>Socraigh 2FA</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>An bhfuil tú cinnte gur mhaith leat 2FA a wipe don úsáideoir ''?</value>
+    <value>An bhfuil tú cinnte gur mhaith leat 2FA a wipe?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Má tá an cheist seo fós téigh i dteagmháil leis an riarthóir gréasáin</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Scriosta</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>An bhfuil tú cinnte gur mhaith leat a scriosadh?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>An bhfuil tú cinnte gur mhaith leat an gailearaí seo a scriosadh?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Ní féidir liom a bheith folamh</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>An bhfuil tú cinnte gur mhaith leat a scriosadh ''?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Mír a scriosadh rathúil</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Failed a scriosadh gailearaí</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>An bhfuil tú cinnte gur mhaith leat gailearaí a scriosadh ''?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Rathúil scrios gailearaí</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Failed chun wipe gailearaí</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>An bhfuil tú cinnte gur mhaith leat a wipe gailearaí ''?</value>
+    <value>An bhfuil tú cinnte gur mhaith leat a wipe gailearaí?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Go rathúil wiped gailearaí</value>
@@ -1733,13 +1730,13 @@
     <value>Níor aimsíodh aon chomhaid a uaslódáil</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Uaslódáil mír {innéacs} {count}...</value>
+    <value>Mír Uaslódáil</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Uaslódáil rathúil {count} mír(s)</value>
+    <value>Míreanna uaslódáil rathúil</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Uaslódáil rathúil {count} mír(s) go dtí go ndéanfar athbhreithniú</value>
+    <value>Míreanna a uaslódáil go rathúil go dtí athbhreithniú</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Uaslódáil ag</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Failed a scriosadh úsáideoir</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>An bhfuil tú cinnte gur mhaith leat a scriosadh úsáideoir ''?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Úsáideoir scriosta rathúil</value>

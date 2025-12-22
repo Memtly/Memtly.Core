@@ -74,7 +74,7 @@
     <value>2FA Setup</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Är du säker på att du vill torka 2FA för användaren '{namn}'?</value>
+    <value>Är du säker på att du vill torka 2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Om detta problem kvarstår vänligen kontakta webbadministratören</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Är du säker på att du vill ta bort?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Är du säker på att du vill ta bort detta galleri?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Id kan inte vara tom</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Är du säker på att du vill ta bort '(namn)'?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Framgångsrikt raderade objekt</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Misslyckades med att ta bort galleri</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Är du säker på att du vill ta bort galleriet '{namn}'?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Framgångsrikt raderat galleri</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Misslyckades med att torka galleriet</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Är du säker på att du vill torka galleriet '{namn}'?</value>
+    <value>Är du säker på att du vill torka galleri?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Framgångsrikt torkat galleri</value>
@@ -1733,13 +1730,13 @@
     <value>Inga filer upptäcktes för att ladda upp</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Uppladdning av objekt {index} av {count}...</value>
+    <value>Ladda upp objektet</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Framgångsrikt uppladdad {count} objekt(s)</value>
+    <value>Framgångsrikt uppladdade objekt</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Framgångsrikt uppladdad {count} objekt(s) i väntan på granskning</value>
+    <value>Framgångsrikt uppladdade objekt i väntan på granskning</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Uppladdad av</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Misslyckades med att ta bort användaren</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Är du säker på att du vill ta bort användaren '{namn}'?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Framgångsrikt raderad användare</value>

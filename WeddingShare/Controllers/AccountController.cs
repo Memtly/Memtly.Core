@@ -113,7 +113,7 @@ namespace WeddingShare.Controllers
                             }
 
                             var mfaSet = !string.IsNullOrEmpty(user.MultiFactorToken);
-                            HttpContext.Session.SetString(SessionKey.MultiFactorTokenSet, mfaSet.ToString().ToLower());
+                            HttpContext.Session.SetString(SessionKey.MultiFactor.TokenSet, mfaSet.ToString().ToLower());
 
                             if (mfaSet)
                             {
@@ -488,7 +488,7 @@ namespace WeddingShare.Controllers
                             }
 
                             var mfaSet = !string.IsNullOrWhiteSpace(user.MultiFactorToken);
-                            HttpContext.Session.SetString(SessionKey.MultiFactorTokenSet, (!string.IsNullOrEmpty(user.MultiFactorToken)).ToString().ToLower());
+                            HttpContext.Session.SetString(SessionKey.MultiFactor.TokenSet, (!string.IsNullOrEmpty(user.MultiFactorToken)).ToString().ToLower());
 
                             if (mfaSet)
                             {
@@ -543,11 +543,11 @@ namespace WeddingShare.Controllers
                 ActiveTab = tab ?? (User?.Identity?.GetDefaultTab() ?? AccountTabs.Reviews)
             };
 
-            var deviceType = HttpContext.Session.GetString(SessionKey.DeviceType);
+            var deviceType = HttpContext.Session.GetString(SessionKey.Device.Type);
             if (string.IsNullOrWhiteSpace(deviceType))
             {
                 deviceType = (await _deviceDetector.ParseDeviceType(Request.Headers["User-Agent"].ToString())).ToString();
-                HttpContext.Session.SetString(SessionKey.DeviceType, deviceType ?? "Desktop");
+                HttpContext.Session.SetString(SessionKey.Device.Type, deviceType ?? "Desktop");
             }
 
             try
@@ -1680,102 +1680,6 @@ namespace WeddingShare.Controllers
                 finally
                 {
                     _fileHelper.DeleteDirectoryIfExists(importDir);
-                }
-            }
-
-            return Json(new { success = false });
-        }
-
-        [HttpPost]
-        [RequiresRole(UserPermission = UserPermissions.Login)]
-        public async Task<IActionResult> RegisterMultifactorAuth(string secret, string code)
-        {
-            if (!string.IsNullOrWhiteSpace(secret) && !string.IsNullOrWhiteSpace(code))
-            {
-                if (User?.Identity != null && User.Identity.IsAuthenticated && await _settings.GetOrDefault(Settings.IsDemoMode, false) == false)
-                {
-                    try
-                    {
-                        var tfa = new TwoFactorAuth(await _settings.GetOrDefault(Settings.Basic.Title, "WeddingShare"));
-                        if (tfa.VerifyCode(secret, code))
-                        {
-                            var userId = User.Identity.GetUserId();
-                            if (userId > 0)
-                            {
-                                var set = await _database.SetMultiFactorToken(userId, secret);
-                                if (set)
-                                {
-                                    await _audit.LogAction(User?.Identity?.Name, _localizer["Audit_MultiFactorAdded"].Value);
-
-                                    HttpContext.Session.SetString(SessionKey.MultiFactorTokenSet, "true");
-                                    return Json(new { success = true });
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, $"{_localizer["MultiFactor_Token_Set_Failed"].Value} - {ex?.Message}");
-                    }
-                }
-            }
-
-            return Json(new { success = false });
-        }
-
-        [HttpDelete]
-        [RequiresRole(UserPermission = UserPermissions.Reset_MFA)]
-        public async Task<IActionResult> ResetMultifactorAuth()
-        {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
-            {
-                try
-                {
-                    await _audit.LogAction(User?.Identity?.Name, _localizer["Audit_MultiFactorReset"].Value);
-
-                    return await ResetMultifactorAuthForUser(User.Identity.GetUserId());
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, $"{_localizer["MultiFactor_Token_Set_Failed"].Value} - {ex?.Message}");
-                }
-            }
-
-            return Json(new { success = false });
-        }
-
-        [HttpDelete]
-        [RequiresRole(UserPermission = UserPermissions.Reset_MFA)]
-        public async Task<IActionResult> ResetMultifactorAuthForUser(int userId)
-        {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
-            {
-                try
-                {
-                    if (userId > 0)
-                    {
-                        var user = await _database.GetUser(userId);
-                        if (user != null && User.Identity.CanEdit(UserPermissions.Reset_MFA, user.Id))
-                        { 
-                            var cleared = await _database.SetMultiFactorToken(userId, string.Empty);
-                            if (cleared)
-                            {
-                                var currentUserId = User.Identity.GetUserId();
-                                if (userId == currentUserId)
-                                { 
-                                    HttpContext.Session.SetString(SessionKey.MultiFactorTokenSet, "false");
-                                }
-
-                                await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_MultiFactorResetUser"].Value} '{user?.Username}'");
-
-                                return Json(new { success = true });
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, $"{_localizer["MultiFactor_Token_Set_Failed"].Value} - {ex?.Message}");
                 }
             }
 

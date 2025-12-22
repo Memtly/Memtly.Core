@@ -74,7 +74,7 @@
     <value>Configurare 2FA</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Sigur doriți să ștergeți 2FA pentru utilizator '{numele} '?</value>
+    <value>Sigur vrei să ştergi 2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Dacă această problemă persistă vă rugăm să contactați administratorul web</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Șterge</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Sigur doriți să ștergeți?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Sigur doriți să ștergeți această galerie?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Nu poate fi gol</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Sigur doriți să ștergeți '{numele} '?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Punct eliminat cu succes</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Eșec la ștergerea galeriei</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Sigur doriți să ștergeți galeria '{numele} '?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Galerie ștersă cu succes</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Eșec la ștergerea galeriei</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Eşti sigur că vrei să ştergi galeria '{numele}'?</value>
+    <value>Eşti sigur că vrei să ştergi galeria?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Galerie ștersă cu succes</value>
@@ -1733,13 +1730,13 @@
     <value>Nu au fost detectate fișiere pentru a încărca</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Încărcare element {index} de {număr}...</value>
+    <value>Încărcare element</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Produs încărcat cu succes (număr}</value>
+    <value>Elemente încărcate cu succes</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Încărcat cu succes {conte} element (s) în curs de revizuire</value>
+    <value>Produse încărcate cu succes în așteptarea revizuirii</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Încărcat de</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Eșec la ștergerea utilizatorului</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Sigur doriți să ștergeți utilizatorul '{numele}'?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Utilizator șters cu succes</value>

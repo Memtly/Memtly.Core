@@ -32,9 +32,9 @@ body {
 }
 
 .btn-outline-disabled, .btn-outline-disabled:active, .btn-outline-disabled:hover {
-    color: #777777;
-    border: 1px solid #777777;
-    cursor: default;
+    color: #777777 !important;
+    border: 1px solid #777777 !important;
+    cursor: default !important;
 }
 
 tr td {

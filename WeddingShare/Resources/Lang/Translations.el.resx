@@ -74,7 +74,7 @@
     <value>Set 2FA</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Σίγουρα θέλετε να σκουπίσετε το 2FA για το χρήστη '{name}'?</value>
+    <value>Σίγουρα θέλεις να σκουπίσεις 2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Εάν αυτό το θέμα επιμένει παρακαλώ επικοινωνήστε με το διαχειριστή ιστού</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Διαγραφή</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Σίγουρα θέλετε να διαγράψετε?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Σίγουρα θέλετε να διαγράψετε αυτή την γκαλερί?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Δεν μπορεί να είναι άδειο</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Σίγουρα θέλετε να διαγράψετε το '{ name}'?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Επιτυχής διαγραφή αντικειμένου</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Αποτυχία διαγραφής της συλλογής</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Σίγουρα θέλετε να διαγράψετε το gallery '{name}'?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Επιτυχώς διαγραμμένη συλλογή</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Αποτυχία διαγραφής της συλλογής</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Είσαι σίγουρος ότι θέλεις να σκουπίσεις την γκαλερί '{όνομα}'?</value>
+    <value>Σίγουρα θέλεις να σκουπίσεις την γκαλερί?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Επιτυχής σκούπισμα γκαλερί</value>
@@ -1733,13 +1730,13 @@
     <value>Δεν εντοπίστηκαν αρχεία για αποστολή</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Αποστολή αντικειμένου {index} του {count}...</value>
+    <value>Αποστολή αντικειμένου</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Επιτυχής αποστολή του αντικειμένου {count}</value>
+    <value>Επιτυχής αποστολή αντικειμένων</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Επιτυχής μεταφόρτωση {count} αντικειμένου( ων) εν αναμονή της αναθεώρησης</value>
+    <value>Επιτυχής αποστολή αντικειμένων εν αναμονή της αναθεώρησης</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Αποστολή από</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Αποτυχία διαγραφής του χρήστη</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Επιθυμείτε σίγουρα τη διαγραφή του χρήστη '{ name}'?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Επιτυχής διαγραφή του χρήστη</value>

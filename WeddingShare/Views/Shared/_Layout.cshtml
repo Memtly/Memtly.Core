@@ -45,7 +45,7 @@
     string? culture;
     try
     {
-        culture = Context?.Session?.GetString(SessionKey.SelectedLanguage)?.Trim();
+        culture = Context?.Session?.GetString(SessionKey.Language.Selected)?.Trim();
         if (string.IsNullOrEmpty(culture))
         {
             culture = await _language.GetOrFallbackCulture(string.Empty, await _settings.GetOrDefault(Settings.Languages.Default, "en-GB"));
@@ -95,11 +95,11 @@
                             @if (await _settings.GetOrDefault(Settings.IdentityCheck.Enabled, true))
                             {
                                 var requireEmail = await _settings.GetOrDefault(Settings.IdentityCheck.RequireEmail, false);
-                                <i class="change-identity fa-solid fa-id-card fa-1x text-secondary pointer mx-2" data-identity-name="@Context?.Session.GetString(SessionKey.ViewerIdentity)" @(requireEmail ? $"data-identity-email={Context?.Session.GetString(SessionKey.ViewerEmailAddress)}" : string.Empty)></i>
+                                <i class="change-identity fa-solid fa-id-card fa-1x text-secondary pointer mx-2" data-identity-name="@Context?.Session.GetString(SessionKey.Viewer.Identity)" @(requireEmail ? $"data-identity-email={Context?.Session.GetString(SessionKey.Viewer.EmailAddress)}" : string.Empty)></i>
                             }
                             @if (User?.Identity != null && User.Identity.IsAuthenticated)
                             {
-                                <i class="change-2fa fa-solid fa-key fa-1x text-secondary pointer mx-2" data-mfa-set="@(bool.Parse(Context?.Session.GetString(SessionKey.MultiFactorTokenSet)?.ToLower() ?? "false").ToString().ToLower())"></i>
+                                <i class="change-2fa fa-solid fa-key fa-1x text-secondary pointer mx-2" data-mfa-set="@(bool.Parse(Context?.Session.GetString(SessionKey.MultiFactor.TokenSet)?.ToLower() ?? "false").ToString().ToLower())"></i>
                             }
                         </div>
                         <div class="profile-icon my-1 m-lg-0 float-end">
@@ -154,8 +154,6 @@
 
             @RenderBody()
         </div>
-
-        <partial name="~/Views/Shared/_2FA.cshtml" model="null" />
 
        @*  @if (await _settings.GetOrDefault(Settings.IdentityCheck.Enabled, true) && await _settings.GetOrDefault(Settings.IdentityCheck.ShowOnPageLoad, true) && string.IsNullOrWhiteSpace(Context?.Session?.GetString(SessionKey.ViewerIdentity)))
         {

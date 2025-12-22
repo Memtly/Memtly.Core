@@ -74,7 +74,7 @@
     <value>2FA Setup</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>هل أنت متأكد أنك تريد أن تمسح 2FA للمستعمل؟?</value>
+    <value>هل أنت متأكد من أنك تريد مسح 2FA؟?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>إذا استمرت هذه المسألة، يرجى الاتصال بمدير الإنترنت</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>تحذف</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد حذف؟?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>هل أنت متأكد أنك تريد حذف هذا المعرض؟?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>لا يمكن أن تكون فارغة</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>هل أنت متأكد من أنك تريد حذف 'اسم' ؟?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>البند المحذف بنجاح</value>
@@ -567,9 +567,6 @@
   </data>
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>فشل في حذف المعرض</value>
-  </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>هل أنت متأكد من أنك تريد حذف المعرض؟?</value>
   </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>معرض محو بنجاح</value>
@@ -1733,13 +1730,13 @@
     <value>No files were detected to upload</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>تحميل البند {index} من {count}.</value>
+    <value>بند تحميل</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Successfully uploaded {count} item(s)</value>
+    <value>الأصناف المحملة بنجاح</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>قيد الاستعراض</value>
+    <value>البنود المعلقة قيد الاستعراض</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>محمولة</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>عدم حذف المستخدم</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>هل أنت متأكد أنك تريد حذف المستعمل؟?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>المستخدم المحذف بنجاح</value>

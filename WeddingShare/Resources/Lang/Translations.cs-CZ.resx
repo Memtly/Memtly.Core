@@ -74,7 +74,7 @@
     <value>Nastavení 2FA</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Určitě chcete smazat 2FA pro uživatele '{name}'?</value>
+    <value>Určitě chceš smazat 2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Pokud tento problém přetrvává, kontaktujte prosím správce webu</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Smazat</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Určitě to chceš smazat?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Jste si jistý, že chcete tuto galerii smazat?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Id nemůže být prázdný</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Určitě chcete smazat '{name}'?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Úspěšně vymazána položka</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Nepodařilo se odstranit galerii</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Určitě chcete smazat galerii '{name}'?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Úspěšně vymazána galerie</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Nepodařilo se vymazat galerii</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Určitě chcete otřít galerii '{name}'?</value>
+    <value>Určitě chcete otřít galerii?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Úspěšně vymazaná galerie</value>
@@ -1733,13 +1730,13 @@
     <value>Nebyly zjištěny žádné soubory k nahrání</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Nahrávání položky {index} {count}...</value>
+    <value>Odesílatel</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Úspěšně nahraná položka (položky) {počet}</value>
+    <value>Úspěšně nahrané položky</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Úspěšně nahrané položky {count} do přezkumu</value>
+    <value>Úspěšně nahrané položky do přezkumu</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Uploadnul</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Nepodařilo se odstranit uživatele</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Určitě chcete smazat uživatelské jméno?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Úspěšně vymazán uživatel</value>

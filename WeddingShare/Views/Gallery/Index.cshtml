@@ -23,7 +23,7 @@
     {
         try
         {
-            var currentCulture = Context.Request.HttpContext.Session.GetString(SessionKey.SelectedLanguage);
+            var currentCulture = Context.Request.HttpContext.Session.GetString(SessionKey.Language.Selected);
             if (!string.IsNullOrWhiteSpace(currentCulture))
             {
                 qrAppend.Add(new KeyValuePair<string, string>("culture", currentCulture));
@@ -49,7 +49,7 @@
 
     <header class="file-uploader bg-dark py-1 py-lg-4">
         <div class="container px-0 px-lg-2">
-            <form class="file-uploader-form" data-identity-required="@((identityRequired && string.IsNullOrWhiteSpace(Context?.Session?.GetString(SessionKey.ViewerIdentity))).ToString().ToLower())">
+            <form class="file-uploader-form" data-identity-required="@((identityRequired && string.IsNullOrWhiteSpace(Context?.Session?.GetString(SessionKey.Viewer.Identity))).ToString().ToLower())">
                 @Html.AntiForgeryToken()
 
                 <fieldset class="upload_drop text-center p-4 text-center text-white">

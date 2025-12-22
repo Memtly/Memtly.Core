@@ -74,7 +74,7 @@
     <value>Setup 2FA</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Sei sicuro di voler cancellare 2FA per l'utente '{name}?</value>
+    <value>Sei sicuro di voler pulire 2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Se questo problema persiste contatta l'amministratore web</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Cancella</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Sei sicuro di voler eliminare?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Sei sicuro di voler eliminare questa galleria?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>L'id non può essere vuoto</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Sei sicuro di voler eliminare '{name}?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Elemento eliminato correttamente</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Impossibile cancellare la galleria</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Sei sicuro di voler cancellare la galleria '{name}'?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Galleria cancellata con successo</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Impossibile svuotare la galleria</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Sei sicuro di voler svuotare la galleria?</value>
+    <value>Sei sicuro di voler pulire la galleria?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Galleria svuotata con successo</value>
@@ -1733,13 +1730,13 @@
     <value>Nessun file rilevato da caricare</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Caricamento elemento {index} di {count}...</value>
+    <value>Elemento di caricamento</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Caricati con successo {count} elementi</value>
+    <value>Articoli caricati con successo</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Caricati correttamente {count} elementi in attesa di revisione</value>
+    <value>Successivo caricato articoli in attesa di recensione</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Caricato da</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Impossibile eliminare l'utente</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Sei sicuro di voler eliminare l'utente '{name}?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Utente eliminato con successo</value>

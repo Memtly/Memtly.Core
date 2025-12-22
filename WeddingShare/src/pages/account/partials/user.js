@@ -1,185 +1,21 @@
 ﻿import { displayMessage } from '@modules/message-box';
 import { displayPopup } from '@modules/popups';
 import { displayLoader } from '@modules/loader';
-import { generatePasswordValidationField, initPasswordValidationField } from '@validation/password-validation';
+import { generatePasswordValidationContainer, initPasswordValidation } from '@validation/password-validation';
 
 function init() {
     bindEventHandlers();
 }
 
 function bindEventHandlers() {
+    bindAddUserButton();
+    bindEditUserButton();
+    bindChangePasswordButton();
+    bindMultiFactorWipeButton();
     bindActivateUserButton();
     bindFreezeUserButton();
     bindUnfreezeUserButton();
-    bindAddUserButton();
-    bindEditUserButton();
     bindDeleteUserButton();
-    bindChangePasswordButton();
-}
-
-function bindActivateUserButton() {
-    $(document).off('click', '.btnActivateUser').on('click', '.btnActivateUser', function (e) {
-        preventDefaults(e);
-
-        if ($(this).attr('disabled') == 'disabled') {
-            return;
-        }
-
-        let row = $(this).closest('tr');
-        displayPopup({
-            Title: localization.translate('Activate_User'),
-            Message: `${localization.translate('Activate_User_Message')} '${row.data('user-name')}'`,
-            Fields: [{
-                Id: 'user-id',
-                Value: row.data('user-id'),
-                Type: 'hidden'
-            }],
-            Buttons: [{
-                Text: localization.translate('Activate'),
-                Class: 'btn-danger',
-                Callback: function () {
-                    displayLoader(localization.translate('Loading'));
-
-                    let id = $('#popup-modal-field-user-id').val();
-                    if (id == undefined || id.length == 0) {
-                        displayMessage(localization.translate('Activate_User'), localization.translate('User_Missing_Id'));
-                        return;
-                    }
-
-                    $.ajax({
-                        url: '/Account/ActivateUser',
-                        method: 'PUT',
-                        data: { Id: id }
-                    })
-                        .done(data => {
-                            if (data.success === true) {
-                                updatePage();
-                                displayMessage(localization.translate('Activate_User'), localization.translate('Activate_Successfully'));
-                            } else if (data.message) {
-                                displayMessage(localization.translate('Activate_User'), localization.translate('Activate_Failed'), [data.message]);
-                            } else {
-                                displayMessage(localization.translate('Activate_User'), localization.translate('Activate_Failed'));
-                            }
-                        })
-                        .fail((xhr, error) => {
-                            displayMessage(localization.translate('Activate_User'), localization.translate('Activate_Failed'), [error]);
-                        });
-                }
-            }, {
-                Text: localization.translate('Close')
-            }]
-        });
-    });
-}
-
-function bindFreezeUserButton() {
-    $(document).off('click', '.btnFreezeUser').on('click', '.btnFreezeUser', function (e) {
-        preventDefaults(e);
-
-        if ($(this).attr('disabled') == 'disabled') {
-            return;
-        }
-
-        let row = $(this).closest('tr');
-        displayPopup({
-            Title: localization.translate('Freeze_User'),
-            Message: `${localization.translate('Freeze_User_Message')} '${row.data('user-name') }'`,
-            Fields: [{
-                Id: 'user-id',
-                Value: row.data('user-id'),
-                Type: 'hidden'
-            }],
-            Buttons: [{
-                Text: localization.translate('Freeze'),
-                Class: 'btn-danger',
-                Callback: function () {
-                    displayLoader(localization.translate('Loading'));
-
-                    let id = $('#popup-modal-field-user-id').val();
-                    if (id == undefined || id.length == 0) {
-                        displayMessage(localization.translate('Freeze_User'), localization.translate('User_Missing_Id'));
-                        return;
-                    }
-
-                    $.ajax({
-                        url: '/Account/FreezeUser',
-                        method: 'PUT',
-                        data: { Id: id }
-                    })
-                        .done(data => {
-                            if (data.success === true) {
-                                updatePage();
-                                displayMessage(localization.translate('Freeze_User'), localization.translate('Freeze_Successfully'));
-                            } else if (data.message) {
-                                displayMessage(localization.translate('Freeze_User'), localization.translate('Freeze_Failed'), [data.message]);
-                            } else {
-                                displayMessage(localization.translate('Freeze_User'), localization.translate('Freeze_Failed'));
-                            }
-                        })
-                        .fail((xhr, error) => {
-                            displayMessage(localization.translate('Freeze_User'), localization.translate('Freeze_Failed'), [error]);
-                        });
-                }
-            }, {
-                Text: localization.translate('Close')
-            }]
-        });
-    });
-}
-
-function bindUnfreezeUserButton() {
-    $(document).off('click', '.btnUnfreezeUser').on('click', '.btnUnfreezeUser', function (e) {
-        preventDefaults(e);
-
-        if ($(this).attr('disabled') == 'disabled') {
-            return;
-        }
-
-        let row = $(this).closest('tr');
-        displayPopup({
-            Title: localization.translate('Unfreeze_User'),
-            Message: `${localization.translate('Unfreeze_User_Message')} '${row.data('user-name')}'`,
-            Fields: [{
-                Id: 'user-id',
-                Value: row.data('user-id'),
-                Type: 'hidden'
-            }],
-            Buttons: [{
-                Text: localization.translate('Unfreeze'),
-                Class: 'btn-danger',
-                Callback: function () {
-                    displayLoader(localization.translate('Loading'));
-
-                    let id = $('#popup-modal-field-user-id').val();
-                    if (id == undefined || id.length == 0) {
-                        displayMessage(localization.translate('Unfreeze_User'), localization.translate('User_Missing_Id'));
-                        return;
-                    }
-
-                    $.ajax({
-                        url: '/Account/UnfreezeUser',
-                        method: 'PUT',
-                        data: { Id: id }
-                    })
-                        .done(data => {
-                            if (data.success === true) {
-                                updatePage();
-                                displayMessage(localization.translate('Unfreeze_User'), localization.translate('Unfreeze_Successfully'));
-                            } else if (data.message) {
-                                displayMessage(localization.translate('Unfreeze_User'), localization.translate('Unfreeze_Failed'), [data.message]);
-                            } else {
-                                displayMessage(localization.translate('Unfreeze_User'), localization.translate('Unfreeze_Failed'));
-                            }
-                        })
-                        .fail((xhr, error) => {
-                            displayMessage(localization.translate('Unfreeze_User'), localization.translate('Unfreeze_Failed'), [error]);
-                        });
-                }
-            }, {
-                Text: localization.translate('Close')
-            }]
-        });
-    });
 }
 
 function bindAddUserButton() {
@@ -248,7 +84,7 @@ function bindAddUserButton() {
                     }
                 ]
             }],
-            FooterHtml: `${generatePasswordValidationField('input#popup-modal-field-user-password')}`,
+            FooterHtml: `${generatePasswordValidationContainer('input#popup-modal-field-user-password')}`,
             Buttons: [{
                 Text: localization.translate('Add'),
                 Class: 'btn-success',
@@ -315,8 +151,7 @@ function bindAddUserButton() {
                 Text: localization.translate('Close')
             }]
         }, () => {
-            const validator = $('input#popup-modal-field-user-password');
-            initPasswordValidationField(validator);
+            initPasswordValidation();
         });
     });
 }
@@ -433,61 +268,6 @@ function bindEditUserButton() {
     });
 }
 
-function bindDeleteUserButton() {
-    $(document).off('click', '.btnDeleteUser').on('click', '.btnDeleteUser', function (e) {
-        preventDefaults(e);
-
-        if ($(this).attr('disabled') == 'disabled') {
-            return;
-        }
-
-        let row = $(this).closest('tr');
-        displayPopup({
-            Title: localization.translate('User_Delete'),
-            Message: localization.translate('User_Delete_Message', { name: row.data('user-name') }),
-            Fields: [{
-                Id: 'user-id',
-                Value: row.data('user-id'),
-                Type: 'hidden'
-            }],
-            Buttons: [{
-                Text: localization.translate('Delete'),
-                Class: 'btn-danger',
-                Callback: function () {
-                    displayLoader(localization.translate('Loading'));
-
-                    let id = $('#popup-modal-field-user-id').val();
-                    if (id == undefined || id.length == 0) {
-                        displayMessage(localization.translate('User_Delete'), localization.translate('User_Missing_Id'));
-                        return;
-                    }
-
-                    $.ajax({
-                        url: '/Account/DeleteUser',
-                        method: 'DELETE',
-                        data: { id }
-                    })
-                        .done(data => {
-                            if (data.success === true) {
-                                updatePage();
-                                displayMessage(localization.translate('User_Delete'), localization.translate('User_Delete_Success'));
-                            } else if (data.message) {
-                                displayMessage(localization.translate('User_Delete'), localization.translate('User_Delete_Failed'), [data.message]);
-                            } else {
-                                displayMessage(localization.translate('User_Delete'), localization.translate('User_Delete_Failed'));
-                            }
-                        })
-                        .fail((xhr, error) => {
-                            displayMessage(localization.translate('User_Delete'), localization.translate('User_Delete_Failed'), [error]);
-                        });
-                }
-            }, {
-                Text: localization.translate('Close')
-            }]
-        });
-    });
-}
-
 function bindChangePasswordButton() {
     $(document).off('click', '.btnChangePassword').on('click', '.btnChangePassword', function (e) {
         preventDefaults(e);
@@ -517,7 +297,7 @@ function bindChangePasswordButton() {
                 Type: 'password',
                 Class: 'confirm-password'
             }],
-            FooterHtml: `${generatePasswordValidationField('input#popup-modal-field-user-password')}`,
+            FooterHtml: `${generatePasswordValidationContainer('input#popup-modal-field-user-password')}`,
             Buttons: [{
                 Text: localization.translate('Update'),
                 Class: 'btn-success',
@@ -565,8 +345,283 @@ function bindChangePasswordButton() {
                 Text: localization.translate('Close')
             }]
         }, () => {
-            const validator = $('input#popup-modal-field-user-password');
-            initPasswordValidationField(validator);
+            initPasswordValidation();
+        });
+    });
+}
+
+function bindMultiFactorWipeButton() {
+    $(document).off('click', '.btnWipe2FA').on('click', '.btnWipe2FA', function (e) {
+        preventDefaults(e);
+
+        if ($(this).attr('disabled') == 'disabled') {
+            return;
+        }
+
+        let row = $(this).closest('tr');
+        displayPopup({
+            Title: localization.translate('2FA_Setup'),
+            Message: localization.translate('2FA_Wipe_Message'),
+            Fields: [{
+                Id: 'user-id',
+                Value: row.data('user-id'),
+                Type: 'hidden'
+            }],
+            Buttons: [{
+                Text: localization.translate('Wipe'),
+                Class: 'btn-danger',
+                Callback: function () {
+                    displayLoader(localization.translate('Loading'));
+
+                    let id = $('#popup-modal-field-user-id').val();
+                    if (id == undefined || id.length == 0) {
+                        displayMessage(localization.translate('2FA_Setup'), localization.translate('User_Missing_Id'));
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/MultiFactor/ResetForUser',
+                        method: 'DELETE',
+                        data: { userId: id }
+                    })
+                        .done(data => {
+                            if (data.success === true) {
+                                updateUsersList();
+                                displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Wipe'));
+                            } else if (data.message) {
+                                displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Failed'), [data.message]);
+                            } else {
+                                displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Failed'));
+                            }
+                        })
+                        .fail((xhr, error) => {
+                            displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Failed'), [error]);
+                        });
+                }
+            }, {
+                Text: localization.translate('Close')
+            }]
+        });
+    });
+}
+
+function bindActivateUserButton() {
+    $(document).off('click', '.btnActivateUser').on('click', '.btnActivateUser', function (e) {
+        preventDefaults(e);
+
+        if ($(this).attr('disabled') == 'disabled') {
+            return;
+        }
+
+        let row = $(this).closest('tr');
+        displayPopup({
+            Title: localization.translate('Activate_User'),
+            Message: `${localization.translate('Activate_User_Message')} '${row.data('user-name')}'`,
+            Fields: [{
+                Id: 'user-id',
+                Value: row.data('user-id'),
+                Type: 'hidden'
+            }],
+            Buttons: [{
+                Text: localization.translate('Activate'),
+                Class: 'btn-danger',
+                Callback: function () {
+                    displayLoader(localization.translate('Loading'));
+
+                    let id = $('#popup-modal-field-user-id').val();
+                    if (id == undefined || id.length == 0) {
+                        displayMessage(localization.translate('Activate_User'), localization.translate('User_Missing_Id'));
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/Account/ActivateUser',
+                        method: 'PUT',
+                        data: { Id: id }
+                    })
+                        .done(data => {
+                            if (data.success === true) {
+                                updateUsersList();
+                                displayMessage(localization.translate('Activate_User'), localization.translate('Activate_Successfully'));
+                            } else if (data.message) {
+                                displayMessage(localization.translate('Activate_User'), localization.translate('Activate_Failed'), [data.message]);
+                            } else {
+                                displayMessage(localization.translate('Activate_User'), localization.translate('Activate_Failed'));
+                            }
+                        })
+                        .fail((xhr, error) => {
+                            displayMessage(localization.translate('Activate_User'), localization.translate('Activate_Failed'), [error]);
+                        });
+                }
+            }, {
+                Text: localization.translate('Close')
+            }]
+        });
+    });
+}
+
+function bindFreezeUserButton() {
+    $(document).off('click', '.btnFreezeUser').on('click', '.btnFreezeUser', function (e) {
+        preventDefaults(e);
+
+        if ($(this).attr('disabled') == 'disabled') {
+            return;
+        }
+
+        let row = $(this).closest('tr');
+        displayPopup({
+            Title: localization.translate('Freeze_User'),
+            Message: `${localization.translate('Freeze_User_Message')} '${row.data('user-name')}'`,
+            Fields: [{
+                Id: 'user-id',
+                Value: row.data('user-id'),
+                Type: 'hidden'
+            }],
+            Buttons: [{
+                Text: localization.translate('Freeze'),
+                Class: 'btn-danger',
+                Callback: function () {
+                    displayLoader(localization.translate('Loading'));
+
+                    let id = $('#popup-modal-field-user-id').val();
+                    if (id == undefined || id.length == 0) {
+                        displayMessage(localization.translate('Freeze_User'), localization.translate('User_Missing_Id'));
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/Account/FreezeUser',
+                        method: 'PUT',
+                        data: { Id: id }
+                    })
+                        .done(data => {
+                            if (data.success === true) {
+                                updateUsersList();
+                                displayMessage(localization.translate('Freeze_User'), localization.translate('Freeze_Successfully'));
+                            } else if (data.message) {
+                                displayMessage(localization.translate('Freeze_User'), localization.translate('Freeze_Failed'), [data.message]);
+                            } else {
+                                displayMessage(localization.translate('Freeze_User'), localization.translate('Freeze_Failed'));
+                            }
+                        })
+                        .fail((xhr, error) => {
+                            displayMessage(localization.translate('Freeze_User'), localization.translate('Freeze_Failed'), [error]);
+                        });
+                }
+            }, {
+                Text: localization.translate('Close')
+            }]
+        });
+    });
+}
+
+function bindUnfreezeUserButton() {
+    $(document).off('click', '.btnUnfreezeUser').on('click', '.btnUnfreezeUser', function (e) {
+        preventDefaults(e);
+
+        if ($(this).attr('disabled') == 'disabled') {
+            return;
+        }
+
+        let row = $(this).closest('tr');
+        displayPopup({
+            Title: localization.translate('Unfreeze_User'),
+            Message: `${localization.translate('Unfreeze_User_Message')} '${row.data('user-name')}'`,
+            Fields: [{
+                Id: 'user-id',
+                Value: row.data('user-id'),
+                Type: 'hidden'
+            }],
+            Buttons: [{
+                Text: localization.translate('Unfreeze'),
+                Class: 'btn-danger',
+                Callback: function () {
+                    displayLoader(localization.translate('Loading'));
+
+                    let id = $('#popup-modal-field-user-id').val();
+                    if (id == undefined || id.length == 0) {
+                        displayMessage(localization.translate('Unfreeze_User'), localization.translate('User_Missing_Id'));
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/Account/UnfreezeUser',
+                        method: 'PUT',
+                        data: { Id: id }
+                    })
+                        .done(data => {
+                            if (data.success === true) {
+                                updateUsersList();
+                                displayMessage(localization.translate('Unfreeze_User'), localization.translate('Unfreeze_Successfully'));
+                            } else if (data.message) {
+                                displayMessage(localization.translate('Unfreeze_User'), localization.translate('Unfreeze_Failed'), [data.message]);
+                            } else {
+                                displayMessage(localization.translate('Unfreeze_User'), localization.translate('Unfreeze_Failed'));
+                            }
+                        })
+                        .fail((xhr, error) => {
+                            displayMessage(localization.translate('Unfreeze_User'), localization.translate('Unfreeze_Failed'), [error]);
+                        });
+                }
+            }, {
+                Text: localization.translate('Close')
+            }]
+        });
+    });
+}
+
+function bindDeleteUserButton() {
+    $(document).off('click', '.btnDeleteUser').on('click', '.btnDeleteUser', function (e) {
+        preventDefaults(e);
+
+        if ($(this).attr('disabled') == 'disabled') {
+            return;
+        }
+
+        let row = $(this).closest('tr');
+        let name = row.data('user-name');
+        displayPopup({
+            Title: localization.translate('User_Delete'),
+            Message: `${name} - ${localization.translate('Delete_Are_You_Sure')}`,
+            Fields: [{
+                Id: 'user-id',
+                Value: row.data('user-id'),
+                Type: 'hidden'
+            }],
+            Buttons: [{
+                Text: localization.translate('Delete'),
+                Class: 'btn-danger',
+                Callback: function () {
+                    displayLoader(localization.translate('Loading'));
+
+                    let id = $('#popup-modal-field-user-id').val();
+                    if (id == undefined || id.length == 0) {
+                        displayMessage(localization.translate('User_Delete'), localization.translate('User_Missing_Id'));
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/Account/DeleteUser',
+                        method: 'DELETE',
+                        data: { id }
+                    })
+                        .done(data => {
+                            if (data.success === true) {
+                                updateUsersList();
+                                displayMessage(localization.translate('User_Delete'), localization.translate('User_Delete_Success'));
+                            } else if (data.message) {
+                                displayMessage(localization.translate('User_Delete'), localization.translate('User_Delete_Failed'), [data.message]);
+                            } else {
+                                displayMessage(localization.translate('User_Delete'), localization.translate('User_Delete_Failed'));
+                            }
+                        })
+                        .fail((xhr, error) => {
+                            displayMessage(localization.translate('User_Delete'), localization.translate('User_Delete_Failed'), [error]);
+                        });
+                }
+            }, {
+                Text: localization.translate('Close')
+            }]
         });
     });
 }

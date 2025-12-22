@@ -1,7 +1,9 @@
 ﻿import { displayMessage } from '@modules/message-box';
 import { displayLoader, hideLoader } from '@modules/loader';
+import { initPasswordValidation } from '@validation/password-validation';
 
 function init() {
+    initPasswordValidation();
     bindEventHandlers();
 }
 

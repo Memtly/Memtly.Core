@@ -74,7 +74,7 @@
     <value>2FA Setup</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>האם אתה בטוח שאתה רוצה למחוק 2FA למשתמש 'שם'?</value>
+    <value>אתה בטוח שאתה רוצה למחוק 2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>אם נושא זה נמשך אנא צרו קשר עם מנהל האינטרנט</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>אתה בטוח שאתה רוצה למחוק?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>אתה בטוח שאתה רוצה למחוק את הגלריה?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>לא יכול להיות ריק</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>אתה בטוח שאתה רוצה למחוק את השם?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>פריט נמחק מוצלח</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>נכשל למחוק את הגלריה</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>האם אתם בטוחים שאתם רוצים למחוק את הגלריה?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>גלריה נמחקה</value>
   </data>
@@ -662,7 +659,7 @@
     <value>נכשלת בגלריית הנגיף</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>אתה בטוח שאתה רוצה למחוק את הגלריה '?</value>
+    <value>אתה בטוח שאתה רוצה למחוק את הגלריה?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>גלריה ממולחת</value>
@@ -1733,13 +1730,13 @@
     <value>לא נמצאו קבצים כדי להעלות</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Load .</value>
+    <value>העלאת פריט</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>פורסם ב-[[770]]</value>
+    <value>פריטים שהועלו בהצלחה</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>פורסם ב-[[1924]]</value>
+    <value>פריטים שהועלה בהצלחה</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>מוצג על ידי</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>נכשל למחוק משתמשים</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>אתה בטוח שאתה רוצה למחוק את המשתמש 'שם'?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>משתמש מוצלח</value>

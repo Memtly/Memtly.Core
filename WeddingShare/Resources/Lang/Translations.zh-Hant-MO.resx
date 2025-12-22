@@ -74,7 +74,7 @@
     <value>2FA 设置</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>您确定要为用户“ {name} ” 擦去 2FA 吗 ?</value>
+    <value>你確定要擦出2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>如果这个问题持续存在,请联系网络管理员</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>删除</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>您確定要刪除嗎 ?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>您确定要删除此画廊吗 ?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>无法为空</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>您确定要删除“ {name} ” 吗 ?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>成功删除项目</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>删除相册失败</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>您确定要删除相册“ {name} ” 吗 ?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>成功删除相册</value>
   </data>
@@ -662,7 +659,7 @@
     <value>擦去画廊失败</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>您确定要擦去画廊“ {name} ” 吗 ?</value>
+    <value>你確定想把畫廊弄走?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>成功擦除画廊</value>
@@ -1733,13 +1730,13 @@
     <value>没有检测到要上传的文件</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>正在上传 { index} 的 { counts}...</value>
+    <value>上傳項目中</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>成功上传 { counts} 项</value>
+    <value>已成功上傳項目</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>成功上传{计算}项待审查</value>
+    <value>在審查前已成功上傳項目</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>上传于</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>删除用户失败</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>您确定要删除用户“ {name} ” 吗 ?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>成功删除用户</value>

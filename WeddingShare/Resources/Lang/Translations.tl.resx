@@ -74,7 +74,7 @@
     <value>2FA Setup</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Natitiyak mo ba na nais mong punasan ang 2FA para sa user na '{name''?</value>
+    <value>Sigurado ka bang papahirin mo ang 2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Kung ang labas na ito ay patuloy na makipag - ugnayan sa administrador ng web</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Ibagsak</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Sigurado ka bang gusto mong mag - delete?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Tiyak mo bang nais mong alisin ang galeryang ito?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Hindi maaaring walang laman ang Id</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Natitiyak mo ba na nais mong i-delete ang 'ificname}'?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Matagumpay na inalis ang bagay</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Sawi sa pag-distrate ng galerya</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Natitiyak mo ba na nais mong i-delete ang gallery '{name''?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Matagumpay na Inalis ang galerya</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Sawi sa pagbura ng galerya</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Natitiyak mo ba na nais mong alisin ang gallery 'ificname}'?</value>
+    <value>Natitiyak mo ba na nais mong alisin ang galerya?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Matagumpay na nabura ang galerya</value>
@@ -1733,13 +1730,13 @@
     <value>Walang mga files na nahanap upang i-upload</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Pag - a - download ng bagay na {index } ng { {...</value>
+    <value>Pagdidiskarga ng bagay</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Matagumpay na nai-upload {/s)</value>
+    <value>Matagumpay na nai - download ang mga bagay</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Matagumpay na nai-download ang {/s) naghihintay na review</value>
+    <value>Matagumpay na naikarga ang mga bagay na hindi pa narerepaso</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Nabibigatan</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Sawi sa pag-delete ng gumagamit</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Natitiyak mo ba na nais mong i-delete ang user 'ificulati'?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Matagumpay na inalis ang gumagamit</value>

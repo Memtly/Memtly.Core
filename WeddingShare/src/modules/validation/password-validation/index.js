@@ -1,16 +1,16 @@
 ﻿import { generateChecklistItem } from '@modules/html-elements';
 
 function init() {
-    if ($('div.password-validator-container').length > 0) {
-        $('div.password-validator-container').each(function () {
-            $(this).html(generatePasswordValidationField($(this).data('input')));
-        });
-    }
-
     initPasswordValidation();
 }
 
-function initPasswordValidation() {
+export function initPasswordValidation() {
+    if ($('div.password-validator-container').length > 0) {
+        $('div.password-validator-container').each(function () {
+            $(this).html(generatePasswordValidationContainer($(this).data('input')));
+        });
+    }
+
     if ($('.password-validator').length > 0) {
         $('.password-validator').each(function () {
             const validator = $(this);
@@ -19,7 +19,7 @@ function initPasswordValidation() {
     }
 }
 
-export function initPasswordValidationField(validator) {
+function initPasswordValidationField(validator) {
     let input = $(validator.data('input'));
     if (input !== undefined && input.length > 0) {
         let confirmField = input.parent().parent().parent().find('input.confirm-password');
@@ -27,8 +27,8 @@ export function initPasswordValidationField(validator) {
             validator.find('.lbl-confirm').removeClass('visually-hidden');
             confirmField.off('keyup').on('keyup', function () {
                 var value = $(input).val();
-                setPasswordValidationField(validator.find('.lbl-confirm'), confirmField.val() === value && value.length);
-                setPasswordValidationField(validator, validator.find('li[class^=\'lbl-\']:not([class*=\'hidden\'])').length === 0);
+                setPasswordValidationField(validator.find('.lbl-confirm'), confirmField.val() === value && value.length > 0);
+                //setPasswordValidationField(validator, validator.find('li[class^=\'lbl-\']:not([class*=\'hidden\'])').length === 0);
             });
         }
 
@@ -41,15 +41,15 @@ export function initPasswordValidationField(validator) {
             setPasswordValidationField(validator.find('.lbl-length'), value.length >= 8);
 
             if (confirmField !== undefined && confirmField.length === 1) {
-                setPasswordValidationField(validator.find('.lbl-confirm'), confirmField.val() === value && value.length);
+                setPasswordValidationField(validator.find('.lbl-confirm'), confirmField.val() === value && value.length > 0);
             }
 
-            setPasswordValidationField(validator, validator.find('li[class^=\'lbl-\']:not([class*=\'hidden\'])').length === 0);
-        })
+            //setPasswordValidationField(validator, validator.find('li[class^=\'lbl-\']:not([class*=\'hidden\'])').length === 0);
+        });
     }
 }
 
-export function generatePasswordValidationField(field) {
+export function generatePasswordValidationContainer(field) {
     return `
         <div class="checklist password-validator" data-input="${field}">
             ${generateChecklistItem('lbl-lower', 'default', localization.translate('Password_Validation_Lower'))}
@@ -63,16 +63,15 @@ export function generatePasswordValidationField(field) {
 }
 
 function setPasswordValidationField(field, valid) {
+    let icon = field.find('.checklist-item-icon').first();
     if (valid) {
-        field.removeClass('checklist-success checklist-error checklist-default');
-        field.addClass('checklist-success');
-        field.find('i.fa').removeClass('fa-square-check fa-square-xmark fa-square fa-regular');
-        field.find('i.fa').addClass('fa-square-check');
+        field.removeClass('checklist-success checklist-error checklist-default').addClass('checklist-success');
+        icon.removeClass('fa-square-check fa-square-xmark fa-square-minus').addClass('fa-square-check');
+        icon.attr('data-icon', 'square-check');
     } else {
-        field.removeClass('checklist-success checklist-error checklist-default');
-        field.addClass('checklist-error');
-        field.find('i.fa').removeClass('fa-square-check fa-square-xmark fa-square fa-regular');
-        field.find('i.fa').addClass('fa-square-xmark');
+        field.removeClass('checklist-success checklist-error checklist-default').addClass('checklist-error');
+        icon.removeClass('fa-square-check fa-square-xmark fa-square-minus').addClass('fa-square-xmark');
+        icon.attr('data-icon', 'square-xmark');
     }
 }
 

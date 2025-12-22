@@ -5,7 +5,6 @@ using WeddingShare.Constants;
 using WeddingShare.Extensions;
 using WeddingShare.Helpers;
 using WeddingShare.Helpers.Database;
-using WeddingShare.Models;
 
 namespace WeddingShare.Controllers
 {
@@ -38,11 +37,11 @@ namespace WeddingShare.Controllers
 
             try
             {
-                var deviceType = HttpContext.Session.GetString(SessionKey.DeviceType);
+                var deviceType = HttpContext.Session.GetString(SessionKey.Device.Type);
                 if (string.IsNullOrWhiteSpace(deviceType))
                 {
                     deviceType = (await _deviceDetector.ParseDeviceType(Request.Headers["User-Agent"].ToString())).ToString();
-                    HttpContext.Session.SetString(SessionKey.DeviceType, deviceType ?? "Desktop");
+                    HttpContext.Session.SetString(SessionKey.Device.Type, deviceType ?? "Desktop");
                 }
 
                 if (await _settings.GetOrDefault(Settings.Basic.SingleGalleryMode, false))
@@ -100,8 +99,8 @@ namespace WeddingShare.Controllers
                 }
                 else
                 {
-                    HttpContext.Session.SetString(SessionKey.ViewerIdentity, name);
-                    HttpContext.Session.SetString(SessionKey.ViewerEmailAddress, emailAddress ?? string.Empty);
+                    HttpContext.Session.SetString(SessionKey.Viewer.Identity, name);
+                    HttpContext.Session.SetString(SessionKey.Viewer.EmailAddress, emailAddress ?? string.Empty);
 
                     return Json(new { success = true });
                 }

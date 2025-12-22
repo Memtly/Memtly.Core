@@ -74,7 +74,7 @@
     <value>2FA installatie</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Weet u zeker dat u 2FA wilt wissen voor gebruiker '{name}'?</value>
+    <value>Weet u zeker dat u 2FA wilt afvegen?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Als dit probleem aanhoudt, neem dan contact op met de webbeheerder</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Verwijderen</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Weet u zeker dat u wilt verwijderen?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Weet u zeker dat u deze galerij wilt verwijderen?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Id kan niet leeg zijn</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Weet u zeker dat u '{name}' wilt verwijderen?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Item succesvol verwijderd</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Kon galerij niet verwijderen</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Weet u zeker dat u galerij '{name}' wilt verwijderen?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Galerie succesvol verwijderd</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Kon galerij niet wissen</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Weet u zeker dat u galerij '{name}' wilt wissen?</value>
+    <value>Weet u zeker dat u de galerie wilt wissen?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Galerie met succes gewist</value>
@@ -1733,13 +1730,13 @@
     <value>Er zijn geen bestanden gevonden om te uploaden</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Item {index} van {count} uploaden...</value>
+    <value>Item uploaden</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Met succes geüpload {count} item(s)</value>
+    <value>Succesvol geüpload items</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Succesvol geüpload {count} item(s) in afwachting van beoordeling</value>
+    <value>Succesvol geüpload items in afwachting van beoordeling</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Geüpload door</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Verwijderen van gebruiker is mislukt</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Weet u zeker dat u gebruiker '{name}' wilt verwijderen?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Gebruiker succesvol verwijderd</value>

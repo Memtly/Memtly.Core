@@ -36,7 +36,7 @@ namespace WeddingShare.Controllers
 
             try
             {
-                var selectedLang = HttpContext.Session.GetString(SessionKey.SelectedLanguage);
+                var selectedLang = HttpContext.Session.GetString(SessionKey.Language.Selected);
                 if (string.IsNullOrWhiteSpace(selectedLang))
                 {
                     selectedLang = await _languageHelper.GetOrFallbackCulture(string.Empty, await _settings.GetOrDefault(Settings.Languages.Default, "en-GB"));
@@ -99,11 +99,11 @@ namespace WeddingShare.Controllers
             {
                 culture = await _languageHelper.GetOrFallbackCulture(culture, await _settings.GetOrDefault(Settings.Languages.Default, "en-GB"));
 
-                HttpContext.Session.SetString(SessionKey.SelectedLanguage, culture);
+                HttpContext.Session.SetString(SessionKey.Language.Selected, culture);
                 Response.Cookies.Append(
                     CookieRequestCultureProvider.DefaultCookieName,
                     CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-                    new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+                    new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1), IsEssential = true }
                 );
 
                 return Json(new { success = true });
@@ -114,11 +114,11 @@ namespace WeddingShare.Controllers
 
                 culture = "en-GB";
 
-                HttpContext.Session.SetString(SessionKey.SelectedLanguage, culture);
+                HttpContext.Session.SetString(SessionKey.Language.Selected, culture);
                 Response.Cookies.Append(
                     CookieRequestCultureProvider.DefaultCookieName,
                     CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-                    new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+                    new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1), IsEssential = true }
                 );
             }
 

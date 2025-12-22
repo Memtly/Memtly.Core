@@ -74,7 +74,7 @@
     <value>Persediaan 256</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Anda yakin ingin menghapus 2FA untuk pengguna '{name}'?</value>
+    <value>Kau yakin ingin menghapus 2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Jika isu ini berlanjut silakan hubungi administrator web</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Dihapus</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Anda yakin ingin menghapus?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Anda yakin ingin menghapus galeri ini?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Id tidak boleh kosong</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Anda yakin ingin menghapus '{nama}'?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Malang Sukses menghapus item</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Gagal memadam galeri</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Anda yakin ingin menghapus galeri '{name}'?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Messier Sukses dihapus galeri</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Gagal menghapus galeri</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Anda yakin ingin menghapus galeri '{name}'?</value>
+    <value>Kau yakin ingin menghapus galeri?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Galeri yang berhasil dibersihkan</value>
@@ -1733,13 +1730,13 @@
     <value>Tidak ada file yang terdeteksi untuk diunggah</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Memuat naik item {indeks} dari {count}...</value>
+    <value>Memuat naik item</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>{0} Sukses Diunggah {count} item</value>
+    <value>Barang - barang yang telah diunggah dengan sukses</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>{0} Sukses Diunggah {count} item yang belum selesai ditinjau</value>
+    <value>{0} Sukses mengunggah barang - barang yang belum selesai ditinjau ulang</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Diunggah Oleh</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Gagal memadam pengguna</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Anda yakin ingin menghapus pengguna '{name}'?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Evolution Sukses dihapus pengguna</value>

@@ -74,7 +74,7 @@
     <value>Rregullimi 2FA</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Jeni i sigurt që dëshironi të eleminoni 2FA për përdoruesin '{name}?</value>
+    <value>Je i sigurt që dëshiron të fshish 2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Nëse kjo çështje vazhdon të kontaktojë administratorin e ueb-it</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Elemino</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Jeni i sigurt që dëshironi të eleminoni?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Jeni i sigurt që dëshironi të eleminoni këtë galeri?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Id nuk mund të jetë bosh</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Jeni i sigurt që dëshironi të eleminoni '{name}'?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Element i fshirë me sukses</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Eleminimi i koleksionit dështoi</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Jeni i sigurt që dëshironi të eleminoni galerinë '{name}?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Galeria e fshirë me sukses</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Fshirja e koleksionit dështoi</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Jeni i sigurt që dëshironi të eleminoni galerinë '{name}'?</value>
+    <value>Jeni i sigurt që dëshironi të fshini galerinë?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Galeria e fshirë me sukses</value>
@@ -1733,13 +1730,13 @@
     <value>Nuk u zbulua asnjë file për ngarkimin</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Nga.</value>
+    <value>Elementi i ngarkimit</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Të ngarkuar me sukses {count}</value>
+    <value>Elementë të ngarkuar me sukses</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>I ngarkuar me sukses {count}</value>
+    <value>Elementë në pritje j</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Nga</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Fshirja e përdoruesit dështoi</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Je i sigurt që dëshiron të eleminosh përdoruesin '{name}'?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Përdoruesi i fshirë me sukses</value>

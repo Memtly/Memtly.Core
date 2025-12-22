@@ -74,7 +74,7 @@
     <value>Thiết lập 2FA</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Anh có chắc là muốn xóa 2FA cho người dùng không?</value>
+    <value>Anh có chắc là muốn xóa 2FA không?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Nếu vấn đề này còn tiếp tục, vui lòng liên lạc với nhà quản trị web</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Xoá</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Bạn có chắc muốn xoá không?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Bạn có chắc muốn xoá nơi trưng bày này không?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Sẽ không thể trống rỗng</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Bạn có chắc muốn xoá '{ name' không?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Đã xoá mục</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Lỗi xoá nơi trưng bày</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Bạn có chắc muốn xoá nơi trưng bày '{ name}' không?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Phòng trưng bày đã được xoá thành công</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Lỗi xoá bộ trình bày</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Anh có chắc là muốn xóa "tên" phòng trưng bày không?</value>
+    <value>Anh có chắc là muốn dọn dẹp phòng tranh không?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Phòng trưng bày đã được xoá thành công</value>
@@ -1733,13 +1730,13 @@
     <value>Không phát hiện tập tin cần tải lên</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Đang tải lên mục...</value>
+    <value>Đang tải lên mục</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Mục đã được tải lên thành công</value>
+    <value>Tải lên mục thành công</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Việc tải lên thành công mục [s] đang xem xét</value>
+    <value>Xem xét các mục đang được tải lên thành công</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Tải lên bởi</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Lỗi xoá người dùng</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Bạn có chắc muốn xoá người dùng « Tên} » không?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Đã xoá thành công người dùng</value>

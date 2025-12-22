@@ -74,7 +74,7 @@
     <value>2FA</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Kullanıcı için 2FA'yı silmek istediğinizden emin misiniz '{name}?</value>
+    <value>2FA'yı silmek istediğinizden emin misiniz?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Bu konu devam ederse lütfen web yöneticisiyle iletişime geçin</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Silmek istediğinizden emin misiniz?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Bu galeriyi silmek istediğinizden emin misiniz?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Boş olamaz</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>‘{name} silmek istediğinizden emin misiniz?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Başarılı silinmiş öğe</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Galeriyi silmek için başarısız oldu</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Galeriyi silmek istediğinizden emin misiniz ‘{name}?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Başarılı silinmiş galeri</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Galeriyi yok etmek için başarısız oldu</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Galeriyi ‘{name} silmek istediğinizden emin misiniz?</value>
+    <value>Galeriyi silmek istediğinizden emin misiniz?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Başarılı bir şekilde galeriyi sildi</value>
@@ -1733,13 +1730,13 @@
     <value>Yüklemek için hiçbir dosya tespit edilmedi</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>{index} {say}.</value>
+    <value>Yüklemek</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Başarılı bir şekilde yüklenen {count} item(s)</value>
+    <value>Başarılı olarak yüklenen öğeler</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Başarılı bir şekilde yüklenen {count} item(s) bekleme süresi</value>
+    <value>Başarılı bir şekilde gözden geçirilen öğeleri gözden geçirme</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Bölüm Adı</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Kullanıcıyı silmek için başarısız oldu</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Kullanıcı '{name} silmek istediğinizden emin misiniz?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Başarılı bir şekilde silindi kullanıcı</value>

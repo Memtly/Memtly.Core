@@ -218,7 +218,7 @@ namespace WeddingShare.UnitTests.Tests.Helpers
 			}
 
 			var session = new MockSession();
-			session.Set(SessionKey.ViewerIdentity, uploadedBy ?? string.Empty);
+			session.Set(SessionKey.Viewer.Identity, uploadedBy ?? string.Empty);
 
 			var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext(
@@ -248,7 +248,7 @@ namespace WeddingShare.UnitTests.Tests.Helpers
             files.Add(new FormFile(null, 0, 0, "TestFile_001", $"{Guid.NewGuid()}.jpg"));
 
             var session = new MockSession();
-            session.Set(SessionKey.ViewerIdentity, string.Empty);
+            session.Set(SessionKey.Viewer.Identity, string.Empty);
 
             var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext(

@@ -74,7 +74,7 @@
     <value>Configuració 2FA</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Esteu segur que voleu esborrar 2FA per l' usuari '{nom}'?</value>
+    <value>Esteu segur que voleu esborrar 2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Si aquest problema persisteix, contacteu amb l' administrador del web</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Esborra</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Esteu segur que voleu esborrar?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Esteu segur que voleu esborrar aquesta galeria?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>No puc estar buida</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Esteu segur que voleu esborrar '{nom}'?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>L' element s' ha esborrat correctament</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Ha fallat en esborrar la galeria</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Esteu segur que voleu esborrar la galeria '{nom}'?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>La galeria s' ha esborrat correctament</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Ha fallat en esborrar la galeria</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Esteu segur que voleu esborrar la galeria '{nom}'?</value>
+    <value>Segur que voleu esborrar la galeria?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>S' ha esborrat correctament la galeria</value>
@@ -1733,13 +1730,13 @@
     <value>No s' ha detectat cap fitxer per pujar</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>S' està pujant l' element {index} del {count}...</value>
+    <value>S' està pujant l' element</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>S' ha pujat '% count} element(s) correctament</value>
+    <value>S' han pujat correctament els elements</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>S' ha pujat correctament {compost} element(s) pendent de revisió</value>
+    <value>S' han pujat els elements correctament la revisió pendent</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Pujat per</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Ha fallat en esborrar l' usuari</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Esteu segur que voleu esborrar l' usuari '{nom}'?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>L' usuari s' ha esborrat correctament</value>

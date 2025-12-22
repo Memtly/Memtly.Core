@@ -4,7 +4,6 @@ let accountStateCheckInterval = null;
 
 function init() {
     const tab = getActiveTab()?.toLowerCase();
-    console.log(`Active Tab: ${tab}`);
     if (tab === 'reviews') {
         import('@pages/account/partials/review').then(({ default: init }) => { init(); });
     } else if (tab === 'galleries') {

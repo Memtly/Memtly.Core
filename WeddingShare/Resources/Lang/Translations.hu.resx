@@ -74,7 +74,7 @@
     <value>2FA beállítás</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Biztosan törölni akarod a 2FA-t a {name} felhasználónak?</value>
+    <value>Biztos, hogy le akarod törölni a 2FA-t?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Ha ez a probléma továbbra is fennáll, kérjük, forduljon a webes adminisztrátorhoz</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Törlés</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Biztos, hogy törölni akarod?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Biztos, hogy törölni akarod ezt a galériát?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Nem lehet üres</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Biztosan törölni akarod a {name} -t?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Sikeresen törölt tétel</value>
@@ -567,9 +567,6 @@
   </data>
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>A galéria törlése nem sikerült</value>
-  </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Biztosan törölni akarod a galériát?</value>
   </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Sikeresen törölt galéria</value>
@@ -1733,13 +1730,13 @@
     <value>Nem észleltek fájlokat a feltöltéshez</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Feltöltése tétel {index} a {szám}...</value>
+    <value>Feltöltési tétel</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Sikeresen feltöltött {Count} elem (ok)</value>
+    <value>Sikeresen feltöltött elemek</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Sikeresen feltöltött {Count} elem (ek) függőben felülvizsgálat</value>
+    <value>Sikeresen feltöltött tételek felülvizsgálatig</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Feltöltve</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Nem sikerült törölni a felhasználót</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Biztosan törölni szeretné a {name} felhasználót?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Sikeresen törölt felhasználó</value>

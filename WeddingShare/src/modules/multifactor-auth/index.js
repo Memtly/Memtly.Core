@@ -1,6 +1,5 @@
 ﻿import { displayPopup } from '@modules/popups';
 import { displayMessage } from '@modules/message-box';
-import { displayLoader } from '@modules/loader';
 
 function init() {
     bindEventHandlers();
@@ -8,83 +7,56 @@ function init() {
 
 function bindEventHandlers() {
     bindMultiFactorChangeButton();
-    bindMultiFactorWipeButton();
 }
 
 function bindMultiFactorChangeButton() {
     $(document).off('click', '.change-2fa').on('click', '.change-2fa', function (e) {
         preventDefaults(e);
-        multiFactorAuthSetup($('.change-2fa').data('mfa-set'));
-    });
-}
 
-function bindMultiFactorWipeButton() {
-    $(document).off('click', '.btnWipe2FA').on('click', '.btnWipe2FA', function (e) {
-        preventDefaults(e);
-
-        if ($(this).attr('disabled') == 'disabled') {
-            return;
-        }
-
-        let row = $(this).closest('tr');
-        displayPopup({
-            Title: localization.translate('2FA_Setup'),
-            Message: localization.translate('2FA_Wipe_Message', { name: row.data('user-name') }),
-            Fields: [{
-                Id: 'user-id',
-                Value: row.data('user-id'),
-                Type: 'hidden'
-            }],
-            Buttons: [{
-                Text: localization.translate('Wipe'),
-                Class: 'btn-danger',
-                Callback: function () {
-                    displayLoader(localization.translate('Loading'));
-
-                    let id = $('#popup-modal-field-user-id').val();
-                    if (id == undefined || id.length == 0) {
-                        displayMessage(localization.translate('2FA_Setup'), localization.translate('User_Missing_Id'));
-                        return;
-                    }
-
-                    $.ajax({
-                        url: '/Account/ResetMultifactorAuthForUser',
-                        method: 'DELETE',
-                        data: { userId: id }
-                    })
-                        .done(data => {
-                            if (data.success === true) {
-                                updatePage();
-                                displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Wipe'));
-                            } else if (data.message) {
-                                displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Failed'), [data.message]);
-                            } else {
-                                displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Failed'));
-                            }
-                        })
-                        .fail((xhr, error) => {
-                            displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Failed'), [error]);
-                        });
+        $.ajax({
+            url: '/MultiFactor/ResetForUser',
+            method: 'DELETE',
+            data: { userId: id }
+        })
+            .done(data => {
+                if (data.success === true) {
                 }
-            }, {
-                Text: localization.translate('Close')
-            }]
-        });
+            });
     });
 }
 
-function multiFactorAuthSetup(showResetOption) {
-    let customHtml = '';
-    let buttons = [];
+function showSetupPopup(secret, qrCode) {
+    displayPopup({
+        Title: localization.translate('2FA_Setup'),
+        CustomHtml: `<div class="text-center">
+                <p class="mb-1">${localization.translate('2FA_Scan_With_App')}</p>
+                <p class="mb-2"><img src="${qrCode}"/></p>
+                <p class="mb-2">${localization.translate('Or')}</p>
+                <p class="mb-0">${localization.translate('2FA_Manually_Enter_Code')}</p>
+                <p class="mb-4 fw-bold">${secret}</p>
+            </div>`,
+        Buttons: [{
+            Text: localization.translate('Next'),
+            Class: 'btn-success',
+            Callback: function () {
+                multiFactorAuthValidation();
+            }
+        }, {
+            Text: localization.translate('Close')
+        }]
+    });
+}
 
-    if (showResetOption) {
-        buttons = [{
+function showResetPopup() {
+    displayPopup({
+        Title: localization.translate('2FA_Setup'),
+        Buttons: [{
             Text: localization.translate('Reset'),
             Class: 'btn-danger',
             Callback: function () {
                 $.ajax({
                     type: "DELETE",
-                    url: '/Account/ResetMultifactorAuth',
+                    url: '/MultiFactor/Reset',
                     success: function (data) {
                         if (data.success) {
                             displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Reset_Successfully'));
@@ -97,36 +69,10 @@ function multiFactorAuthSetup(showResetOption) {
             }
         }, {
             Text: localization.translate('Close')
-        }];
-    } else {
-        const secret = $('input#2fa-secret').val();
-        const qrCode = $('input#2fa-qr-code').val();
-
-        customHtml = `<div class="text-center">
-            <p class="mb-1">${localization.translate('2FA_Scan_With_App')}</p>
-            <p class="mb-2"><img src="${qrCode}"/></p>
-            <p class="mb-2">${localization.translate('Or')}</p>
-            <p class="mb-0">${localization.translate('2FA_Manually_Enter_Code')}</p>
-            <p class="mb-4 fw-bold">${secret}</p>
-        </div>`;
-
-        buttons = [{
-            Text: localization.translate('Next'),
-            Class: 'btn-success',
-            Callback: function () {
-                multiFactorAuthValidation();
-            }
-        }, {
-            Text: localization.translate('Close')
-        }];
-    }
-
-    displayPopup({
-        Title: localization.translate('2FA_Setup'),
-        CustomHtml: customHtml,
-        Buttons: buttons
+        }]
     });
 }
+
 function multiFactorAuthValidation() {
     const secret = $('input#2fa-secret').val();
 
@@ -151,7 +97,7 @@ function multiFactorAuthValidation() {
 
                 $.ajax({
                     type: "POST",
-                    url: '/Account/RegisterMultifactorAuth',
+                    url: '/MultiFactor/Register',
                     data: { secret, code },
                     success: function (data) {
                         if (data.success) {

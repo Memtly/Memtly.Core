@@ -2,7 +2,6 @@
 
 function init() {
     const theme = getSelectedTheme();
-
     const themeCookie = getCookie('Theme');
     if (themeCookie === undefined || themeCookie.length === 0 || themeCookie !== theme) {
         changeSelectedTheme(theme);
@@ -16,7 +15,7 @@ export function getSelectedTheme() {
 }
 
 function changeSelectedTheme(theme) {
-    setCookie('Theme', theme, 24);
+    setCookie('Theme', theme, 'Functional', 24);
     window.location.reload();
 }
 

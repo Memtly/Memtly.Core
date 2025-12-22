@@ -2,13 +2,13 @@
     let icon;
     switch (type.toLowerCase()) {
         case 'success':
-            icon = `<i class="fa fa-square-check mx-2"></i>`;
+            icon = `<i class="fa fa-square-check checklist-item-icon mx-2"></i>`;
             break;
         case 'error':
-            icon = `<i class="fa fa-square-xmark mx-2"></i>`;
+            icon = `<i class="fa fa-square-xmark checklist-item-icon mx-2"></i>`;
             break;
         case 'default':
-            icon = `<i class="fa fa-regular fa-square mx-2"></i>`;
+            icon = `<i class="fa fa-square-minus checklist-item-icon mx-2"></i>`;
             break;
         default:
             icon = '';

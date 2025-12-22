@@ -283,9 +283,10 @@ function bindWipeGalleryButton() {
         }
 
         let row = $(this).closest('tr');
+        let name = row.data('gallery-name');
         displayPopup({
             Title: localization.translate('Gallery_Wipe'),
-            Message: localization.translate('Gallery_Wipe_Message', { name: row.data('gallery-name') }),
+            Message: `${name} - ${localization.translate('Gallery_Wipe_Message')}`,
             Fields: [{
                 Id: 'gallery-id',
                 Value: row.data('gallery-id'),
@@ -380,9 +381,10 @@ function bindDeleteGalleryButton() {
         }
 
         let row = $(this).closest('tr');
+        let name = row.data('gallery-name');
         displayPopup({
             Title: localization.translate('Gallery_Delete'),
-            Message: localization.translate('Gallery_Delete_Message', { name: row.data('gallery-name') }),
+            Message: `${name} - ${localization.translate('Delete_Are_You_Sure')}`,
             Fields: [{
                 Id: 'gallery-id',
                 Value: row.data('gallery-id'),

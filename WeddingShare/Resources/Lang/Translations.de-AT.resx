@@ -74,7 +74,7 @@
     <value>2FA Setup</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Sind Sie sicher, dass Sie 2FA für Benutzer '{name}' löschen möchten?</value>
+    <value>Willst du sicher 2FA löschen?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Falls dieses Problem weiterhin besteht, wende dich bitte an den Web-Administrator</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Löschen</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Sind Sie sicher, dass Sie löschen möchten?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Bist du dir sicher, dass du diese Galerie löschen möchtest?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Kann nicht leer sein</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Sind Sie sicher, dass Sie '{name}' löschen möchten?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Erfolgreich gelöschter Artikel</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Versäumt, Galerie zu löschen</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Sind Sie sicher, dass Sie die Galerie '{name}' löschen möchten?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Erfolgreich gelöschte Galerie</value>
   </data>
@@ -662,7 +659,7 @@
     <value>Versäumt, Galerie zu löschen</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>Bist du sicher, dass du die Galerie '{name}' löschen willst?</value>
+    <value>Sind Sie sicher, dass Sie die Galerie löschen wollen?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>Erfolgreich gelöschte Galerie</value>
@@ -1733,13 +1730,13 @@
     <value>Keine Dateien wurden erkannt, um hochzuladen</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Hochladen {index} von {count}...</value>
+    <value>Artikel hochladen</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Erfolgreich geladen {count} item(s)</value>
+    <value>Erfolgreich hochgeladene Artikel</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Erfolgreich geladen {count} item(s) ausstehende Bewertung</value>
+    <value>Erfolgreich hochgeladene Artikel ausstehende Überprüfung</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Hochgeladen von</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Nicht zu löschen Benutzer</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Sind Sie sicher, dass Sie den Benutzer '{name}' löschen möchten?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Erfolgreich gelöschter Benutzer</value>

@@ -74,7 +74,7 @@
     <value>ตั้งค่า 2FA</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>คุณแน่ใจหรือว่าต้องการจะล้าง 2FA สําหรับผู้ใช้ '{0}'?</value>
+    <value>คุณแน่ใจหรือไม่ที่จะเช็ด 2FA?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>หากเรื่องนี้ยืนยัน โปรดติดต่อผู้ดูแลระบบ</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>ลบ</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>คุณแน่ใจหรือว่าต้องการจะลบ?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>คุณแน่ใจหรือว่าต้องการจะลบคลังภาพนี้?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>ไม่สามารถว่างได้</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>คุณแน่ใจหรือว่าต้องการจะลบ '% {ชื่อ}'?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>ลบรายการเรียบร้อยแล้ว</value>
@@ -568,9 +568,6 @@
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>ล้มเหลวในการลบคลังภาพ</value>
   </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>คุณแน่ใจหรือว่าต้องการจะลบคลังภาพ '{0}'?</value>
-  </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>ลบคลังภาพเรียบร้อยแล้ว</value>
   </data>
@@ -662,7 +659,7 @@
     <value>ล้มเหลวในการลบคลังภาพ</value>
   </data>
   <data name="Gallery_Wipe_Message" xml:space="preserve">
-    <value>คุณแน่ใจหรือว่าต้องการจะลบคลังภาพ '{0}'?</value>
+    <value>คุณแน่ใจหรือว่าต้องการจะล้างคลังภาพ?</value>
   </data>
   <data name="Gallery_Wipe_Success" xml:space="preserve">
     <value>ลบคลังภาพเรียบร้อยแล้ว</value>
@@ -1733,13 +1730,13 @@
     <value>ไม่พบแฟ้มที่จะอัปโหลด</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>กําลังอัปโหลดรายการ (index) ของ {จํานวน}...</value>
+    <value>กําลังอัปโหลดรายการ</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>การอัปโหลดเสร็จสมบูรณ์</value>
+    <value>การอัปโหลดเสร็จสิ้น</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>การอัปโหลดเสร็จสมบูรณ์</value>
+    <value>ทําการอัปโหลดรายการที่อยู่ระหว่างการทบทวน</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>อัปโหลดโดย</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>ล้มเหลวในการลบผู้ใช้</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>คุณแน่ใจหรือว่าต้องการจะลบผู้ใช้ '% {ชื่อ}'?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>ผู้ใช้ที่ถูกลบเรียบร้อยแล้ว</value>

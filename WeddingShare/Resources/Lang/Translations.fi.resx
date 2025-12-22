@@ -74,7 +74,7 @@
     <value>2FA:n asetukset</value>
   </data>
   <data name="2FA_Wipe_Message" xml:space="preserve">
-    <value>Haluatko varmasti pyyhkiä 2FA:n käyttäjän {name}?</value>
+    <value>Haluatko varmasti pyyhkiä 2FA:n?</value>
   </data>
   <data name="400_Error_Message" xml:space="preserve">
     <value>Jos tämä ongelma jatkuu, ota yhteyttä verkkovastaavaan</value>
@@ -382,6 +382,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Poista</value>
   </data>
+  <data name="Delete_Are_You_Sure" xml:space="preserve">
+    <value>Haluatko varmasti poistaa?</value>
+  </data>
   <data name="Delete_Confirmation" xml:space="preserve">
     <value>Haluatko varmasti poistaa tämän gallerian?</value>
   </data>
@@ -393,9 +396,6 @@
   </data>
   <data name="Delete_Item_Id_Missing" xml:space="preserve">
     <value>Id ei voi olla tyhjä</value>
-  </data>
-  <data name="Delete_Item_Message" xml:space="preserve">
-    <value>Haluatko varmasti poistaa '{name}'?</value>
   </data>
   <data name="Delete_Item_Success" xml:space="preserve">
     <value>Onnistuneesti poistettu kohde</value>
@@ -567,9 +567,6 @@
   </data>
   <data name="Gallery_Delete_Failed" xml:space="preserve">
     <value>Gallerian poistaminen epäonnistui</value>
-  </data>
-  <data name="Gallery_Delete_Message" xml:space="preserve">
-    <value>Haluatko varmasti poistaa gallerian '{name}'?</value>
   </data>
   <data name="Gallery_Delete_Success" xml:space="preserve">
     <value>Onnistuneesti poistettu galleria</value>
@@ -1733,13 +1730,13 @@
     <value>Ladattavia tiedostoja ei löytynyt</value>
   </data>
   <data name="Upload_Progress" xml:space="preserve">
-    <value>Ladataan kohdetta {index} {count}...</value>
+    <value>Lähetetään kohdetta</value>
   </data>
   <data name="Upload_Success" xml:space="preserve">
-    <value>Onnistuneesti ladattu {count} kohta(s)</value>
+    <value>Onnistuneesti ladatut kohteet</value>
   </data>
   <data name="Upload_Success_Pending_Review" xml:space="preserve">
-    <value>Onnistuneesti ladattu {count} kohta [s] odottamassa uudelleentarkastelua</value>
+    <value>Onnistuneesti ladattu kohteita odottamassa uudelleen</value>
   </data>
   <data name="Uploaded_By" xml:space="preserve">
     <value>Lähettäjä</value>
@@ -1773,9 +1770,6 @@
   </data>
   <data name="User_Delete_Failed" xml:space="preserve">
     <value>Käyttäjän poistaminen epäonnistui</value>
-  </data>
-  <data name="User_Delete_Message" xml:space="preserve">
-    <value>Haluatko varmasti poistaa käyttäjän '{name}'?</value>
   </data>
   <data name="User_Delete_Success" xml:space="preserve">
     <value>Onnistuneesti poistettu käyttäjä</value>

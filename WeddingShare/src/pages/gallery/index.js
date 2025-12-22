@@ -142,7 +142,7 @@ function bindDeletePhoto() {
 
         displayPopup({
             Title: localization.translate('Delete_Item'),
-            Message: localization.translate('Delete_Item_Message', { name }),
+            Message: `${name} - ${localization.translate('Delete_Are_You_Sure')}`,
             Fields: [{
                 Id: 'photo-id',
                 Value: id,
