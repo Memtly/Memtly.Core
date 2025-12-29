@@ -571,6 +571,9 @@
   <data name="Freeze_User_Message" xml:space="preserve">
     <value>Na pewno chcesz zamrozić konto</value>
   </data>
+  <data name="Full_Sponsors_List_Link_Message" xml:space="preserve">
+    <value>Kliknij tutaj, aby zobaczyć pełną listę sponsorów i gwiazd</value>
+  </data>
   <data name="Galleries" xml:space="preserve">
     <value>Galerie</value>
   </data>

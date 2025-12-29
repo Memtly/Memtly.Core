@@ -57,7 +57,7 @@
                 {
                     if (platform?.Sponsors != null && platform.Sponsors.Any())
                     {
-                        foreach (var sponsor in platform.Sponsors)
+                        foreach (var sponsor in platform.Sponsors.Take(50))
                         {
                             if (platform.Name.Equals("Github", StringComparison.OrdinalIgnoreCase))
                             {
@@ -72,6 +72,8 @@
                                 </div>
                             }
                         }
+
+                        <small class="sponsors-more-text"><a class="text-link" href="https://github.com/Cirx08/WeddingShare/stargazers" title="GitHub Sponsors" target="_blank">@_localizer["Full_Sponsors_List_Link_Message"].Value</a></small>
                     }
                 }
             </section>

@@ -571,6 +571,9 @@
   <data name="Freeze_User_Message" xml:space="preserve">
     <value>Er du sikker på, at du ønsker at fryse konto</value>
   </data>
+  <data name="Full_Sponsors_List_Link_Message" xml:space="preserve">
+    <value>Klik her for at se den fulde liste over sponsorer og stjerner</value>
+  </data>
   <data name="Galleries" xml:space="preserve">
     <value>Gallerier</value>
   </data>

@@ -45,6 +45,12 @@
         display: inline-block;
     }
 
+.sponsors-more-text {
+    display: block;
+    text-align: center;
+    margin: 20px 10px 0px;
+}
+
 .sponsor-card-small {
     margin: 20px 0px 0px !important;
 }

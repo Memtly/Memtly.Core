@@ -571,6 +571,9 @@
   <data name="Freeze_User_Message" xml:space="preserve">
     <value>Biztosan be akarja fagyasztani a számlát</value>
   </data>
+  <data name="Full_Sponsors_List_Link_Message" xml:space="preserve">
+    <value>Kattintson ide a szponzorok és csillagok teljes listájának megtekintéséhez</value>
+  </data>
   <data name="Galleries" xml:space="preserve">
     <value>Galéria</value>
   </data>

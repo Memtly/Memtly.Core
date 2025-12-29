@@ -571,6 +571,9 @@
   <data name="Freeze_User_Message" xml:space="preserve">
     <value>Haluatko varmasti jäädyttää tilin</value>
   </data>
+  <data name="Full_Sponsors_List_Link_Message" xml:space="preserve">
+    <value>Napsauta tästä nähdäksesi täydellisen listan sponsoreista ja tähdistä</value>
+  </data>
   <data name="Galleries" xml:space="preserve">
     <value>Galleriat</value>
   </data>

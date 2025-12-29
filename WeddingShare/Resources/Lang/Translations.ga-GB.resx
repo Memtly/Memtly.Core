@@ -571,6 +571,9 @@
   <data name="Freeze_User_Message" xml:space="preserve">
     <value>An bhfuil tú cinnte gur mhaith leat cuntas a reo</value>
   </data>
+  <data name="Full_Sponsors_List_Link_Message" xml:space="preserve">
+    <value>Cliceáil anseo chun féachaint ar liosta iomlán na n-urraitheoirí agus na réaltaí</value>
+  </data>
   <data name="Galleries" xml:space="preserve">
     <value>An tSraith Shinsearach</value>
   </data>

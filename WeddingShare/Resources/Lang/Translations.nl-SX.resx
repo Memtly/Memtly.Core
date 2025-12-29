@@ -571,6 +571,9 @@
   <data name="Freeze_User_Message" xml:space="preserve">
     <value>Weet u zeker dat u account wilt bevriezen</value>
   </data>
+  <data name="Full_Sponsors_List_Link_Message" xml:space="preserve">
+    <value>Klik hier om de volledige lijst van sponsors en sterren te bekijken</value>
+  </data>
   <data name="Galleries" xml:space="preserve">
     <value>Galerijen</value>
   </data>

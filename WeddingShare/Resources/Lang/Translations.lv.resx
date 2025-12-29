@@ -571,6 +571,9 @@
   <data name="Freeze_User_Message" xml:space="preserve">
     <value>Vai tiešām vēlaties iesaldēt kontu</value>
   </data>
+  <data name="Full_Sponsors_List_Link_Message" xml:space="preserve">
+    <value>Klikšķiniet šeit, lai apskatītu pilnu sponsoru un zvaigžņu sarakstu</value>
+  </data>
   <data name="Galleries" xml:space="preserve">
     <value>Galerijas</value>
   </data>
