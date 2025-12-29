@@ -113,7 +113,7 @@
                             }
                             
                             <!-- ( Set MFA ) -->
-                            @if (User?.Identity != null && User.Identity.IsAuthenticated)
+                            @if (User?.Identity != null && User.Identity.IsAuthenticated && !string.IsNullOrWhiteSpace(Context?.Request.Path.Value) && Context.Request.Path.Value.Contains("/Account", StringComparison.OrdinalIgnoreCase) && !Context.Request.Path.Value.Contains("/Login", StringComparison.OrdinalIgnoreCase) && !Context.Request.Path.Value.Contains("/Register", StringComparison.OrdinalIgnoreCase) && !Context.Request.Path.Value.Contains("/ForgotPassword", StringComparison.OrdinalIgnoreCase))
                             {
                                 var tooltip = _localizer["2FA_Setup"].Value;
                                 <span alt="@tooltip" title="@tooltip">

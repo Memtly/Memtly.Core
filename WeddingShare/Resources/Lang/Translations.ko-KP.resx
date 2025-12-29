@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>2FA 앱에 의해 생성된 코드를 입력하세요</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>2FA 비밀을 생성하는 실패</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>제공된 인증 코드는 잘못되었습니다</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>수동으로 코드를 입력:</value>
   </data>

@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>Inserisci il codice generato dall'app 2FA</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>Non è riuscito a generare un segreto 2FA</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>Il codice di autenticazione fornito era errato</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>Inserisci manualmente il codice:</value>
   </data>

@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>Введіть код, який генерується додатком 2FA</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>Не вдалося створити секрет 2FA</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>Введіть номер мобільного, який Ви вказали при укладаннi договору з банком - для ідентифікації</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>Вкажіть код:</value>
   </data>

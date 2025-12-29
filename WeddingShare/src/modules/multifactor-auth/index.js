@@ -13,15 +13,18 @@ function bindMultiFactorChangeButton() {
     $(document).off('click', '.change-2fa').on('click', '.change-2fa', function (e) {
         preventDefaults(e);
 
-        $.ajax({
-            url: '/MultiFactor/ResetForUser',
-            method: 'DELETE',
-            data: { userId: id }
-        })
-            .done(data => {
-                if (data.success === true) {
+        const isSet = $(this).data('mfa-set');
+        if (isSet) {
+            showResetPopup();
+        } else {
+            generateToken().then(data => {
+                if (data !== undefined && data.secret !== undefined && data.qr_code !== undefined) {
+                    showSetupPopup(data.secret, data.qr_code);
+                } else {
+                    displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Failed'), [ localization.translate('2FA_Generate_Secret_Failed') ]);
                 }
             });
+        }
     });
 }
 
@@ -39,7 +42,7 @@ function showSetupPopup(secret, qrCode) {
             Text: localization.translate('Next'),
             Class: 'btn-success',
             Callback: function () {
-                multiFactorAuthValidation();
+                multiFactorAuthValidation(secret);
             }
         }, {
             Text: localization.translate('Close')
@@ -60,10 +63,11 @@ function showResetPopup() {
                     success: function (data) {
                         if (data.success) {
                             displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Reset_Successfully'));
+                            $('.change-2fa').attr('data-mfa-set', 'true');
                         } else {
                             displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Reset_Failed'));
                         }
-                        $('i.change-2fa').attr('data-mfa-set', data.success);
+                        $('.change-2fa').attr('data-mfa-set', data.success);
                     }
                 });
             }
@@ -73,9 +77,7 @@ function showResetPopup() {
     });
 }
 
-function multiFactorAuthValidation() {
-    const secret = $('input#2fa-secret').val();
-
+function multiFactorAuthValidation(secret) {
     displayPopup({
         Title: localization.translate('2FA_Setup'),
         Fields: [{
@@ -103,9 +105,9 @@ function multiFactorAuthValidation() {
                         if (data.success) {
                             displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Successfully'));
                         } else {
-                            displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Failed'));
+                            displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Failed'), [localization.translate('2FA_Invalid_Code')]);
                         }
-                        $('i.change-2fa').attr('data-mfa-set', data.success);
+                        $('.change-2fa').attr('data-mfa-set', data.success);
                     }
                 });
             }
@@ -113,6 +115,13 @@ function multiFactorAuthValidation() {
             Text: localization.translate('Close')
         }]
     });
+}
+
+async function generateToken() {
+    const response = await fetch(`/MultiFactor/GenerateToken`);
+    const data = await response.json();
+
+    return data;
 }
 
 export default init;

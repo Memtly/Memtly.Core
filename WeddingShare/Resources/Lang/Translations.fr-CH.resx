@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>Veuillez saisir le code généré par votre application 2FA</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>Impossible de générer un secret 2FA</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>Le code d'authentification fourni était incorrect</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>Saisissez manuellement le code :</value>
   </data>

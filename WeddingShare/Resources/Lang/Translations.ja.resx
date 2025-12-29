@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>2FAアプリで生成されたコードを入力してください</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>2FAシークレットを生成できなかった</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>提供された認証コードが間違っていた</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>手動でコードを入力する:</value>
   </data>

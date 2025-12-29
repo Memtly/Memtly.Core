@@ -210,26 +210,34 @@ tr td {
 
 .header-actions {
     position: relative;
-    bottom: -5px;
+    bottom: 5px;
     right: 0px;
     float: right;
 }
 
     .header-actions .action {
-        display: inline-block;
+        display: inline-block !important;
         text-align: center;
     }
 
         .header-actions .action i, .header-actions .action svg {
             font-size: 20px !important;
-            display: block;
         }
 
         .header-actions .action span {
             font-size: 10px;
             font-weight: bold;
+            margin: -5px 0px 0px;
             display: block;
         }
+
+.display-7 .header-actions {
+    bottom: 0px;
+}
+
+.display-7 .header-actions .action span {
+    margin: 0px 0px 0px;
+}
 
 .table-rounded-border {
     border-radius: 3px;

@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>Si us plau, introduïu el codi generat per l' aplicació 2FA</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>Ha fallat en generar un secret 2FA</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>El codi d' autenticació proporcionat no és correcte</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>Introduïu manualment el codi:</value>
   </data>

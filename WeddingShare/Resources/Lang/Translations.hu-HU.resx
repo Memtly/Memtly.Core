@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>Adja meg a 2FA alkalmazás által generált kódot</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>Nem sikerült létrehozni egy 2FA titkot</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>A megadott hitelesítési kód hibás volt</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>Adja meg a kódot:</value>
   </data>

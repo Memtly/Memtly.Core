@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>Pakipasok ang code na ginawa ng inyong 2FA app</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>Sawi sa paglikha ng 2FA lihim</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>Mali ang inilaang kodigo ng pag - iral</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>Manu - manong pumasok sa kodigo:</value>
   </data>

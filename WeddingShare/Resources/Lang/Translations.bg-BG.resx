@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>Моля, въведете кода, генериран от вашето приложение 2FA</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>Грешка при генериране на 2FA тайна</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>Предоставеният код за идентификация е неправилен</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>Ръчно въведете кода:</value>
   </data>

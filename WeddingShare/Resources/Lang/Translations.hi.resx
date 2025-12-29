@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>कृपया अपने 2FA ऐप द्वारा उत्पन्न कोड दर्ज करें</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>2FA रहस्य उत्पन्न करने में विफल</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>प्रदान की गई प्रमाणीकरण कोड गलत था</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>मैन्युअल रूप से कोड दर्ज करें:</value>
   </data>

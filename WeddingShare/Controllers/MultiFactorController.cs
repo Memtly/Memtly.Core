@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using TwoFactorAuthNet;
@@ -43,9 +44,11 @@ namespace WeddingShare.Controllers
 
                 var secret = tfa.CreateSecret(160);
                 var qrCode = tfa.GetQrCodeImageAsDataUri(title, secret);
+            
+                return Json(new { secret = secret, qr_code = qrCode });
             }
 
-            return Json(new { });
+            return Json(new { secret = string.Empty, qr_code = string.Empty });
         }
 
         [HttpPost]
@@ -59,7 +62,9 @@ namespace WeddingShare.Controllers
                     try
                     {
                         var tfa = new TwoFactorAuth(await _settings.GetOrDefault(Settings.Basic.Title, "WeddingShare"));
-                        if (tfa.VerifyCode(secret, code))
+
+                        var valid = tfa.VerifyCode(secret, code);
+                        if (valid)
                         {
                             var userId = User.Identity.GetUserId();
                             if (userId > 0)

@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>অনুগ্রহ করে আপনার ২FA অ্যাপ্লিকেশন দ্বারা নির্মিত কোড লিখুন</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>Subf- র সাথে তথ্য বিনিময় করতে ব্যর্থ</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>অনুমোদন ব্যবস্থা বৈধ নয়</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>নিজে হাতে কোড লিখুন:</value>
   </data>

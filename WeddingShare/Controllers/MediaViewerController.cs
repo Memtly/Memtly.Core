@@ -8,14 +8,12 @@ using WeddingShare.Enums;
 using WeddingShare.Extensions;
 using WeddingShare.Helpers;
 using WeddingShare.Helpers.Database;
-using WeddingShare.Helpers.Notifications;
 using WeddingShare.Models;
 using WeddingShare.Models.Database;
 using WeddingShare.Views.MediaViewer;
 
 namespace WeddingShare.Controllers
 {
-    [AllowAnonymous]
     public class MediaViewerController : BaseController
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
@@ -42,6 +40,7 @@ namespace WeddingShare.Controllers
             CustomResourcesDirectory = Path.Combine(_hostingEnvironment.WebRootPath, Directories.CustomResources);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GalleryItem(int id)
         {
@@ -210,6 +209,7 @@ namespace WeddingShare.Controllers
             return PartialView("~/Views/MediaViewer/Popup.cshtml", new Popup() { Id = id });
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Like(int id, string action)
         {

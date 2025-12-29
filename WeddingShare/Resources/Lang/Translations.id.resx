@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>Silakan masukkan kode yang dihasilkan oleh aplikasi 2FA Anda</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>Gagal membuat sebuah rahasia 2FA</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>Kode otentikasi yang diberikan salah</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>Secara manual masukkan kode:</value>
   </data>

@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>Anna 2FA-sovelluksen luoma koodi</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>2FA-salaisuuden luominen epäonnistui</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>Annettu tunnistuskoodi oli virheellinen</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>Anna koodi käsin:</value>
   </data>

@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>من فضلك أدخل الرمز المولد من تطبيقك</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>فشل في توليد سر 2FA</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>رمز التوثيق المقدّم كان غير صحيح</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>أدخل الرمز</value>
   </data>

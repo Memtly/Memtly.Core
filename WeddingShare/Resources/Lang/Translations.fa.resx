@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>لطفا کد تولید شده توسط برنامه 2FA خود را وارد کنید</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>شکست برای ایجاد یک راز 2FA</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>کد احراز هویت ارائه شده نادرست بود</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>Manually وارد کد:</value>
   </data>

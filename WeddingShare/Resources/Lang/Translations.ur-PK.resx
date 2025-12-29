@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>براہ کرم آپ 2FA app سے پیدا کردہ کوڈ داخل کریں۔</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>2FA راز پیدا کرنے میں ناکامی</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>فراہم کردہ توثیقی کوڈ غلط تھا</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>دستی طور پر کوڈ داخل کریں:</value>
   </data>

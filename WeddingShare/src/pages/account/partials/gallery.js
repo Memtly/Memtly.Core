@@ -18,7 +18,7 @@ function bindEventHandlers() {
     bindDeleteGalleryButton();
 }
 
-function bindGallerySettingsButton() {
+export function bindGallerySettingsButton() {
     $(document).off('click', '.btnGallerySettings').on('click', '.btnGallerySettings', function (e) {
         preventDefaults(e);
 

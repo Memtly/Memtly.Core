@@ -112,12 +112,16 @@
         if (Model?.GroupBy != GalleryGroup.None)
         {
             <h1 class="display-7">@imageGroup.Key
-                <span class="header-actions">
-                    <span class="action text-success pointer">
-                        <i class="btnDownloadGroup fas fa-download" data-gallery-id="@Model?.Gallery?.Id" data-gallery-name="@Model?.Gallery?.Name" data-gallery-key="@Model?.SecretKey" data-group-name="@((int?)Model?.GroupBy)|@imageGroup.Key" alt="@_localizer["Download"].Value"></i>
-                        <span>@_localizer["Download"].Value</span>
+                @if (Model?.Gallery?.Id > 0)
+                {
+                    <!-- ( TODO - Fix for "All" gallery ) -->
+                    <span class="header-actions">
+                        <span class="btnDownloadGroup action text-success pointer" data-gallery-id="@Model?.Gallery?.Id" data-gallery-name="@Model?.Gallery?.Name" data-gallery-key="@Model?.SecretKey" data-group-name="@((int?)Model?.GroupBy)|@imageGroup.Key" alt="@_localizer["Download"].Value">
+                            <i class="fas fa-download"></i>
+                            <span>@_localizer["Download"].Value</span>
+                        </span>
                     </span>
-                </span>
+                }
             </h1>
         }
 

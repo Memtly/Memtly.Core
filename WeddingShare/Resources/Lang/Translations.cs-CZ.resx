@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>Zadejte prosím kód generovaný aplikací 2FA</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>Nepodařilo se vytvořit 2FA tajemství</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>Poskytnutý ověřovací kód byl nesprávný</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>Ručně zadejte kód:</value>
   </data>

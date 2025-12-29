@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>Παρακαλώ εισάγετε τον κωδικό που δημιουργήθηκε από την εφαρμογή 2FA σας</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>Αποτυχία δημιουργίας ενός μυστικού 2FA</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>Ο παρεχόμενος κωδικός ταυτοποίησης ήταν εσφαλμένος</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>Χειροκίνητα εισάγετε τον κωδικό:</value>
   </data>

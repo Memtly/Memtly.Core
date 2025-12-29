@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>Prašome įvesti kodą generuoja savo 2FA app</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>Nepavyko sukurti 2FA paslapties</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>Pateiktas atpažinties kodas buvo neteisingas</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>Rankiniu būdu įvesti kodą:</value>
   </data>

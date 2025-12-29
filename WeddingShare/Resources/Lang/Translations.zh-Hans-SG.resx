@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>请输入您 2FA 应用程序生成的代码</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>生成 2FA 密钥失败</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>提供的认证代码不正确</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>手动输入代码 :</value>
   </data>

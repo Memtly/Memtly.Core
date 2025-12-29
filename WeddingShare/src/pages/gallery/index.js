@@ -7,6 +7,7 @@ import { default as galleryUpload } from '@modules/upload-box';
 import MediaViewer from '@modules/media-viewer';
 import Slideshow from '@modules/slideshow';
 import { default as initSettings } from '@pages/account/partials/settings';
+import { bindGallerySettingsButton } from '@pages/account/partials/gallery'
 
 let resizeTimeout = null;
 let idleTimeout = null;
@@ -34,6 +35,7 @@ function bindEventHandlers() {
     bindDeletePhoto();
     bindIdleRefresh();
     bindPageResizeEvent();
+    bindGallerySettingsButton();
 }
 
 function bindPageResizeEvent() {

@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>Сураныч, 2FA тиркемесиңиз тарабынан түзүлгөн кодду киргизиңиз</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>2FA сырын түзүүгө мүмкүн эмес</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>Берилген аутентификация коду туура эмес болгон</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>Кодду кол менен киргизиңиз:</value>
   </data>

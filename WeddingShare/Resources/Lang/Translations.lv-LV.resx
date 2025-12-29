@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>Lūdzu, ievadiet kodu, ko ģenerē jūsu 2FA lietotne</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>Neizdevās ģenerēt 2FA noslēpumu</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>Sniegtais autentifikācijas kods bija nepareizs</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>Manuāli ievadiet kodu:</value>
   </data>

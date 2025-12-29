@@ -49,6 +49,12 @@
   <data name="2FA_Code_Hint" xml:space="preserve">
     <value>Voer de door uw 2FA-app gegenereerde code in</value>
   </data>
+  <data name="2FA_Generate_Secret_Failed" xml:space="preserve">
+    <value>Kon een 2FA-geheim niet aanmaken</value>
+  </data>
+  <data name="2FA_Invalid_Code" xml:space="preserve">
+    <value>De opgegeven authenticatiecode was onjuist</value>
+  </data>
   <data name="2FA_Manually_Enter_Code" xml:space="preserve">
     <value>Voer handmatig de code in:</value>
   </data>
