@@ -35,6 +35,8 @@ test:
   services:
     - docker:24-dind
   before_script:
+    - for i in $(seq 1 30); do docker info >/dev/null 2>&1 && break || sleep 1; done
+    - docker info
     - apk add --no-cache curl
     - mkdir -p ~/.docker/cli-plugins
     - curl -SL https://github.com/docker/buildx/releases/download/v0.12.0/buildx-v0.12.0.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
@@ -47,6 +49,8 @@ test:
   services:
     - docker:24-dind
   before_script:
+    - for i in $(seq 1 30); do docker info >/dev/null 2>&1 && break || sleep 1; done
+    - docker info
     - apk add --no-cache curl
     - mkdir -p ~/.docker/cli-plugins
     - curl -SL https://github.com/docker/buildx/releases/download/v0.12.0/buildx-v0.12.0.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
