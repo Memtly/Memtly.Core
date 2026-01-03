@@ -93,19 +93,7 @@ function bindNavigationScrollers() {
 
 function bindPageResizeEvent() {
     $(window).on('resize', function (e) {
-        alert(`Page Resize Detected - Window`);
-    });
-
-    $(document).on('resize', function (e) {
-        alert(`Page Resize Detected - Document`);
-    });
-
-    $('body').on('resize', function (e) {
-        alert(`Page Resize Detected - Body`);
-    });
-
-    $('div#main-wrapper').on('resize', function (e) {
-        alert(`Page Resize Detected - main-wrapper`);
+        resizeLayout();
     });
 }
 
