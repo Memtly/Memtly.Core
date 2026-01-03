@@ -2,6 +2,7 @@
     /* Generic */
     --white: 255, 255, 255;
     --black: 0, 0, 0;
+    --text-contrast: 0, 0, 0;
     /* Navbar */
     --navbar-bg: 255, 255, 255;
     --navbar-border: 5, 150, 105;
@@ -84,6 +85,7 @@
 }
 
 .card {
+    color: rgba(var(--black), 1.0) !important;
     background: rgba(var(--navbar-bg), 0.5) !important;
 }
 
@@ -130,7 +132,7 @@
 .nav-tabs .nav-item .nav-link {
     color: rgba(var(--nav-text), 1.0) !important;
     background-color: rgba(var(--nav-bg), 1.0) !important;
-    border-color: none !important;
+    border-color: rgba(var(--nav-hover-border), 1.0) !important;
 }
 
     .nav-tabs .nav-item .nav-link.active, .nav-tabs .nav-item .nav-link.active:hover {
@@ -200,8 +202,11 @@ footer {
     color: rgba(var(--disabled-bg), 1.0) !important;
 }
 
-/* Borders */
+.text-contrast {
+    color: rgba(var(--text-contrast), 1.0) !important;
+}
 
+/* Borders */
 .border-primary-1 {
     border-color: rgba(var(--primary-bg-1), 1.0) !important;
 }

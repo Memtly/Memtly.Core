@@ -42,7 +42,7 @@
 
                     @if (isRegistrationEnabled)
                     {
-                        <div class="row mt-4 mt-lg-5 text-center">
+                        <div class="row mt-4 mt-lg-5 text-center text-primary-3">
                             <div class="col-12">
                                 @Html.ActionLink(_localizer["Register_Account"].Value, "Register", "Account", null, new { @class = "text-link link-primary-2 mx-2" }) | @Html.ActionLink(_localizer["Forgot_Password"].Value, "ForgotPassword", "Account", null, new { @class = "text-link link-primary-2 mx-2" })
                             </div>

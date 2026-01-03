@@ -3689,6 +3689,9 @@ textarea.form-control-lg {
   --bs-nav-tabs-link-active-bg: #fff;
   --bs-nav-tabs-link-active-border-color: #dee2e6 #dee2e6 #fff;
 }
+.nav-tabs .nav-item {
+    margin: 0px 2px;
+}
 .nav-tabs .nav-link {
   margin-bottom: calc(-1 * var(--bs-nav-tabs-border-width));
   background: none;
@@ -3848,35 +3851,35 @@ textarea.form-control-lg {
 
       a.navbar-brand .navbar-title {
         font-size: 1.0rem;
-        top: 0px;
+        top: 2px;
       }
   }
 
   @media only screen and (max-width: 450px) {
       a.navbar-brand .navbar-title {
-          font-size: 1.05rem;
-          top: 0px;
+          font-size: 0.9rem;
+          top: 2px;
       }
   }
 
   @media only screen and (max-width: 399px) {
       a.navbar-brand .navbar-title {
-          font-size: 1.0rem;
+          font-size: 0.85rem;
           top: 0px;
       }
   }
 
   @media only screen and (max-width: 389px) {
       a.navbar-brand .navbar-title {
-          font-size: 0.95rem;
-          top: 0px;
+          font-size: 0.8rem;
+          top: 2px;
       }
   }
 
   @media only screen and (max-width: 375px) {
       a.navbar-brand .navbar-title {
-          font-size: 0.9rem;
-          top: 0px;
+          font-size: 0.75rem;
+          top: 2px;
       }
   }
 
