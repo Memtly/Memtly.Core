@@ -550,7 +550,7 @@
     <value>Please enter the identifier of the gallery you want to visit.</value>
   </data>
   <data name="Gallery_Identifier_Placeholder" xml:space="preserve">
-    <value>my-wedding-gallery</value>
+    <value>my-gallery-name</value>
   </data>
   <data name="Gallery_Invalid_Gallery_Or_Secret_Key" xml:space="preserve">
     <value>Invalid gallery name or secret key, please try again</value>

@@ -550,7 +550,7 @@
     <value>Sartu bisitatu nahi duzun galeriaren identifikatzailea.</value>
   </data>
   <data name="Gallery_Identifier_Placeholder" xml:space="preserve">
-    <value>my-wedding-gallery</value>
+    <value>my-gallery-name</value>
   </data>
   <data name="Gallery_Invalid_Gallery_Or_Secret_Key" xml:space="preserve">
     <value>Galeriaren izen baliogabea edo ezkutuko gakoa, saiatu berriro</value>

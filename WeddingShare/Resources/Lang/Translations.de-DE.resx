@@ -626,7 +626,7 @@
     <value>Bitte geben Sie die Kennung der Galerie ein, die Sie besuchen möchten.</value>
   </data>
   <data name="Gallery_Identifier_Placeholder" xml:space="preserve">
-    <value>my-wedding-gallery</value>
+    <value>my-gallery-name</value>
   </data>
   <data name="Gallery_Invalid_Gallery_Or_Secret_Key" xml:space="preserve">
     <value>Invalider Galeriename oder geheimer Schlüssel, bitte versuchen Sie es erneut</value>

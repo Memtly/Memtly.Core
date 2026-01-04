@@ -626,7 +626,7 @@
     <value>Lütfen ziyaret etmek istediğiniz galerinin tanımlayıcısına girin.</value>
   </data>
   <data name="Gallery_Identifier_Placeholder" xml:space="preserve">
-    <value>my-wedding-gallery</value>
+    <value>my-gallery-name</value>
   </data>
   <data name="Gallery_Invalid_Gallery_Or_Secret_Key" xml:space="preserve">
     <value>Invalid galeri adı veya gizli anahtar, lütfen tekrar deneyin</value>
