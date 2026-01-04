@@ -80,7 +80,7 @@ function bindPressentationMode() {
             presentationTimeout = setTimeout(() => {
                 $('.presentation-hidden').fadeOut(500);
                 $('body').css('cursor', 'none');
-            }, 1000);
+            }, 5000);
         });
     }
 }

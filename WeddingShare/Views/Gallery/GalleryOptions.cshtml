@@ -13,7 +13,7 @@
 
 @if (qrCodeEnabled)
 {
-    <div class="row mb-4">
+    <div class="row mb-4 presentation-hidden">
         <div class="col-12 text-center">
             <div class="qrcode-wrapper" data-value="@Html.Raw(ViewBag.QRCodeLink)"></div>
             <h6 class="text-contrast">@_localizer["Share_Code"].Value</h6>

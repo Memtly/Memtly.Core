@@ -78,7 +78,7 @@ export function displayMessage(title, message, errors, callbackFn) {
     clearTimeout(displayMessageTimeout);
     displayMessageTimeout = setTimeout(() => {
         if ($('#alert-message-modal').is(':visible')) {
-            //hideMessage();
+            hideMessage();
             if (callbackFn !== undefined && callbackFn !== null) {
                 callbackFn();
             }

@@ -65,7 +65,7 @@
                         @if (userPermissions.Gallery.HasFlag(GalleryPermissions.Download))
                         {
                             var tooltip = _localizer["Download"].Value;
-                            if (gallery.TotalItems > 0)
+                            if (!gallery.Identifier.Equals("All", StringComparison.OrdinalIgnoreCase) && gallery.TotalItems > 0)
                             {
                                 <button class="btnDownloadGallery btn btn-primary-3" alt="@tooltip" title="@tooltip">
                                     <i class="fas fa-download"></i>
@@ -90,7 +90,7 @@
                         @if (userPermissions.Gallery.HasFlag(GalleryPermissions.Update))
                         {
                             var tooltip = _localizer["Edit"].Value;
-                            if (gallery.TotalItems > 0)
+                            if (!gallery.Identifier.Equals("All", StringComparison.OrdinalIgnoreCase) && gallery.TotalItems > 0)
                             {
                                 <button class="btnEditGallery btn btn-primary-3" alt="@tooltip" title="@tooltip">
                                     <i class="fas fa-pen-to-square"></i>
@@ -98,7 +98,7 @@
                             }
                             else
                             {
-                                <button class="btn btn-disabled" alt="@tooltip @tooltipDisabled" title="@tooltip @tooltipDisabled">
+                                <button class="btn btn-disabled" disabled=disabled alt="@tooltip @tooltipDisabled" title="@tooltip @tooltipDisabled">
                                     <i class="fas fa-pen-to-square"></i>
                                 </button>
                             }
@@ -108,7 +108,7 @@
                         @if (userPermissions.Gallery.HasFlag(GalleryPermissions.Wipe))
                         {
                             var tooltip = _localizer["Wipe"].Value;
-                            if (gallery.TotalItems > 0)
+                            if (!gallery.Identifier.Equals("All", StringComparison.OrdinalIgnoreCase) && gallery.TotalItems > 0)
                             {
                                 <button class="btnWipeGallery btn btn-danger" alt="@tooltip" title="@tooltip">
                                     <i class="fas fa-broom"></i>
@@ -133,7 +133,7 @@
                         @if (userPermissions.Gallery.HasFlag(GalleryPermissions.Delete))
                         {
                             var tooltip = _localizer["Delete"].Value;
-                            if (gallery.TotalItems > 0)
+                            if (!gallery.Identifier.Equals("All", StringComparison.OrdinalIgnoreCase) && gallery.TotalItems > 0)
                             {
                                 <button class="btnDeleteGallery btn btn-danger" alt="@tooltip" title="@tooltip">
                                     <i class="fas fa-trash-can"></i>
@@ -141,7 +141,7 @@
                             }
                             else
                             {
-                                <button class="btn btn-disabled" alt="@tooltip @tooltipDisabled" title="@tooltip @tooltipDisabled">
+                                <button class="btn btn-disabled" disabled=disabled alt="@tooltip @tooltipDisabled" title="@tooltip @tooltipDisabled">
                                     <i class="fas fa-trash-can"></i>
                                 </button>
                             }

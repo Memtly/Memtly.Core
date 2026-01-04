@@ -18,7 +18,7 @@
                     <img src="@image.ImagePath" class="slideshow-slide-img shadow-1-strong" loading="lazy" />
                     @if (identityEnabled)
                     {
-                        <h6 class="credits">@_localizer["Uploaded_By"].Value: @(!string.IsNullOrWhiteSpace(image?.UploadedBy) ? image.UploadedBy : "Anonymous")</h6>
+                        <h6 class="credits text-contrast">@_localizer["Uploaded_By"].Value: @(!string.IsNullOrWhiteSpace(image?.UploadedBy) ? image.UploadedBy : "Anonymous")</h6>
                     }
                 </div>
             }
@@ -27,7 +27,7 @@
             {
                 <div class="slideshow-slide">
                     <span class="slideshow-slide-img share-slide" data-value="@Html.Raw(ViewBag.QRCodeLink)"></span>
-                    <h6 class="credits">@_localizer["Scan_To_Share"].Value</h6>
+                    <h6 class="credits text-contrast">@_localizer["Scan_To_Share"].Value</h6>
                 </div>
             }
         </div>
