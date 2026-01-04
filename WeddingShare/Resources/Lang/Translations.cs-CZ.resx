@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>Přidat uživatele</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Pokročilé</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>Všechny</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Skupina</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>Skrýt pokročilá nastavení</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>Nastala chyba při načítání domovské stránky</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>Kód podílu</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>Zobrazit pokročilá nastavení</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>Jednoduché</value>

@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>הוסף משתמשים</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>מתקדם</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>הכל</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>קבוצה</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>הגדרות מתקדמות</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>טעות הייתה לטעון את דף הבית</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>קוד שיתוף</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>הצג הגדרות מתקדמות</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>רווק</value>

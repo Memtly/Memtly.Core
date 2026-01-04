@@ -226,7 +226,7 @@ tr td {
 }
 
     .header-actions .action {
-        display: inline-block !important;
+        display: inline-block;
         text-align: center;
     }
 
@@ -316,3 +316,7 @@ tr td {
     .nav-horizontal-scroller::-webkit-scrollbar {
         display: none;
     }
+
+.advanced-setting {
+    display: none;
+}

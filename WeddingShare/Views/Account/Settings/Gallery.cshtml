@@ -3,7 +3,7 @@
 
 @if (Model?.Settings != null && Model.Settings.Any())
 {
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_DefaultView_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Gallery.DefaultView">
@@ -23,7 +23,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_DefaultGroup_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Gallery.DefaultGroup">
@@ -43,7 +43,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_DefaultOrder_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Gallery.DefaultOrder">
@@ -63,7 +63,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_DefaultFilter_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Gallery.DefaultFilter">
@@ -183,7 +183,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_Columns_Label"].Value</label>
             <input class="setting-field form-control" data-setting-name="@Settings.Gallery.Columns" placeholder="1, 2, 3, 4, 6 or 12" value="@Model.Settings.GetValue(Settings.Gallery.Columns.ToUpper(), string.Empty)" type="number" min="1" max="12" step="1" />
@@ -191,7 +191,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_ItemsPerPage_Label"].Value</label>
             <input class="setting-field form-control" data-setting-name="@Settings.Gallery.ItemsPerPage" placeholder="50" value="@Model.Settings.GetValue(Settings.Gallery.ItemsPerPage.ToUpper(), string.Empty)" type="number" min="1" max="5000" step="10" />
@@ -199,7 +199,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_Upload_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Gallery.Upload">
@@ -219,7 +219,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_UploadPeriod_Label"].Value</label>
             <input class="setting-field form-control" data-setting-name="@Settings.Gallery.UploadPeriod" placeholder="2025-01-01 00:00 / 2025-01-03 23:59" value="@Model.Settings.GetValue(Settings.Gallery.UploadPeriod.ToUpper(), string.Empty).Replace("1970-01-01 00:00", string.Empty)" type="text" />
@@ -227,7 +227,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_AllowedFileTypes_Label"].Value</label>
             <input class="setting-field form-control" data-setting-name="@Settings.Gallery.AllowedFileTypes" placeholder=".jpg,.jpeg,.png,.mp4,.mov" value="@Model.Settings.GetValue(Settings.Gallery.AllowedFileTypes.ToUpper(), string.Empty)" type="text" />
@@ -235,7 +235,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_CameraUploads_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Gallery.CameraUploads">
@@ -255,7 +255,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_RequireReview_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Gallery.RequireReview">
@@ -275,7 +275,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_RetainRejectedItems_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Gallery.RetainRejectedItems">
@@ -315,7 +315,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_MaxSizeMb_Label"].Value</label>
             <input class="setting-field form-control" data-setting-name="@Settings.Gallery.MaxSizeMB" placeholder="1024" value="@Model.Settings.GetValue(Settings.Gallery.MaxSizeMB.ToUpper(), string.Empty)" type="number" min="100" step="1" />
@@ -323,7 +323,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_MaxFileSizeMb_Label"].Value</label>
             <input class="setting-field form-control" data-setting-name="@Settings.Gallery.MaxFileSizeMB" placeholder="50" value="@Model.Settings.GetValue(Settings.Gallery.MaxFileSizeMB.ToUpper(), string.Empty)" type="number" min="1" step="1" />
@@ -351,7 +351,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_QRCodeEnabled_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Gallery.QRCode.Enabled">
@@ -371,7 +371,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_QRCodeDefaultView_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Gallery.QRCode.DefaultView">
@@ -391,7 +391,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_QRCodeDefaultSort_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Gallery.QRCode.DefaultSort">
@@ -411,7 +411,7 @@
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 advanced-setting">
         <div class="col-12">
             <label>@_localizer["Settings_Gallery_QRCodeIncludeCulture_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Gallery.QRCode.IncludeCulture">

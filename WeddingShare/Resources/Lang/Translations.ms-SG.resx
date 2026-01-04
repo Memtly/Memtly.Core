@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>Tambah Pengguna</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Lanjutan</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>Semua</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Kumpulan</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>Sembunyikan Tetapan Lanjutan</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>Kesalahan terjadi ketika memuat laman utama</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>Kode Kongsi</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>Tetapan Lanjutan</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>♪ Single ♪</value>

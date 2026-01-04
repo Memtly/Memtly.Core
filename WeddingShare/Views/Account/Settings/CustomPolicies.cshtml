@@ -9,7 +9,7 @@
             <select class="setting-field form-control" data-setting-name="@Settings.Policies.Enabled">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(Settings.Policies.Enabled.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(Settings.Policies.Enabled.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }

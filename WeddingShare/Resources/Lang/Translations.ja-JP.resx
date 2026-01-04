@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>ユーザーを追加</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>アドバンスト</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>すべて</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>グループ</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>高度な設定を隠す</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>ホームページをロードするエラーが発生しました</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>共有コード</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>高度な設定を表示する</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>シングル</value>

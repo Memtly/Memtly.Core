@@ -69,7 +69,7 @@ namespace WeddingShare.Helpers.Dbup
                 // Protect any galleries without a secret key by forcing a new one
                 if (galleries != null && galleries.Any())
                 {
-                    var allowInsecureGalleries = config.GetOrDefault(Settings.Basic.AllowInsecureGalleries, false);
+                    var allowInsecureGalleries = config.GetOrDefault(Settings.Basic.AllowInsecureGalleries, true);
                     if (!allowInsecureGalleries)
                     { 
                         foreach (var gallery in galleries.Where(gallery => string.IsNullOrWhiteSpace(gallery.SecretKey)))

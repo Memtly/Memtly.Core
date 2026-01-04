@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>Adaugă utilizator</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Avansat</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>Toate</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Grup</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>Ascunde configurări avansate</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>A apărut o eroare la încărcarea paginii de start</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>Partajează codul</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>Arată configurări avansate</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>Single</value>

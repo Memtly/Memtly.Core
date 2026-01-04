@@ -8,6 +8,7 @@ function init() {
 function bindEventHandlers() {
     bindUpdateSettingActions();
     bindSaveSettingsButton();
+    bindAdvancedSettingsButtons();
 }
 
 function bindUpdateSettingActions() {
@@ -46,6 +47,24 @@ function bindSaveSettingsButton() {
         } else {
             displayMessage(localization.translate('Update_Settings'), localization.translate('Update_Settings_No_Change'));
         }
+    });
+}
+
+function bindAdvancedSettingsButtons() {
+    $(document).off('click', '.btnShowAdvancedSettings').on('click', '.btnShowAdvancedSettings', function (e) {
+        $('.advanced-setting').each(function () {
+            $(this).css('display', 'block');
+        });
+        $('.btnShowAdvancedSettings').toggleClass('d-none');
+        $('.btnHideAdvancedSettings').toggleClass('d-none');
+    });
+
+    $(document).off('click', '.btnHideAdvancedSettings').on('click', '.btnHideAdvancedSettings', function (e) {
+        $('.advanced-setting').each(function () {
+            $(this).css('display', 'none');
+        });
+        $('.btnHideAdvancedSettings').toggleClass('d-none');
+        $('.btnShowAdvancedSettings').toggleClass('d-none');
     });
 }
 

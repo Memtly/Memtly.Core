@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>Gebruiker toevoegen</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Geavanceerd</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>Alles</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Groep</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>Geavanceerde instellingen verbergen</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>Er is een fout opgetreden bij het laden van de startpagina</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>Code van het aandeel</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>Geavanceerde instellingen tonen</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>Alleenstaand</value>

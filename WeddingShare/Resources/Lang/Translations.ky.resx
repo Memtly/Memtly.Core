@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>Колдонуучуну кошуу</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Өнүккөн</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>Баары</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Топ тобу</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>Жашыруун өнүккөн шарттар</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>Негизги баракчаны жүктөө катасы болгон</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>Акциялык код</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>Өнүккөн орнотууларды көрсөтүңүз</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>Бирдиктүү бирдиктүү бирдиктүү</value>

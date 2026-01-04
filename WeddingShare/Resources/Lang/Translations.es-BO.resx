@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>Agregar usuario</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Avances</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>Todos</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Grupo</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>Ocultar ajustes avanzados</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>Se produjo un error cargando la página principal</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>Código de acción</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>Mostrar configuraciones avanzadas</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>Individual</value>

@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>उपयोगकर्ता जोड़ें</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>उन्नत</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>सब</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>समूह</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>एडवांस्ड सेटिंग छुपाएं</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>एक त्रुटि होमपेज लोड हो रही है</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>शेयर कोड</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>उन्नत सेटिंग दिखाएं</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>एकल</value>

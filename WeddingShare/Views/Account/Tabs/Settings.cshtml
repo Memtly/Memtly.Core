@@ -11,7 +11,18 @@
         <div class="container px-3 px-lg-1 my-3 my-lg-0">
             <div class="row">
                 <div class="col-12">
-                    <h1 class="display-6">@_localizer["Settings"].Value</h1>
+                    <h1 class="display-6">@_localizer["Settings"].Value
+                        <span class="header-actions">
+                            <span class="btnShowAdvancedSettings action link-primary-2 pointer" alt="@_localizer["Show_Advanced_Settings"].Value" title="@_localizer["Show_Advanced_Settings"].Value">
+                                <i class="fas fa-eye"></i>
+                                <span>@_localizer["Advanced"].Value</span>
+                            </span>
+                            <span class="btnHideAdvancedSettings action link-primary-2 pointer d-none" alt="@_localizer["Hide_Advanced_Settings"].Value" title="@_localizer["Hide_Advanced_Settings"].Value">
+                                <i class="fas fa-eye-slash"></i>
+                                <span>@_localizer["Advanced"].Value</span>
+                            </span>
+                        </span>
+                    </h1>
                 </div>
             </div>
             <div class="row">

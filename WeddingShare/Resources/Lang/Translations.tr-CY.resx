@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>Ekle Kullanıcı Ekle</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>Bütün Bütün Hepsi</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Grup Grup Grup Grubu</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>Gizle Gelişmiş Ayarlar</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>Bir hata ana sayfayı yükleme oldu</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>Share Code</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>Show Advanced Settings Ayarları</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>Single</value>

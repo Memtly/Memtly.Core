@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>Afegeix usuari</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Avançat</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>Tot</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Grup</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>Oculta els arranjaments avançats</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>Hi ha hagut un error en carregar la pàgina web</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>Codi de compartició</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>Mostra els arranjaments avançats</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>Simple</value>

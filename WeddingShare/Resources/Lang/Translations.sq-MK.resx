@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>Shto përdorues</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Të detajuara</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>Gjithçka</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Grupi</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>Fshih rregullimet e detajuara</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>U ndesh një gabim gjatë ngarkimit të faqes home</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>Kodi</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>Shfaq rregullimet e detajuara</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>I vetëm</value>

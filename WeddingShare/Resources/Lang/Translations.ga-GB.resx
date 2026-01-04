@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>Cuir iarratas isteach</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Bláthanna cumhra: cumhráin</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>Gach duine</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Grúpa an Ghrúpa</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>Folaigh Socruithe Casta</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>Tharla earráid luchtú an leathanach baile</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>Comhroinn an leathanach</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>Taispeáin Socruithe Casta</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>Aonair</value>

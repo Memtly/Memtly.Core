@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>사용자 정의</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>지원하다</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>모든 것</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>그룹</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>고급 설정 숨기기</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>오류가 발생했습니다</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>공유 코드</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>고급 설정 표시</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>제품정보</value>

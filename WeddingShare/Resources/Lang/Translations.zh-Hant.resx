@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>新增使用者</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>高级</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>全体</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>组</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>隱藏高级設定值</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>装入主页出错</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>共享代码</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>顯示高级設定值</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>单身</value>

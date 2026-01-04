@@ -4556,6 +4556,29 @@ textarea.form-control-lg {
   border-bottom-left-radius: var(--bs-accordion-border-radius);
 }
 
+    .accordion-item:last-child {
+        border-bottom-right-radius: var(--bs-accordion-border-radius) !important;
+        border-bottom-left-radius: var(--bs-accordion-border-radius) !important;
+    }
+
+    /* Style the last non-advanced item (Languages) when it's the last visible */
+    .accordion-item:not(.advanced-setting):not(:has(~ .accordion-item:not(.advanced-setting))) {
+        border-bottom-right-radius: var(--bs-accordion-border-radius) !important;
+        border-bottom-left-radius: var(--bs-accordion-border-radius) !important;
+    }
+
+        .accordion-item:last-child .accordion-button.collapsed,
+        .accordion-item:not(.advanced-setting):not(:has(~ .accordion-item:not(.advanced-setting))) .accordion-button.collapsed {
+            border-bottom-right-radius: var(--bs-accordion-inner-border-radius);
+            border-bottom-left-radius: var(--bs-accordion-inner-border-radius);
+        }
+
+        .accordion-item:last-child .accordion-collapse,
+        .accordion-item:not(.advanced-setting):not(:has(~ .accordion-item:not(.advanced-setting))) .accordion-collapse {
+            border-bottom-right-radius: var(--bs-accordion-border-radius);
+            border-bottom-left-radius: var(--bs-accordion-border-radius);
+        }
+
 .accordion-body {
   padding: var(--bs-accordion-body-padding-y) var(--bs-accordion-body-padding-x);
 }

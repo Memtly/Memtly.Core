@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>Добавяне на потребител</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Разширено</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>Всички</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Група</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>Скриване на разширени настройки</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>Грешка при зареждане на началната страница</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>Код на акцията</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>Показване на напреднали настройки</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>Единичен</value>

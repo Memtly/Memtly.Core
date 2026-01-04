@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>Magdagdag ng User</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Sumulong</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>Lahat</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Grupo</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>Palihim na Naunang mga Pagtatakda</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>Nagkaroon ng pagkakamali sa pagkarga sa pagguho ng bahay</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>Bahaging Kodigo</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>Ipakita ang Patiunang Pagtatakda</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>Walang Asawa</value>

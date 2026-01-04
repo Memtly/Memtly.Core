@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>Pridėti naudotoją</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Sudėtingesnė</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>All</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Grupė</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>Slėpti sudėtingesnius nustatymus</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>Įvyko klaida įkeliant pagrindinį puslapį</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>Akcijų kodas</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>Rodyti sudėtingesnius nustatymus</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>@ item: inlistbox</value>

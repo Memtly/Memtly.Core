@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>صارف شامل کریں</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>اعلی</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>تمام</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>گروپ</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>تنصیب کی ترتیبات</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>گھریلو صفحات لوڈ کرنے کے دوران غلطی</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>شیئر کوڈ</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>تنصیب کی ترتیبات دکھائیں</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>تنہا</value>

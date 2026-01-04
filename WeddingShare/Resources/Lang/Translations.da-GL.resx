@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>Tilføj bruger</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Avanceret</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>Alle</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Gruppe</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>Skjul avancerede indstillinger</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>En fejl opstod indlæsning af hjemmesiden</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>Del kode</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>Vis avancerede indstillinger</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>Enkelt</value>

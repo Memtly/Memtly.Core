@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>Felhasználó hozzáadása</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Speciális</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>Valamennyi</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Csoport</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>Speciális beállítások elrejtése</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>Hiba történt a honlap betöltése közben</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>Megosztás kódja</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>Speciális beállítások megjelenítése</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>Egyedi</value>

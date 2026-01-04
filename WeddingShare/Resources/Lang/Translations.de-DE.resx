@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>Benutzer hinzufügen</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Erweiterte</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>Alle</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Gruppe</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>Erweiterte Einstellungen verbergen</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>Ein Fehler ist beim laden der Homepage aufgetreten</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>Teile den Code</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>Erweiterte Einstellungen anzeigen</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>Einzeln</value>

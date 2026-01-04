@@ -163,6 +163,9 @@
   <data name="Add_User" xml:space="preserve">
     <value>ব্যবহারকারী যোগ করুন</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>উন্নত</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>সকল</value>
   </data>
@@ -699,6 +702,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>দল</value>
+  </data>
+  <data name="Hide_Advanced_Settings" xml:space="preserve">
+    <value>উন্নত বৈশিষ্ট্য আড়াল করা হবে</value>
   </data>
   <data name="Homepage_Load_Error" xml:space="preserve">
     <value>হোম-পেজ লোড করার সময় সমস্যা দেখা দিয়েছে</value>
@@ -1656,6 +1662,9 @@
   </data>
   <data name="Share_Code" xml:space="preserve">
     <value>শেয়ার কোড</value>
+  </data>
+  <data name="Show_Advanced_Settings" xml:space="preserve">
+    <value>উন্নত সেটিংসমূহ প্রদর্শন করা হবে</value>
   </data>
   <data name="Single" xml:space="preserve">
     <value>একক</value>
