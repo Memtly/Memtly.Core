@@ -3,9 +3,9 @@
 
 @if (Model != null && Model.Any())
 {
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Ntfy_Enabled_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Ntfy_Enabled_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Notifications.Ntfy.Enabled">
                 @foreach (var option in ViewOptions.YesNo)
                 {
@@ -19,39 +19,39 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Ntfy_Enabled_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Ntfy_Enabled_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Ntfy_Endpoint_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Ntfy_Endpoint_Label"].Value</label>
             <input class="setting-field form-control" data-setting-name="@Notifications.Ntfy.Endpoint" placeholder="https://ntfy.your-domain.com/" value="@Model.GetValue(Notifications.Ntfy.Endpoint.ToUpper(), string.Empty)" type="text" />
-            <div class="form-text">@_localizer["Settings_Ntfy_Endpoint_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Ntfy_Endpoint_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Ntfy_Token_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Ntfy_Token_Label"].Value</label>
             <input class="setting-field form-control" data-setting-name="@Notifications.Ntfy.Token" placeholder="my-token" value="@Model.GetValue(Notifications.Ntfy.Token.ToUpper(), string.Empty)" type="password" />
-            <div class="form-text">@_localizer["Settings_Ntfy_Token_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Ntfy_Token_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Ntfy_Topic_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Ntfy_Topic_Label"].Value</label>
             <input class="setting-field form-control" data-setting-name="@Notifications.Ntfy.Topic" placeholder="WeddingShare" value="@Model.GetValue(Notifications.Ntfy.Topic.ToUpper(), string.Empty)" type="text" />
-            <div class="form-text">@_localizer["Settings_Ntfy_Topic_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Ntfy_Topic_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Ntfy_Priority_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Ntfy_Priority_Label"].Value</label>
             <input class="setting-field form-control" data-setting-name="@Notifications.Ntfy.Priority" placeholder="4" value="@Model.GetValue(Notifications.Ntfy.Priority.ToUpper(), "4")" type="number" min="1" max="10" step="1" />
-            <div class="form-text">@_localizer["Settings_Ntfy_Priority_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Ntfy_Priority_Help"].Value</div>
         </div>
     </div>
 }

@@ -55,22 +55,12 @@ function bindSaveSettingsButton() {
 
 function bindAdvancedSettingsButtons() {
     $(document).off('click', '.btnShowAdvancedSettings').on('click', '.btnShowAdvancedSettings', function (e) {
-        $('.advanced-setting').each(function () {
-            $(this).css('display', 'block');
-        });
-        $('.btnShowAdvancedSettings').toggleClass('d-none');
-        $('.btnHideAdvancedSettings').toggleClass('d-none');
-
+        showAdvancedSettings();
         searchSettings();
     });
 
     $(document).off('click', '.btnHideAdvancedSettings').on('click', '.btnHideAdvancedSettings', function (e) {
-        $('.advanced-setting').each(function () {
-            $(this).css('display', 'none');
-        });
-        $('.btnHideAdvancedSettings').toggleClass('d-none');
-        $('.btnShowAdvancedSettings').toggleClass('d-none');
-
+        hideAdvancedSettings();
         searchSettings();
     });
 }
@@ -81,42 +71,50 @@ function bindSettingsSearchBox() {
     });
 }
 
+function showAdvancedSettings() {
+    $('.setting-advanced').removeClass('d-none');
+    $('.btnShowAdvancedSettings').addClass('d-none');
+    $('.btnHideAdvancedSettings').removeClass('d-none');
+}
+
+function hideAdvancedSettings() {
+    $('.setting-advanced').addClass('d-none');
+    $('.btnShowAdvancedSettings').removeClass('d-none');
+    $('.btnHideAdvancedSettings').addClass('d-none');
+}
+
 export function searchSettings() {
     clearTimeout(settingsSearchTimeout);
     settingsSearchTimeout = setTimeout(() => {
         let term = $('input#settings-search-term').val();
 
-        $('#settings-accordion .accordion-item, #settings-accordion .accordion-item .accordion-body > .row').removeClass('d-none');
+        $('#settings-accordion .accordion-item, #settings-accordion .accordion-item .setting-container').removeClass('d-none');
+
 
         if (term !== undefined && term.length > 0) {
-
-            $('.setting-field').each(function () {
-                const label = $(this).parent().find('label').text();
-                const hint = $(this).parent().find('.form-text').text();
+            $('.setting-container').each(function () {
+                const label = $(this).find('.setting-label').text();
+                const hint = $(this).find('.setting-hint').text();
 
                 if ((label === undefined && hint === undefined) || (label.toLowerCase().indexOf(term.toLowerCase()) === -1 || hint.toLowerCase().indexOf(term.toLowerCase()) === -1)) {
-                    $(this).closest('.row').addClass('d-none');
-                } else {
-                    $(this).closest('.row').removeClass('d-none');
-                }
-            });
-
-            $('#settings-accordion .accordion-item').each(function () {
-                const count = $(this).find('.accordion-body > .row:not(.d-none)').length;
-                if (count === 0) {
                     $(this).addClass('d-none');
+                } else {
+                    $(this).removeClass('d-none');
                 }
             });
-        } else {
-            resetSettings();
         }
-    }, 500);
-}
 
-export function resetSettings() {
-    $('.setting-field').each(function () {
-        $(this).closest('.row').removeClass('d-none');
-    });
+        if ($('.btnShowAdvancedSettings:not(.d-none)').length > 0) {
+            hideAdvancedSettings();
+        }
+
+        $('#settings-accordion .accordion-item').each(function () {
+            const count = $(this).find('.setting-container:not(.d-none)').length;
+            if (count === 0) {
+                $(this).addClass('d-none');
+            }
+        });
+    }, 500);
 }
 
 export function updateSettings() {

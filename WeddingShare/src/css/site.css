@@ -316,7 +316,3 @@ tr td {
     .nav-horizontal-scroller::-webkit-scrollbar {
         display: none;
     }
-
-.advanced-setting {
-    display: none;
-}

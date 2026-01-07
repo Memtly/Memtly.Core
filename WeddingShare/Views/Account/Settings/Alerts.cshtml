@@ -3,9 +3,9 @@
 
 @if (Model != null && Model.Any())
 {
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Alerts_Failed_Login_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Alerts_Failed_Login_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Notifications.Alerts.FailedLogin">
                 @foreach (var option in ViewOptions.YesNo)
                 {
@@ -19,13 +19,13 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Alerts_Failed_Login_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Alerts_Failed_Login_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Alerts_Account_Lockout_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Alerts_Account_Lockout_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Notifications.Alerts.AccountLockout">
                 @foreach (var option in ViewOptions.YesNo)
                 {
@@ -39,13 +39,13 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Alerts_Account_Lockout_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Alerts_Account_Lockout_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Alerts_Destructive_Action_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Alerts_Destructive_Action_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Notifications.Alerts.DestructiveAction">
                 @foreach (var option in ViewOptions.YesNo)
                 {
@@ -59,13 +59,13 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Alerts_Destructive_Action_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Alerts_Destructive_Action_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Alerts_Pending_Review_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Alerts_Pending_Review_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Notifications.Alerts.PendingReview">
                 @foreach (var option in ViewOptions.YesNo)
                 {
@@ -79,7 +79,7 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Alerts_Pending_Review_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Alerts_Pending_Review_Help"].Value</div>
         </div>
     </div>
 }

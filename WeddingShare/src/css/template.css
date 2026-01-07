@@ -4528,76 +4528,45 @@ textarea.form-control-lg {
 }
 
 .accordion-item {
-  color: var(--bs-accordion-color);
-  background-color: var(--bs-accordion-bg);
-  border: var(--bs-accordion-border-width) solid var(--bs-accordion-border-color);
-}
-.accordion-item:first-of-type {
-  border-top-left-radius: var(--bs-accordion-border-radius);
-  border-top-right-radius: var(--bs-accordion-border-radius);
-}
-.accordion-item:first-of-type .accordion-button {
-  border-top-left-radius: var(--bs-accordion-inner-border-radius);
-  border-top-right-radius: var(--bs-accordion-inner-border-radius);
-}
-.accordion-item:not(:first-of-type) {
-  border-top: 0;
-}
-.accordion-item:last-of-type {
-  border-bottom-right-radius: var(--bs-accordion-border-radius);
-  border-bottom-left-radius: var(--bs-accordion-border-radius);
-}
-.accordion-item:last-of-type .accordion-button.collapsed {
-  border-bottom-right-radius: var(--bs-accordion-inner-border-radius);
-  border-bottom-left-radius: var(--bs-accordion-inner-border-radius);
-}
-.accordion-item:last-of-type .accordion-collapse {
-  border-bottom-right-radius: var(--bs-accordion-border-radius);
-  border-bottom-left-radius: var(--bs-accordion-border-radius);
+    color: var(--bs-accordion-color);
+    background-color: var(--bs-accordion-bg);
+    border: var(--bs-accordion-border-width) solid var(--bs-accordion-border-color);
 }
 
-    .accordion-item:last-child {
-        border-bottom-right-radius: var(--bs-accordion-border-radius) !important;
-        border-bottom-left-radius: var(--bs-accordion-border-radius) !important;
+    .accordion-item:not(.d-none) {
+        border-top: var(--bs-accordion-border-width) solid var(--bs-accordion-border-color) !important;
+        border-top-left-radius: var(--bs-accordion-border-radius);
+        border-top-right-radius: var(--bs-accordion-border-radius);
     }
 
-    /* Style the last non-advanced item (Languages) when it's the last visible */
-        .accordion-item:first-child .accordion-button.collapsed,
-        .accordion-item:not(.advanced-setting):not(:has(~ .accordion-item:not(.advanced-setting))) .accordion-button.collapsed,
-        .accordion-item:not(.d-none):not(:has(~ .accordion-item:not(.d-none))) .accordion-button.collapsed {
-            border-top-right-radius: var(--bs-accordion-inner-border-radius);
+        .accordion-item:not(.d-none) .accordion-button.collapsed {
             border-top-left-radius: var(--bs-accordion-inner-border-radius);
+            border-top-right-radius: var(--bs-accordion-inner-border-radius);
         }
 
-        .accordion-item:first-child .accordion-collapse,
-        .accordion-item:not(.advanced-setting):not(:has(~ .accordion-item:not(.advanced-setting))) .accordion-collapse,
-        .accordion-item:not(.d-none):not(:has(~ .accordion-item:not(.d-none))) .accordion-collapse {
-            border-top-right-radius: var(--bs-accordion-border-radius);
-            border-top-left-radius: var(--bs-accordion-border-radius);
+        .accordion-item:not(.d-none) ~ .accordion-item:not(.d-none) {
+            border-top: 0 !important;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
         }
 
-    .accordion-item:not(.advanced-setting):not(:has(~ .accordion-item:not(.advanced-setting))),
-    .accordion-item:not(.d-none):not(:has(~ .accordion-item:not(.d-none))) {
-        border-bottom-right-radius: var(--bs-accordion-border-radius) !important;
-        border-bottom-left-radius: var(--bs-accordion-border-radius) !important;
-    }
+            .accordion-item:not(.d-none) ~ .accordion-item:not(.d-none) .accordion-button.collapsed {
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
+            }
 
-        .accordion-item:last-child .accordion-button.collapsed,
-        .accordion-item:not(.advanced-setting):not(:has(~ .accordion-item:not(.advanced-setting))) .accordion-button.collapsed,
-        .accordion-item:not(.d-none):not(:has(~ .accordion-item:not(.d-none))) .accordion-button.collapsed {
-            border-bottom-right-radius: var(--bs-accordion-inner-border-radius);
-            border-bottom-left-radius: var(--bs-accordion-inner-border-radius);
-        }
-
-        .accordion-item:last-child .accordion-collapse,
-        .accordion-item:not(.advanced-setting):not(:has(~ .accordion-item:not(.advanced-setting))) .accordion-collapse,
-        .accordion-item:not(.d-none):not(:has(~ .accordion-item:not(.d-none))) .accordion-collapse {
-            border-bottom-right-radius: var(--bs-accordion-border-radius);
+        .accordion-item:not(.d-none):not(:has(~ .accordion-item:not(.d-none))) {
             border-bottom-left-radius: var(--bs-accordion-border-radius);
+            border-bottom-right-radius: var(--bs-accordion-border-radius);
         }
+
+            .accordion-item:not(.d-none):not(:has(~ .accordion-item:not(.d-none))) .accordion-button.collapsed {
+                border-bottom-left-radius: var(--bs-accordion-inner-border-radius);
+                border-bottom-right-radius: var(--bs-accordion-inner-border-radius);
+            }
 
 .accordion-body {
-  padding: var(--bs-accordion-body-padding-y) var(--bs-accordion-body-padding-x);
+    padding: var(--bs-accordion-body-padding-y) var(--bs-accordion-body-padding-x);
 }
 
 .accordion-flush .accordion-collapse {

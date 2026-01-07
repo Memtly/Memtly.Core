@@ -3,9 +3,9 @@
 
 @if (Model != null && Model.Any())
 {
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Themes_Enabled_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Themes_Enabled_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Themes.Enabled">
                 @foreach (var option in ViewOptions.YesNo)
                 {
@@ -19,13 +19,13 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Themes_Enabled_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Themes_Enabled_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Themes_Default_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Themes_Default_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Themes.Default">
                 @foreach (Themes t in Enum.GetValues(typeof(Themes)))
                 {
@@ -39,7 +39,7 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Themes_Default_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Themes_Default_Help"].Value</div>
         </div>
     </div>
 }

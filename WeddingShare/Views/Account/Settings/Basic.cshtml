@@ -3,17 +3,17 @@
 
 @if (Model?.Settings != null && Model.Settings.Any())
 {
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Basic_Title_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Basic_Title_Label"].Value</label>
             <input class="setting-field form-control" data-setting-name="@Settings.Basic.Title" placeholder="WeddingShare" value="@Model.Settings.GetValue(Settings.Basic.Title.ToUpper(), string.Empty)" type="text" />
-            <div class="form-text">@_localizer["Settings_Basic_Title_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Basic_Title_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Basic_Logo_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Basic_Logo_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Basic.Logo" placeholder="my-banner.jpg">
                 <option value="/images/logo.png">Default</option>
                 @{
@@ -39,21 +39,21 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Basic_Logo_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Basic_Logo_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4 advanced-setting">
+    <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
-            <label>@_localizer["Settings_Basic_BaseUrl_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Basic_BaseUrl_Label"].Value</label>
             <input class="setting-field form-control" data-setting-name="@Settings.Basic.BaseUrl" placeholder="https://wedding-share.your-domain.com/" value="@Model.Settings.GetValue(Settings.Basic.BaseUrl.ToUpper(), string.Empty)" type="text" />
-            <div class="form-text">@_localizer["Settings_Basic_BaseUrl_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Basic_BaseUrl_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4 advanced-setting">
+    <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
-            <label>@_localizer["Settings_Basic_ForceHttps_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Basic_ForceHttps_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Basic.ForceHttps">
                 @foreach (var option in ViewOptions.YesNo)
                 {
@@ -67,13 +67,13 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Basic_ForceHttps_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Basic_ForceHttps_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Basic_SingleGalleryMode_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Basic_SingleGalleryMode_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Basic.SingleGalleryMode">
                 @foreach (var option in ViewOptions.SingleGalleryMode)
                 {
@@ -87,13 +87,13 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Basic_SingleGalleryMode_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Basic_SingleGalleryMode_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4 advanced-setting">
+    <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
-            <label>@_localizer["Settings_Basic_AllowInsecureGalleries_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Basic_AllowInsecureGalleries_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Basic.AllowInsecureGalleries">
                 @foreach (var option in ViewOptions.YesNo)
                 {
@@ -107,21 +107,21 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Basic_AllowInsecureGalleries_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Basic_AllowInsecureGalleries_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4 advanced-setting">
+    <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
-            <label>@_localizer["Settings_Basic_MaxGalleryCount_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Basic_MaxGalleryCount_Label"].Value</label>
             <input class="setting-field form-control" data-setting-name="@Settings.Basic.MaxGalleryCount" placeholder="1000000" value="@Model.Settings.GetValue(Settings.Basic.MaxGalleryCount.ToUpper(), "1000000")" type="number" min="1" max="@(int.MaxValue.ToString())" step="10" />
-            <div class="form-text">@_localizer["Settings_Basic_MaxGalleryCount_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Basic_MaxGalleryCount_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4 advanced-setting">
+    <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
-            <label>@_localizer["Settings_Basic_GallerySelectorDropdown_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Basic_GallerySelectorDropdown_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.GallerySelector.Dropdown">
                 @foreach (var option in ViewOptions.GallerySelectorDropdown)
                 {
@@ -135,13 +135,13 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Basic_GallerySelectorDropdown_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Basic_GallerySelectorDropdown_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Basic_GallerySelectorHideDefault_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Basic_GallerySelectorHideDefault_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.GallerySelector.HideDefaultOption">
                 @foreach (var option in ViewOptions.YesNoInverted)
                 {
@@ -155,13 +155,13 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Basic_GallerySelectorHideDefault_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Basic_GallerySelectorHideDefault_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4 advanced-setting">
+    <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
-            <label>@_localizer["Settings_GallerySelector_ShowUsernames_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_GallerySelector_ShowUsernames_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.GallerySelector.ShowUsernames">
                 @foreach (var option in ViewOptions.YesNo)
                 {
@@ -175,13 +175,13 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_GallerySelector_ShowUsernames_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_GallerySelector_ShowUsernames_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4 advanced-setting">
+    <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
-            <label>@_localizer["Settings_Basic_HomeLink_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Basic_HomeLink_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Basic.HomeLink">
                 @foreach (var option in ViewOptions.YesNo)
                 {
@@ -195,13 +195,13 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Basic_HomeLink_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Basic_HomeLink_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Basic_GuestGalleryCreation_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Basic_GuestGalleryCreation_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Basic.GuestGalleryCreation">
                 @foreach (var option in ViewOptions.YesNo)
                 {
@@ -215,13 +215,13 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Basic_GuestGalleryCreation_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Basic_GuestGalleryCreation_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4 advanced-setting">
+    <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
-            <label>@_localizer["Settings_Basic_HideKeyFromQRCode_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Basic_HideKeyFromQRCode_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Basic.HideKeyFromQRCode">
                 @foreach (var option in ViewOptions.YesNoInverted)
                 {
@@ -235,13 +235,13 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Basic_HideKeyFromQRCode_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Basic_HideKeyFromQRCode_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4 advanced-setting">
+    <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
-            <label>@_localizer["Settings_Basic_LinksOpenNewTab_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Basic_LinksOpenNewTab_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Basic.LinksOpenNewTab">
                 @foreach (var option in ViewOptions.YesNo)
                 {
@@ -255,21 +255,21 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Basic_LinksOpenNewTab_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Basic_LinksOpenNewTab_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4">
+    <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label>@_localizer["Settings_Basic_ThumbnailSize_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Basic_ThumbnailSize_Label"].Value</label>
             <input class="setting-field form-control" data-setting-name="@Settings.Basic.ThumbnailSize" placeholder="720" value="@Model.Settings.GetValue(Settings.Basic.ThumbnailSize.ToUpper(), "720")" type="number" min="100" step="50" />
-            <div class="form-text">@_localizer["Settings_Basic_ThumbnailSize_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Basic_ThumbnailSize_Help"].Value</div>
         </div>
     </div>
 
-    <div class="row mb-4 mb-lg-4 advanced-setting">
+    <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
-            <label>@_localizer["Settings_Basic_EmailReport_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Basic_EmailReport_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Basic.EmailReport">
                 @foreach (var option in ViewOptions.YesNo)
                 {
@@ -283,7 +283,7 @@
                     }
                 }
             </select>
-            <div class="form-text">@_localizer["Settings_Basic_EmailReport_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Basic_EmailReport_Help"].Value</div>
         </div>
     </div>
 }
