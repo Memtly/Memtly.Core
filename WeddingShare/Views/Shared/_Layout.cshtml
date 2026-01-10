@@ -210,5 +210,16 @@
         <script src="~/dist/main.js" asp-append-version="true"></script>
 
         @await RenderSectionAsync("Scripts", required: false)
+        @{
+            var umamiEndpoint = await _settings.GetOrDefault(Trackers.Umami.Endpoint, string.Empty);
+            if (!string.IsNullOrWhiteSpace(umamiEndpoint))
+            {
+                var umamiWebsiteId = await _settings.GetOrDefault(Trackers.Umami.WebsiteId, string.Empty);
+                if (!string.IsNullOrWhiteSpace(umamiWebsiteId))
+                {
+                    <script async defer data-website-id="@umamiWebsiteId" src="@(umamiEndpoint.Replace("umami.js", string.Empty).TrimEnd('/'))/umami.js"></script>
+                }
+            }
+        }
     </body>
 </html>

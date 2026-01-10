@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WeddingShare.Views.Account.Settings
+namespace WeddingShare.Views.Account.Settings.Notifications
 {
-    public class SmtpModel : PageModel
+    public class NtfyModel : PageModel
     {
-        public SmtpModel()
+        public NtfyModel()
         {
         }
 

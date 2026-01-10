@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WeddingShare.Views.Account.Settings
+namespace WeddingShare.Views.Account.Settings.IdentityCheck
 {
     public class IdentityCheckModel : PageModel
     {

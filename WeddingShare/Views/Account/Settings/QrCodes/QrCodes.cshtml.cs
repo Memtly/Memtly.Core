@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WeddingShare.Views.Account.Settings
+namespace WeddingShare.Views.Account.Settings.QrCodes
 {
-    public class NtfyModel : PageModel
+    public class QrCodesModel : PageModel
     {
-        public NtfyModel()
+        public QrCodesModel()
         {
         }
 

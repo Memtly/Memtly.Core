@@ -849,7 +849,7 @@ namespace WeddingShare.Controllers
                 return Redirect("/");
             }
 
-            var model = new Views.Account.Settings.GalleryModel();
+            var model = new Views.Account.Settings.Gallery.GalleryOverridesModel();
 
             try
             {
@@ -865,7 +865,7 @@ namespace WeddingShare.Controllers
                 _logger.LogError(ex, $"{_localizer["Settings_Failed"].Value} - {ex?.Message}");
             }
 
-            return PartialView("~/Views/Account/Settings/Gallery.cshtml", model);
+            return PartialView("~/Views/Account/Settings/Gallery/GalleryOverrides.cshtml", model);
         }
 
         [HttpPost]

@@ -580,6 +580,15 @@
   <data name="Galleries" xml:space="preserve">
     <value>Galleries</value>
   </data>
+  <data name="View_Options" xml:space="preserve">
+    <value>View Options</value>
+  </data>
+  <data name="Uploads" xml:space="preserve">
+    <value>Uploads</value>
+  </data>
+  <data name="Size_Limits" xml:space="preserve">
+    <value>Size Limits</value>
+  </data>
   <data name="Gallery" xml:space="preserve">
     <value>Gallery</value>
   </data>
@@ -677,6 +686,9 @@
     <value>Please enter a new secret key</value>
   </data>
   <data name="Gallery_Selector_Title" xml:space="preserve">
+    <value>Gallery Selector</value>
+  </data>
+  <data name="Gallery_Selector" xml:space="preserve">
     <value>Gallery Selector</value>
   </data>
   <data name="Gallery_Settings" xml:space="preserve">
@@ -1072,8 +1084,14 @@
   <data name="Resources" xml:space="preserve">
     <value>Resources</value>
   </data>
+  <data name="Downloads" xml:space="preserve">
+    <value>Downloads</value>
+  </data>
   <data name="Review" xml:space="preserve">
     <value>Review</value>
+  </data>
+  <data name="Reviews" xml:space="preserve">
+    <value>Reviews</value>
   </data>
   <data name="Review_Failed" xml:space="preserve">
     <value>Failed to review item</value>
@@ -1285,6 +1303,9 @@
   <data name="Settings_Gallery" xml:space="preserve">
     <value>Gallery Defaults</value>
   </data>
+  <data name="Common_Settings" xml:space="preserve">
+    <value>Common Settings</value>
+  </data>
   <data name="Settings_Gallery_AllowedFileTypes_Help" xml:space="preserve">
     <value>What file types are guests allowed to upload</value>
   </data>
@@ -1453,7 +1474,7 @@
   <data name="Settings_GallerySelector_ShowUsernames_Label" xml:space="preserve">
     <value>Show Gallery Owners</value>
   </data>
-  <data name="Settings_Gotify" xml:space="preserve">
+  <data name="Gotify" xml:space="preserve">
     <value>Gotify</value>
   </data>
   <data name="Settings_Gotify_Enabled_Help" xml:space="preserve">
@@ -1528,7 +1549,7 @@
   <data name="Settings_Languages_Enabled_Label" xml:space="preserve">
     <value>Enabled</value>
   </data>
-  <data name="Settings_Ntfy" xml:space="preserve">
+  <data name="Ntfy" xml:space="preserve">
     <value>Ntfy</value>
   </data>
   <data name="Settings_Ntfy_Enabled_Help" xml:space="preserve">
@@ -1600,7 +1621,7 @@
   <data name="Settings_Slideshow_Share_Slide_Label" xml:space="preserve">
     <value>Include Share Slide</value>
   </data>
-  <data name="Settings_Smtp" xml:space="preserve">
+  <data name="Email" xml:space="preserve">
     <value>Email</value>
   </data>
   <data name="Settings_Smtp_Display_Name_Help" xml:space="preserve">
@@ -1941,5 +1962,38 @@
   </data>
   <data name="Wipe_Data_Success" xml:space="preserve">
     <value>Successfully wiped data</value>
+  </data>
+  <data name="Settings_Trackers" xml:space="preserve">
+    <value>Trackers</value>
+  </data>
+  <data name="Umami" xml:space="preserve">
+    <value>Umami</value>
+  </data>
+  <data name="Settings_Trackers_UmamiEndpoint_Label" xml:space="preserve">
+    <value>Endpoint</value>
+  </data>
+  <data name="Settings_Trackers_UmamiEndpoint_Help" xml:space="preserve">
+    <value>The Umami server address</value>
+  </data>
+  <data name="Settings_Trackers_UmamiWebsiteId_Label" xml:space="preserve">
+    <value>Website Id</value>
+  </data>
+  <data name="Settings_Trackers_UmamiWebsiteId_Help" xml:space="preserve">
+    <value>The Umami website Id</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="QR_Codes" xml:space="preserve">
+    <value>QR Codes</value>
+  </data>
+  <data name="GDPR" xml:space="preserve">
+    <value>GDPR</value>
+  </data>
+  <data name="Layout" xml:space="preserve">
+    <value>Layout</value>
   </data>
 </root>

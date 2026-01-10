@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WeddingShare.Views.Account.Settings
+namespace WeddingShare.Views.Account.Settings.Trackers
 {
-    public class GotifyModel : PageModel
+    public class UmamiModel : PageModel
     {
-        public GotifyModel()
+        public UmamiModel()
         {
         }
 
