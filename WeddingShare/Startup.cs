@@ -134,7 +134,6 @@ namespace WeddingShare
                 try
                 {
                     var baseUrl = settings.GetOrDefault(Settings.Basic.BaseUrl, string.Empty).Result;
-
                     var baseUrlCSP = "http://localhost:* ws://localhost:*";
                     if (!string.IsNullOrWhiteSpace(baseUrl))
                     { 
@@ -142,6 +141,21 @@ namespace WeddingShare
                         {
                             var uri = new Uri(baseUrl);
                             baseUrlCSP = !string.IsNullOrWhiteSpace(uri.Host) ? $"{uri.Scheme}://{uri.Host}:* {(uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase) ? "wss" : "ws")}://{uri.Host}:*" : string.Empty;
+                        }
+                        catch { }
+                    }
+
+                    var umamiUrl = settings.GetOrDefault(Trackers.Umami.Endpoint, string.Empty).Result;
+                    var trackersUrlCSP = string.Empty;
+                    if (!string.IsNullOrWhiteSpace(umamiUrl))
+                    {
+                        try
+                        {
+                            var uri = new Uri(umamiUrl);
+                            if (!string.IsNullOrWhiteSpace(uri.Host))
+                            {
+                                trackersUrlCSP = $"{trackersUrlCSP} {uri.Scheme}://{uri.Host}:*".Trim();
+                            }
                         }
                         catch { }
                     }
@@ -155,7 +169,7 @@ namespace WeddingShare
                         context.Response.Headers.Append("X-Content-Type-Options", config.GetOrDefault(Security.Headers.XContentTypeOptions, "nosniff"));
 
                         context.Response.Headers.Remove("Content-Security-Policy");
-                        context.Response.Headers.Append("Content-Security-Policy", config.GetOrDefault(Security.Headers.CSP, $"default-src 'self' {(!string.IsNullOrWhiteSpace(baseUrlCSP) ? baseUrlCSP : "http://localhost:* ws://localhost:*")}; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://github.com/ https://avatars.githubusercontent.com/ data:; frame-src 'self'; frame-ancestors 'self';"));
+                        context.Response.Headers.Append("Content-Security-Policy", config.GetOrDefault(Security.Headers.CSP, $"default-src 'self' {(!string.IsNullOrWhiteSpace(baseUrlCSP) ? baseUrlCSP : "http://localhost:* ws://localhost:*")}; script-src 'self' 'unsafe-inline' 'unsafe-eval'{(!string.IsNullOrWhiteSpace(trackersUrlCSP) ? $" {trackersUrlCSP}" : string.Empty)}; style-src 'self' 'unsafe-inline'; connect-src 'self' {(!string.IsNullOrWhiteSpace(baseUrlCSP) ? baseUrlCSP : "http://localhost:* ws://localhost:*")}{(!string.IsNullOrWhiteSpace(trackersUrlCSP) ? $" {trackersUrlCSP}" : string.Empty)}; font-src 'self'; img-src 'self' https://github.com/ https://avatars.githubusercontent.com/ data:; frame-src 'self'; frame-ancestors 'self';"));
 
                         await next();
                     });
