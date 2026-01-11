@@ -60,6 +60,12 @@ namespace WeddingShare.Helpers.Dbup
                     Value = isDemoMode.ToString()
                 });
 
+                await database.SetSetting(new SettingModel()
+                {
+                    Id = Settings.Themes.Default.ToUpper(),
+                    Value = config.GetOrDefault(Settings.Themes.Default, Themes.AutoDetect.ToString())
+                });
+
                 var username = !isDemoMode ? config.GetOrDefault(Settings.Account.Admin.Username, config.GetOrDefault(Settings.Account.Owner.Username, "admin")).ToLower() : "demo";
                 var ownerAccount = new UserModel() 
                 {
