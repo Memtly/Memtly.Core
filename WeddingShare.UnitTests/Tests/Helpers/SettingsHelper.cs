@@ -182,13 +182,10 @@ namespace WeddingShare.UnitTests.Tests.Helpers
         public async Task SettingsHelper_GetReleaseVersion(string version, int places, string expected)
         {
             var environment = Substitute.For<IEnvironmentWrapper>();
-            var configuration = ConfigurationHelper.MockConfiguration(new Dictionary<string, string?>()
-            {
-                { "Release:Version", version },
-            });
+            var configuration = ConfigurationHelper.MockConfiguration(new Dictionary<string, string?>());
             var config = new ConfigHelper(environment, configuration, Substitute.For<ILogger<ConfigHelper>>());
             
-            var actual = await new SettingsHelper(_database, config, _logger).GetReleaseVersion(places);
+            var actual = new SettingsHelper(_database, config, _logger).GetReleaseVersion(version, places);
             Assert.That(actual, Is.EqualTo(expected));
         }
     }

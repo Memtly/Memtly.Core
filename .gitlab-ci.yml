@@ -34,6 +34,7 @@ test:
     - docker info
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker buildx create --use --name $BUILD_BUILDER_NAME --driver docker-container || docker buildx use $BUILD_BUILDER_NAME
+    - export VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" YourProject.csproj)
 
 .docker_buildx_dockerhub: &docker_buildx_dockerhub
   image: docker:29
@@ -41,6 +42,7 @@ test:
     - docker info
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
     - docker buildx create --use --name $BUILD_BUILDER_NAME --driver docker-container || docker buildx use $BUILD_BUILDER_NAME
+    - export VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" YourProject.csproj)
 
 #
 #   PRE-RELEASE
@@ -53,7 +55,7 @@ push_release:
     - /^(feature\/|release\/).+/
     - /^(prerel|rc|release)-.+/
   script:
-    - docker buildx build --tag $CI_REGISTRY_IMAGE:pre_release --platform $BUILD_PLATFORMS --push -f $BUILD_DOCKERFILE .
+    - docker buildx build --tag $CI_REGISTRY_IMAGE:rc-$VERSION --tag $CI_REGISTRY_IMAGE:pre_release --platform $BUILD_PLATFORMS --push -f $BUILD_DOCKERFILE .
   needs:
     - test
 
@@ -68,7 +70,7 @@ push_latest:
     - main
     - master
   script:
-    - docker buildx build --tag $CI_REGISTRY_IMAGE:latest --platform $BUILD_PLATFORMS --push -f $BUILD_DOCKERFILE .
+    - docker buildx build --tag $CI_REGISTRY_IMAGE:$VERSION --platform $BUILD_PLATFORMS --push -f $BUILD_DOCKERFILE .
   needs:
     - test
     
@@ -82,7 +84,7 @@ push_tag:
   only:
     - tags
   script:
-    - docker buildx build --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME --platform $BUILD_PLATFORMS --push -f $BUILD_DOCKERFILE .
+    - docker buildx build --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME --tag $CI_REGISTRY_IMAGE:latest --platform $BUILD_PLATFORMS --push -f $BUILD_DOCKERFILE .
   needs:
     - test
 

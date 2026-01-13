@@ -40,7 +40,7 @@ namespace WeddingShare
             var dbHelper = services.AddDatabaseConfiguration(config, _loggerFactory);
 
             var settings = new SettingsHelper(dbHelper, config, _loggerFactory.CreateLogger<SettingsHelper>());
-            _logger.LogInformation($"Release Version - '{settings.GetReleaseVersion(4).Result}'");
+            _logger.LogInformation($"Release Version - '{settings.GetReleaseVersion(4)}'");
 
             services.AddNotificationConfiguration(settings);
             services.AddLocalizationConfiguration(settings);

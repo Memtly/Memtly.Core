@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using WeddingShare.Constants;
 using WeddingShare.Helpers.Database;
 using WeddingShare.Models.Database;
@@ -17,7 +18,7 @@ namespace WeddingShare.Helpers
         Task<DateTime?> GetOrDefault(string key, DateTime? defaultValue, int? galleryId = null);
         Task<SettingModel?> SetSetting(string key, string value, int? galleryId = null);
         Task<bool> DeleteSetting(string key, int? galleryId = null);
-        Task<string> GetReleaseVersion(int places = 3);
+        string GetReleaseVersion(int places = 3);
     }
 
     public class SettingsHelper : ISettingsHelper
@@ -208,11 +209,16 @@ namespace WeddingShare.Helpers
             return await _databaseHelper.DeleteAllSettings(galleryId);
         }
 
-        public async Task<string> GetReleaseVersion(int places = 3)
+        public string GetReleaseVersion(int places = 3)
+        {
+            return GetReleaseVersion(Assembly.GetExecutingAssembly()?.GetName()?.Version?.ToString() ?? "1.0.0.0", places);
+        }
+
+        public string GetReleaseVersion(string version, int places = 3)
         {
             try
             {
-                var versionNumberParts = (await this.GetOrDefault(Release.Version, "1.0.0"))?.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                var versionNumberParts = version?.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                 if (versionNumberParts != null && versionNumberParts.Length > 0)
                 {
                     var builder = new StringBuilder();
@@ -235,7 +241,7 @@ namespace WeddingShare.Helpers
             {
                 _logger.LogError(ex, $"Failed to build release version string - {ex?.Message}");
             }
-                
+
             return "1.0.0";
         }
     }
