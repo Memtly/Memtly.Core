@@ -11,15 +11,17 @@
     <table class="table table-rounded-border">
         <tr>
             <th class="col-2 d-none d-md-table-cell">@_localizer["Timestamp"].Value</th>
-            <th class="col-3 col-md-2">@_localizer["User"].Value</th>
-            <th class="col-9 col-md-8">@_localizer["Action"].Value</th>
+            <th class="col-1 d-none d-md-table-cell">@_localizer["Severity"].Value</th>
+            <th class="col-2 col-md-1">@_localizer["User"].Value</th>
+            <th class="col-8 col-md-8">@_localizer["Action"].Value</th>
         </tr>
-        @foreach (var user in Model.OrderByDescending(x => x.Timestamp))
+        @foreach (var log in Model.OrderByDescending(x => x.Timestamp))
         {
             <tr>
-                <td class="d-none d-md-table-cell">@user.Timestamp</td>
-                <td class="text-capitalize">@user.Username</td>
-                <td>@user.Message</td>
+                <td class="d-none d-md-table-cell">@log.Timestamp</td>
+                <td class="text-capitalize">@log.Severity</td>
+                <td class="text-capitalize">@log.Username</td>
+                <td>@log.Message</td>
             </tr>
         }
     </table>

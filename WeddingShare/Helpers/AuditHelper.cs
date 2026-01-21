@@ -1,4 +1,5 @@
-﻿using WeddingShare.Helpers.Database;
+﻿using WeddingShare.Enums;
+using WeddingShare.Helpers.Database;
 using WeddingShare.Models.Database;
 
 namespace WeddingShare.Helpers
@@ -6,6 +7,7 @@ namespace WeddingShare.Helpers
     public interface IAuditHelper
     {
         Task<bool> LogAction(string? user, string? action);
+        Task<bool> LogAction(string? user, string? action, AuditSeverity severity);
     }
 
     public class AuditHelper : IAuditHelper
@@ -21,6 +23,11 @@ namespace WeddingShare.Helpers
 
         public async Task<bool> LogAction(string? user, string? action)
         {
+            return await LogAction(user, action, AuditSeverity.Information);
+        }
+
+        public async Task<bool> LogAction(string? user, string? action, AuditSeverity severity)
+        {
             if (!string.IsNullOrWhiteSpace(user) && !string.IsNullOrWhiteSpace(action))
             { 
                 try 
@@ -28,7 +35,8 @@ namespace WeddingShare.Helpers
                     return await _databaseHelper.AddAuditLog(new AuditLogModel()
                     {
                         Username = user,
-                        Message = action
+                        Message = action,
+                        Severity = severity
                     }) != null;
                 }
                 catch (Exception ex) 

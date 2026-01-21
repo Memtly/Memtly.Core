@@ -95,8 +95,8 @@ namespace WeddingShare.Helpers.Database
         #endregion
 
         #region Audit
-        Task<IEnumerable<AuditLogModel>?> GetAuditLogs(string term = "", int limit = 100);
-        Task<IEnumerable<AuditLogModel>?> GetUserAuditLogs(int userId, string term = "", int limit = 100);
+        Task<IEnumerable<AuditLogModel>?> GetAuditLogs(string term = "", AuditSeverity severity = AuditSeverity.Information, int limit = 100);
+        Task<IEnumerable<AuditLogModel>?> GetUserAuditLogs(int userId, string term = "", AuditSeverity severity = AuditSeverity.Information, int limit = 100);
         Task<AuditLogModel?> AddAuditLog(AuditLogModel model);
         #endregion
     }

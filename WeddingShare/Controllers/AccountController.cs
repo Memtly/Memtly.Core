@@ -128,7 +128,7 @@ namespace WeddingShare.Controllers
                             }
                             else
                             {
-                                await _audit.LogAction(user?.Username, _localizer["Audit_UserLoggedIn"].Value);
+                                await _audit.LogAction(user?.Username, _localizer["Audit_UserLoggedIn"].Value, AuditSeverity.Debug);
 
                                 return Json(new LoginResponse(await this.SetUserClaims(this.HttpContext, user)));
                             }
@@ -253,7 +253,7 @@ namespace WeddingShare.Controllers
                                     });
                                 }
 
-                                await _audit.LogAction(user.Username, $"{_localizer["Audit_Account_Registered"].Value}");
+                                await _audit.LogAction(user.Username, $"{_localizer["Audit_Account_Registered"].Value}", AuditSeverity.Debug);
                             }
                             catch (Exception ex)
                             {
@@ -295,7 +295,7 @@ namespace WeddingShare.Controllers
                                 await _database.SetUserSecret(user.Id, PasswordHelper.GenerateSecretCode());
                                 await CreateDefaultUserGallery(user);
 
-                                await _audit.LogAction(user.Username, $"{_localizer["Audit_Email_Verified"].Value}");
+                                await _audit.LogAction(user.Username, $"{_localizer["Audit_Email_Verified"].Value}", AuditSeverity.Debug);
 
                                 if ((await _database.EditUser(user))?.State == user.State && await this.SetUserClaims(this.HttpContext, user))
                                 {
@@ -353,7 +353,7 @@ namespace WeddingShare.Controllers
                                 }
                             });
 
-                        await _audit.LogAction(user.Username, $"{_localizer["Audit_Forgot_Password"].Value}");
+                        await _audit.LogAction(user.Username, $"{_localizer["Audit_Forgot_Password"].Value}", AuditSeverity.Verbose);
 
                         return Json(new { success = true });
                     }
@@ -451,7 +451,7 @@ namespace WeddingShare.Controllers
                                                 }
                                             });
 
-                                        await _audit.LogAction(user.Username, $"{_localizer["Audit_Password_Reset"].Value}");
+                                        await _audit.LogAction(user.Username, $"{_localizer["Audit_Password_Reset"].Value}", AuditSeverity.Debug);
 
                                         return Json(new { success = true, username = user.Username, mfa = !string.IsNullOrWhiteSpace(user.MultiFactorToken) });
                                     }
@@ -487,7 +487,7 @@ namespace WeddingShare.Controllers
                         {
                             if (user.FailedLogins > 0)
                             {
-                                await _audit.LogAction(user?.Username, _localizer["Audit_FailedLoginAttemptReset"].Value);
+                                await _audit.LogAction(user?.Username, _localizer["Audit_FailedLoginAttemptReset"].Value, AuditSeverity.Warning);
                                 await _database.ResetLockoutCount(user.Id);
                             }
 
@@ -499,13 +499,13 @@ namespace WeddingShare.Controllers
                                 var tfa = new TwoFactorAuth(await _settings.GetOrDefault(Settings.Basic.Title, "WeddingShare"));
                                 if (tfa.VerifyCode(user.MultiFactorToken, model.Code))
                                 {
-                                    await _audit.LogAction(user?.Username, _localizer["Audit_MultiFactorPassed"].Value);
+                                    await _audit.LogAction(user?.Username, _localizer["Audit_MultiFactorPassed"].Value, AuditSeverity.Debug);
                                     return Json(new { success = await this.SetUserClaims(this.HttpContext, user) });
                                 }
                             }
                             else
                             {
-                                await _audit.LogAction(user?.Username, _localizer["Audit_UserLoggedIn"].Value);
+                                await _audit.LogAction(user?.Username, _localizer["Audit_UserLoggedIn"].Value, AuditSeverity.Debug);
                                 return Json(new { success = await this.SetUserClaims(this.HttpContext, user) });
                             }
                         }
@@ -529,7 +529,7 @@ namespace WeddingShare.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Logout()
         {
-            await _audit.LogAction(User?.Identity?.Name, _localizer["Audit_LoggedOut"].Value);
+            await _audit.LogAction(User?.Identity?.Name, _localizer["Audit_LoggedOut"].Value, AuditSeverity.Verbose);
             await this.HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Account");
         }
@@ -592,7 +592,7 @@ namespace WeddingShare.Controllers
                         }
                         else if (model.ActiveTab == AccountTabs.Audit)
                         {
-                            model.AuditLogs = await _database.GetAuditLogs(string.Empty, 10);
+                            model.AuditLogs = await _database.GetAuditLogs(string.Empty, AuditSeverity.Information, 10);
                         }
                     }
                     else
@@ -807,42 +807,6 @@ namespace WeddingShare.Controllers
             return PartialView("~/Views/Account/Partials/SettingsList.cshtml", model);
         }
 
-        [HttpPost]
-        [RequiresRole(AuditPermission = AuditPermissions.View)]
-        public async Task<IActionResult> AuditList(string term = "", int limit = 10)
-        {
-            if (User?.Identity == null || !User.Identity.IsAuthenticated)
-            {
-                return Redirect("/");
-            }
-
-            IEnumerable<AuditLogModel>? result = null;
-
-            try
-            {
-                var user = await _database.GetUser(User.Identity.GetUserId());
-                if (user != null)
-                {
-                    limit = limit >= 5 ? limit : 5;
-
-                    if (User?.Identity?.IsPrivilegedUser() ?? false)
-                    {
-                        result = await _database.GetAuditLogs(term, limit);
-                    }
-                    else
-                    {
-                        result = await _database.GetUserAuditLogs(user.Id, term, limit);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{_localizer["Audit_List_Failed"].Value} - {ex?.Message}");
-            }
-
-            return PartialView("~/Views/Account/Partials/AuditList.cshtml", result ?? new List<AuditLogModel>());
-        }
-
         [HttpGet]
         [RequiresRole(SettingsPermission = SettingsPermissions.Gallery_Update)]
         [Route("Account/Settings/{galleryId}")]
@@ -895,7 +859,7 @@ namespace WeddingShare.Controllers
                                 review.State = GalleryItemState.Approved;
                                 await _database.EditGalleryItem(review);
 
-                                await _audit.LogAction(User?.Identity?.Name, $"'{review.Title}' {_localizer["Audit_ItemApprovedInGallery"].Value} '{gallery.Identifier}'");
+                                await _audit.LogAction(User?.Identity?.Name, $"'{review.Title}' {_localizer["Audit_ItemApprovedInGallery"].Value} '{gallery.Identifier}'", AuditSeverity.Verbose);
                             }
                             else if (action == ReviewAction.REJECTED)
                             {
@@ -913,7 +877,7 @@ namespace WeddingShare.Controllers
 
                                 await _database.DeleteGalleryItem(review);
 
-                                await _audit.LogAction(User?.Identity?.Name, $"'{review.Title}' {_localizer["Audit_ItemRejectedInGallery"].Value} '{gallery.Identifier}'");
+                                await _audit.LogAction(User?.Identity?.Name, $"'{review.Title}' {_localizer["Audit_ItemRejectedInGallery"].Value} '{gallery.Identifier}'", AuditSeverity.Verbose);
                             }
                             else if (action == ReviewAction.UNKNOWN)
                             {
@@ -964,7 +928,7 @@ namespace WeddingShare.Controllers
                                         review.State = GalleryItemState.Approved;
                                         await _database.EditGalleryItem(review);
 
-                                        await _audit.LogAction(User?.Identity?.Name, _localizer["Audit_BulkApproveReviews"].Value);
+                                        await _audit.LogAction(User?.Identity?.Name, _localizer["Audit_BulkApproveReviews"].Value, AuditSeverity.Verbose);
                                     }
                                     else if (action == ReviewAction.REJECTED)
                                     {
@@ -982,7 +946,7 @@ namespace WeddingShare.Controllers
 
                                         await _database.DeleteGalleryItem(review);
 
-                                        await _audit.LogAction(User?.Identity?.Name, _localizer["Audit_BulkRejectReviews"].Value);
+                                        await _audit.LogAction(User?.Identity?.Name, _localizer["Audit_BulkRejectReviews"].Value, AuditSeverity.Verbose);
                                     }
                                     else if (action == ReviewAction.UNKNOWN)
                                     {
@@ -1027,7 +991,7 @@ namespace WeddingShare.Controllers
                                 var gallery = await _database.AddGallery(model);
                                 if (gallery != null)
                                 {
-                                    await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_CreatedGallery"].Value} '{model?.Name}'");
+                                    await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_CreatedGallery"].Value} '{model?.Name}'", AuditSeverity.Debug);
 
                                     return Json(new { success = string.Equals(model?.Name, gallery?.Name, StringComparison.OrdinalIgnoreCase) });
                                 }
@@ -1082,7 +1046,7 @@ namespace WeddingShare.Controllers
                                 gallery = await _database.EditGallery(gallery);
                                 if (gallery != null)
                                 {
-                                    await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_UpdatedGallery"].Value} '{model?.Name}'");
+                                    await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_UpdatedGallery"].Value} '{model?.Name}'", AuditSeverity.Debug);
                                 
                                     return Json(new { success = string.Equals(model?.Name, gallery?.Name, StringComparison.OrdinalIgnoreCase) });
                                 }
@@ -1144,7 +1108,7 @@ namespace WeddingShare.Controllers
                             }
                         }
                             
-                        await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_WipedGallery"].Value} '{gallery?.Name}'");
+                        await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_WipedGallery"].Value} '{gallery?.Name}'", AuditSeverity.Warning);
 
                         return Json(new { success = await _database.WipeGallery(gallery) });
                     }
@@ -1190,7 +1154,7 @@ namespace WeddingShare.Controllers
                         }
                     }
                         
-                    await _audit.LogAction(User?.Identity?.Name, _localizer["Audit_WipeAllGalleries"].Value);
+                    await _audit.LogAction(User?.Identity?.Name, _localizer["Audit_WipeAllGalleries"].Value, AuditSeverity.Warning);
 
                     return Json(new { success = await _database.WipeAllGalleries() });
                 }
@@ -1222,7 +1186,7 @@ namespace WeddingShare.Controllers
                             await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"The destructive action 'Delete' was performed on gallery '{gallery.Name}'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                         }
 
-                        await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_DeletedGallery"].Value} '{gallery?.Name} ({gallery?.OwnerName})'");
+                        await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_DeletedGallery"].Value} '{gallery?.Name} ({gallery?.OwnerName})'", AuditSeverity.Warning);
 
                         return Json(new { success = await _database.DeleteGallery(gallery) });
                     }
@@ -1257,7 +1221,7 @@ namespace WeddingShare.Controllers
                             var photoPath = Path.Combine(UploadsDirectory, gallery.Identifier, photo.Title);
                             _fileHelper.DeleteFileIfExists(photoPath);
 
-                            await _audit.LogAction(User?.Identity?.Name, $"'{photo?.Title}' {_localizer["Audit_ItemDeletedInGallery"].Value} '{gallery?.Name}'");
+                            await _audit.LogAction(User?.Identity?.Name, $"'{photo?.Title}' {_localizer["Audit_ItemDeletedInGallery"].Value} '{gallery?.Name}'", AuditSeverity.Warning);
 
                             return Json(new { success = await _database.DeleteGalleryItem(photo) });
                         }
@@ -1292,7 +1256,7 @@ namespace WeddingShare.Controllers
                             model.Password = _encryption.Encrypt(model.Password, model.Username.ToLower());
                             model.CPassword = string.Empty;
 
-                            await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_CreatedNewUser"].Value} '{model?.Username}'");
+                            await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_CreatedNewUser"].Value} '{model?.Username}'", AuditSeverity.Verbose);
 
                             return Json(new { success = string.Equals(model?.Username, (await _database.AddUser(model))?.Username, StringComparison.OrdinalIgnoreCase) });
                         }
@@ -1335,7 +1299,7 @@ namespace WeddingShare.Controllers
                                 user.Level = model.Level;
                             }
                          
-                            await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_UpdatedUser"].Value} '{user?.Username}'");
+                            await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_UpdatedUser"].Value} '{user?.Username}'", AuditSeverity.Verbose);
 
                             return Json(new { success = string.Equals(user?.Username, (await _database.EditUser(user))?.Username, StringComparison.OrdinalIgnoreCase) });
                         }
@@ -1373,7 +1337,7 @@ namespace WeddingShare.Controllers
                         {
                             user.Password = _encryption.Encrypt(model.Password, user.Username.ToLower());
 
-                            await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_UpdatedUser"].Value} '{user?.Username}'");
+                            await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_UpdatedUser"].Value} '{user?.Username}'", AuditSeverity.Verbose);
 
                             return Json(new { success = await _database.ChangePassword(user) });
                         }
@@ -1409,7 +1373,7 @@ namespace WeddingShare.Controllers
                     {
                         user.State = AccountState.Frozen;
 
-                        await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_FrozeUser"].Value} '{user?.Username}'");
+                        await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_FrozeUser"].Value} '{user?.Username}'", AuditSeverity.Information);
 
                         return Json(new { success = (await _database.EditUser(user))?.State == user.State });
                     }
@@ -1440,7 +1404,7 @@ namespace WeddingShare.Controllers
                     {
                         user.State = AccountState.Active;
 
-                        await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_UnfrozeUser"].Value} '{user?.Username}'");
+                        await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_UnfrozeUser"].Value} '{user?.Username}'", AuditSeverity.Information);
 
                         return Json(new { success = (await _database.EditUser(user))?.State == user.State });
                     }
@@ -1474,7 +1438,7 @@ namespace WeddingShare.Controllers
                         await _database.SetUserSecret(user.Id, PasswordHelper.GenerateSecretCode());
                         await CreateDefaultUserGallery(user);
 
-                        await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_ActivateUser"].Value} '{user?.Username}'");
+                        await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_ActivateUser"].Value} '{user?.Username}'", AuditSeverity.Information);
 
                         return Json(new { success = (await _database.EditUser(user))?.State == user.State });
                     }
@@ -1520,7 +1484,7 @@ namespace WeddingShare.Controllers
                             await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"The destructive action 'Delete' was performed on user '{user.Username}'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                         }
 
-                        await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_DeletedUser"].Value} '{user?.Username}'");
+                        await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_DeletedUser"].Value} '{user?.Username}'", AuditSeverity.Warning);
 
                         return Json(new { success = await _database.DeleteUser(user) });
                     }
@@ -1604,7 +1568,7 @@ namespace WeddingShare.Controllers
 
                             _fileHelper.DeleteFileIfExists(dbExport);
 
-                            await _audit.LogAction(User?.Identity?.Name, _localizer["Audit_ExportedBackup"].Value);
+                            await _audit.LogAction(User?.Identity?.Name, _localizer["Audit_ExportedBackup"].Value, AuditSeverity.Information);
 
                             return response;
                         }
@@ -1669,7 +1633,7 @@ namespace WeddingShare.Controllers
                                     var dbImport = Path.Combine(importDir, "WeddingShare.bak");
                                     var imported = await _database.Import($"Data Source={dbImport}");
 
-                                    await _audit.LogAction(User?.Identity?.Name, _localizer["Audit_ImportedBackup"].Value);
+                                    await _audit.LogAction(User?.Identity?.Name, _localizer["Audit_ImportedBackup"].Value, AuditSeverity.Information);
 
                                     return Json(new { success = imported });
                                 }
@@ -1736,7 +1700,7 @@ namespace WeddingShare.Controllers
                                     if (item?.Id > 0)
                                     {
                                         uploaded++;
-                                        await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_CustomResourceUploaded"].Value} '{item?.FileName}'");
+                                        await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_CustomResourceUploaded"].Value} '{item?.FileName}'", AuditSeverity.Verbose);
                                     }
                                 }
                             }
@@ -1784,7 +1748,7 @@ namespace WeddingShare.Controllers
                                 _fileHelper.DeleteFileIfExists(Path.Combine(CustomResourcesDirectory, resource.FileName));
                             }
 
-                            await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_CustomResourceDeleted"].Value} '{resource?.FileName}'");
+                            await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_CustomResourceDeleted"].Value} '{resource?.FileName}'", AuditSeverity.Warning);
 
                             Response.StatusCode = (int)HttpStatusCode.OK;
 
@@ -1825,7 +1789,7 @@ namespace WeddingShare.Controllers
                                     _fileHelper.DeleteFileIfExists(Path.Combine(CustomResourcesDirectory, resource.FileName));
                                 }
 
-                                await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_CustomResourceDeleted"].Value} '{resource?.FileName}'");
+                                await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_CustomResourceDeleted"].Value} '{resource?.FileName}'", AuditSeverity.Warning);
                             }
                         }
                     }
@@ -1907,7 +1871,7 @@ namespace WeddingShare.Controllers
                                     }
                                     else
                                     {
-                                        await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_SettingsUpdated"].Value} '{(!string.IsNullOrWhiteSpace(gallery?.Name) ? gallery.Name : "Gallery Defaults")}' - '{setting?.Id}'='{setting?.Value}'");
+                                        await _audit.LogAction(User?.Identity?.Name, $"{_localizer["Audit_SettingsUpdated"].Value} '{(!string.IsNullOrWhiteSpace(gallery?.Name) ? gallery.Name : "Gallery Defaults")}' - '{setting?.Id}'='{setting?.Value}'", AuditSeverity.Information);
                                     }
                                 }
                                 catch (Exception ex)
@@ -1980,7 +1944,7 @@ namespace WeddingShare.Controllers
                     }
                 }
 
-                await _audit.LogAction(user?.Username, _localizer["Audit_FailedLoginAttemptDetected"].Value);
+                await _audit.LogAction(user?.Username, _localizer["Audit_FailedLoginAttemptDetected"].Value, AuditSeverity.Warning);
 
                 return true;
             }

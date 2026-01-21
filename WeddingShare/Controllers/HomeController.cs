@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using WeddingShare.Constants;
+using WeddingShare.Enums;
 using WeddingShare.Extensions;
 using WeddingShare.Helpers;
 using WeddingShare.Helpers.Database;
@@ -121,7 +122,7 @@ namespace WeddingShare.Controllers
             {
                 var ipAddress = Request.HttpContext.TryGetIpAddress();
 
-                return Json(new { success = await _audit.LogAction("Visitor", $"{_localizer["Audit_CookieConsentApproved"].Value}: {ipAddress}") });
+                return Json(new { success = await _audit.LogAction("Visitor", $"{_localizer["Audit_CookieConsentApproved"].Value}: {ipAddress}", AuditSeverity.Verbose) });
             }
             catch (Exception ex)
             {

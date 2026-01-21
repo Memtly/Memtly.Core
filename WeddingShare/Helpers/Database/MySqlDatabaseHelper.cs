@@ -1963,15 +1963,16 @@ namespace WeddingShare.Helpers.Database
         #endregion
 
         #region Audit Logs
-        public async Task<IEnumerable<AuditLogModel>?> GetAuditLogs(string term = "", int limit = 100)
+        public async Task<IEnumerable<AuditLogModel>?> GetAuditLogs(string term = "", AuditSeverity severity = AuditSeverity.Information, int limit = 100)
         {
             List<AuditLogModel> result = new List<AuditLogModel>();
 
             using (var conn = await GetConnection())
             {
-                var cmd = CreateCommand($"SELECT * FROM `audit_logs` WHERE `username` LIKE @Term OR `message` LIKE @Term ORDER BY `id` DESC LIMIT @Limit;", conn);
+                var cmd = CreateCommand($"SELECT * FROM `audit_logs` WHERE (`username` LIKE @Term OR `message` LIKE @Term) AND `severity` >= @Severity ORDER BY `id` DESC LIMIT @Limit;", conn);
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("Term", $"%{term?.Trim()}%");
+                cmd.Parameters.AddWithValue("Severity", (int)severity);
                 cmd.Parameters.AddWithValue("Limit", limit);
 
                 await conn.OpenAsync();
@@ -1985,7 +1986,7 @@ namespace WeddingShare.Helpers.Database
             return result;
         }
 
-        public async Task<IEnumerable<AuditLogModel>?> GetUserAuditLogs(int userId, string term = "", int limit = 100)
+        public async Task<IEnumerable<AuditLogModel>?> GetUserAuditLogs(int userId, string term = "", AuditSeverity severity = AuditSeverity.Information, int limit = 100)
         {
             List<AuditLogModel> result = new List<AuditLogModel>();
 
@@ -1993,10 +1994,11 @@ namespace WeddingShare.Helpers.Database
 
             using (var conn = await GetConnection())
             {
-                var cmd = CreateCommand($"SELECT * FROM `audit_logs` WHERE `username`=@Username AND `message` LIKE @Term ORDER BY `id` DESC LIMIT @Limit;", conn);
+                var cmd = CreateCommand($"SELECT * FROM `audit_logs` WHERE `username`=@Username AND `message` LIKE @Term AND `severity` >= @Severity ORDER BY `id` DESC LIMIT @Limit;", conn);
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("Username", username);
                 cmd.Parameters.AddWithValue("Term", $"%{term?.Trim()}%");
+                cmd.Parameters.AddWithValue("Severity", (int)severity);
                 cmd.Parameters.AddWithValue("Limit", limit);
 
                 await conn.OpenAsync();
@@ -2016,9 +2018,10 @@ namespace WeddingShare.Helpers.Database
 
             using (var conn = await GetConnection())
             {
-                var cmd = CreateCommand($"INSERT INTO `audit_logs` (`message`, `username`, `timestamp`) VALUES (@Message, @Username, @Timestamp); SELECT * FROM `audit_logs` WHERE `id`=LAST_INSERT_ID();", conn);
-                cmd.Parameters.AddWithValue("Message", model.Message);
+                var cmd = CreateCommand($"INSERT INTO `audit_logs` (`username`, `message`, `severity`, `timestamp`) VALUES (@Username, @Message, @Severity, @Timestamp); SELECT * FROM `audit_logs` WHERE `id`=LAST_INSERT_ID();", conn);
                 cmd.Parameters.AddWithValue("Username", model.Username?.ToLower());
+                cmd.Parameters.AddWithValue("Message", model.Message);
+                cmd.Parameters.AddWithValue("Severity", model.Severity);
                 cmd.Parameters.AddWithValue("Timestamp", DateTime.UtcNow);
                 cmd.CommandType = CommandType.Text;
 
@@ -2324,8 +2327,9 @@ namespace WeddingShare.Helpers.Database
                             items.Add(new AuditLogModel()
                             {
                                 Id = id,
-                                Message = !await reader.IsDBNullAsync("message") ? reader.GetString("message") : string.Empty,
                                 Username = !await reader.IsDBNullAsync("username") ? reader.GetString("username") : string.Empty,
+                                Message = !await reader.IsDBNullAsync("message") ? reader.GetString("message") : string.Empty,
+                                Severity = !await reader.IsDBNullAsync("severity") ? (AuditSeverity)reader.GetInt32("severity") : AuditSeverity.Information,
                                 Timestamp = !await reader.IsDBNullAsync("timestamp") ? reader.GetDateTime("timestamp") : default(DateTime)
                             });
                         }
