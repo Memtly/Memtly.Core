@@ -17,8 +17,6 @@ namespace WeddingShare.Helpers.Database
         {
             _db = db;
             _logger = logger;
-
-            _logger.LogInformation($"Using EntityFramework");
         }
 
         #region Gallery
