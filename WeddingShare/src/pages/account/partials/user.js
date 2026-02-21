@@ -8,6 +8,7 @@ function init() {
 }
 
 function bindEventHandlers() {
+    bindSearchBox();
     bindAddUserButton();
     bindEditUserButton();
     bindChangePasswordButton();
@@ -16,6 +17,12 @@ function bindEventHandlers() {
     bindFreezeUserButton();
     bindUnfreezeUserButton();
     bindDeleteUserButton();
+}
+
+function bindSearchBox() {
+    $(document).off('keyup', 'input#users-search-term').on('keyup', 'input#users-search-term', function (e) {
+        updateUsersList();
+    });
 }
 
 function bindAddUserButton() {
@@ -627,9 +634,13 @@ function bindDeleteUserButton() {
 }
 
 export function updateUsersList() {
+    let term = $('input#users-search-term').val();
+    let limit = 1000;
+    let page = 1;
+
     $.ajax({
         type: 'GET',
-        url: `/Account/UsersList`,
+        url: `/Account/UsersList?term=${term}&limit=${limit}&page=${page}`,
         success: function (data) {
             $('#users-list').html(data);
             bindEventHandlers();

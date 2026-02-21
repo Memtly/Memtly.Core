@@ -9,10 +9,17 @@ function init() {
 }
 
 function bindEventHandlers() {
+    bindSearchBox();
     bindUploadCustomResourceInput();
     bindDeleteCustomResourceButton();
     bindRelinkCustomResourceButton();
     bindBulkDeleteCustomResourceButton();
+}
+
+function bindSearchBox() {
+    $(document).off('keyup', 'input#custom-resources-search-term').on('keyup', 'input#custom-resources-search-term', function (e) {
+        updateCustomResources();
+    });
 }
 
 function bindUploadCustomResourceInput() {
@@ -277,9 +284,13 @@ function bindBulkDeleteCustomResourceButton() {
 }
 
 export function updateCustomResources() {
+    let term = $('input#custom-resources-search-term').val();
+    let limit = 1000;
+    let page = 1;
+
     $.ajax({
         type: 'GET',
-        url: `/Account/CustomResources`,
+        url: `/Account/CustomResources?term=${term}&limit=${limit}&page=${page}`,
         success: function (data) {
             $('#custom-resources').html(data);
             bindEventHandlers();

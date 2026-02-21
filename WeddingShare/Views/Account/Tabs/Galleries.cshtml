@@ -34,6 +34,13 @@
                 </h1>
             </div>
         </div>
+        <div class="row mt-3 mb-4">
+            <div class="col-12 mb-lg-0">
+                <label>@_localizer["SearchTerm_Label"].Value</label>
+                <input id="galleries-search-term" class="form-control" type="text" placeholder="" />
+                <div class="form-text">@_localizer["SearchTerm_Help"].Value</div>
+            </div>
+        </div>
         <div class="row pb-5">
             <div id="galleries-list" class="col-12">
                 <partial name="~/Views/Account/Partials/GalleriesList.cshtml" model="Model?.Galleries" />

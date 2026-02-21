@@ -32,6 +32,13 @@
                 </div>
             </div>
         }
+        <div class="row mt-3 mb-4">
+            <div class="col-12 mb-lg-0">
+                <label>@_localizer["SearchTerm_Label"].Value</label>
+                <input id="custom-resources-search-term" class="form-control" type="text" placeholder="" />
+                <div class="form-text">@_localizer["SearchTerm_Help"].Value</div>
+            </div>
+        </div>
         <div class="row">
             <div id="custom-resources" class="col-12 pb-5">
                 <partial name="~/Views/Account/Partials/CustomResources.cshtml" model="Model?.CustomResources" />

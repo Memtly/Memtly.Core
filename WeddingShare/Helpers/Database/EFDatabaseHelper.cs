@@ -34,10 +34,15 @@ namespace WeddingShare.Helpers.Database
                 );
         }
 
-        public async Task<List<GalleryModel>> GetGalleries(int? userId = null)
+        public async Task<List<GalleryModel>> GetGalleries(int? userId = null, string term = "", int limit = int.MaxValue, int page = 1)
         {
             return await _db.Galleries
-                .Where(g => userId == null || g.UserId == userId)
+                .Where(g => 
+                    (userId == null || g.UserId == userId)
+                    && (string.IsNullOrWhiteSpace(term) || g.Identifier.ToLower().Contains(term.ToLower()) || g.Name.ToLower().Contains(term.ToLower()) || g.User!.Username.ToLower().Contains(term.ToLower()))
+                )
+                .Skip((page - 1) * limit)
+                .Take(limit)
                 .Select(g => new GalleryModel
                 {
                     Id = g.Id,
@@ -496,10 +501,15 @@ namespace WeddingShare.Helpers.Database
                 .CountAsync(u => u.Level != UserLevel.System && u.Username.ToLower().Equals(username.ToLower()) && u.Password.Equals(password))) > 0;
         }
 
-        public async Task<List<UserModel>?> GetAllUsers()
+        public async Task<List<UserModel>?> GetUsers(string term = "", int limit = int.MaxValue, int page = 1)
         {
             return await _db.Users
-                .Where(u => !u.Username.ToLower().Equals(UserAccounts.SystemUser.ToLower()))
+                .Where(u => 
+                    !u.Username.ToLower().Equals(UserAccounts.SystemUser.ToLower())
+                    && (string.IsNullOrWhiteSpace(term) || u.Username.ToLower().Contains(term.ToLower()))
+                )
+                .Skip((page - 1) * limit)
+                .Take(limit)
                 .Select(u => new UserModel()
                 {
                     Id = u.Id,
@@ -768,10 +778,15 @@ namespace WeddingShare.Helpers.Database
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<List<CustomResourceModel>> GetCustomResources(int? userId = null)
+        public async Task<List<CustomResourceModel>> GetCustomResources(int? userId = null, string term = "", int limit = int.MaxValue, int page = 1)
         {
             return await _db.CustomResources
-                .Where(cr => userId == null || cr.UserId == userId)
+                .Where(cr => 
+                    (userId == null || cr.UserId == userId)
+                    && (string.IsNullOrWhiteSpace(term) || cr.Title.ToLower().Contains(term.ToLower()) || cr.Filename.ToLower().Contains(term.ToLower()) || cr.User!.Username.ToLower().Contains(term.ToLower()))
+                )
+                .Skip((page - 1) * limit)
+                .Take(limit)
                 .Select(cr => new CustomResourceModel()
                 {
                     Id = cr.Id,
@@ -1158,62 +1173,6 @@ namespace WeddingShare.Helpers.Database
             await _db.AuditLogs
                 .Where(al => al.CreatedAt < flushDate)
                 .ExecuteDeleteAsync();
-        }
-        #endregion
-
-        #region Backups
-        public async Task<bool> Import(string path)
-        {
-            bool result = false;
-
-            //try
-            //{
-            //    using (var backup = await GetConnection(path))
-            //    using (var conn = await GetConnection())
-            //    {
-            //        await backup.OpenAsync();
-            //        await conn.OpenAsync();
-
-            //        backup.BackupDatabase(conn);
-
-            //        await conn.CloseAsync();
-            //        await backup.CloseAsync();
-
-            //        ClearPool(backup);
-            //    }
-
-            //    result = true;
-            //}
-            //catch { }
-
-            return result;
-        }
-
-        public async Task<bool> Export(string path)
-        {
-            bool result = false;
-
-            //try
-            //{
-            //    using (var conn = await GetConnection())
-            //    using (var backup = await GetConnection(path))
-            //    {
-            //        await conn.OpenAsync();
-            //        await backup.OpenAsync();
-
-            //        conn.BackupDatabase(backup);
-
-            //        await backup.CloseAsync();
-            //        await conn.CloseAsync();
-
-            //        ClearPool(backup);
-            //    }
-
-            //    result = true;
-            //}
-            //catch { }
-
-            return result;
         }
         #endregion
     }

@@ -9,6 +9,7 @@ function init() {
 }
 
 function bindEventHandlers() {
+    bindSearchBox();
     bindGallerySettingsButton();
     bindOpenGalleryButton();
     bindDownloadGalleryButton();
@@ -18,6 +19,12 @@ function bindEventHandlers() {
     bindWipeGalleryButton();
     bindWipeAllGalleriesButton();
     bindDeleteGalleryButton();
+}
+
+function bindSearchBox() {
+    $(document).off('keyup', 'input#galleries-search-term').on('keyup', 'input#galleries-search-term', function (e) {
+        updateGalleryList();
+    });
 }
 
 export function bindGallerySettingsButton() {
@@ -496,9 +503,13 @@ function bindDeleteGalleryButton() {
 }
 
 export function updateGalleryList() {
+    let term = $('input#galleries-search-term').val();
+    let limit = 1000;
+    let page = 1;
+
     $.ajax({
         type: 'GET',
-        url: `/Account/GalleriesList`,
+        url: `/Account/GalleriesList?term=${term}&limit=${limit}&page=${page}`,
         success: function (data) {
             $('#galleries-list').html(data);
             bindEventHandlers();

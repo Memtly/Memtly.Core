@@ -8,7 +8,7 @@ namespace WeddingShare.Helpers.Database
         #region Gallery
         Task<int> GetGalleryCount();
         Task<IDictionary<string, string>> GetGalleryNames(bool showUsernames = false);
-        Task<List<GalleryModel>> GetGalleries(int? userId = null);
+        Task<List<GalleryModel>> GetGalleries(int? userId = null, string term = "", int limit = int.MaxValue, int page = 1);
         Task<int?> GetGalleryId(string identifier);
         Task<int?> GetGalleryIdByName(string name);
         Task<string?> GetGalleryIdentifier(int id);
@@ -46,7 +46,7 @@ namespace WeddingShare.Helpers.Database
 
         #region Users
         Task<bool> ValidateCredentials(string username, string password);
-        Task<List<UserModel>?> GetAllUsers();
+        Task<List<UserModel>?> GetUsers(string term = "", int limit = int.MaxValue, int page = 1);
         Task<UserModel?> GetUser(int id);
         Task<UserModel?> GetUserByUsername(string name);
         Task<UserModel?> GetUserByEmail(string email);
@@ -63,11 +63,6 @@ namespace WeddingShare.Helpers.Database
         Task ResetMultiFactorToDefault();
         #endregion
 
-        #region Backups
-        Task<bool> Import(string path);
-        Task<bool> Export(string path);
-        #endregion
-
         #region Settings
         Task<IEnumerable<SettingModel>?> GetAllSettings(int? galleryId = null);
         Task<SettingModel?> GetSetting(string id, int? gallery = null);
@@ -81,7 +76,7 @@ namespace WeddingShare.Helpers.Database
 
         #region Custom Resources
         Task<CustomResourceModel?> GetCustomResource(int id);
-        Task<List<CustomResourceModel>> GetCustomResources(int? userId = null);
+        Task<List<CustomResourceModel>> GetCustomResources(int? userId = null, string term = "", int limit = int.MaxValue, int page = 1);
         Task<CustomResourceModel?> AddCustomResource(CustomResourceModel model);
         Task<CustomResourceModel?> EditCustomResource(CustomResourceModel model);
         Task<CustomResourceModel?> RelinkCustomResource(CustomResourceModel model);

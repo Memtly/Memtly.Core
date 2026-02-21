@@ -575,7 +575,7 @@ namespace WeddingShare.Controllers
                         }
                         else if (model.ActiveTab == AccountTabs.Users)
                         {
-                            model.Users = await _database.GetAllUsers();
+                            model.Users = await _database.GetUsers();
                         }
                         else if (model.ActiveTab == AccountTabs.Resources)
                         {
@@ -630,7 +630,7 @@ namespace WeddingShare.Controllers
 
         [HttpGet]
         [RequiresRole(GalleryPermission = GalleryPermissions.View)]
-        public async Task<IActionResult> GalleriesList()
+        public async Task<IActionResult> GalleriesList(string term = "", int limit = int.MaxValue, int page = 1)
         {
             if (User?.Identity == null || !User.Identity.IsAuthenticated)
             {
@@ -646,8 +646,8 @@ namespace WeddingShare.Controllers
                 {
                     if (User?.Identity?.IsPrivilegedUser() ?? false)
                     {
-                        result = (await _database.GetGalleries())?.Where(x => !x.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))?.ToList();
-                        if (result != null)
+                        result = (await _database.GetGalleries(null, term, limit, page))?.Where(x => !x.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))?.ToList() ?? new List<GalleryModel>();
+                        if (result != null && (string.IsNullOrEmpty(term) || SystemGalleries.AllGallery.Contains(term, StringComparison.OrdinalIgnoreCase)))
                         {
                             var all = await _database.GetAllGallery();
                             if (all != null)
@@ -658,7 +658,7 @@ namespace WeddingShare.Controllers
                     }
                     else
                     {
-                        result = await _database.GetGalleries(user.Id);
+                        result = await _database.GetGalleries(user.Id, term, limit, page);
                     }
                 }
             }
@@ -706,7 +706,7 @@ namespace WeddingShare.Controllers
 
         [HttpGet]
         [RequiresRole(UserPermission = UserPermissions.View)]
-        public async Task<IActionResult> UsersList()
+        public async Task<IActionResult> UsersList(string term = "", int limit = int.MaxValue, int page = 1)
         {
             if (User?.Identity == null || !User.Identity.IsAuthenticated)
             {
@@ -722,7 +722,7 @@ namespace WeddingShare.Controllers
                 {
                     if (User?.Identity?.IsPrivilegedUser() ?? false)
                     {
-                        result = await _database.GetAllUsers();
+                        result = await _database.GetUsers(term, limit, page);
                     }
                     else 
                     {
@@ -740,7 +740,7 @@ namespace WeddingShare.Controllers
 
         [HttpGet]
         [RequiresRole(CustomResourcePermission = CustomResourcePermissions.View)]
-        public async Task<IActionResult> CustomResources()
+        public async Task<IActionResult> CustomResources(string term = "", int limit = int.MaxValue, int page = 1)
         {
             if (User?.Identity == null || !User.Identity.IsAuthenticated)
             {
@@ -756,11 +756,11 @@ namespace WeddingShare.Controllers
                 {
                     if (User?.Identity?.IsPrivilegedUser() ?? false)
                     {
-                        result = await _database.GetCustomResources();
+                        result = await _database.GetCustomResources(null, term, limit, page);
                     }
                     else
                     { 
-                        result = await _database.GetCustomResources(user.Id);
+                        result = await _database.GetCustomResources(user.Id, term, limit, page);
                     }
                 }
             }
@@ -1698,12 +1698,12 @@ namespace WeddingShare.Controllers
                                         ZipFile.ExtractToDirectory(customResourcesZip, CustomResourcesDirectory, true);
                                     }
 
-                                    var dbImport = Path.Combine(importDir, "WeddingShare.bak");
-                                    var imported = await _database.Import($"Data Source={dbImport}");
+                                    //var dbImport = Path.Combine(importDir, "WeddingShare.bak");
+                                    //var imported = await _database.Import($"Data Source={dbImport}");
 
                                     await _audit.LogAction(User?.Identity?.GetUserId(), _localizer["Audit_ImportedBackup"].Value, AuditSeverity.Information);
 
-                                    return Json(new { success = imported });
+                                    return Json(new { success = true });
                                 }
                             }
                         }
