@@ -1115,7 +1115,7 @@ namespace WeddingShare.Controllers
                                 }
                                 else
                                 {
-                                    return Json(new { success = false, message = _localizer["Failed_Relink_Gallery"].Value });
+                                    return Json(new { success = false, message = _localizer["Gallery_Relink_Failed"].Value });
                                 }
                             }
                             else
@@ -1125,12 +1125,12 @@ namespace WeddingShare.Controllers
                         }
                         else
                         {
-                            return Json(new { success = false, message = _localizer["Failed_Relink_Gallery"].Value });
+                            return Json(new { success = false, message = _localizer["Gallery_Relink_Failed"].Value });
                         }
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, $"{_localizer["Failed_Relink_Gallery"].Value} - {ex?.Message}");
+                        _logger.LogError(ex, $"{_localizer["Gallery_Relink_Failed"].Value} - {ex?.Message}");
                     }
                 }
                 else
@@ -1764,8 +1764,8 @@ namespace WeddingShare.Controllers
                                     {
                                         Title = title,
                                         FileName = fileName,
-                                        UploadedBy = User?.Identity.Name,
-                                        Owner = userId
+                                        Owner = userId,
+                                        OwnerName = User?.Identity.Name
                                     });
 
                                     if (item?.Id > 0)
@@ -1793,6 +1793,63 @@ namespace WeddingShare.Controllers
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, $"{_localizer["CustomResource_Upload_Failed"].Value} - {ex?.Message}");
+                }
+            }
+
+            return Json(new { success = false });
+        }
+
+        [HttpPut]
+        [RequiresRole(CustomResourcePermission = CustomResourcePermissions.Relink)]
+        public async Task<IActionResult> RelinkCustomResource(CustomResourceModel model)
+        {
+            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                if (!string.IsNullOrWhiteSpace(model?.OwnerName))
+                {
+                    try
+                    {
+                        var resource = await _database.GetCustomResource(model.Id);
+                        if (resource != null && User.Identity.CanEdit(CustomResourcePermissions.Relink, resource.Owner))
+                        {
+                            var user = await _database.GetUserByUsername(model.OwnerName);
+                            if (user != null)
+                            {
+                                var originalOwner = resource.OwnerName;
+
+                                resource.Owner = user.Id;
+                                resource.OwnerName = user.Username;
+
+                                resource = await _database.RelinkCustomResource(resource);
+                                if (resource != null)
+                                {
+                                    await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_RelinkedCustomResource"].Value} '{model?.OwnerName}' - {originalOwner} > {user.Username}", AuditSeverity.Debug);
+
+                                    return Json(new { success = string.Equals(model?.OwnerName, resource?.OwnerName, StringComparison.OrdinalIgnoreCase) });
+                                }
+                                else
+                                {
+                                    return Json(new { success = false, message = _localizer["Custom_Resource_Relink_Failed"].Value });
+                                }
+                            }
+                            else
+                            {
+                                return Json(new { success = false, message = _localizer["User_Not_Found"].Value });
+                            }
+                        }
+                        else
+                        {
+                            return Json(new { success = false, message = _localizer["Custom_Resource_Relink_Failed"].Value });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"{_localizer["Custom_Resource_Relink_Failed"].Value} - {ex?.Message}");
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = _localizer["Missing_Username"].Value });
                 }
             }
 

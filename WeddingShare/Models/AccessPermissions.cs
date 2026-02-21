@@ -160,7 +160,8 @@ namespace WeddingShare.Models
                 CustomResourcePermissions.View
                 | CustomResourcePermissions.Create
                 | CustomResourcePermissions.Update
-                | CustomResourcePermissions.Delete;
+                | CustomResourcePermissions.Delete
+                | CustomResourcePermissions.Relink;
             Settings =
                 SettingsPermissions.View
                 | SettingsPermissions.Update

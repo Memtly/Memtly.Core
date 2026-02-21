@@ -129,7 +129,7 @@ namespace WeddingShare.Controllers
                             Collection = "custom_resources",
                             Source = $"/{CustomResourcesDirectory.Remove(_hostingEnvironment.WebRootPath).Replace('\\', '/').TrimStart('/')}/{resource.FileName}",
                             Title = resource.Title,
-                            Author = $"{_localizer["Uploaded_By"].Value}: {(!string.IsNullOrWhiteSpace(resource?.UploadedBy) ? resource.UploadedBy : "Anonymous")}",
+                            Author = $"{_localizer["Uploaded_By"].Value}: {(!string.IsNullOrWhiteSpace(resource?.OwnerName) ? resource.OwnerName : "Anonymous")}",
                             Type = MediaType.Image.ToString().ToLower(),
                             DownloadEnabled = true
                         });

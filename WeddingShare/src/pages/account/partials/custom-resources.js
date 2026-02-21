@@ -11,6 +11,7 @@ function init() {
 function bindEventHandlers() {
     bindUploadCustomResourceInput();
     bindDeleteCustomResourceButton();
+    bindRelinkCustomResourceButton();
     bindBulkDeleteCustomResourceButton();
 }
 
@@ -81,6 +82,73 @@ function bindUploadCustomResourceInput() {
         }
 
         uploadCustomResource(0);
+    });
+}
+
+function bindRelinkCustomResourceButton() {
+    $(document).off('click', '.custom-resource-relink').on('click', '.custom-resource-relink', function (e) {
+        preventDefaults(e);
+
+        if ($(this).attr('disabled') == 'disabled') {
+            return;
+        }
+
+        let id = $(this).data('id');
+        let element = $(this).closest('.custom-resource');
+
+        displayPopup({
+            Title: localization.translate('Custom_Resource_Relink'),
+            Fields: [{
+                Id: 'custom-resource-id',
+                Value: id,
+                Type: 'hidden'
+            }, {
+                Id: 'custom-resource-username',
+                Name: localization.translate('Username'),
+                Value: element.data('custom-resource-username'),
+                Hint: localization.translate('Relink_Username_Hint')
+            }],
+            Buttons: [{
+                Text: localization.translate('Update'),
+                Class: 'btn-primary-2',
+                Callback: function () {
+                    displayLoader(localization.translate('Loading'));
+
+                    let id = $('#popup-modal-field-custom-resource-id').val();
+                    if (id == undefined || id.length == 0) {
+                        displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Custom_Resource_Missing_Id'));
+                        return;
+                    }
+
+                    let username = $('#popup-modal-field-custom-resource-username').val();
+                    if (username == undefined || username.length == 0) {
+                        displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Missing_Username'));
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/Account/RelinkCustomResource',
+                        method: 'PUT',
+                        data: { Id: id, UploadedBy: username }
+                    })
+                        .done(data => {
+                            if (data.success === true) {
+                                updateCustomResources();
+                                displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Custom_Resource_Relink_Success'));
+                            } else if (data.message) {
+                                displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Custom_Resource_Relink_Failed'), [data.message]);
+                            } else {
+                                displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Custom_Resource_Relink_Failed'));
+                            }
+                        })
+                        .fail((xhr, error) => {
+                            displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Custom_Resource_Relink_Failed'), [error]);
+                        });
+                }
+            }, {
+                Text: localization.translate('Close')
+            }]
+        });
     });
 }
 

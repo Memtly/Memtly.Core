@@ -14,10 +14,14 @@
         {
             var resource = Model[i];
 
-            <div class="custom-resource col-12 col-lg-4 mb-1 mb-lg-4">
+            <div class="custom-resource col-12 col-lg-4 mb-1 mb-lg-4" data-custom-resource-username="@resource.OwnerName">
                 <div class="card">
                     <a href="/custom_resources/@resource.FileName" class="media-viewer-item" data-media-viewer-id="@resource.Id" data-media-viewer-index="@i" data-media-viewer-collection="custom_resources" data-media-viewer-type="custom_resource">
                         <img src="/custom_resources/@resource?.FileName" class="review-tile" loading="lazy" />
+                        @if (userPermissions.CustomResources.HasFlag(CustomResourcePermissions.Relink))
+                        {
+                            <i class="fa fa-link custom-resource-relink btn-relink-item d-lg-none" data-id="@resource?.Id" data-name="@resource?.FileName"></i>
+                        }
                         @if (userPermissions.CustomResources.HasFlag(CustomResourcePermissions.Delete))
                         {
                             <i class="fa fa-trash custom-resource-delete btn-delete-item d-lg-none" data-id="@resource?.Id" data-name="@resource?.FileName"></i>

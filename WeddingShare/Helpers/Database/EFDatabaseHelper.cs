@@ -763,7 +763,7 @@ namespace WeddingShare.Helpers.Database
                     Title = cr.Title,
                     FileName = cr.Filename,
                     Owner = cr.UserId ?? 0,
-                    UploadedBy = cr.User!.Username
+                    OwnerName = cr.User!.Username
                 })
                 .FirstOrDefaultAsync();
         }
@@ -778,7 +778,7 @@ namespace WeddingShare.Helpers.Database
                     Title = cr.Title,
                     FileName = cr.Filename,
                     Owner = cr.UserId ?? 0,
-                    UploadedBy = cr.User!.Username
+                    OwnerName = cr.User!.Username
                 })
                 .OrderBy(cr => cr.Title!.ToLower())
                 .ToListAsync();
@@ -812,6 +812,22 @@ namespace WeddingShare.Helpers.Database
             }
 
             return customResource != null ? await GetCustomResource(customResource.Id) : null;
+        }
+
+        public async Task<CustomResourceModel?> RelinkCustomResource(CustomResourceModel model)
+        {
+            var resource = await _db.CustomResources.FirstOrDefaultAsync(x => x.Id == model.Id);
+
+            if (resource != null)
+            {
+                resource.UserId = model.Owner;
+
+                await _db.SaveChangesAsync();
+
+                return await GetCustomResource(resource.Id);
+            }
+
+            return null;
         }
 
         public async Task DeleteCustomResource(CustomResourceModel model)

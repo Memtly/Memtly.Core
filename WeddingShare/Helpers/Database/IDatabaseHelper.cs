@@ -84,6 +84,7 @@ namespace WeddingShare.Helpers.Database
         Task<List<CustomResourceModel>> GetCustomResources(int? userId = null);
         Task<CustomResourceModel?> AddCustomResource(CustomResourceModel model);
         Task<CustomResourceModel?> EditCustomResource(CustomResourceModel model);
+        Task<CustomResourceModel?> RelinkCustomResource(CustomResourceModel model);
         Task DeleteCustomResource(CustomResourceModel model);
         #endregion
 

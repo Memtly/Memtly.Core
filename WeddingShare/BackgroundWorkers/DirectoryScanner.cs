@@ -282,8 +282,8 @@ namespace WeddingShare.BackgroundWorkers
                                 {
                                     Title = Path.GetFileNameWithoutExtension(filename),
                                     FileName = filename,
-                                    UploadedBy = "DirectoryScanner",
-                                    Owner = systemUser!.Id
+                                    Owner = systemUser!.Id,
+                                    OwnerName = "DirectoryScanner"
                                 });
                                 await auditHelper.LogAction($"Directory scanner added new custom resource '{filename}'", AuditSeverity.Verbose);
                             }
