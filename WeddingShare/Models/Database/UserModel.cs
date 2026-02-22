@@ -11,11 +11,13 @@ namespace WeddingShare.Models.Database
         public string? Lastname { get; set; }
         public string? Password { get; set; }
         public string? CPassword { get; set; }
+        public DateTime? PaidUntil { get; set; }
         public int FailedLogins { get; set; }
         public DateTime? LockoutUntil { get; set; }
         public string? MultiFactorToken { get; set; }
         public AccountState State { get; set; } = AccountState.Active;
-        public UserLevel Level { get; set; } = UserLevel.Free;
+        public UserLevel Level { get; set; } = UserLevel.Basic;
+        public PaidTier Tier { get; set; } = PaidTier.None;
 
         public bool IsLockedOut
         {

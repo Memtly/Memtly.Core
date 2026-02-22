@@ -22,7 +22,9 @@ namespace WeddingShare.Extensions
         {
             try
             {
-                var level = ((ClaimsIdentity)identity).Claims.FirstOrDefault(x => string.Equals(ClaimTypes.Role, x.Type, StringComparison.OrdinalIgnoreCase))?.Value;
+                var role = ((ClaimsIdentity)identity).Claims.FirstOrDefault(x => string.Equals(ClaimTypes.Role, x.Type, StringComparison.OrdinalIgnoreCase))?.Value ?? $"{UserLevel.Basic}|{PaidTier.None}";
+                var level = role.Split(new [] { '|' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)[0];
+
                 foreach (UserLevel l in Enum.GetValues(typeof(UserLevel)))
                 {
                     if (l.ToString().Equals(level, StringComparison.OrdinalIgnoreCase))
@@ -33,14 +35,34 @@ namespace WeddingShare.Extensions
             }
             catch { }
 
-            return UserLevel.Free;
+            return UserLevel.Basic;
+        }
+
+        public static PaidTier GetPaidTier(this IIdentity identity)
+        {
+            try
+            {
+                var role = ((ClaimsIdentity)identity).Claims.FirstOrDefault(x => string.Equals(ClaimTypes.Role, x.Type, StringComparison.OrdinalIgnoreCase))?.Value ?? $"{UserLevel.Basic}|{PaidTier.None}";
+                var tier = role.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)[1];
+
+                foreach (PaidTier t in Enum.GetValues(typeof(PaidTier)))
+                {
+                    if (t.ToString().Equals(tier, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return t;
+                    }
+                }
+            }
+            catch { }
+
+            return PaidTier.None;
         }
 
         public static bool IsPrivilegedUser(this IIdentity identity)
         {
             try
             {
-                var userLevel = identity?.GetUserLevel() ?? UserLevel.Free;
+                var userLevel = identity?.GetUserLevel() ?? UserLevel.Basic;
                 
                 return userLevel == UserLevel.Reviewer
                     || userLevel == UserLevel.Moderator
@@ -63,8 +85,8 @@ namespace WeddingShare.Extensions
                 var level = identity.GetUserLevel();
                 switch (level)
                 {
-                    case UserLevel.Free:
-                        return new FreeUserPermissions();
+                    case UserLevel.Basic:
+                        return new BasicUserPermissions();
                     case UserLevel.Paid:
                         return new PaidUserPermissions();
                     case UserLevel.Reviewer:
@@ -88,12 +110,24 @@ namespace WeddingShare.Extensions
             {
                 switch (identity.GetUserLevel())
                 {
-                    case UserLevel.Free:
+                    case UserLevel.Basic:
+                        return 1;
+                    case UserLevel.Paid:
+                        switch (identity.GetPaidTier())
+                        {
+                            case PaidTier.Basic:
+                                return 3;
+                            case PaidTier.Advanced:
+                                return 5;
+                            case PaidTier.Premium:
+                                return 10;
+                            default: 
+                                return 1;
+                        }
                     case UserLevel.Reviewer:
                         return 0;
-                    case UserLevel.Paid:
-                        return 3;
                     case UserLevel.Moderator:
+                        return 3;
                     case UserLevel.Admin:
                         return int.MaxValue;
                 }

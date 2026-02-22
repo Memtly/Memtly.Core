@@ -48,7 +48,9 @@ namespace WeddingShare.EntityFramework.Migrations
                     MultiFactorAuthToken = table.Column<string>(maxLength: 2000, nullable: true),
                     ActionAuthCode = table.Column<string>(maxLength: 2000, nullable: true),
                     Level = table.Column<UserLevel?>(nullable: false),
+                    Tier = table.Column<PaidTier?>(nullable: false),
                     State = table.Column<AccountState?>(nullable: false),
+                    PaidUntil = table.Column<long?>(nullable: true),
                     FailedLoginCount = table.Column<int>(nullable: false),
                     LockoutUntil = table.Column<long?>(nullable: true),
                     CreatedAt = table.Column<long>(nullable: false)

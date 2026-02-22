@@ -35,8 +35,13 @@ namespace WeddingShare.EntityFramework
                 e.Property(x => x.Password).HasMaxLength(500);
                 e.Property(x => x.MultiFactorAuthToken).HasMaxLength(2000);
                 e.Property(x => x.ActionAuthCode).HasMaxLength(2000);
-                e.Property(x => x.Level).HasDefaultValue(UserLevel.Free);
+                e.Property(x => x.Level).HasDefaultValue(UserLevel.Basic);
+                e.Property(x => x.Tier).HasDefaultValue(PaidTier.None);
                 e.Property(x => x.State).HasDefaultValue(AccountState.PendingActivation);
+                e.Property(x => x.PaidUntil).HasConversion(
+                    v => v.HasValue ? v.Value.UtcTicks : (long?)null,
+                    v => v.HasValue ? new DateTimeOffset(v.Value, TimeSpan.Zero) : (DateTimeOffset?)null
+                );
                 e.Property(x => x.FailedLoginCount).HasDefaultValue(0);
                 e.Property(x => x.LockoutUntil).HasConversion(
                     v => v.HasValue ? v.Value.UtcTicks : (long?)null,

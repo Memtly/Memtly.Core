@@ -9,7 +9,7 @@ namespace WeddingShare.Attributes
 {
     public class RequiresRoleAttribute : ActionFilterAttribute
     {
-        public UserLevel User { get; set; } = UserLevel.Free;
+        public UserLevel User { get; set; } = UserLevel.Basic;
         public ReviewPermissions ReviewPermission { get; set; } = ReviewPermissions.None;
         public GalleryPermissions GalleryPermission { get; set; } = GalleryPermissions.None;
         public UserPermissions UserPermission { get; set; } = UserPermissions.None;
@@ -22,7 +22,7 @@ namespace WeddingShare.Attributes
         {
             try
             {
-                var level = filterContext.HttpContext?.User?.Identity?.GetUserLevel() ?? UserLevel.Free;
+                var level = filterContext.HttpContext?.User?.Identity?.GetUserLevel() ?? UserLevel.Basic;
                 if (level < this.User)
                 {
                     filterContext.Result = new RedirectToActionResult("Index", "Error", new { Reason = ErrorCode.Unauthorized }, false);

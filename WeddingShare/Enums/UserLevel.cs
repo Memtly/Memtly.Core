@@ -2,7 +2,7 @@
 {
     public enum UserLevel
     {
-        Free = 0,
+        Basic = 0,
         Paid = 1,
         Reviewer = 2,
         Moderator = 3,

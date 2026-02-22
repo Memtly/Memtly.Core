@@ -58,6 +58,7 @@ namespace WeddingShare.Helpers.Database
         Task<string> SetUserSecret(int id, string secretCode);
         Task<bool> VerifyUserSecret(int id, string secretCode);
         Task<int> IncrementLockoutCount(int id);
+        Task<bool> SetPaidPeriod(int id, DateTime? datetime);
         Task<bool> SetLockout(int id, DateTime? datetime);
         Task<bool> ResetLockoutCount(int id);
         Task<bool> SetMultiFactorToken(int id, string token);

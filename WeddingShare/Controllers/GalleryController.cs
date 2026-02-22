@@ -347,7 +347,7 @@ namespace WeddingShare.Controllers
                     if (files != null && files.Count > 0)
                     {
                         var galleryOwner = await _database.GetUser(gallery.Owner);
-                        var isFreeGallery = gallery.Owner > 0 && (galleryOwner?.Level ?? UserLevel.Free) == UserLevel.Free;
+                        var isFreeGallery = gallery.Owner > 0 && (galleryOwner?.Level ?? UserLevel.Basic) == UserLevel.Basic;
                         var requiresReview = !isFreeGallery && await _settings.GetOrDefault(Settings.Gallery.RequireReview, true, gallery.Id);
 
                         var uploaded = 0;
@@ -484,7 +484,7 @@ namespace WeddingShare.Controllers
                     var uploadedBy = HttpContext.Session.GetString(SessionKey.Viewer.Identity) ?? "Anonymous";
 
                     var galleryOwner = await _database.GetUser(gallery.Owner);
-                    var isFreeGallery = gallery.Owner > 0 && (galleryOwner?.Level ?? UserLevel.Free) == UserLevel.Free;
+                    var isFreeGallery = gallery.Owner > 0 && (galleryOwner?.Level ?? UserLevel.Basic) == UserLevel.Basic;
                     var requiresReview = !isFreeGallery && await _settings.GetOrDefault(Settings.Gallery.RequireReview, true, gallery.Id);
 
                     int uploaded = int.Parse((Request?.Form?.FirstOrDefault(x => string.Equals("Count", x.Key, StringComparison.OrdinalIgnoreCase)).Value)?.ToString() ?? "0");

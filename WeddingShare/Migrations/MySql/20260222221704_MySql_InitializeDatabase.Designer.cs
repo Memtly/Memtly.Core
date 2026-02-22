@@ -11,7 +11,7 @@ using WeddingShare.EntityFramework;
 namespace WeddingShare.Migrations.MySql
 {
     [DbContext(typeof(CoreDbContext))]
-    [Migration("20260222134138_MySql_InitializeDatabase")]
+    [Migration("20260222221704_MySql_InitializeDatabase")]
     partial class MySql_InitializeDatabase
     {
         /// <inheritdoc />
@@ -315,6 +315,9 @@ namespace WeddingShare.Migrations.MySql
                         .HasMaxLength(2000)
                         .HasColumnType("varchar(2000)");
 
+                    b.Property<long?>("PaidUntil")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -324,6 +327,11 @@ namespace WeddingShare.Migrations.MySql
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(2);
+
+                    b.Property<int?>("Tier")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<string>("Username")
                         .IsRequired()

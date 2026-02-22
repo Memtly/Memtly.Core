@@ -26,9 +26,9 @@ namespace WeddingShare.Models
         public FeaturePermissions Features { get; set; }
     }
 
-    public class FreeUserPermissions : Permissions
+    public class BasicUserPermissions : Permissions
     {
-        public FreeUserPermissions()
+        public BasicUserPermissions()
             : base()
         {
             Features = 

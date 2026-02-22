@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Azure;
 using Microsoft.EntityFrameworkCore;
 using WeddingShare.Constants;
 using WeddingShare.EntityFramework;
@@ -527,8 +528,10 @@ namespace WeddingShare.Helpers.Database
                     Email = u.EmailAddress,
                     Firstname = u.Firstname,
                     Lastname = u.Lastname,
-                    Level = u.Level ?? UserLevel.Free,
+                    Level = u.Level ?? UserLevel.Basic,
+                    Tier = u.Tier ?? PaidTier.None,
                     State = u.State ?? AccountState.PendingActivation,
+                    PaidUntil = u.PaidUntil.HasValue ? u.PaidUntil.Value.DateTime : null,
                     FailedLogins = u.FailedLoginCount,
                     LockoutUntil = u.LockoutUntil.HasValue ? u.LockoutUntil.Value.DateTime : null,
                     MultiFactorToken = u.MultiFactorAuthToken
@@ -547,8 +550,10 @@ namespace WeddingShare.Helpers.Database
                     Email = u.EmailAddress,
                     Firstname = u.Firstname,
                     Lastname = u.Lastname,
-                    Level = u.Level ?? UserLevel.Free,
+                    Level = u.Level ?? UserLevel.Basic,
+                    Tier = u.Tier ?? PaidTier.None,
                     State = u.State ?? AccountState.PendingActivation,
+                    PaidUntil = u.PaidUntil.HasValue ? u.PaidUntil.Value.DateTime : null,
                     FailedLogins = u.FailedLoginCount,
                     LockoutUntil = u.LockoutUntil.HasValue ? u.LockoutUntil.Value.DateTime : null,
                     MultiFactorToken = u.MultiFactorAuthToken
@@ -566,8 +571,10 @@ namespace WeddingShare.Helpers.Database
                     Email = u.EmailAddress,
                     Firstname = u.Firstname,
                     Lastname = u.Lastname,
-                    Level = u.Level ?? UserLevel.Free,
+                    Level = u.Level ?? UserLevel.Basic,
+                    Tier = u.Tier ?? PaidTier.None,
                     State = u.State ?? AccountState.PendingActivation,
+                    PaidUntil = u.PaidUntil.HasValue ? u.PaidUntil.Value.DateTime : null,
                     FailedLogins = u.FailedLoginCount,
                     LockoutUntil = u.LockoutUntil.HasValue ? u.LockoutUntil.Value.DateTime : null,
                     MultiFactorToken = u.MultiFactorAuthToken
@@ -585,8 +592,10 @@ namespace WeddingShare.Helpers.Database
                     Email = u.EmailAddress,
                     Firstname = u.Firstname,
                     Lastname = u.Lastname,
-                    Level = u.Level ?? UserLevel.Free,
+                    Level = u.Level ?? UserLevel.Basic,
+                    Tier = u.Tier ?? PaidTier.None,
                     State = u.State ?? AccountState.PendingActivation,
+                    PaidUntil = u.PaidUntil.HasValue ? u.PaidUntil.Value.DateTime : null,
                     FailedLogins = u.FailedLoginCount,
                     LockoutUntil = u.LockoutUntil.HasValue ? u.LockoutUntil.Value.DateTime : null,
                     MultiFactorToken = u.MultiFactorAuthToken
@@ -604,7 +613,9 @@ namespace WeddingShare.Helpers.Database
                 Lastname = model.Lastname ?? string.Empty,
                 Password = model.Password ?? PasswordHelper.GenerateTempPassword(),
                 Level = model.Level,
+                Tier = model.Tier,
                 State = model.State,
+                PaidUntil = model.PaidUntil,
                 FailedLoginCount = model.FailedLogins,
                 LockoutUntil = model.LockoutUntil,
                 //MultiFactorAuthToken = model.
@@ -626,7 +637,9 @@ namespace WeddingShare.Helpers.Database
                 user.Firstname = model.Firstname ?? string.Empty;
                 user.Lastname = model.Lastname ?? string.Empty;
                 user.Level = model.Level;
+                user.Tier = model.Tier;
                 user.State = model.State;
+                user.PaidUntil = model.PaidUntil;
                 user.FailedLoginCount = model.FailedLogins;
                 user.LockoutUntil = model.LockoutUntil;
                 //user.MultiFactorAuthToken = model.
@@ -708,6 +721,42 @@ namespace WeddingShare.Helpers.Database
             }
 
             return user?.FailedLogins ?? int.MaxValue;
+        }
+
+        public async Task<bool> SetPaidPeriod(int id, DateTime? datetime)
+        {
+            DateTimeOffset? normalizedDatetime = null;
+
+            if (datetime.HasValue)
+            {
+                var dt = datetime.Value;
+                normalizedDatetime = new DateTimeOffset(
+                    dt.Year, dt.Month, dt.Day,
+                    dt.Hour, dt.Minute, 0,
+                    TimeSpan.Zero
+                );
+            }
+
+            try
+            {
+                await _db.Users
+                    .Where(u => u.Level != UserLevel.System && u.Id == id)
+                    .ExecuteUpdateAsync(setter => setter
+                        .SetProperty(u => u.PaidUntil, normalizedDatetime)
+                    );
+
+                var updatedValue = await _db.Users
+                    .Where(u => u.Id == id)
+                    .Select(u => u.PaidUntil)
+                    .FirstOrDefaultAsync();
+
+                return updatedValue == normalizedDatetime;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to set user paid period - {Message}", ex.Message);
+                return false;
+            }
         }
 
         public async Task<bool> SetLockout(int id, DateTime? datetime) 

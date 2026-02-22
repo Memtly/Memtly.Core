@@ -76,12 +76,7 @@ function bindAddUserButton() {
                     {
                         key: '0',
                         selected: true,
-                        value: 'Free'
-                    },
-                    {
-                        key: '1',
-                        selected: false,
-                        value: 'Paid'
+                        value: 'Basic'
                     },
                     {
                         key: '2',
@@ -209,12 +204,7 @@ function bindEditUserButton() {
                     {
                         key: '0',
                         selected: row.data('user-level') == '0',
-                        value: 'Free'
-                    },
-                    {
-                        key: '1',
-                        selected: row.data('user-level') == '1',
-                        value: 'Paid'
+                        value: 'Basic'
                     },
                     {
                         key: '2',

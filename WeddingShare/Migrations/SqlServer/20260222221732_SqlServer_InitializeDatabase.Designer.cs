@@ -11,7 +11,7 @@ using WeddingShare.EntityFramework;
 namespace WeddingShare.Migrations.SqlServer
 {
     [DbContext(typeof(CoreDbContext))]
-    [Migration("20260222134209_SqlServer_InitializeDatabase")]
+    [Migration("20260222221732_SqlServer_InitializeDatabase")]
     partial class SqlServer_InitializeDatabase
     {
         /// <inheritdoc />
@@ -315,6 +315,9 @@ namespace WeddingShare.Migrations.SqlServer
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
+                    b.Property<long?>("PaidUntil")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -324,6 +327,11 @@ namespace WeddingShare.Migrations.SqlServer
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(2);
+
+                    b.Property<int?>("Tier")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<string>("Username")
                         .IsRequired()

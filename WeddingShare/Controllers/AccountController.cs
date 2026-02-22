@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using System.IO.Compression;
 using System.Net;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -11,7 +9,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using Mysqlx.Crud;
 using TwoFactorAuthNet;
 using WeddingShare.Attributes;
 using WeddingShare.Constants;
@@ -22,7 +19,6 @@ using WeddingShare.Helpers.Database;
 using WeddingShare.Helpers.Notifications;
 using WeddingShare.Models;
 using WeddingShare.Models.Database;
-using WeddingShare.Models.Notifications;
 using WeddingShare.Resources.Templates.Email;
 using WeddingShare.Views.Account;
 using WeddingShare.Views.Account.Tabs;
@@ -208,7 +204,8 @@ namespace WeddingShare.Controllers
                             Email = model.EmailAddress.Trim().ToLower(),
                             Password = _encryption.Encrypt(model.Password, model.Username.ToLower()),
                             State = requireEmailValidation ? AccountState.PendingActivation : AccountState.Active,
-                            Level = UserLevel.Paid // TODO - Update to Free once payment logic is completed
+                            Level = UserLevel.Basic,
+                            Tier = PaidTier.None
                         });
 
                         if (user?.Id != null && user.Id > 0 && !string.IsNullOrWhiteSpace(user.Email))
@@ -2046,11 +2043,17 @@ namespace WeddingShare.Controllers
         {
             try
             {
+                var level = user.Level;
+                if (user.Level == UserLevel.Basic || user.Level == UserLevel.Paid)
+                {
+                    level = user.PaidUntil != null && user.PaidUntil > DateTime.UtcNow ? UserLevel.Paid : UserLevel.Basic;
+                }
+
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Sid, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Username.ToLower()),
-                    new Claim(ClaimTypes.Role, user.Level.ToString()),
+                    new Claim(ClaimTypes.Role, $"{level.ToString()}|{user.Tier.ToString()}"),
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
