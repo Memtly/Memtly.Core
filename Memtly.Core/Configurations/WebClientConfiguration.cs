@@ -3,7 +3,7 @@ using Memtly.Core.Helpers;
 
 namespace Memtly.Core.Configurations
 {
-    internal static class WebClientConfiguration
+    public static class WebClientConfiguration
     {
         public static void AddWebClientConfiguration(this IServiceCollection services)
         {

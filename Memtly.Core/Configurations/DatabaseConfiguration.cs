@@ -11,7 +11,7 @@ using Memtly.Core.Models.Database;
 
 namespace Memtly.Core.Configurations
 {
-    internal static class DatabaseConfiguration
+    public static class DatabaseConfiguration
     {
         public static void AddDatabaseConfiguration(this IServiceCollection services)
         {
@@ -70,7 +70,7 @@ namespace Memtly.Core.Configurations
             ctx.Database.Migrate();
 
             var encryption = services.BuildServiceProvider().GetRequiredService<IEncryptionHelper>();
-            var logger = services.BuildServiceProvider().GetRequiredService<ILogger<Startup>>();
+            var logger = services.BuildServiceProvider().GetRequiredService<ILogger<EFDatabaseHelper>>();
 
             using (var scope = services.BuildServiceProvider().CreateScope())
             {

@@ -2,7 +2,7 @@
 
 namespace Memtly.Core.Configurations
 {
-    internal static class NotificationConfiguration
+    public static class NotificationConfiguration
     {
         private const int CLIENT_DEFAULT_TIMEOUT = 10;
 

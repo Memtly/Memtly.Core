@@ -4,7 +4,7 @@ using Memtly.Core.Helpers;
 
 namespace Memtly.Core.Configurations
 {
-    internal static class FfmpegConfiguration
+    public static class FfmpegConfiguration
     {
         public static void AddFfmpegConfiguration(this IServiceCollection services)
         {
@@ -17,7 +17,7 @@ namespace Memtly.Core.Configurations
             var downloaded = new ImageHelper(new FileHelper(loggerFactory.CreateLogger<FileHelper>()), loggerFactory.CreateLogger<ImageHelper>(), localizer).DownloadFFMPEG(ffmpegPath).Result;
             if (!downloaded)
             {
-                loggerFactory.CreateLogger<Startup>().LogWarning($"{localizer["FFMPEG_Download_Failed"].Value} '{ffmpegPath}'");
+                loggerFactory.CreateLogger<FFMPEG>().LogWarning($"{localizer["FFMPEG_Download_Failed"].Value} '{ffmpegPath}'");
             }
         }
     }

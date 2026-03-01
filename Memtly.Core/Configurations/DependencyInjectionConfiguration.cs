@@ -2,7 +2,7 @@
 
 namespace Memtly.Core.Configurations
 {
-    internal static class DependencyInjectionConfiguration
+    public static class DependencyInjectionConfiguration
     {
         public static void AddDependencyInjectionConfiguration(this IServiceCollection services)
         {

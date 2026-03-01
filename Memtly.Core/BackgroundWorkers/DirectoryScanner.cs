@@ -1,5 +1,4 @@
-﻿using Mysqlx.Expr;
-using NCrontab;
+﻿using NCrontab;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using Memtly.Core.Constants;
@@ -18,7 +17,7 @@ namespace Memtly.Core.BackgroundWorkers
             if (enabled)
             {
                 var cron = await settingsHelper.GetOrDefault(BackgroundServices.DirectoryScanner.Schedule, "*/30 * * * *");
-                var nextExecutionTime = DateTime.Now.AddMinutes(1);
+                var nextExecutionTime = DateTime.Now.AddMinutes(5);
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
@@ -49,15 +48,8 @@ namespace Memtly.Core.BackgroundWorkers
 
         private async Task ScanForFiles()
         {
-            if (Startup.Ready)
-            {
-                await this.ScanGalleryImages();
-                await this.ScanCustomResources();
-            }
-            else
-            {
-                logger.LogInformation($"Skipping directory scan, application not ready yet");
-            }
+            await this.ScanGalleryImages();
+            await this.ScanCustomResources();
         }
 
         private async Task ScanGalleryImages()

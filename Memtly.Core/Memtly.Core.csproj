@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-Memtly-3190c778-4fc0-46f9-9259-fc6196c41c5a</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <!--<Target Name="NpmBuildDev" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug'">
