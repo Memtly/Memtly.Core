@@ -1,0 +1,19 @@
+﻿@model Memtly.Core.Views.Account.Settings.Gallery.GalleryOverridesModel
+@using Memtly.Core.Constants
+
+@if (Model?.Settings != null && Model.Settings.Any())
+{
+    <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/Layout.cshtml" model="Model" />
+    <hr />
+    <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/Uploads.cshtml" model="Model.Settings" />
+    <hr />
+    <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/Downloads.cshtml" model="Model.Settings" />
+    <hr />
+    <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/Reviews.cshtml" model="Model.Settings" />
+    <hr />
+    <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/ViewOptions.cshtml" model="Model.Settings" />
+    <hr />
+    <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/SizeLimits.cshtml" model="Model.Settings" />
+    <hr />
+    <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/QrCodes.cshtml" model="Model.Settings" />
+}

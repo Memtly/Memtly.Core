@@ -1,0 +1,213 @@
+﻿@model Memtly.Core.Views.Account.Partials.SettingsListModel
+@using Memtly.Core.Extensions
+@using Memtly.Core.Views.Account.Settings.Basic
+@using Memtly.Core.Views.Account.Settings.Gallery
+@using Memtly.Core.Views.Account.Tabs
+
+@{
+    var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
+}
+
+@if (userPermissions.Settings.HasFlag(SettingsPermissions.View) && Model != null)
+{
+    <div class="accordion" id="settings-accordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading-basic">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-basic" aria-expanded="false" aria-controls="collapse-basic">
+                    @_localizer["Settings_Basic"].Value
+                </button>
+            </h2>
+            <div id="collapse-basic" class="accordion-collapse collapse" aria-labelledby="heading-basic" data-bs-parent="#settings-accordion">
+                <div class="accordion-body mt-3 mt-lg-3">
+                    <partial name="~/Views/Account/Settings/Basic/General.cshtml" model="new GeneralModel() { Settings = Model.Settings, CustomResources = Model.CustomResources }" />
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading-gallery-selector">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-gallery-selector" aria-expanded="false" aria-controls="collapse-gallery-selector">
+                    @_localizer["Gallery_Selector"].Value
+                </button>
+            </h2>
+            <div id="collapse-gallery-selector" class="accordion-collapse collapse" aria-labelledby="heading-v" data-bs-parent="#settings-accordion">
+                <div class="accordion-body mt-3 mt-lg-3">
+                    <partial name="~/Views/Account/Settings/GallerySelector/GallerySelector.cshtml" model="Model.Settings" />
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading-gallery">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-gallery" aria-expanded="false" aria-controls="collapse-gallery">
+                    @_localizer["Galleries"].Value
+                </button>
+            </h2>
+            <div id="collapse-gallery" class="accordion-collapse collapse" aria-labelledby="heading-gallery" data-bs-parent="#settings-accordion">
+                <div class="accordion-body mt-3 mt-lg-3">
+                    <h5 class="mb-3">@_localizer["General"].Value</h5>
+                    <partial name="~/Views/Account/Settings/Gallery/GalleryCommon.cshtml" model="Model.Settings" />
+
+                    <hr />
+
+                    <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides.cshtml" model="new GalleryOverridesModel() { Settings = Model.Settings, CustomResources = Model.CustomResources }" />
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item setting-advanced d-none">
+            <h2 class="accordion-header" id="heading-slideshow">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-slideshow" aria-expanded="false" aria-controls="collapse-slideshow">
+                    @_localizer["Settings_Slideshow"].Value
+                </button>
+            </h2>
+            <div id="collapse-slideshow" class="accordion-collapse collapse" aria-labelledby="heading-slideshow" data-bs-parent="#settings-accordion">
+                <div class="accordion-body mt-3 mt-lg-3">
+                    <partial name="~/Views/Account/Settings/Slideshow/Slideshow.cshtml" model="Model.Settings" />
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item setting-advanced d-none">
+            <h2 class="accordion-header" id="heading-qr-codes">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-qr-codes" aria-expanded="false" aria-controls="collapse-qr-codes">
+                    @_localizer["QR_Codes"].Value
+                </button>
+            </h2>
+            <div id="collapse-qr-codes" class="accordion-collapse collapse" aria-labelledby="heading-qr-codes" data-bs-parent="#settings-accordion">
+                <div class="accordion-body mt-3 mt-lg-3">
+                    <partial name="~/Views/Account/Settings/QrCodes/QrCodes.cshtml" model="Model.Settings" />
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading-identity-check">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-identity-check" aria-expanded="false" aria-controls="collapse-identity-check">
+                    @_localizer["Settings_IdentityCheck"].Value
+                </button>
+            </h2>
+            <div id="collapse-identity-check" class="accordion-collapse collapse" aria-labelledby="heading-identity-check" data-bs-parent="#settings-accordion">
+                <div class="accordion-body mt-3 mt-lg-3">
+                    <partial name="~/Views/Account/Settings/IdentityCheck/IdentityCheck.cshtml" model="Model.Settings" />
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading-account">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-account" aria-expanded="false" aria-controls="collapse-account">
+                    @_localizer["Settings_Account"].Value
+                </button>
+            </h2>
+            <div id="collapse-account" class="accordion-collapse collapse" aria-labelledby="heading-account" data-bs-parent="#settings-accordion">
+                <div class="accordion-body mt-3 mt-lg-3">
+                    <partial name="~/Views/Account/Settings/Account/Account.cshtml" model="Model.Settings" />
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item setting-advanced d-none">
+            <h2 class="accordion-header" id="heading-alerts">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-alerts" aria-expanded="false" aria-controls="collapse-alerts">
+                    @_localizer["Settings_Alerts"].Value
+                </button>
+            </h2>
+            <div id="collapse-alerts" class="accordion-collapse collapse" aria-labelledby="heading-alerts" data-bs-parent="#settings-accordion">
+                <div class="accordion-body mt-3 mt-lg-3">
+                    <partial name="~/Views/Account/Settings/Alerts/Alerts.cshtml" model="Model.Settings" />
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading-notifications">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-notifications" aria-expanded="false" aria-controls="collapse-notifications">
+                    @_localizer["Notifications"].Value
+                </button>
+            </h2>
+            <div id="collapse-notifications" class="accordion-collapse collapse" aria-labelledby="heading-notifications" data-bs-parent="#settings-accordion">
+                <div class="accordion-body mt-3 mt-lg-3">
+                    <h5 class="mb-3">@_localizer["Email"].Value</h5>
+                    <partial name="~/Views/Account/Settings/Notifications/Smtp.cshtml" model="Model.Settings" />
+
+                    <hr />
+
+                    <h5 class="mb-3">@_localizer["Ntfy"].Value</h5>
+                    <partial name="~/Views/Account/Settings/Notifications/Ntfy.cshtml" model="Model.Settings" />
+
+                    <hr />
+
+                    <h5 class="mb-3">@_localizer["Gotify"].Value</h5>
+                    <partial name="~/Views/Account/Settings/Notifications/Gotify.cshtml" model="Model.Settings" />
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading-themes">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-themes" aria-expanded="false" aria-controls="collapse-themes">
+                    @_localizer["Settings_Themes"].Value
+                </button>
+            </h2>
+            <div id="collapse-themes" class="accordion-collapse collapse" aria-labelledby="heading-themes" data-bs-parent="#settings-accordion">
+                <div class="accordion-body mt-3 mt-lg-3">
+                    <partial name="~/Views/Account/Settings/Themes/Themes.cshtml" model="Model.Settings" />
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading-languages">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-languages" aria-expanded="false" aria-controls="collapse-languages">
+                    @_localizer["Settings_Languages"].Value
+                </button>
+            </h2>
+            <div id="collapse-languages" class="accordion-collapse collapse" aria-labelledby="heading-languages" data-bs-parent="#settings-accordion">
+                <div class="accordion-body mt-3 mt-lg-3">
+                    <partial name="~/Views/Account/Settings/Languages/Languages.cshtml" model="Model.Settings" />
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading-audit-logs">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-audit-logs" aria-expanded="false" aria-controls="collapse-audit-logs">
+                    @_localizer["Audit"].Value
+                </button>
+            </h2>
+            <div id="collapse-audit-logs" class="accordion-collapse collapse" aria-labelledby="heading-audit-logs" data-bs-parent="#settings-accordion">
+                <div class="accordion-body mt-3 mt-lg-3">
+                    <partial name="~/Views/Account/Settings/Audit/Audit.cshtml" model="Model.Settings" />
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item setting-advanced d-none">
+            <h2 class="accordion-header" id="heading-custom-policies">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-custom-policies" aria-expanded="false" aria-controls="collapse-custom-policies">
+                    @_localizer["Settings_CustomPolicies"].Value
+                </button>
+            </h2>
+            <div id="collapse-custom-policies" class="accordion-collapse collapse" aria-labelledby="heading-custom-policies" data-bs-parent="#settings-accordion">
+                <div class="accordion-body mt-3 mt-lg-3">
+                    <h5 class="mb-3">@_localizer["GDPR"].Value</h5>
+                    <partial name="~/Views/Account/Settings/CustomPolicies/GdprPopups.cshtml" model="Model.Settings" />
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item setting-advanced d-none">
+            <h2 class="accordion-header" id="heading-trackers">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-trackers" aria-expanded="false" aria-controls="collapse-trackers">
+                    @_localizer["Settings_Trackers"].Value
+                </button>
+            </h2>
+            <div id="collapse-trackers" class="accordion-collapse collapse" aria-labelledby="heading-trackers" data-bs-parent="#settings-accordion">
+                <div class="accordion-body mt-3 mt-lg-3">
+                    <h5 class="mb-3">@_localizer["Umami"].Value</h5>
+                    <partial name="~/Views/Account/Settings/Trackers/Umami.cshtml" model="Model.Settings" />
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item setting-advanced d-none">
+            <h2 class="accordion-header" id="heading-background-services">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-background-services" aria-expanded="false" aria-controls="collapse-background-services">
+                    @_localizer["Settings_BackgroundServices"].Value
+                </button>
+            </h2>
+            <div id="collapse-background-services" class="accordion-collapse collapse" aria-labelledby="heading-background-services" data-bs-parent="#settings-accordion">
+                <div class="accordion-body mt-3 mt-lg-3">
+                    <partial name="~/Views/Account/Settings/BackgroundServices/BackgroundServices.cshtml" model="Model.Settings" />
+                </div>
+            </div>
+        </div>
+    </div>
+}

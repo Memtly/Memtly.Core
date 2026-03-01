@@ -1,0 +1,34 @@
+﻿@model IEnumerable<AuditLogModel>?
+@using Memtly.Core.Views.Account
+@using Memtly.Core.Models.Database
+
+@{
+    var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
+}
+
+@if (userPermissions.Audit.HasFlag(AuditPermissions.View) && Model != null && Model.Any())
+{
+    <table class="table table-rounded-border">
+        <tr>
+            <th class="col-4 col-md-1">@_localizer["User"].Value</th>
+            <th class="col-1 d-none d-md-table-cell">@_localizer["Severity"].Value</th>
+            <th class="col-2 d-none d-md-table-cell">@_localizer["Timestamp"].Value</th>
+            <th class="col-8 col-md-8">@_localizer["Action"].Value</th>
+        </tr>
+        @foreach (var log in Model.OrderByDescending(x => x.Timestamp))
+        {
+            <tr>
+                <td class="text-capitalize">@log.Username</td>
+                <td class="d-none d-md-table-cell text-capitalize">@log.Severity</td>
+                <td class="d-none d-md-table-cell">@log.Timestamp.ToString("dd/MM/yyyy hh:mm tt")</td>
+                <td>@log.Message</td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <div class="col-12 text-center border border-primary-1 rounded py-3 py-lg-4">
+        <h3 class="display-6">@_localizer["No_Data"].Value</h3>
+    </div>
+}

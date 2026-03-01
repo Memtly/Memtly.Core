@@ -1,0 +1,81 @@
+﻿@model BasicEmail
+@using Memtly.Core.Resources.Templates.Email
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: #f6f6f6;
+                font-family: Arial, sans-serif;
+            }
+
+            .email-wrapper {
+                margin: 5px;
+                background-color: #ffffff;
+                border: 1px solid #dddddd;
+                border-radius: 6px;
+                overflow: hidden;
+            }
+
+            .email-header {
+                background-color: #50a2fa;
+                color: white;
+                padding: 5px 20px;
+            }
+
+                .email-header h1 {
+                    margin: 0;
+                    font-size: 24px;
+                }
+
+            .email-body {
+                padding: 30px;
+                color: #333333;
+                background-color: #f7f9fc;
+            }
+
+                .email-body p {
+                    font-size: 16px;
+                    line-height: 1.6;
+                    margin: 0 0 15px;
+                }
+
+                .email-body .link {
+                    font-size: 16px;
+                    line-height: 1.6;
+                    margin: 40px 0px 15px;
+                }
+
+                    .email-body .link a, .email-body .link a:active, .email-body .link a:hover, .email-body .link a:visited {
+                        color: #50a2fa;
+                    }
+        </style>
+    </head>
+    <body>
+        <div class="email-wrapper">
+            <div class="email-header">
+                <h1>@Model.Title</h1>
+            </div>
+            <div class="email-body">
+                <p>
+                    @Model.Message
+                </p>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Link?.Heading) && !string.IsNullOrWhiteSpace(Model.Link?.Value))
+                {
+                    <p class="link">
+                        <b>@Model.Link.Heading</b><br />
+                        <a href="@Model.Link.Value">@Model.Link.Value</a>
+                    </p>
+                }
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,56 @@
+﻿@model ResourcesModel
+@using Memtly.Core.Constants
+@using Memtly.Core.Models.Database
+@using Memtly.Core.Views.Account
+@using Memtly.Core.Views.Account.Tabs
+@using Memtly.Core.Views.Shared
+
+@{
+    var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
+
+    var currentPage = 1;
+    try
+    {
+        currentPage = int.Parse((Context.Request.Query.ContainsKey("page") && !string.IsNullOrWhiteSpace(Context.Request.Query["page"])) ? Context.Request.Query["page"].ToString().ToLower() : "1");
+    }
+    catch { }
+}
+
+<div class="row">
+    @if (userPermissions.CustomResources.HasFlag(CustomResourcePermissions.View) && Model?.CustomResources != null && Model.CustomResources.Any())
+    {
+        for (var i = 0; i < Model.CustomResources.Count; i++)
+        {
+            var resource = Model.CustomResources[i];
+
+            <div class="custom-resource col-12 col-lg-4 mb-1 mb-lg-4" data-custom-resource-username="@resource.OwnerName">
+                <div class="card">
+                    <a href="/custom_resources/@resource.FileName" class="media-viewer-item" data-media-viewer-id="@resource.Id" data-media-viewer-index="@i" data-media-viewer-collection="custom_resources" data-media-viewer-type="custom_resource">
+                        <img src="/custom_resources/@resource?.FileName" class="review-tile" loading="lazy" />
+                        @if (userPermissions.CustomResources.HasFlag(CustomResourcePermissions.Relink))
+                        {
+                            <i class="fa fa-link custom-resource-relink btn-relink-item d-lg-none" data-id="@resource?.Id" data-name="@resource?.FileName"></i>
+                        }
+                        @if (userPermissions.CustomResources.HasFlag(CustomResourcePermissions.Delete))
+                        {
+                            <i class="fa fa-trash custom-resource-delete btn-delete-item d-lg-none" data-id="@resource?.Id" data-name="@resource?.FileName"></i>
+                        }
+                        <i class="fa fa-square btn-multi-select" data-id="@resource?.Id"></i>
+                    </a>
+                </div>
+            </div>
+        }
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <partial name="~/Views/Shared/_Pagination.cshtml" model="new PaginationModel() { CurrentPage = currentPage, TotalItems = Model?.TotalItems ?? 0, ItemsPerPage = Model?.TotalItemsPerPage ?? 50 }" />
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="col-12 text-center border border-primary-1 rounded py-3 py-lg-4">
+            <h3 class="display-6">@_localizer["No_Custom_Resources"].Value</h3>
+        </div>
+    }
+</div>
