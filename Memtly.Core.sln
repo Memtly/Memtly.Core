@@ -5,7 +5,7 @@ VisualStudioVersion = 17.14.36717.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memtly.Core", "Memtly.Core\Memtly.Core.csproj", "{D465DB4E-7BB3-F591-C56D-8DEABFE059D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memtly.UnitTests", "..\..\..\..\..\GitLab\Memtly\memtly.community\Memtly.Core\Memtly.UnitTests\Memtly.UnitTests.csproj", "{AD03FC4C-30A9-9486-A006-8A36491AF5CB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memtly.Core.UnitTests", "Memtly.Core.UnitTests\Memtly.Core.UnitTests.csproj", "{AD03FC4C-30A9-9486-A006-8A36491AF5CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
