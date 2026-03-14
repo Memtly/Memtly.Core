@@ -23,10 +23,6 @@
   </Target>
 
   <ItemGroup>
-    <ProjectReference Include="..\Memtly.Localization\Memtly.Localization.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="src\js\**" />
     <Compile Remove="wwwroot\temp\**" />
     <Content Remove="src\js\**" />
@@ -107,6 +103,7 @@
   <ItemGroup>
     <PackageReference Include="dbup-mysql" Version="6.0.4" />
     <PackageReference Include="dbup-sqlite" Version="6.0.1" />
+    <PackageReference Include="Memtly.Localization" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.10" />
