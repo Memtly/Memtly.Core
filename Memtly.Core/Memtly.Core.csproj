@@ -1,37 +1,23 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-Memtly-3190c778-4fc0-46f9-9259-fc6196c41c5a</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <OutputType>Library</OutputType>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <PackageId>Memtly.Core</PackageId>
-    <Authors>Memtly</Authors>
-    <Description>Core backend code used by Memtly</Description>
-    <PackageIcon>Icon.png</PackageIcon>
-    <IsPackable>true</IsPackable>
-  </PropertyGroup>
+  <Target Name="BuildAssetsDebug" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug'">
+    <Exec Command="npm run development" WorkingDirectory="$(ProjectDir)" />
+  </Target>
+
+  <Target Name="BuildAssetsProd" BeforeTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <Exec Command="npm run production" WorkingDirectory="$(ProjectDir)" />
+  </Target>
 
   <ItemGroup>
-    <None Include="Icon.png" Pack="true" PackagePath="" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
-
-  <!--<Target Name="NpmBuildDev" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug'">
-    <Message Importance="high" Text="Running webpack in development mode..." />
-    <Exec Command="npm ci" WorkingDirectory="$(ProjectDir)" />
-    <Exec Command="npm run development" WorkingDirectory="$(ProjectDir)" />
-  </Target>-->
-
-  <Target Name="NpmBuildProd" BeforeTargets="Build" Condition="'$(Configuration)' == 'Release'">
-    <Message Importance="high" Text="Running webpack in production mode..." />
-    <Exec Command="npm install" WorkingDirectory="$(ProjectDir)" />
-    <Exec Command="npm run build" WorkingDirectory="$(ProjectDir)" />
-  </Target>
 
   <ItemGroup>
     <Compile Remove="src\js\**" />
@@ -47,8 +33,15 @@
   <ItemGroup>
     <Content Remove="Resources\Templates\Basic.cshtml" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="src\themes\light.css" />
+  </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Assets\DemoImage.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="src\css\main.css" />
     <Content Include="src\css\site.css" />
     <Content Include="src\css\template.css" />
@@ -100,6 +93,7 @@
     <Content Include="src\pages\homepage\index.js" />
     <Content Include="src\themes\darkblue.css" />
     <Content Include="src\themes\darkpink.css" />
+    <Content Include="src\themes\light.css" />
     <Content Include="src\themes\pink.css" />
     <Content Include="src\themes\blue.css" />
     <Content Include="src\themes\dark.css" />
@@ -141,18 +135,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="config\" />
     <Folder Include="Migrations\" />
-    <Folder Include="wwwroot\custom_resources\" />
-    <Folder Include="wwwroot\thumbnails\" />
-    <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\images\buymeacoffee.gif" />
     <None Include="wwwroot\images\buymeacoffee_avatar.png" />
     <None Include="wwwroot\images\close.png" />
-    <None Include="wwwroot\images\DemoImage.png" />
     <None Include="wwwroot\images\github.png" />
     <None Include="wwwroot\images\github_avatar.png" />
     <None Include="wwwroot\images\loading.gif" />
@@ -161,6 +150,7 @@
     <None Include="wwwroot\images\play-button.svg" />
     <None Include="wwwroot\images\prev.png" />
   </ItemGroup>
+
 
   <ItemGroup>
     <Resource Include="Resources\Templates\Email\Basic.cshtml" />

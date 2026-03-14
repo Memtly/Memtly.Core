@@ -56,10 +56,10 @@ namespace Memtly.Core.BackgroundWorkers
         {
             try
             { 
-                var thumbnailsDirectory = Path.Combine(hostingEnvironment.WebRootPath, Directories.Thumbnails);
+                var thumbnailsDirectory = Path.Combine(hostingEnvironment.ContentRootPath, Directories.Public.Thumbnails);
                 fileHelper.CreateDirectoryIfNotExists(thumbnailsDirectory);
 
-                var uploadsDirectory = Path.Combine(hostingEnvironment.WebRootPath, Directories.Uploads);
+                var uploadsDirectory = Path.Combine(hostingEnvironment.ContentRootPath, Directories.Public.Uploads);
                 if (fileHelper.DirectoryExists(uploadsDirectory))
                 {
                     var galleryDirs = fileHelper.GetDirectories(uploadsDirectory, "*", SearchOption.TopDirectoryOnly)?.Where(x => !Path.GetFileName(x).StartsWith("."));
@@ -260,7 +260,7 @@ namespace Memtly.Core.BackgroundWorkers
 
                     var existing = await db.GetCustomResources();
 
-                    var customResourcesDirectory = Path.Combine(hostingEnvironment.WebRootPath, Directories.CustomResources);
+                    var customResourcesDirectory = Path.Combine(hostingEnvironment.ContentRootPath, Directories.Public.CustomResources);
                     fileHelper.CreateDirectoryIfNotExists(customResourcesDirectory);
 
                     foreach (var resource in fileHelper.GetFiles(customResourcesDirectory))

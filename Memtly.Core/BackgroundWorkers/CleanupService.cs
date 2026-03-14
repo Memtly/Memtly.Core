@@ -52,7 +52,7 @@ namespace Memtly.Core.BackgroundWorkers
                 {
                     var paths = new List<string>()
                     {
-                        Path.Combine(hostingEnvironment.WebRootPath, Directories.TempFiles)
+                        Path.Combine(hostingEnvironment.ContentRootPath, Directories.Public.TempFiles)
                     };
 
                     if (paths != null)

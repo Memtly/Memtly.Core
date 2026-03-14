@@ -32,7 +32,7 @@ namespace Memtly.Core.Controllers
         private readonly ILogger _logger;
         private readonly IStringLocalizer<Localization.Translations> _localizer;
 
-        private readonly string ImagesDirectory;
+        private readonly string AssetsDirectory;
         private readonly string TempDirectory;
         private readonly string UploadsDirectory;
         private readonly string ThumbnailsDirectory;
@@ -52,10 +52,10 @@ namespace Memtly.Core.Controllers
             _logger = logger;
             _localizer = localizer;
 
-            ImagesDirectory = Path.Combine(_hostingEnvironment.WebRootPath, Directories.Images);
-            TempDirectory = Path.Combine(_hostingEnvironment.WebRootPath, Directories.TempFiles);
-            UploadsDirectory = Path.Combine(_hostingEnvironment.WebRootPath, Directories.Uploads);
-            ThumbnailsDirectory = Path.Combine(_hostingEnvironment.WebRootPath, Directories.Thumbnails);
+            AssetsDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Private.Assets);
+            TempDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.TempFiles);
+            UploadsDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.Uploads);
+            ThumbnailsDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.Thumbnails);
         }
 
         [HttpPost]
@@ -295,8 +295,8 @@ namespace Memtly.Core.Controllers
                                 UploadedBy = x.UploadedBy ?? "Unknown",
                                 UploaderEmailAddress = x.UploaderEmailAddress,
                                 UploadDate = x.UploadedDate,
-                                ImagePath = $"/{Path.Combine(UploadsDirectory, galleryIdentifier).Remove(_hostingEnvironment.WebRootPath).Replace('\\', '/').TrimStart('/')}/{x.Title}",
-                                ThumbnailPath = $"/{Path.Combine(ThumbnailsDirectory, galleryIdentifier).Remove(_hostingEnvironment.WebRootPath).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(x.Title)}.webp",
+                                ImagePath = $"/{Path.Combine(UploadsDirectory, galleryIdentifier).Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/{x.Title}",
+                                ThumbnailPath = $"/{Path.Combine(ThumbnailsDirectory, galleryIdentifier).Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(x.Title)}.webp",
                                 MediaType = x.MediaType
                             };
                         })?.ToList(),
@@ -391,7 +391,7 @@ namespace Memtly.Core.Controllers
                                         }
                                         else
                                         {
-                                            System.IO.File.Copy(Path.Combine(ImagesDirectory, $"DemoImage.png"), filePath, true);
+                                            System.IO.File.Copy(Path.Combine(AssetsDirectory, $"DemoImage.png"), filePath, true);
                                         }
 
                                         var checksum = await _fileHelper.GetChecksum(filePath);

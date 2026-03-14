@@ -64,10 +64,10 @@ namespace Memtly.Core.Controllers
             _logger = loggerFactory.CreateLogger<AccountController>();
             _localizer = localizer;
 
-            TempDirectory = Path.Combine(_hostingEnvironment.WebRootPath, Directories.TempFiles);
-            UploadsDirectory = Path.Combine(_hostingEnvironment.WebRootPath, Directories.Uploads);
-            ThumbnailsDirectory = Path.Combine(_hostingEnvironment.WebRootPath, Directories.Thumbnails);
-            CustomResourcesDirectory = Path.Combine(_hostingEnvironment.WebRootPath, Directories.CustomResources);
+            TempDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.TempFiles);
+            UploadsDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.Uploads);
+            ThumbnailsDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.Thumbnails);
+            CustomResourcesDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.CustomResources);
         }
 
         [AllowAnonymous]
@@ -2128,8 +2128,8 @@ namespace Memtly.Core.Controllers
                                 UploadedBy = x.UploadedBy ?? "Unknown",
                                 UploaderEmailAddress = x.UploaderEmailAddress,
                                 UploadDate = x.UploadedDate,
-                                ImagePath = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(_hostingEnvironment.WebRootPath).Replace('\\', '/').TrimStart('/')}/Pending/{x.Title}",
-                                ThumbnailPath = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(_hostingEnvironment.WebRootPath).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(x.Title)}.webp",
+                                ImagePath = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/Pending/{x.Title}",
+                                ThumbnailPath = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(x.Title)}.webp",
                                 MediaType = x.MediaType
                             })?.ToList(),
                             ItemsPerPage = int.MaxValue,

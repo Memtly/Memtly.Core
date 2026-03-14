@@ -35,9 +35,9 @@ namespace Memtly.Core.Controllers
             _logger = logger;
             _localizer = localizer;
 
-            UploadsDirectory = Path.Combine(_hostingEnvironment.WebRootPath, Directories.Uploads);
-            ThumbnailsDirectory = Path.Combine(_hostingEnvironment.WebRootPath, Directories.Thumbnails);
-            CustomResourcesDirectory = Path.Combine(_hostingEnvironment.WebRootPath, Directories.CustomResources);
+            UploadsDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.Uploads);
+            ThumbnailsDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.Thumbnails);
+            CustomResourcesDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.CustomResources);
         }
 
         [AllowAnonymous]
@@ -84,8 +84,8 @@ namespace Memtly.Core.Controllers
                             {
                                 Id = id,
                                 Collection = gallery.Name,
-                                Source = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(_hostingEnvironment.WebRootPath).Replace('\\', '/').TrimStart('/')}/{galleryItem.Title}",
-                                Thumbnail = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(_hostingEnvironment.WebRootPath).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(galleryItem.Title)}.webp",
+                                Source = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/{galleryItem.Title}",
+                                Thumbnail = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(galleryItem.Title)}.webp",
                                 Author = author,
                                 Type = galleryItem.MediaType.ToString().ToLower(),
                                 Likes = new PhotoGalleryImageLikes()
@@ -127,7 +127,7 @@ namespace Memtly.Core.Controllers
                         {
                             Id = id,
                             Collection = "custom_resources",
-                            Source = $"/{CustomResourcesDirectory.Remove(_hostingEnvironment.WebRootPath).Replace('\\', '/').TrimStart('/')}/{resource.FileName}",
+                            Source = $"/{CustomResourcesDirectory.Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/{resource.FileName}",
                             Title = resource.Title,
                             Author = $"{_localizer["Uploaded_By"].Value}: {(!string.IsNullOrWhiteSpace(resource?.OwnerName) ? resource.OwnerName : "Anonymous")}",
                             Type = MediaType.Image.ToString().ToLower(),
@@ -189,8 +189,8 @@ namespace Memtly.Core.Controllers
                             {
                                 Id = id,
                                 Collection = gallery.Name,
-                                Source = $"/{Path.Combine(UploadsDirectory, gallery.Identifier, "Pending").Remove(_hostingEnvironment.WebRootPath).Replace('\\', '/').TrimStart('/')}/{galleryItem.Title}",
-                                Thumbnail = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(_hostingEnvironment.WebRootPath).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(galleryItem.Title)}.webp",
+                                Source = $"/{Path.Combine(UploadsDirectory, gallery.Identifier, "Pending").Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/{galleryItem.Title}",
+                                Thumbnail = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(galleryItem.Title)}.webp",
                                 Title = null,
                                 Description = null,
                                 Author = author,

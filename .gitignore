@@ -23,3 +23,5 @@
 /wwwroot/logos
 /wwwroot/banners
 /wwwroot/dist
+/Memtly.Core/node_modules
+/Memtly.Core/wwwroot/dist

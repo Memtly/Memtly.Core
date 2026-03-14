@@ -15,7 +15,7 @@
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Basic_Logo_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@Settings.Basic.Logo" placeholder="my-banner.jpg">
-                <option value="/images/logo.png">Default</option>
+                <option value="/_content/memtly.core/images/logo.png">Default</option>
                 @{
                     var currentValue = Model.Settings.GetValue(Settings.Basic.Logo.ToUpper(), string.Empty);
                     if (Model?.CustomResources != null && Model.CustomResources.Any())

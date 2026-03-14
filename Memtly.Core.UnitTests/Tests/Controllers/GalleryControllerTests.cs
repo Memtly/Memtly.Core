@@ -38,7 +38,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [SetUp]
         public void Setup()
         {
-            _env.WebRootPath.Returns("/app/wwwroot");
+            _env.ContentRootPath.Returns("/app/wwwroot");
 
 			var mockData = GetMockData();
 

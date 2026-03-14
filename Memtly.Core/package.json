@@ -4,9 +4,9 @@
   "description": "A place for guests to view and drop pictures of the big day",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --mode production",
-    "watch": "webpack --mode development --watch",
-    "development": "webpack --mode development"
+    "development": "webpack --mode development",
+    "production": "webpack --mode production",
+    "watch": "webpack --mode development --watch"
   },
   "keywords": [
     "photo",

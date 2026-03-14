@@ -22,14 +22,14 @@
                                     if (platform.Name.Equals("Github", StringComparison.OrdinalIgnoreCase))
                                     {
                                         <a href="@((await _settings.GetOrDefault(Sponsors.Github.ProfileUrl, string.Empty))?.TrimEnd('/'))/@sponsor" class="sponsor-card">
-                                            <img src="@((await _settings.GetOrDefault(Sponsors.Github.ProfileUrl, string.Empty))?.TrimEnd('/'))/@($"{sponsor}.png")" class="sponsor-card-logo" alt="@sponsor" onerror="this.src = '/images/@(platform.Name.ToLower())_avatar.png';" />
+                                            <img src="@((await _settings.GetOrDefault(Sponsors.Github.ProfileUrl, string.Empty))?.TrimEnd('/'))/@($"{sponsor}.png")" class="sponsor-card-logo" alt="@sponsor" onerror="this.src = '/_content/memtly.core/images/@(platform.Name.ToLower())_avatar.png';" />
                                             <p class="sponsor-card-name">@sponsor</p>
                                         </a>
                                     }
                                     else
                                     {
                                         <div class="sponsor-card">
-                                            <img src="/images/@(platform.Name.ToLower())_avatar.png" class="sponsor-card-logo" alt="@sponsor" />
+                                            <img src="/_content/memtly.core/images/@(platform.Name.ToLower())_avatar.png" class="sponsor-card-logo" alt="@sponsor" />
                                             <p class="sponsor-card-name">@sponsor</p>
                                         </div>
                                     }
@@ -62,13 +62,13 @@
                             if (platform.Name.Equals("Github", StringComparison.OrdinalIgnoreCase))
                             {
                                 <a href="@((await _settings.GetOrDefault(Sponsors.Github.ProfileUrl, string.Empty))?.TrimEnd('/'))/@sponsor" class="sponsor-card sponsor-card-small">
-                                    <img src="@((await _settings.GetOrDefault(Sponsors.Github.ProfileUrl, string.Empty))?.TrimEnd('/'))/@($"{sponsor}.png")" class="sponsor-card-logo" alt="@sponsor" onerror="this.src = '/images/@(platform.Name.ToLower())_avatar.png';" />
+                                    <img src="@((await _settings.GetOrDefault(Sponsors.Github.ProfileUrl, string.Empty))?.TrimEnd('/'))/@($"{sponsor}.png")" class="sponsor-card-logo" alt="@sponsor" onerror="this.src = '/_content/memtly.core/images/@(platform.Name.ToLower())_avatar.png';" />
                                 </a>
                             }
                             else
                             {
                                 <div class="sponsor-card sponsor-card-small">
-                                    <img src="@((await _settings.GetOrDefault(Sponsors.Github.ProfileUrl, string.Empty))?.TrimEnd('/'))/@($"{sponsor}.png")" class="sponsor-card-logo" alt="@sponsor" onerror="this.src = '/images/@(platform.Name.ToLower())_avatar.png';" />
+                                    <img src="@((await _settings.GetOrDefault(Sponsors.Github.ProfileUrl, string.Empty))?.TrimEnd('/'))/@($"{sponsor}.png")" class="sponsor-card-logo" alt="@sponsor" onerror="this.src = '/_content/memtly.core/images/@(platform.Name.ToLower())_avatar.png';" />
                                 </div>
                             }
                         }

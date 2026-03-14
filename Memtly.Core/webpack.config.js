@@ -29,7 +29,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'wwwroot/dist'),
         filename: '[name].js',
-        publicPath: '/dist/',
+        publicPath: '/_content/memtly.core/dist/',
         clean: true
     },
     module: {
