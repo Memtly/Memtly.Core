@@ -2,6 +2,8 @@ name: Pack and Publish NuGet
 
 on:
   push:
+    branches:
+      - master
     tags:
       - '*.*.*'
       - '*.*.*.*'
@@ -24,12 +26,23 @@ jobs:
 
       - name: Restore
         run: dotnet restore
+        env:
+          NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
+      - name: Set Version
+        id: version
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            echo "VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+          else
+            echo "VERSION=0.0.0-preview.${GITHUB_SHA::7}" >> $GITHUB_ENV
+          fi
+
       - name: Pack
-        run: dotnet pack --configuration Release --no-build --output ./nupkg -p:Version=${GITHUB_REF_NAME}
+        run: dotnet pack --configuration Release --no-build --output ./nupkg -p:Version=${{ env.VERSION }}
 
       - name: Push to GitHub Packages
         run: dotnet nuget push ./nupkg/*.nupkg --source "https://nuget.pkg.github.com/memtly/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
