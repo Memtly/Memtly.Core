@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36717.8
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memtly.Core", "Memtly.Core\Memtly.Core.csproj", "{D465DB4E-7BB3-F591-C56D-8DEABFE059D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memtly.UnitTests", "..\..\..\..\..\GitLab\Memtly\memtly.community\Memtly.Core\Memtly.UnitTests\Memtly.UnitTests.csproj", "{AD03FC4C-30A9-9486-A006-8A36491AF5CB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D465DB4E-7BB3-F591-C56D-8DEABFE059D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D465DB4E-7BB3-F591-C56D-8DEABFE059D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D465DB4E-7BB3-F591-C56D-8DEABFE059D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D465DB4E-7BB3-F591-C56D-8DEABFE059D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD03FC4C-30A9-9486-A006-8A36491AF5CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD03FC4C-30A9-9486-A006-8A36491AF5CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD03FC4C-30A9-9486-A006-8A36491AF5CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD03FC4C-30A9-9486-A006-8A36491AF5CB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B0475827-017C-4AB3-A853-B93B59350436}
+	EndGlobalSection
+EndGlobal
