@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/Memtly/Memtly.Assets/blob/master/Other/Memtly%20Icon%20(Other).png?raw=true" style="width: 15%;" />
+  <img src="Memtly.Core/Icon.png" style="width: 15%;" />
   
   <h1>Memtly.Core</h1>
   <p>
