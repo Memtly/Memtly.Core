@@ -2,8 +2,8 @@ name: Pack and Publish NuGet
 
 on:
   push:
-    branches:
-      - master
+#    branches:
+#      - master
     tags:
       - '*.*.*'
       - '*.*.*.*'
