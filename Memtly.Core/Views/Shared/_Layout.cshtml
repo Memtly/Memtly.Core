@@ -12,14 +12,14 @@
     var title = await _settings.GetOrDefault(Settings.Basic.Title, "Memtly", galleryId);
     var isDemoMode = await _settings.GetOrDefault(Settings.IsDemoMode, false);
 
-    var logo = "/_content/memtly.core/images/logo.png";
+    var logo = "/_content/Memtly.Core/images/logo.png";
     try
     {
-        logo = await _settings.GetOrDefault(Settings.Basic.Logo, "/_content/memtly.core/images/logo.png", galleryId);
+        logo = await _settings.GetOrDefault(Settings.Basic.Logo, "/_content/Memtly.Core/images/logo.png", galleryId);
     }
     catch
     {
-        logo = "/_content/memtly.core/images/logo.png";
+        logo = "/_content/Memtly.Core/images/logo.png";
     }
 
     var viewMode = ViewBag?.ViewMode != null ? ViewBag.ViewMode : ViewMode.Default;
@@ -73,15 +73,15 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         
-        <link rel="stylesheet" href="~/_content/memtly.core/dist/main.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/_content/Memtly.Core/dist/main.css" asp-append-version="true" />
         @if (theme.Equals(Themes.AutoDetect.ToString().ToLower(), StringComparison.OrdinalIgnoreCase))
         {
-            <link rel="stylesheet" href="~/_content/memtly.core/dist/themes/light.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" asp-append-version="true" />
-            <link rel="stylesheet" href="~/_content/memtly.core/dist/themes/dark.css" media="(prefers-color-scheme: dark)" asp-append-version="true" />
+            <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/light.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" asp-append-version="true" />
+            <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/dark.css" media="(prefers-color-scheme: dark)" asp-append-version="true" />
         }
         else
         {
-            <link rel="stylesheet" href="~/_content/memtly.core/dist/themes/@(theme).css" asp-append-version="true" />
+            <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/@(theme).css" asp-append-version="true" />
         }
     </head>
     <body data-theme="@theme" data-identity-check="@identityCheck.ToString().ToLower()">
@@ -89,7 +89,7 @@
         <nav class="navbar navbar-expand-lg">
             <div class="container px-3 px-lg-5 @(viewMode == ViewMode.Presentation || viewMode == ViewMode.Slideshow ? "justify-content-center" : string.Empty)">
                 <a class="navbar-brand" href="@(await _settings.GetOrDefault(Settings.Basic.HomeLink, true) ? "/" : "#")">
-                    <img class="navbar-logo" src="@logo" onerror="this.onerror=null;this.src='/_content/memtly.core/images/logo.png';" />
+                    <img class="navbar-logo" src="@logo" onerror="this.onerror=null;this.src='/_content/Memtly.Core/images/logo.png';" />
                     <span class="navbar-title">@title</span>
                 </a>
                 
@@ -197,8 +197,8 @@
                         <a class="text-link" href="https://github.com/Cirx08/Memtly" title="Copyright Cirx08" target="_blank"><i class="fa-brands fa-github"></i> Memtly v@(_settings.GetReleaseVersion(3)) &copy; Cirx08 @DateTime.UtcNow.Year</a>
                     </span>
                     <span class="float-end">
-                        <a class="text-link" href="https://github.com/sponsors/Cirx08" title="GitHub Sponsors" target="_blank"><img class="fa-sponsor-badge" src="/_content/memtly.core/images/github.png" /></a>
-                        <a class="text-link" href="https://buymeacoffee.com/cirx08" title="BuyMeACoffee" target="_blank"><img class="fa-sponsor-badge" src="/_content/memtly.core/images/buymeacoffee.gif" /></a>
+                        <a class="text-link" href="https://github.com/sponsors/Cirx08" title="GitHub Sponsors" target="_blank"><img class="fa-sponsor-badge" src="/_content/Memtly.Core/images/github.png" /></a>
+                        <a class="text-link" href="https://buymeacoffee.com/cirx08" title="BuyMeACoffee" target="_blank"><img class="fa-sponsor-badge" src="/_content/Memtly.Core/images/buymeacoffee.gif" /></a>
                     </span>
                 </p>
             </div>
@@ -211,7 +211,7 @@
         <i class="btn-show-sponsors fas fa-bolt"></i>
         
         <!-- Webpack -->
-        <script src="~/_content/memtly.core/dist/main.js" asp-append-version="true"></script>
+        <script src="~/_content/Memtly.Core/dist/main.js" asp-append-version="true"></script>
 
         @await RenderSectionAsync("Scripts", required: false)
         @{

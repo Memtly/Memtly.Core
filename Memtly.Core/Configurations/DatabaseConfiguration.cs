@@ -8,6 +8,7 @@ using Memtly.Core.Enums;
 using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Database;
 using Memtly.Core.Models.Database;
+using System.Text.RegularExpressions;
 
 namespace Memtly.Core.Configurations
 {
@@ -26,6 +27,17 @@ namespace Memtly.Core.Configurations
                 switch (provider.ToLower())
                 {
                     case "sqlite":
+                        try
+                        {
+                            var fileHelper = services.BuildServiceProvider().GetRequiredService<IFileHelper>();
+                            var databasePathMatch = Regex.Match(connString, "Data Source=(.+?)(;|$)", RegexOptions.Multiline);
+                            if (databasePathMatch?.Groups != null && databasePathMatch.Groups.Count == 3)
+                            {
+                                fileHelper.CreateDirectoryIfNotExists(Path.GetDirectoryName(databasePathMatch.Groups[1].Value)!);
+                            }
+                        }
+                        catch { }
+
                         options.UseSqlite(connString, x =>
                         {
                             x.MigrationsAssembly(assemblyName);

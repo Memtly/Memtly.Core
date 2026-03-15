@@ -34,12 +34,12 @@ function bindShowSponsorsButton() {
                                 CustomHtml: `<div class="text-center mb-5">
     	                                <section class="my-4">
     		                                <a href="https://github.com/sponsors/Cirx08" class="sponsor-card">
-    			                                <img src="/_content/memtly.core/images/github_avatar.png" class="sponsor-card-logo" alt="GitHub Sponsors Link" />
+    			                                <img src="/_content/Memtly.Core/images/github_avatar.png" class="sponsor-card-logo" alt="GitHub Sponsors Link" />
     			                                <p class="sponsor-card-name">GitHub Sponsors</p>
     		                                </a>
                                             <br/>
     		                                <a href="https://buymeacoffee.com/cirx08" class="sponsor-card">
-    			                                <img src="/_content/memtly.core/images/buymeacoffee_avatar.png" class="sponsor-card-logo" alt="BuyMeACoffee Sponsor Link" />
+    			                                <img src="/_content/Memtly.Core/images/buymeacoffee_avatar.png" class="sponsor-card-logo" alt="BuyMeACoffee Sponsor Link" />
     			                                <p class="sponsor-card-name">BuyMeACoffee</p>
     		                                </a>
     	                                </section>

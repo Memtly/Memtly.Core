@@ -29,7 +29,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'wwwroot/dist'),
         filename: '[name].js',
-        publicPath: '/_content/memtly.core/dist/',
+        publicPath: '/_content/Memtly.Core/dist/',
         clean: true
     },
     module: {
@@ -77,7 +77,5 @@ module.exports = {
             'window.jQuery': 'jquery',
             Popper: ['@popperjs/core', 'default']
         })
-    ],
-    mode: 'development',
-    watch: false
+    ]
 };

@@ -7,6 +7,10 @@
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
 
+  <Target Name="NpmInstall" BeforeTargets="BuildAssetsDebug;BuildAssetsProd">
+    <Exec Command="npm install" WorkingDirectory="$(ProjectDir)" />
+  </Target>
+  
   <Target Name="BuildAssetsDebug" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug'">
     <Exec Command="npm run development" WorkingDirectory="$(ProjectDir)" />
   </Target>
