@@ -12,14 +12,14 @@
     var title = await _settings.GetOrDefault(Settings.Basic.Title, "Memtly", galleryId);
     var isDemoMode = await _settings.GetOrDefault(Settings.IsDemoMode, false);
 
-    var logo = "/_content/Memtly.Core/images/logo.png";
+    var logo = "/images/logo.png";
     try
     {
-        logo = await _settings.GetOrDefault(Settings.Basic.Logo, "/_content/Memtly.Core/images/logo.png", galleryId);
+        logo = await _settings.GetOrDefault(Settings.Basic.Logo, "/images/logo.png", galleryId);
     }
     catch
     {
-        logo = "/_content/Memtly.Core/images/logo.png";
+        logo = "/images/logo.png";
     }
 
     var viewMode = ViewBag?.ViewMode != null ? ViewBag.ViewMode : ViewMode.Default;
@@ -76,8 +76,16 @@
         <link rel="stylesheet" href="~/_content/Memtly.Core/dist/main.css" asp-append-version="true" />
         @if (theme.Equals(Themes.AutoDetect.ToString().ToLower(), StringComparison.OrdinalIgnoreCase))
         {
-            <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/light.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" asp-append-version="true" />
-            <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/dark.css" media="(prefers-color-scheme: dark)" asp-append-version="true" />
+            if (MemtlyCore.Version == MemtlyVersion.Community)
+            {
+                <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/blue.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" asp-append-version="true" />
+                <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/darkblue.css" media="(prefers-color-scheme: dark)" asp-append-version="true" />
+            }
+            else
+            {
+                <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/green.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" asp-append-version="true" />
+                <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/darkgreen.css" media="(prefers-color-scheme: dark)" asp-append-version="true" />
+            }
         }
         else
         {

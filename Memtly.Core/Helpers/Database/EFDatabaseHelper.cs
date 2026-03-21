@@ -300,6 +300,7 @@ namespace Memtly.Core.Helpers.Database
             }
 
             return await query
+                .OrderByDescending(gi => gi.CreatedAt)
                 .Skip((page - 1) * limit)
                 .Take(limit)
                 .Select(gi => new GalleryItemModel()

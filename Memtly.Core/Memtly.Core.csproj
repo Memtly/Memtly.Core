@@ -7,8 +7,12 @@
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
 
+  <Target Name="CleanDist" BeforeTargets="NpmInstall">
+    <RemoveDir Directories="$(ProjectDir)wwwroot/dist" />
+  </Target>
+
   <Target Name="NpmInstall" BeforeTargets="BuildAssetsDebug;BuildAssetsProd">
-    <Exec Command="npm install" WorkingDirectory="$(ProjectDir)" />
+    <Exec Command="npm ci" WorkingDirectory="$(ProjectDir)" />
   </Target>
   
   <Target Name="BuildAssetsDebug" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug'">
@@ -36,10 +40,6 @@
   
   <ItemGroup>
     <Content Remove="Resources\Templates\Basic.cshtml" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <None Remove="src\themes\light.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -97,10 +97,10 @@
     <Content Include="src\pages\homepage\index.js" />
     <Content Include="src\themes\darkblue.css" />
     <Content Include="src\themes\darkpink.css" />
-    <Content Include="src\themes\light.css" />
+    <Content Include="src\themes\green.css" />
     <Content Include="src\themes\pink.css" />
     <Content Include="src\themes\blue.css" />
-    <Content Include="src\themes\dark.css" />
+    <Content Include="src\themes\darkgreen.css" />
     <Content Include="src\themes\index.js" />
     <Content Include="src\modules\utilities\blobs.js" />
     <Content Include="src\modules\utilities\datetime.js" />
@@ -149,7 +149,6 @@
     <None Include="wwwroot\images\github.png" />
     <None Include="wwwroot\images\github_avatar.png" />
     <None Include="wwwroot\images\loading.gif" />
-    <None Include="wwwroot\images\logo.png" />
     <None Include="wwwroot\images\next.png" />
     <None Include="wwwroot\images\play-button.svg" />
     <None Include="wwwroot\images\prev.png" />

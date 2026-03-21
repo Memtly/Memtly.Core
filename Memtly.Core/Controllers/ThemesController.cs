@@ -5,6 +5,7 @@ using Memtly.Core.Constants;
 using Memtly.Core.Enums;
 using Memtly.Core.Helpers;
 using Memtly.Core.Models;
+using System.Reflection;
 
 namespace Memtly.Core.Controllers
 {
@@ -38,12 +39,17 @@ namespace Memtly.Core.Controllers
 
                 foreach (Themes item in Enum.GetValues(typeof(Themes)))
                 {
+                    if (MemtlyCore.Version == MemtlyVersion.Community && (item == Themes.Green || item == Themes.DarkGreen))
+                    {
+                        continue;
+                    }
+
                     options.Themes.Add(new SupportedThemes()
-                    { 
-                        Name = _localizer[item.ToString()].Value,
-                        Value = item.ToString(),
-                        Selected = selectedTheme.Equals(item.ToString(), StringComparison.OrdinalIgnoreCase)
-                    });
+                        {
+                            Name = _localizer[item.ToString()].Value,
+                            Value = item.ToString(),
+                            Selected = selectedTheme.Equals(item.ToString(), StringComparison.OrdinalIgnoreCase)
+                        });
                 }
             }
             catch { }

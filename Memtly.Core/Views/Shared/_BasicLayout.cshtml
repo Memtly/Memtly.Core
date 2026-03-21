@@ -8,11 +8,11 @@
     string logo;
     try
     {
-        logo = await _settings.GetOrDefault(Settings.Basic.Logo, "/_content/Memtly.Core/images/logo.png");
+        logo = await _settings.GetOrDefault(Settings.Basic.Logo, "/images/logo.png");
     }
     catch
     {
-        logo = "/_content/Memtly.Core/images/logo.png";
+        logo = "/images/logo.png";
     }
 
     string theme = await _settings.GetOrDefault(Settings.Themes.Default, Themes.AutoDetect.ToString().ToLower());
@@ -51,8 +51,16 @@
         <link rel="stylesheet" href="~/_content/Memtly.Core/dist/main.css" asp-append-version="true" />
         @if (theme.Equals(Themes.AutoDetect.ToString().ToLower(), StringComparison.OrdinalIgnoreCase))
         {
-            <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/light.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" asp-append-version="true" />
-            <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/dark.css" media="(prefers-color-scheme: dark)" asp-append-version="true" />
+            if (MemtlyCore.Version == MemtlyVersion.Community)
+            {
+                <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/blue.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" asp-append-version="true" />
+                <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/darkblue.css" media="(prefers-color-scheme: dark)" asp-append-version="true" />
+            }
+            else
+            {
+                <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/green.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" asp-append-version="true" />
+                <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/darkgreen.css" media="(prefers-color-scheme: dark)" asp-append-version="true" />
+            }
         }
         else
         {
@@ -64,7 +72,7 @@
         <nav class="navbar navbar-expand-lg">
             <div class="container px-3 px-lg-5">
                 <a class="navbar-brand" href="@(await _settings.GetOrDefault(Settings.Basic.HomeLink, true) ? "/" : "#")">
-                    <img class="navbar-logo" src="@logo" onerror="this.onerror=null;this.src='/_content/Memtly.Core/images/logo.png';" />
+                    <img class="navbar-logo" src="@logo" onerror="this.onerror=null;this.src='/images/logo.png';" />
                     <span class="navbar-title">@title</span>
                 </a>
             </div>

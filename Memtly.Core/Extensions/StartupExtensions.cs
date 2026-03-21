@@ -43,7 +43,7 @@ namespace Memtly.Core.Extensions
             services.AddRazorPages();
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation()
-                .AddApplicationPart(typeof(Memtly.Core.AssemblyMarker).Assembly);
+                .AddApplicationPart(typeof(Memtly.Core.MemtlyCore).Assembly);
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -104,7 +104,7 @@ namespace Memtly.Core.Extensions
         {
             var config = app.ApplicationServices.GetRequiredService<IConfigHelper>();
             var settings = app.ApplicationServices.GetRequiredService<ISettingsHelper>();
-            var logger = app.ApplicationServices.GetRequiredService<ILogger<AssemblyMarker>>();
+            var logger = app.ApplicationServices.GetRequiredService<ILogger<MemtlyCore>>();
 
             logger.LogInformation($"Release Version - '{settings.GetReleaseVersion(4)}'");
 
