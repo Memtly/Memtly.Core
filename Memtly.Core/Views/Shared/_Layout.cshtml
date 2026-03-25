@@ -216,7 +216,10 @@
         <partial name="_CookieConsentPartial" />
 
         <!-- Sponsors Button -->
-        <i class="btn-show-sponsors fas fa-bolt"></i>
+        @if (MemtlyCore.Version == MemtlyVersion.Community)
+        {
+            <i class="btn-show-sponsors fas fa-bolt"></i>
+        }
         
         <!-- Webpack -->
         <script src="~/_content/Memtly.Core/dist/main.js" asp-append-version="true"></script>

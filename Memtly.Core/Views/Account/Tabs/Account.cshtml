@@ -7,7 +7,7 @@
     var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
 }
 
-@if (userPermissions.Account.HasFlag(AccountPermissions.View))
+@if (userPermissions.Account.HasFlag(AccountPermissions.View) && MemtlyCore.Version == MemtlyVersion.Enterprise)
 {
     <section class="pnl-account pnl-account-account pb-0 pb-lg-4">
         <div class="container px-3 px-lg-1 my-3 my-lg-0">

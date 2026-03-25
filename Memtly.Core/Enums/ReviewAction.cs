@@ -2,8 +2,8 @@
 {
     public enum ReviewAction
     {
-        UNKNOWN = 0,
-        APPROVED = 1,
-        REJECTED = 2
+        Unknown = 1,
+        Approved = 2,
+        Rejected = 3
     }
 }

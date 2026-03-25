@@ -2,9 +2,9 @@
 {
     public enum PaidTier
     {
-        None = 0,
-        Basic = 1,
-        Advanced = 2,
-        Premium = 3
+        None = 1,
+        Basic = 2,
+        Advanced = 3,
+        Premium = 4
     }
 }

@@ -2,11 +2,11 @@
 {
     public enum AuditSeverity
     {
-        Verbose = 0,
-        Debug = 1,
-        Information = 2,
-        Warning = 3,
-        Error = 4,
-        Critical = 5
+        Verbose = 1,
+        Debug = 2,
+        Information = 3,
+        Warning = 4,
+        Error = 5,
+        Critical = 6
     }
 }

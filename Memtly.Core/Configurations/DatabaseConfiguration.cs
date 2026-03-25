@@ -24,6 +24,7 @@ namespace Memtly.Core.Configurations
 
             services.AddDbContext<CoreDbContext>(options =>
             {
+                MemtlyCore.DatabaseType = provider.ToLower();
                 switch (provider.ToLower())
                 {
                     case "sqlite":
@@ -88,7 +89,9 @@ namespace Memtly.Core.Configurations
             {
                 var db = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
 
+                logger.LogInformation($"Initializing database - {MemtlyCore.DatabaseType}");
                 InitializeDatabase(config, db, encryption, logger);
+                logger.LogInformation($"Initialization complete");
             }
         }
 

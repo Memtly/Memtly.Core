@@ -140,7 +140,7 @@ namespace Memtly.Core.Extensions
         public static AccountTabs GetDefaultTab(this IIdentity identity)
         {
             var userPermissions = identity?.GetUserPermissions() ?? new Permissions();
-            if (userPermissions.Account.HasFlag(AccountPermissions.View))
+            if (userPermissions.Account.HasFlag(AccountPermissions.View) && MemtlyCore.Version == MemtlyVersion.Enterprise)
             {
                 return AccountTabs.Account;
             }

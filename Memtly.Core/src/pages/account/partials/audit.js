@@ -26,7 +26,7 @@ function bindAuditSearchBox() {
     });
 }
 
-export function searchAudit(term = '', severity = 2, limit = 10) {
+export function searchAudit(term = '', severity = 3, limit = 10) {
     clearTimeout(auditSearchTimeout);
     auditSearchTimeout = setTimeout(() => {
         updateAuditList(term, severity, limit);
@@ -37,7 +37,7 @@ export function resetAudit() {
     updateAuditList('');
 }
 
-export function updateAuditList(term = '', severity = 2, limit = 10) {
+export function updateAuditList(term = '', severity = 3, limit = 10) {
     $.ajax({
         type: 'POST',
         url: `/Audit/AuditList`,

@@ -866,7 +866,7 @@ namespace Memtly.Core.Controllers
                         { 
                             var galleryDir = Path.Combine(UploadsDirectory, gallery.Identifier);
                             var reviewFile = Path.Combine(galleryDir, "Pending", review.Title);
-                            if (action == ReviewAction.APPROVED)
+                            if (action == ReviewAction.Approved)
                             {
                                 _fileHelper.MoveFileIfExists(reviewFile, Path.Combine(galleryDir, review.Title));
 
@@ -875,7 +875,7 @@ namespace Memtly.Core.Controllers
 
                                 await _audit.LogAction(User?.Identity?.GetUserId(), $"'{review.Title}' {_localizer["Audit_ItemApprovedInGallery"].Value} '{gallery.Identifier}'", AuditSeverity.Verbose);
                             }
-                            else if (action == ReviewAction.REJECTED)
+                            else if (action == ReviewAction.Rejected)
                             {
                                 var retain = await _settings.GetOrDefault(Settings.Gallery.RetainRejectedItems, false);
                                 if (retain)
@@ -893,7 +893,7 @@ namespace Memtly.Core.Controllers
 
                                 await _audit.LogAction(User?.Identity?.GetUserId(), $"'{review.Title}' {_localizer["Audit_ItemRejectedInGallery"].Value} '{gallery.Identifier}'", AuditSeverity.Verbose);
                             }
-                            else if (action == ReviewAction.UNKNOWN)
+                            else if (action == ReviewAction.Unknown)
                             {
                                 throw new Exception(_localizer["Unknown_Review_Action"].Value);
                             }
@@ -935,7 +935,7 @@ namespace Memtly.Core.Controllers
                                 {
                                     var galleryDir = Path.Combine(UploadsDirectory, gallery.Identifier);
                                     var reviewFile = Path.Combine(galleryDir, "Pending", review.Title);
-                                    if (action == ReviewAction.APPROVED)
+                                    if (action == ReviewAction.Approved)
                                     {
                                         _fileHelper.MoveFileIfExists(reviewFile, Path.Combine(galleryDir, review.Title));
 
@@ -944,7 +944,7 @@ namespace Memtly.Core.Controllers
 
                                         await _audit.LogAction(User?.Identity?.GetUserId(), _localizer["Audit_BulkApproveReviews"].Value, AuditSeverity.Verbose);
                                     }
-                                    else if (action == ReviewAction.REJECTED)
+                                    else if (action == ReviewAction.Rejected)
                                     {
                                         var retain = await _settings.GetOrDefault(Settings.Gallery.RetainRejectedItems, false);
                                         if (retain)
@@ -962,7 +962,7 @@ namespace Memtly.Core.Controllers
 
                                         await _audit.LogAction(User?.Identity?.GetUserId(), _localizer["Audit_BulkRejectReviews"].Value, AuditSeverity.Verbose);
                                     }
-                                    else if (action == ReviewAction.UNKNOWN)
+                                    else if (action == ReviewAction.Unknown)
                                     {
                                         throw new Exception(_localizer["Unknown_Review_Action"].Value);
                                     }

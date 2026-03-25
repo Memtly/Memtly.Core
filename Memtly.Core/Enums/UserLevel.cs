@@ -2,11 +2,11 @@
 {
     public enum UserLevel
     {
-        Basic = 0,
-        Paid = 1,
-        Reviewer = 2,
-        Moderator = 3,
-        Admin = 4,
+        Basic = 1,
+        Paid = 2,
+        Reviewer = 3,
+        Moderator = 4,
+        Admin = 5,
         System = 9999
     }
 }

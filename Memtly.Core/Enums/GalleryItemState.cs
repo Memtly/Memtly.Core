@@ -2,9 +2,9 @@
 {
     public enum GalleryItemState
     {
-        Unknown = 0,
-        Pending = 1,
-        Approved = 2,
+        Unknown = 1,
+        Pending = 2,
+        Approved = 3,
         All = 99
     }
 }

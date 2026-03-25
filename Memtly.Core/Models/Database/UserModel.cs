@@ -11,9 +11,9 @@ namespace Memtly.Core.Models.Database
         public string? Lastname { get; set; }
         public string? Password { get; set; }
         public string? CPassword { get; set; }
-        public DateTime? PaidUntil { get; set; }
+        public DateTimeOffset? PaidUntil { get; set; }
         public int FailedLogins { get; set; }
-        public DateTime? LockoutUntil { get; set; }
+        public DateTimeOffset? LockoutUntil { get; set; }
         public string? MultiFactorToken { get; set; }
         public AccountState State { get; set; } = AccountState.Active;
         public UserLevel Level { get; set; } = UserLevel.Basic;
@@ -23,7 +23,7 @@ namespace Memtly.Core.Models.Database
         {
             get
             {
-                return this.PaidUntil != null && this.PaidUntil >= DateTime.UtcNow ? SubscriptionState.Active : SubscriptionState.Inactive;
+                return this.PaidUntil != null && this.PaidUntil.Value.DateTime >= DateTime.UtcNow ? SubscriptionState.Active : SubscriptionState.Inactive;
             }
         }
 
@@ -31,7 +31,7 @@ namespace Memtly.Core.Models.Database
         {
             get 
             {
-                return this.LockoutUntil != null && this.LockoutUntil >= DateTime.UtcNow;
+                return this.LockoutUntil != null && this.LockoutUntil.Value.DateTime >= DateTime.UtcNow;
             }
         }
     }

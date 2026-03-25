@@ -2,8 +2,8 @@
 {
     public enum AccountState
     {
-        Active = 0,
-        Frozen = 1,
-        PendingActivation = 2
+        Active = 1,
+        Frozen = 2,
+        PendingActivation = 3
     }
 }

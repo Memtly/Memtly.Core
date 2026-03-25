@@ -35,14 +35,21 @@ namespace Memtly.Core.EntityFramework
                 e.Property(x => x.Password).HasMaxLength(500);
                 e.Property(x => x.MultiFactorAuthToken).HasMaxLength(2000);
                 e.Property(x => x.ActionAuthCode).HasMaxLength(2000);
-                e.Property(x => x.Level).HasDefaultValue(UserLevel.Basic);
-                e.Property(x => x.Tier).HasDefaultValue(PaidTier.None);
-                e.Property(x => x.State).HasDefaultValue(AccountState.PendingActivation);
+                e.Property(x => x.Level)
+                    .HasDefaultValue(UserLevel.Basic)
+                    .HasSentinel(0);
+                e.Property(x => x.Tier)
+                    .HasDefaultValue(PaidTier.None)
+                    .HasSentinel(0);
+                e.Property(x => x.State)
+                    .HasDefaultValue(AccountState.PendingActivation)
+                    .HasSentinel(0);
                 e.Property(x => x.PaidUntil).HasConversion(
                     v => v.HasValue ? v.Value.UtcTicks : (long?)null,
                     v => v.HasValue ? new DateTimeOffset(v.Value, TimeSpan.Zero) : (DateTimeOffset?)null
                 );
-                e.Property(x => x.FailedLoginCount).HasDefaultValue(0);
+                e.Property(x => x.FailedLoginCount)
+                    .HasDefaultValue(0);
                 e.Property(x => x.LockoutUntil).HasConversion(
                     v => v.HasValue ? v.Value.UtcTicks : (long?)null,
                     v => v.HasValue ? new DateTimeOffset(v.Value, TimeSpan.Zero) : (DateTimeOffset?)null
@@ -78,9 +85,15 @@ namespace Memtly.Core.EntityFramework
                 e.Property(x => x.UploadedBy).HasMaxLength(100);
                 e.Property(x => x.Checksum).HasMaxLength(1000);
                 e.Property(x => x.FileSize).HasDefaultValue(0);
-                e.Property(x => x.State).HasDefaultValue(GalleryItemState.Pending);
-                e.Property(x => x.Type).HasDefaultValue(MediaType.Unknown);
-                e.Property(x => x.Orientation).HasDefaultValue(ImageOrientation.Unknown);
+                e.Property(x => x.State)
+                    .HasDefaultValue(GalleryItemState.Pending)
+                    .HasSentinel(0);
+                e.Property(x => x.Type)
+                    .HasDefaultValue(MediaType.Unknown)
+                    .HasSentinel(0);
+                e.Property(x => x.Orientation)
+                    .HasDefaultValue(ImageOrientation.Unknown)
+                    .HasSentinel(0);
                 e.Property(x => x.CreatedAt).HasConversion(
                     v => v.UtcTicks,
                     v => new DateTimeOffset(v, TimeSpan.Zero)
@@ -158,7 +171,9 @@ namespace Memtly.Core.EntityFramework
             mb.Entity<AuditLog>(e =>
             {
                 e.Property(x => x.Message).HasMaxLength(2000);
-                e.Property(x => x.Severity).HasDefaultValue(AuditSeverity.Information);
+                e.Property(x => x.Severity)
+                    .HasDefaultValue(AuditSeverity.Information)
+                    .HasSentinel(0);
                 e.Property(x => x.CreatedAt).HasConversion(
                     v => v.UtcTicks,
                     v => new DateTimeOffset(v, TimeSpan.Zero)

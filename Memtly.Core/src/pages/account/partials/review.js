@@ -18,14 +18,14 @@ function bindEventHandlers() {
 function bindReviewApprovalButton() {
     $(document).off('click', '.btnReviewApprove').on('click', '.btnReviewApprove', function (e) {
         preventDefaults(e);
-        reviewPhoto($(this), 1);
+        reviewPhoto($(this), 2);
     });
 }
 
 function bindReviewRejectButton() {
     $(document).off('click', '.btnReviewReject').on('click', '.btnReviewReject', function (e) {
         preventDefaults(e);
-        reviewPhoto($(this), 2);
+        reviewPhoto($(this), 3);
     });
 }
 
@@ -53,7 +53,7 @@ function bindBulkReviewButton() {
                         $.ajax({
                             url: '/Account/BulkReview',
                             method: 'POST',
-                            data: { action: 1, ids: [] }
+                            data: { action: 2, ids: [] }
                         })
                             .done(data => {
                                 if (data.success === true) {
@@ -78,7 +78,7 @@ function bindBulkReviewButton() {
                         $.ajax({
                             url: '/Account/BulkReview',
                             method: 'POST',
-                            data: { action: 2, ids: [] }
+                            data: { action: 3, ids: [] }
                         })
                             .done(data => {
                                 if (data.success === true) {

@@ -46,6 +46,7 @@ namespace Memtly.Core.Helpers.Database
                     (userId == null || g.UserId == userId)
                     && (string.IsNullOrWhiteSpace(term) || g.Identifier.ToLower().Contains(term.ToLower()) || g.Name.ToLower().Contains(term.ToLower()) || g.User!.Username.ToLower().Contains(term.ToLower()))
                 )
+                .OrderByDescending(g => g.Items.Sum(gi => (long?)gi.FileSize) ?? 0)
                 .Skip((page - 1) * limit)
                 .Take(limit)
                 .Select(g => new GalleryModel
@@ -60,7 +61,6 @@ namespace Memtly.Core.Helpers.Database
                     PendingItems = g.Items.Count(gi => gi.State == GalleryItemState.Pending),
                     TotalGallerySize = g.Items.Sum(gi => (long?)gi.FileSize) ?? 0
                 })
-                .OrderByDescending(g => g.TotalGallerySize)
                 .ToListAsync();
         }
 
@@ -520,6 +520,7 @@ namespace Memtly.Core.Helpers.Database
                     !u.Username.ToLower().Equals(UserAccounts.SystemUser.ToLower())
                     && (string.IsNullOrWhiteSpace(term) || u.Username.ToLower().Contains(term.ToLower()))
                 )
+                .OrderBy(u => u.Username.ToLower())
                 .Skip((page - 1) * limit)
                 .Take(limit)
                 .Select(u => new UserModel()
@@ -532,12 +533,11 @@ namespace Memtly.Core.Helpers.Database
                     Level = u.Level ?? UserLevel.Basic,
                     Tier = u.Tier ?? PaidTier.None,
                     State = u.State ?? AccountState.PendingActivation,
-                    PaidUntil = u.PaidUntil.HasValue ? u.PaidUntil.Value.DateTime : null,
+                    PaidUntil = u.PaidUntil.HasValue ? u.PaidUntil.Value : null,
                     FailedLogins = u.FailedLoginCount,
-                    LockoutUntil = u.LockoutUntil.HasValue ? u.LockoutUntil.Value.DateTime : null,
+                    LockoutUntil = u.LockoutUntil.HasValue ? u.LockoutUntil.Value : null,
                     MultiFactorToken = u.MultiFactorAuthToken
                 })
-                .OrderBy(u => u.Username.ToLower())
                 .ToListAsync();
         }
 
@@ -554,9 +554,9 @@ namespace Memtly.Core.Helpers.Database
                     Level = u.Level ?? UserLevel.Basic,
                     Tier = u.Tier ?? PaidTier.None,
                     State = u.State ?? AccountState.PendingActivation,
-                    PaidUntil = u.PaidUntil.HasValue ? u.PaidUntil.Value.DateTime : null,
+                    PaidUntil = u.PaidUntil.HasValue ? u.PaidUntil.Value : null,
                     FailedLogins = u.FailedLoginCount,
-                    LockoutUntil = u.LockoutUntil.HasValue ? u.LockoutUntil.Value.DateTime : null,
+                    LockoutUntil = u.LockoutUntil.HasValue ? u.LockoutUntil.Value : null,
                     MultiFactorToken = u.MultiFactorAuthToken
                 })
                 .FirstOrDefaultAsync(u => u.Id == id);
@@ -575,9 +575,9 @@ namespace Memtly.Core.Helpers.Database
                     Level = u.Level ?? UserLevel.Basic,
                     Tier = u.Tier ?? PaidTier.None,
                     State = u.State ?? AccountState.PendingActivation,
-                    PaidUntil = u.PaidUntil.HasValue ? u.PaidUntil.Value.DateTime : null,
+                    PaidUntil = u.PaidUntil.HasValue ? u.PaidUntil.Value : null,
                     FailedLogins = u.FailedLoginCount,
-                    LockoutUntil = u.LockoutUntil.HasValue ? u.LockoutUntil.Value.DateTime : null,
+                    LockoutUntil = u.LockoutUntil.HasValue ? u.LockoutUntil.Value : null,
                     MultiFactorToken = u.MultiFactorAuthToken
                 })
                 .FirstOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower()));
@@ -596,9 +596,9 @@ namespace Memtly.Core.Helpers.Database
                     Level = u.Level ?? UserLevel.Basic,
                     Tier = u.Tier ?? PaidTier.None,
                     State = u.State ?? AccountState.PendingActivation,
-                    PaidUntil = u.PaidUntil.HasValue ? u.PaidUntil.Value.DateTime : null,
+                    PaidUntil = u.PaidUntil.HasValue ? u.PaidUntil.Value : null,
                     FailedLogins = u.FailedLoginCount,
-                    LockoutUntil = u.LockoutUntil.HasValue ? u.LockoutUntil.Value.DateTime : null,
+                    LockoutUntil = u.LockoutUntil.HasValue ? u.LockoutUntil.Value : null,
                     MultiFactorToken = u.MultiFactorAuthToken
                 })
                 .FirstOrDefaultAsync(u => u.Email!.ToLower().Equals(email.ToLower()));
@@ -854,6 +854,7 @@ namespace Memtly.Core.Helpers.Database
                     (userId == null || cr.UserId == userId)
                     && (string.IsNullOrWhiteSpace(term) || cr.Title.ToLower().Contains(term.ToLower()) || cr.Filename.ToLower().Contains(term.ToLower()) || cr.User!.Username.ToLower().Contains(term.ToLower()))
                 )
+                .OrderBy(cr => cr.Title!.ToLower())
                 .Skip((page - 1) * limit)
                 .Take(limit)
                 .Select(cr => new CustomResourceModel()
@@ -864,7 +865,6 @@ namespace Memtly.Core.Helpers.Database
                     Owner = cr.UserId ?? 0,
                     OwnerName = cr.User!.Username
                 })
-                .OrderBy(cr => cr.Title!.ToLower())
                 .ToListAsync();
         }
 

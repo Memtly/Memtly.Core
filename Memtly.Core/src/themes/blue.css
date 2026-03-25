@@ -524,16 +524,20 @@ label {
     }
 
 .file-uploader-form, .upload_drop {
-    outline-color: rgba(var(--primary-bg-2), 1.0) !important;
+    outline-color: rgba(var(--primary-bg-3), 1.0) !important;
 }
 
     .upload_drop .upload_svg {
-        fill: rgba(var(--primary-hover-bg-2), 1.0) !important;
+        fill: rgba(var(--primary-hover-bg-3), 1.0) !important;
     }
 
     .file-uploader-form fieldset {
-        color: rgba(var(--primary-bg-2), 1.0) !important;
+        color: rgba(var(--primary-bg-3), 1.0) !important;
     }
+
+        .file-uploader-form fieldset h2 {
+            color: rgba(var(--primary-bg-2), 1.0) !important;
+        }
 
     .upload_drop.highlight {
         color: rgba(var(--primary-hover-bg-1)) !important;
