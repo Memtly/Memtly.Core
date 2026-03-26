@@ -156,6 +156,7 @@
                 public const string Token = "Memtly:Notifications:Ntfy:Token";
                 public const string Topic = "Memtly:Notifications:Ntfy:Topic";
                 public const string Priority = "Memtly:Notifications:Ntfy:Priority";
+                public const string Icon = "Memtly:Notifications:Ntfy:Icon";
             }
 
             public class Smtp
@@ -255,6 +256,17 @@
                 public const string Enabled = "Memtly:BackgroundServices:Cleanup:Enabled";
                 public const string Schedule = "Memtly:BackgroundServices:Cleanup:Schedule";
             }
+        }
+    }
+
+    public class MemtlyStaticConfiguration
+    {
+        public class Links
+        {
+            public const string GitHub = "Links:GitHub";
+            public const string GitHubSponsors = "Links:GitHubSponsors";
+            public const string GitHubStargazers = "Links:GitHubStargazers";
+            public const string BuyMeACoffee = "Links:BuyMeACoffee";
         }
     }
 }

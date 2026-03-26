@@ -55,7 +55,7 @@ namespace Memtly.Core.Helpers.Notifications
             {
                 if (priority > 0)
                 {
-                    var defaultIcon = "https://github.com/Memtly/Memtly.Core/blob/master/Memtly.Core/wwwroot/images/logo.png?raw=true";
+                    var defaultIcon = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Icon, string.Empty);
                     var icon = await _settings.GetOrDefault(MemtlyConfiguration.Basic.Logo, defaultIcon);
                     icon = !icon.StartsWith('.') && !icon.StartsWith('/') ? icon : defaultIcon;
 
