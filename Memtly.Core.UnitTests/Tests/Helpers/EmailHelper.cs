@@ -3,6 +3,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Notifications;
+using Memtly.Core.Constants;
 
 namespace Memtly.Core.UnitTests.Tests.Helpers
 {
@@ -22,15 +23,15 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         {
             _smtp.SendMailAsync(Arg.Any<SmtpClient>(), Arg.Any<MailMessage>()).Returns(Task.FromResult(true));
 
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Smtp.Enabled, Arg.Any<bool>()).Returns(true);
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Smtp.Recipient, Arg.Any<string>()).Returns("unit@test.com");
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Smtp.Host, Arg.Any<string>()).Returns("https://unit.test.com/");
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Smtp.Port, Arg.Any<int>()).Returns(999);
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Smtp.Username, Arg.Any<string>()).Returns("Unit");
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Smtp.Password, Arg.Any<string>()).Returns("Test");
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Smtp.From, Arg.Any<string>()).Returns("unittest@test.com");
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Smtp.DisplayName, Arg.Any<string>()).Returns("UnitTest");
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Smtp.UseSSL, Arg.Any<bool>()).Returns(true);
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Enabled, Arg.Any<bool>()).Returns(true);
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Recipient, Arg.Any<string>()).Returns("unit@test.com");
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Host, Arg.Any<string>()).Returns("https://unit.test.com/");
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Port, Arg.Any<int>()).Returns(999);
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Username, Arg.Any<string>()).Returns("Unit");
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Password, Arg.Any<string>()).Returns("Test");
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.From, Arg.Any<string>()).Returns("unittest@test.com");
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.DisplayName, Arg.Any<string>()).Returns("UnitTest");
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.UseSSL, Arg.Any<bool>()).Returns(true);
         }
 
         [TestCase("unit", "test")]
@@ -44,7 +45,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase(false, false)]
         public async Task EmailHelper_Enabled(bool enabled, bool expected)
         {
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Smtp.Enabled, Arg.Any<bool>()).Returns(enabled);
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Enabled, Arg.Any<bool>()).Returns(enabled);
 
             var actual = await new EmailHelper(_settings, _smtp, _logger, _localizer).Send("unit", "test");
             Assert.That(actual, Is.EqualTo(expected));
@@ -55,7 +56,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase("blaa@blaa.com", true)]
         public async Task EmailHelper_Recipient(string recipient, bool expected)
         {
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Smtp.Recipient, Arg.Any<string>()).Returns(recipient);
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Recipient, Arg.Any<string>()).Returns(recipient);
 
             var actual = await new EmailHelper(_settings, _smtp, _logger, _localizer).Send("unit", "test");
             Assert.That(actual, Is.EqualTo(expected));
@@ -66,7 +67,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase("https://unit.test.com/", true)]
         public async Task EmailHelper_Host(string host, bool expected)
         {
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Smtp.Host, Arg.Any<string>()).Returns(host);
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Host, Arg.Any<string>()).Returns(host);
 
             var actual = await new EmailHelper(_settings, _smtp, _logger, _localizer).Send("unit", "test");
             Assert.That(actual, Is.EqualTo(expected));
@@ -78,7 +79,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase(1, true)]
         public async Task EmailHelper_Port(int port, bool expected)
         {
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Smtp.Port, Arg.Any<int>()).Returns(port);
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Port, Arg.Any<int>()).Returns(port);
 
             var actual = await new EmailHelper(_settings, _smtp, _logger, _localizer).Send("unit", "test");
             Assert.That(actual, Is.EqualTo(expected));
@@ -89,7 +90,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase("blaa@blaa.com", true)]
         public async Task EmailHelper_From(string from, bool expected)
         {
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Smtp.From, Arg.Any<string>()).Returns(from);
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.From, Arg.Any<string>()).Returns(from);
 
             var actual = await new EmailHelper(_settings, _smtp, _logger, _localizer).Send("unit", "test");
             Assert.That(actual, Is.EqualTo(expected));
@@ -100,7 +101,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase("UnitTest", true)]
         public async Task EmailHelper_DisplayName(string displayName, bool expected)
         {
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Smtp.DisplayName, Arg.Any<string>()).Returns(displayName);
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.DisplayName, Arg.Any<string>()).Returns(displayName);
 
             var actual = await new EmailHelper(_settings, _smtp, _logger, _localizer).Send("unit", "test");
             Assert.That(actual, Is.EqualTo(expected));

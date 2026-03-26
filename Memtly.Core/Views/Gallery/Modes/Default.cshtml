@@ -5,8 +5,8 @@
 
 @{
     var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
-    var columnCount = await _settings.GetOrDefault(Settings.Gallery.Columns, 4, Model?.Gallery?.Id);
-    var identityEnabled = await _settings.GetOrDefault(Settings.IdentityCheck.Enabled, true);
+    var columnCount = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Columns, 4, Model?.Gallery?.Id);
+    var identityEnabled = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.Enabled, true);
 
     try
     {
@@ -112,7 +112,7 @@
         if (Model?.GroupBy != GalleryGroup.None)
         {
             <h1 class="display-7">@imageGroup.Key
-                @if (Model?.Gallery?.Id > 0 && (await _settings.GetOrDefault(Settings.Gallery.Download, true, Model?.Gallery?.Id) || (User?.Identity != null && User.Identity.IsAuthenticated)))
+                @if (Model?.Gallery?.Id > 0 && (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Download, true, Model?.Gallery?.Id) || (User?.Identity != null && User.Identity.IsAuthenticated)))
                 {
                     <span class="header-actions">
                         <span class="btnDownloadGroup action link-primary-2 pointer" data-gallery-id="@Model?.Gallery?.Id" data-gallery-name="@Model?.Gallery?.Name" data-gallery-key="@Model?.SecretKey" data-group-name="@((int?)Model?.GroupBy)|@imageGroup.Key" alt="@_localizer["Download"].Value">
@@ -163,7 +163,7 @@
         }
     }
 
-    var idleTimeout = await _settings.GetOrDefault(Settings.Gallery.IdleRefreshMins, 0, Model?.Gallery?.Id);
+    var idleTimeout = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.IdleRefreshMins, 0, Model?.Gallery?.Id);
     if (idleTimeout > 0)
     {
         <input id="galleryIdleRefreshInterval" type="hidden" value="@(TimeSpan.FromMinutes(idleTimeout).TotalMilliseconds)" />

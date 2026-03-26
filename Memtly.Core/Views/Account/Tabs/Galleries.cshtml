@@ -21,7 +21,7 @@
             <div class="col-12">
                 <h1 class="display-6">@_localizer["Galleries"].Value
                     <span class="header-actions">
-                        @if (!await _settings.GetOrDefault(Settings.Basic.SingleGalleryMode, false))
+                        @if (!await _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, false))
                         {
                             if (userPermissions.Gallery.HasFlag(GalleryPermissions.Create))
                             {

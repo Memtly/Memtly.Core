@@ -16,7 +16,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [SetUp]
         public void Setup()
         {
-            _settings.GetOrDefault(Settings.Basic.ForceHttps, Arg.Any<bool>()).Returns(false);
+            _settings.GetOrDefault(MemtlyConfiguration.Basic.ForceHttps, Arg.Any<bool>()).Returns(false);
         }
 
         [TestCase("http", "unittest.com", null, "http://unittest.com/")]
@@ -33,7 +33,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase("https", "mobile.unittest.org", "/unittest?unit=test&blaa=test", "https://mobile.unittest.org/unittest?unit=test&blaa=test")]
         public void UrlHelper_GenerateBaseUrl(string scheme, string host, string? querystring, string expected)
         {
-            _settings.GetOrDefault(Settings.Basic.BaseUrl, Arg.Any<string>()).Returns(host);
+            _settings.GetOrDefault(MemtlyConfiguration.Basic.BaseUrl, Arg.Any<string>()).Returns(host);
 
             var mockContext = MockData.MockHttpContext();
             mockContext.Request.Scheme = scheme;

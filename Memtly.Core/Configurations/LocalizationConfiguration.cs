@@ -20,7 +20,7 @@ namespace Memtly.Core.Configurations
             services.Configure<RequestLocalizationOptions>(options => {
                 var supportedCultures = new LanguageHelper().DetectSupportedCultures();
 
-                var language = settings.GetOrDefault(Settings.Languages.Default, "en-GB").Result;
+                var language = settings.GetOrDefault(MemtlyConfiguration.Languages.Default, "en-GB").Result;
                 CurrentCulture = GetDefaultCulture(supportedCultures, language);
                 
                 options.DefaultRequestCulture = new RequestCulture(CurrentCulture);

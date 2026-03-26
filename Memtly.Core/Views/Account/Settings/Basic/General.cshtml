@@ -6,7 +6,7 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Basic_Title_Label"].Value</label>
-            <input class="setting-field form-control" data-setting-name="@Settings.Basic.Title" placeholder="" value="@Model.Settings.GetValue(Settings.Basic.Title.ToUpper(), string.Empty)" type="text" />
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Basic.Title" placeholder="" value="@Model.Settings.GetValue(MemtlyConfiguration.Basic.Title.ToUpper(), string.Empty)" type="text" />
             <div class="setting-hint form-text">@_localizer["Settings_Basic_Title_Help"].Value</div>
         </div>
     </div>
@@ -14,10 +14,10 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Basic_Logo_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Basic.Logo" placeholder="my-banner.jpg">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Basic.Logo" placeholder="my-banner.jpg">
                 <option value="/images/logo.png">Default</option>
                 @{
-                    var currentValue = Model.Settings.GetValue(Settings.Basic.Logo.ToUpper(), string.Empty);
+                    var currentValue = Model.Settings.GetValue(MemtlyConfiguration.Basic.Logo.ToUpper(), string.Empty);
                     if (Model?.CustomResources != null && Model.CustomResources.Any())
                     {
                         foreach (var option in Model.CustomResources)
@@ -46,7 +46,7 @@
     <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Basic_BaseUrl_Label"].Value</label>
-            <input class="setting-field form-control" data-setting-name="@Settings.Basic.BaseUrl" placeholder="https://www.your-domain.com/" value="@Model.Settings.GetValue(Settings.Basic.BaseUrl.ToUpper(), string.Empty)" type="text" />
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Basic.BaseUrl" placeholder="https://www.your-domain.com/" value="@Model.Settings.GetValue(MemtlyConfiguration.Basic.BaseUrl.ToUpper(), string.Empty)" type="text" />
             <div class="setting-hint form-text">@_localizer["Settings_Basic_BaseUrl_Help"].Value</div>
         </div>
     </div>
@@ -54,10 +54,10 @@
     <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Basic_ForceHttps_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Basic.ForceHttps">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Basic.ForceHttps">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.Settings.GetValue(Settings.Basic.ForceHttps.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.Settings.GetValue(MemtlyConfiguration.Basic.ForceHttps.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -74,10 +74,10 @@
     <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Basic_HomeLink_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Basic.HomeLink">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Basic.HomeLink">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.Settings.GetValue(Settings.Basic.HomeLink.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.Settings.GetValue(MemtlyConfiguration.Basic.HomeLink.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -94,10 +94,10 @@
     <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Basic_LinksOpenNewTab_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Basic.LinksOpenNewTab">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Basic.LinksOpenNewTab">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.Settings.GetValue(Settings.Basic.LinksOpenNewTab.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.Settings.GetValue(MemtlyConfiguration.Basic.LinksOpenNewTab.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -114,10 +114,10 @@
     <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Basic_EmailReport_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Basic.EmailReport">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Basic.EmailReport">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.Settings.GetValue(Settings.Basic.EmailReport.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.Settings.GetValue(MemtlyConfiguration.Basic.EmailReport.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }

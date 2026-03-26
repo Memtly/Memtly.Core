@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using Memtly.Core.Constants;
+using Microsoft.Extensions.Localization;
 
 namespace Memtly.Core.Helpers.Notifications
 {
@@ -25,17 +26,17 @@ namespace Memtly.Core.Helpers.Notifications
             var ntfySent = true;
             var gotifySent = true;
 
-            if (await _settings.GetOrDefault(Constants.Notifications.Smtp.Enabled, false))
+            if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Enabled, false))
             {
                 emailSent = await new EmailHelper(_settings, _smtp, _logger.CreateLogger<EmailHelper>(), _localizer).Send(title, message, actionLink);
             }
 
-            if (await _settings.GetOrDefault(Constants.Notifications.Ntfy.Enabled, false))
+            if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Enabled, false))
             {
                 ntfySent = await new NtfyHelper(_settings, _clientFactory, _logger.CreateLogger<NtfyHelper>()).Send(title, message, actionLink);
             }
 
-            if (await _settings.GetOrDefault(Constants.Notifications.Gotify.Enabled, false))
+            if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Gotify.Enabled, false))
             {
                 gotifySent = await new GotifyHelper(_settings, _clientFactory, _logger.CreateLogger<GotifyHelper>()).Send(title, message, actionLink);
             }

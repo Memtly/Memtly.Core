@@ -1,4 +1,6 @@
-﻿namespace Memtly.Core.Helpers.Notifications
+﻿using Memtly.Core.Constants;
+
+namespace Memtly.Core.Helpers.Notifications
 {
     public class GotifyHelper : INotificationHelper
     {
@@ -15,13 +17,13 @@
 
         public async Task<bool> Send(string title, string message, string? actionLink = null)
         {
-            if (await _settings.GetOrDefault(Constants.Notifications.Gotify.Enabled, false))
+            if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Gotify.Enabled, false))
             {
                 try
                 {
-                    var endpoint = await _settings.GetOrDefault(Constants.Notifications.Gotify.Endpoint, string.Empty);
-                    var token = await _settings.GetOrDefault(Constants.Notifications.Gotify.Token, string.Empty);
-                    var priority = await _settings.GetOrDefault(Constants.Notifications.Gotify.Priority, 4);
+                    var endpoint = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Gotify.Endpoint, string.Empty);
+                    var token = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Gotify.Token, string.Empty);
+                    var priority = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Gotify.Priority, 4);
 
                     return await Send(endpoint, token, priority, title, message, actionLink);
                 }

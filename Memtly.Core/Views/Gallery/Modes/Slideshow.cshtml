@@ -4,10 +4,10 @@
 @using Memtly.Core.Views.Gallery.Modes
 
 @{
-    var slideshowSlideInterval = TimeSpan.FromSeconds(await _settings.GetOrDefault(Settings.Slideshow.Interval, 10)).TotalMilliseconds;
-    var slideshowFadeInterval = await _settings.GetOrDefault(Settings.Slideshow.Fade, 500);
-    var slideLimit = await _settings.GetOrDefault(Settings.Slideshow.Limit, int.MaxValue);
-    var identityEnabled = await _settings.GetOrDefault(Settings.IdentityCheck.Enabled, true);
+    var slideshowSlideInterval = TimeSpan.FromSeconds(await _settings.GetOrDefault(MemtlyConfiguration.Slideshow.Interval, 10)).TotalMilliseconds;
+    var slideshowFadeInterval = await _settings.GetOrDefault(MemtlyConfiguration.Slideshow.Fade, 500);
+    var slideLimit = await _settings.GetOrDefault(MemtlyConfiguration.Slideshow.Limit, int.MaxValue);
+    var identityEnabled = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.Enabled, true);
 
     if (Model?.Images != null)
     {
@@ -23,7 +23,7 @@
                 </div>
             }
 
-            @if (await _settings.GetOrDefault(Settings.Slideshow.IncludeShareSlide, true))
+            @if (await _settings.GetOrDefault(MemtlyConfiguration.Slideshow.IncludeShareSlide, true))
             {
                 <div class="slideshow-slide">
                     <span class="slideshow-slide-img share-slide" data-value="@Html.Raw(ViewBag.QRCodeLink)"></span>

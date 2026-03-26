@@ -3,7 +3,7 @@
 @using Memtly.Core.Helpers
 
 @{
-    var title = await _settings.GetOrDefault(Settings.Basic.Title, "Memtly");
+    var title = await _settings.GetOrDefault(MemtlyConfiguration.Basic.Title, "Memtly");
 
     var tfa = new TwoFactorAuth(title);
 

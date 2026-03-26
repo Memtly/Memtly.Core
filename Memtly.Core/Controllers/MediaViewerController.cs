@@ -55,8 +55,8 @@ namespace Memtly.Core.Controllers
                         if (gallery != null)
                         { 
                             var user = User?.Identity != null && User.Identity.IsAuthenticated ? User.Identity : null;
-                            var identityEnabled = await _settings.GetOrDefault(Settings.IdentityCheck.Enabled, true);
-                            var likesEnabled = await _settings.GetOrDefault(Settings.Gallery.Likes, true, galleryItem.GalleryId);
+                            var identityEnabled = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.Enabled, true);
+                            var likesEnabled = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Likes, true, galleryItem.GalleryId);
 
                             var author = string.Empty;
                             if (identityEnabled)
@@ -95,7 +95,7 @@ namespace Memtly.Core.Controllers
                                     HasUserLiked = user != null ? await _database.CheckUserHasLikedGalleryItem(galleryItem.Id, user.GetUserId()) : false,
                                     Count = await _database.GetGalleryItemLikesCount(id)
                                 },
-                                DownloadEnabled = await _settings.GetOrDefault(Settings.Gallery.Download, true, gallery.Id) || (user?.IsPrivilegedUser() ?? false)
+                                DownloadEnabled = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Download, true, gallery.Id) || (user?.IsPrivilegedUser() ?? false)
                             });
                         }
                     }
@@ -160,8 +160,8 @@ namespace Memtly.Core.Controllers
                         if (gallery != null)
                         {
                             var user = User?.Identity != null && User.Identity.IsAuthenticated ? User.Identity : null;
-                            var identityEnabled = await _settings.GetOrDefault(Settings.IdentityCheck.Enabled, true);
-                            var likesEnabled = await _settings.GetOrDefault(Settings.Gallery.Likes, true, galleryItem.GalleryId);
+                            var identityEnabled = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.Enabled, true);
+                            var likesEnabled = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Likes, true, galleryItem.GalleryId);
 
                             var author = string.Empty;
                             if (identityEnabled)

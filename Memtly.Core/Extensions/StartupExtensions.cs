@@ -116,7 +116,7 @@ namespace Memtly.Core.Extensions
                 app.UseHsts();
             }
 
-            if (settings.GetOrDefault(Settings.Basic.ForceHttps, false).Result)
+            if (settings.GetOrDefault(MemtlyConfiguration.Basic.ForceHttps, false).Result)
             {
                 app.UseHttpsRedirection();
             }
@@ -141,11 +141,11 @@ namespace Memtly.Core.Extensions
                 Directory.CreateDirectory(dirPath);
             }
 
-            if (config.GetOrDefault(Security.Headers.Enabled, true))
+            if (config.GetOrDefault(MemtlyConfiguration.Security.Headers.Enabled, true))
             {
                 try
                 {
-                    var baseUrl = settings.GetOrDefault(Settings.Basic.BaseUrl, string.Empty).Result;
+                    var baseUrl = settings.GetOrDefault(MemtlyConfiguration.Basic.BaseUrl, string.Empty).Result;
                     var baseUrlCSP = "http://localhost:* ws://localhost:*";
                     if (!string.IsNullOrWhiteSpace(baseUrl))
                     {
@@ -157,7 +157,7 @@ namespace Memtly.Core.Extensions
                         catch { }
                     }
 
-                    var umamiUrl = settings.GetOrDefault(Trackers.Umami.Endpoint, string.Empty).Result;
+                    var umamiUrl = settings.GetOrDefault(MemtlyConfiguration.Trackers.Umami.Endpoint, string.Empty).Result;
                     var trackersUrlCSP = string.Empty;
                     if (!string.IsNullOrWhiteSpace(umamiUrl))
                     {
@@ -175,13 +175,13 @@ namespace Memtly.Core.Extensions
                     app.Use(async (context, next) =>
                     {
                         context.Response.Headers.Remove("X-Frame-Options");
-                        context.Response.Headers.Append("X-Frame-Options", config.GetOrDefault(Security.Headers.XFrameOptions, "SAMEORIGIN"));
+                        context.Response.Headers.Append("X-Frame-Options", config.GetOrDefault(MemtlyConfiguration.Security.Headers.XFrameOptions, "SAMEORIGIN"));
 
                         context.Response.Headers.Remove("X-Content-Type-Options");
-                        context.Response.Headers.Append("X-Content-Type-Options", config.GetOrDefault(Security.Headers.XContentTypeOptions, "nosniff"));
+                        context.Response.Headers.Append("X-Content-Type-Options", config.GetOrDefault(MemtlyConfiguration.Security.Headers.XContentTypeOptions, "nosniff"));
 
                         context.Response.Headers.Remove("Content-Security-Policy");
-                        context.Response.Headers.Append("Content-Security-Policy", config.GetOrDefault(Security.Headers.CSP, $"default-src 'self' {(!string.IsNullOrWhiteSpace(baseUrlCSP) ? baseUrlCSP : "http://localhost:* ws://localhost:*")}; script-src 'self' 'unsafe-inline' 'unsafe-eval'{(!string.IsNullOrWhiteSpace(trackersUrlCSP) ? $" {trackersUrlCSP}" : string.Empty)}; style-src 'self' 'unsafe-inline'; connect-src 'self' {(!string.IsNullOrWhiteSpace(baseUrlCSP) ? baseUrlCSP : "http://localhost:* ws://localhost:*")}{(!string.IsNullOrWhiteSpace(trackersUrlCSP) ? $" {trackersUrlCSP}" : string.Empty)}; font-src 'self'; img-src 'self' https://github.com/ https://avatars.githubusercontent.com/ data:; frame-src 'self'; frame-ancestors 'self';"));
+                        context.Response.Headers.Append("Content-Security-Policy", config.GetOrDefault(MemtlyConfiguration.Security.Headers.CSP, $"default-src 'self' {(!string.IsNullOrWhiteSpace(baseUrlCSP) ? baseUrlCSP : "http://localhost:* ws://localhost:*")}; script-src 'self' 'unsafe-inline' 'unsafe-eval'{(!string.IsNullOrWhiteSpace(trackersUrlCSP) ? $" {trackersUrlCSP}" : string.Empty)}; style-src 'self' 'unsafe-inline'; connect-src 'self' {(!string.IsNullOrWhiteSpace(baseUrlCSP) ? baseUrlCSP : "http://localhost:* ws://localhost:*")}{(!string.IsNullOrWhiteSpace(trackersUrlCSP) ? $" {trackersUrlCSP}" : string.Empty)}; font-src 'self'; img-src 'self' https://github.com/ https://avatars.githubusercontent.com/ data:; frame-src 'self'; frame-ancestors 'self';"));
 
                         await next();
                     });

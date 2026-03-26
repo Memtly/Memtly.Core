@@ -8,7 +8,7 @@
 {
     var galleryName = (!string.IsNullOrWhiteSpace(Model?.Gallery?.Identifier) && !Model.Gallery.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase)) ? Model.Gallery.Name.ToLower() : "default";
 
-    var showTitle = await _settings.GetOrDefault(Settings.Gallery.ShowTitle, true, Model?.Gallery?.Id);
+    var showTitle = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.ShowTitle, true, Model?.Gallery?.Id);
     if (showTitle)
     {
         <div class="row mb-4">
@@ -22,7 +22,7 @@
     {
         try
         {
-            var banner = await _settings.GetOrDefault(Settings.Gallery.BannerImage, string.Empty, Model?.Gallery?.Id);
+            var banner = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.BannerImage, string.Empty, Model?.Gallery?.Id);
             if (!string.IsNullOrWhiteSpace(banner))
             {
                 <div class="row mb-3 mb-lg-4 p-0">
@@ -34,7 +34,7 @@
         }
         catch { }
 
-        var quote = await _settings.GetOrDefault(Settings.Gallery.Quote, string.Empty, Model?.Gallery?.Id);
+        var quote = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Quote, string.Empty, Model?.Gallery?.Id);
         if (!string.IsNullOrWhiteSpace(quote))
         {
             <div class="row mb-3 mb-lg-4 border border-primary-1 rounded">
@@ -45,7 +45,7 @@
         }
     }
 
-    if (await _settings.GetOrDefault(Settings.Gallery.ReviewCounter, true, Model?.Gallery?.Id))
+    if (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.ReviewCounter, true, Model?.Gallery?.Id))
     {
         <div class="row mb-3 mb-lg-4 review-counter text-contrast">
             <div class="col-4">

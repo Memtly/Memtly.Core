@@ -8,10 +8,10 @@
     <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Gallery_RequireReview_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Gallery.RequireReview">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.RequireReview">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(Settings.Gallery.RequireReview.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Gallery.RequireReview.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -28,10 +28,10 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Gallery_ReviewCounter_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Gallery.ReviewCounter">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.ReviewCounter">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(Settings.Gallery.ReviewCounter.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Gallery.ReviewCounter.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -48,10 +48,10 @@
     <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Gallery_RetainRejectedItems_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Gallery.RetainRejectedItems">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.RetainRejectedItems">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(Settings.Gallery.RetainRejectedItems.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Gallery.RetainRejectedItems.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }

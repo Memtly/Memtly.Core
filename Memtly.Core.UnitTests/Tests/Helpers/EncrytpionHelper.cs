@@ -9,8 +9,8 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 
         public EncrytpionHelperTests()
         {
-            _settings.GetOrDefault(Security.Encryption.HashType, Arg.Any<string>()).Returns("SHA256");
-            _settings.GetOrDefault(Security.Encryption.Iterations, Arg.Any<int>()).Returns(1000);
+            _settings.GetOrDefault(MemtlyConfiguration.Security.Encryption.HashType, Arg.Any<string>()).Returns("SHA256");
+            _settings.GetOrDefault(MemtlyConfiguration.Security.Encryption.Iterations, Arg.Any<int>()).Returns(1000);
         }
 
         [SetUp]
@@ -23,8 +23,8 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase("Test", "Key3", "Salt3", "47VYeotX2C8GPuhaQlrWXg==")]
         public void EncrytpionHelper_ValidDetails(string value, string key, string salt, string expected)
         {
-            _settings.GetOrDefault(Security.Encryption.Key, Arg.Any<string>()).Returns(key);
-            _settings.GetOrDefault(Security.Encryption.Salt, Arg.Any<string>()).Returns(salt);
+            _settings.GetOrDefault(MemtlyConfiguration.Security.Encryption.Key, Arg.Any<string>()).Returns(key);
+            _settings.GetOrDefault(MemtlyConfiguration.Security.Encryption.Salt, Arg.Any<string>()).Returns(salt);
 
             var actual = new EncryptionHelper(_settings).Encrypt(value);
             Assert.That(actual, Is.EqualTo(expected));
@@ -35,8 +35,8 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase("Test3", "Salt3")]
         public void EncrytpionHelper_NoKey(string value, string salt)
         {
-            _settings.GetOrDefault(Security.Encryption.Key, Arg.Any<string>()).Returns(string.Empty);
-            _settings.GetOrDefault(Security.Encryption.Salt, Arg.Any<string>()).Returns(salt);
+            _settings.GetOrDefault(MemtlyConfiguration.Security.Encryption.Key, Arg.Any<string>()).Returns(string.Empty);
+            _settings.GetOrDefault(MemtlyConfiguration.Security.Encryption.Salt, Arg.Any<string>()).Returns(salt);
 
             var actual = new EncryptionHelper(_settings).Encrypt(value);
             Assert.That(actual, Is.EqualTo(value));
@@ -47,8 +47,8 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase("Test3", "Key3")]
         public void EncrytpionHelper_NoSalt(string value, string key)
         {
-            _settings.GetOrDefault(Security.Encryption.Key, Arg.Any<string>()).Returns(key);
-            _settings.GetOrDefault(Security.Encryption.Salt, Arg.Any<string>()).Returns(string.Empty);
+            _settings.GetOrDefault(MemtlyConfiguration.Security.Encryption.Key, Arg.Any<string>()).Returns(key);
+            _settings.GetOrDefault(MemtlyConfiguration.Security.Encryption.Salt, Arg.Any<string>()).Returns(string.Empty);
 
             var actual = new EncryptionHelper(_settings).Encrypt(value);
             Assert.That(actual, Is.EqualTo(value));
@@ -59,12 +59,12 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase("Test3", "Key3", "Salt3")]
         public void EncrytpionHelper_DifferentHashes(string value, string key, string salt)
         {
-            _settings.GetOrDefault(Security.Encryption.Key, Arg.Any<string>()).Returns(key);
-            _settings.GetOrDefault(Security.Encryption.Salt, Arg.Any<string>()).Returns(salt);
+            _settings.GetOrDefault(MemtlyConfiguration.Security.Encryption.Key, Arg.Any<string>()).Returns(key);
+            _settings.GetOrDefault(MemtlyConfiguration.Security.Encryption.Salt, Arg.Any<string>()).Returns(salt);
             var helper1 = new EncryptionHelper(_settings).Encrypt(value);
 
-            _settings.GetOrDefault(Security.Encryption.Key, Arg.Any<string>()).Returns("Unit");
-            _settings.GetOrDefault(Security.Encryption.Salt, Arg.Any<string>()).Returns("Test");
+            _settings.GetOrDefault(MemtlyConfiguration.Security.Encryption.Key, Arg.Any<string>()).Returns("Unit");
+            _settings.GetOrDefault(MemtlyConfiguration.Security.Encryption.Salt, Arg.Any<string>()).Returns("Test");
             var helper2 = new EncryptionHelper(_settings).Encrypt(value);
 
             Assert.That(helper1, Is.Not.EqualTo(helper2));
@@ -75,8 +75,8 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase("Key", "Salt", true)]
         public void EncrytpionHelper_IsEncryptionEnabled(string key, string salt, bool expected)
         {
-            _settings.GetOrDefault(Security.Encryption.Key, Arg.Any<string>()).Returns(key);
-            _settings.GetOrDefault(Security.Encryption.Salt, Arg.Any<string>()).Returns(salt);
+            _settings.GetOrDefault(MemtlyConfiguration.Security.Encryption.Key, Arg.Any<string>()).Returns(key);
+            _settings.GetOrDefault(MemtlyConfiguration.Security.Encryption.Salt, Arg.Any<string>()).Returns(salt);
             
             var actual = new EncryptionHelper(_settings).IsEncryptionEnabled();
 

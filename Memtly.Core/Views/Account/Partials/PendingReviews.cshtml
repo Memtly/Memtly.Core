@@ -7,8 +7,8 @@
 
 @{
     var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
-    var identityEnabled = await _settings.GetOrDefault(Settings.IdentityCheck.Enabled, true);
-    var requireEmailEnabled = identityEnabled ? await _settings.GetOrDefault(Settings.IdentityCheck.RequireEmail, false) : false;
+    var identityEnabled = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.Enabled, true);
+    var requireEmailEnabled = identityEnabled ? await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.RequireEmail, false) : false;
 
     var currentPage = 1;
     try

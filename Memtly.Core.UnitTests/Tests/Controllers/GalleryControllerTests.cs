@@ -71,14 +71,14 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _database.GetGalleryItems(Arg.Any<int>(), Arg.Any<int>(), GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(MockData.MockGalleryItems(10, 1, GalleryItemState.Approved)));
 			_database.GetGalleryItemByChecksum(Arg.Any<int>(), Arg.Any<string>()).ReturnsNull();
 
-			_settings.GetOrDefault(Settings.Gallery.Upload, Arg.Any<bool>(), Arg.Any<int>()).Returns(true);
-			_settings.GetOrDefault(Settings.Gallery.Download, Arg.Any<bool>(), Arg.Any<int>()).Returns(true);
-			_settings.GetOrDefault(Settings.Gallery.UploadPeriod, Arg.Any<string>(), Arg.Any<int>()).Returns("1970-01-01 00:00:00");
-			_settings.GetOrDefault(Settings.Gallery.PreventDuplicates, Arg.Any<bool>(), Arg.Any<int>()).Returns(true);
-            _settings.GetOrDefault(Settings.Gallery.DefaultView, Arg.Any<int>(), Arg.Any<int>()).Returns((int)ViewMode.Default);
-            _settings.GetOrDefault(Settings.Gallery.AllowedFileTypes, Arg.Any<string>(), Arg.Any<int>()).Returns(".jpg,.jpeg,.png,.mp4,.mov");
-			_settings.GetOrDefault(Settings.Gallery.RequireReview, Arg.Any<bool>(), Arg.Any<int>()).Returns(true);
-            _settings.GetOrDefault(Settings.Gallery.MaxFileSizeMB, Arg.Any<int>(), Arg.Any<int>()).Returns(10);
+			_settings.GetOrDefault(MemtlyConfiguration.Gallery.Upload, Arg.Any<bool>(), Arg.Any<int>()).Returns(true);
+			_settings.GetOrDefault(MemtlyConfiguration.Gallery.Download, Arg.Any<bool>(), Arg.Any<int>()).Returns(true);
+			_settings.GetOrDefault(MemtlyConfiguration.Gallery.UploadPeriod, Arg.Any<string>(), Arg.Any<int>()).Returns("1970-01-01 00:00:00");
+			_settings.GetOrDefault(MemtlyConfiguration.Gallery.PreventDuplicates, Arg.Any<bool>(), Arg.Any<int>()).Returns(true);
+            _settings.GetOrDefault(MemtlyConfiguration.Gallery.DefaultView, Arg.Any<int>(), Arg.Any<int>()).Returns((int)ViewMode.Default);
+            _settings.GetOrDefault(MemtlyConfiguration.Gallery.AllowedFileTypes, Arg.Any<string>(), Arg.Any<int>()).Returns(".jpg,.jpeg,.png,.mp4,.mov");
+			_settings.GetOrDefault(MemtlyConfiguration.Gallery.RequireReview, Arg.Any<bool>(), Arg.Any<int>()).Returns(true);
+            _settings.GetOrDefault(MemtlyConfiguration.Gallery.MaxFileSizeMB, Arg.Any<int>(), Arg.Any<int>()).Returns(10);
 
 			_file.GetChecksum(Arg.Any<string>()).Returns(Guid.NewGuid().ToString());
 
@@ -93,8 +93,8 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         public async Task GalleryController_Index(DeviceType deviceType, int id, string? identifier, string? name, string? key, ViewMode? mode, GalleryGroup group, GalleryOrder order, bool existing)
         {
             _deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(deviceType);
-            _settings.GetOrDefault(Settings.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(false);
-            _settings.GetOrDefault(Settings.Basic.GuestGalleryCreation, Arg.Any<bool>()).Returns(false);
+            _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(false);
+            _settings.GetOrDefault(MemtlyConfiguration.Basic.GuestGalleryCreation, Arg.Any<bool>()).Returns(false);
 
             var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
@@ -125,8 +125,8 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         public async Task GalleryController_Index_GetByIdentifier(string? id, string? identifier, string expected)
         {
             _deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(DeviceType.Desktop);
-            _settings.GetOrDefault(Settings.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(false);
-            _settings.GetOrDefault(Settings.Basic.GuestGalleryCreation, Arg.Any<bool>()).Returns(false);
+            _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(false);
+            _settings.GetOrDefault(MemtlyConfiguration.Basic.GuestGalleryCreation, Arg.Any<bool>()).Returns(false);
 
             var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
@@ -144,8 +144,8 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         public async Task GalleryController_UploadDisabled(bool enabled, bool expected)
         {
             _deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(DeviceType.Desktop);
-            _settings.GetOrDefault(Settings.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(false);
-            _settings.GetOrDefault(Settings.Gallery.Upload, Arg.Any<bool>(), Arg.Any<int>()).Returns(enabled);
+            _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(false);
+            _settings.GetOrDefault(MemtlyConfiguration.Gallery.Upload, Arg.Any<bool>(), Arg.Any<int>()).Returns(enabled);
 
             var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
@@ -166,8 +166,8 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         public async Task GalleryController_UploadDisabled(string uploadPeriod, bool expected)
         {
             _deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(DeviceType.Desktop);
-            _settings.GetOrDefault(Settings.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(false);
-            _settings.GetOrDefault(Settings.Gallery.UploadPeriod, Arg.Any<string>(), Arg.Any<int>()).Returns(uploadPeriod);
+            _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(false);
+            _settings.GetOrDefault(MemtlyConfiguration.Gallery.UploadPeriod, Arg.Any<string>(), Arg.Any<int>()).Returns(uploadPeriod);
 
             var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
@@ -186,7 +186,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 		public async Task GalleryController_Index_SingleGalleryMode(DeviceType deviceType, ViewMode? mode, GalleryGroup group, GalleryOrder order)
 		{
 			_deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(deviceType);
-            _settings.GetOrDefault(Settings.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(true);
+            _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(true);
 
 			var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext();
@@ -209,7 +209,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 		[TestCase(false, 3, "Unit Testing")]
 		public async Task GalleryController_UploadImage(bool requiresReview, int fileCount, string? uploadedBy)
 		{
-            _settings.GetOrDefault(Settings.Gallery.RequireReview, Arg.Any<bool>()).Returns(requiresReview);
+            _settings.GetOrDefault(MemtlyConfiguration.Gallery.RequireReview, Arg.Any<bool>()).Returns(requiresReview);
 
 			var files = new FormFileCollection();
 			for (var i = 0; i < fileCount; i++)

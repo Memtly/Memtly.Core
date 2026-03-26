@@ -6,10 +6,10 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Enabled"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.IdentityCheck.Enabled">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.IdentityCheck.Enabled">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(Settings.IdentityCheck.Enabled.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.IdentityCheck.Enabled.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -26,10 +26,10 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_IdentityCheck_RequireName_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.IdentityCheck.RequireName">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.IdentityCheck.RequireName">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(Settings.IdentityCheck.RequireName.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.IdentityCheck.RequireName.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -46,10 +46,10 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_IdentityCheck_RequireEmail_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.IdentityCheck.RequireEmail">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.IdentityCheck.RequireEmail">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(Settings.IdentityCheck.RequireEmail.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.IdentityCheck.RequireEmail.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -66,10 +66,10 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_IdentityCheck_PageLoad_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.IdentityCheck.ShowOnPageLoad">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.IdentityCheck.ShowOnPageLoad">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(Settings.IdentityCheck.ShowOnPageLoad.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.IdentityCheck.ShowOnPageLoad.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -86,10 +86,10 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_IdentityCheck_Upload_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.IdentityCheck.RequireIdentityForUpload">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.IdentityCheck.RequireIdentityForUpload">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(Settings.IdentityCheck.RequireIdentityForUpload.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.IdentityCheck.RequireIdentityForUpload.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }

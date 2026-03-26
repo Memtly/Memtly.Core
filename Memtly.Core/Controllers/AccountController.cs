@@ -161,7 +161,7 @@ namespace Memtly.Core.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel model)
         {
-            if (await _settings.GetOrDefault(Settings.Account.Registration.Enabled, true))
+            if (await _settings.GetOrDefault(MemtlyConfiguration.Account.Registration.Enabled, true))
             {
                 try
                 {
@@ -195,8 +195,8 @@ namespace Memtly.Core.Controllers
                     }
                     else
                     {
-                        var requireEmailValidation = await _settings.GetOrDefault(Notifications.Smtp.Enabled, false)
-                            && await _settings.GetOrDefault(Settings.Account.Registration.RequireEmailValidation, true);
+                        var requireEmailValidation = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Enabled, false)
+                            && await _settings.GetOrDefault(MemtlyConfiguration.Account.Registration.RequireEmailValidation, true);
 
                         var user = await _database.AddUser(new UserModel()
                         {
@@ -273,7 +273,7 @@ namespace Memtly.Core.Controllers
         [HttpGet]
         public async Task<IActionResult> VerifyEmail(string data)
         {
-            if (!string.IsNullOrWhiteSpace(data) && await _settings.GetOrDefault(Settings.Account.Registration.Enabled, true))
+            if (!string.IsNullOrWhiteSpace(data) && await _settings.GetOrDefault(MemtlyConfiguration.Account.Registration.Enabled, true))
             {
                 try
                 {
@@ -367,7 +367,7 @@ namespace Memtly.Core.Controllers
         [HttpGet]
         public async Task<IActionResult> ResetPassword(string data)
         {
-            if (!string.IsNullOrWhiteSpace(data) && await _settings.GetOrDefault(Settings.Account.Registration.Enabled, true))
+            if (!string.IsNullOrWhiteSpace(data) && await _settings.GetOrDefault(MemtlyConfiguration.Account.Registration.Enabled, true))
             {
                 try
                 {
@@ -402,7 +402,7 @@ namespace Memtly.Core.Controllers
         [HttpPost]
         public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
         {
-            if (await _settings.GetOrDefault(Settings.Account.Registration.Enabled, true) && !string.IsNullOrWhiteSpace(model?.Data))
+            if (await _settings.GetOrDefault(MemtlyConfiguration.Account.Registration.Enabled, true) && !string.IsNullOrWhiteSpace(model?.Data))
             {
                 try
                 {
@@ -492,7 +492,7 @@ namespace Memtly.Core.Controllers
 
                             if (mfaSet)
                             {
-                                var tfa = new TwoFactorAuth(await _settings.GetOrDefault(Settings.Basic.Title, "Memtly"));
+                                var tfa = new TwoFactorAuth(await _settings.GetOrDefault(MemtlyConfiguration.Basic.Title, "Memtly"));
                                 if (tfa.VerifyCode(user.MultiFactorToken, model.Code))
                                 {
                                     await _audit.LogAction(user?.Id, _localizer["Audit_MultiFactorPassed"].Value, AuditSeverity.Debug);
@@ -838,7 +838,7 @@ namespace Memtly.Core.Controllers
                 var gallery = await _database.GetGallery(galleryId);
                 if (!string.IsNullOrWhiteSpace(gallery?.Name))
                 {
-                    model.Settings = (await _database.GetAllSettings(gallery.Id))?.Where(x => x.Id.StartsWith(Settings.Gallery.BaseKey, StringComparison.OrdinalIgnoreCase))?.ToDictionary(x => x.Id.ToUpper(), x => x.Value ?? string.Empty);
+                    model.Settings = (await _database.GetAllSettings(gallery.Id))?.Where(x => x.Id.StartsWith(MemtlyConfiguration.Gallery.BaseKey, StringComparison.OrdinalIgnoreCase))?.ToDictionary(x => x.Id.ToUpper(), x => x.Value ?? string.Empty);
                     model.CustomResources = User.Identity.IsPrivilegedUser() ? await _database.GetCustomResources() : await _database.GetCustomResources(User.Identity.GetUserId());
                 }
             }
@@ -877,7 +877,7 @@ namespace Memtly.Core.Controllers
                             }
                             else if (action == ReviewAction.Rejected)
                             {
-                                var retain = await _settings.GetOrDefault(Settings.Gallery.RetainRejectedItems, false);
+                                var retain = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.RetainRejectedItems, false);
                                 if (retain)
                                 {
                                     var rejectedDir = Path.Combine(galleryDir, "Rejected");
@@ -946,7 +946,7 @@ namespace Memtly.Core.Controllers
                                     }
                                     else if (action == ReviewAction.Rejected)
                                     {
-                                        var retain = await _settings.GetOrDefault(Settings.Gallery.RetainRejectedItems, false);
+                                        var retain = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.RetainRejectedItems, false);
                                         if (retain)
                                         {
                                             var rejectedDir = Path.Combine(galleryDir, "Rejected");
@@ -1003,7 +1003,7 @@ namespace Memtly.Core.Controllers
                         var alreadyExists = userGalleries.Any(x => x.Name.Equals(model.Name, StringComparison.OrdinalIgnoreCase)) || ((await _database.GetGalleryId(model.Identifier)) != null);
                         if (!alreadyExists)
                         {
-                            if (userGalleries.Count() < User.Identity.GetGalleryLimit() && await _database.GetGalleryCount() < await _settings.GetOrDefault(Settings.Basic.MaxGalleryCount, 1000000))
+                            if (userGalleries.Count() < User.Identity.GetGalleryLimit() && await _database.GetGalleryCount() < await _settings.GetOrDefault(MemtlyConfiguration.Basic.MaxGalleryCount, 1000000))
                             {
                                 model.Owner = userId;
 
@@ -1183,7 +1183,7 @@ namespace Memtly.Core.Controllers
                             _fileHelper.DeleteDirectoryIfExists(galleryDir);
                             _fileHelper.CreateDirectoryIfNotExists(galleryDir);
 
-                            if (await _settings.GetOrDefault(Notifications.Alerts.DestructiveAction, true))
+                            if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Alerts.DestructiveAction, true))
                             { 
                                 await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"The destructive action 'Wipe' was performed on gallery '{gallery.Name}'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                             }
@@ -1230,7 +1230,7 @@ namespace Memtly.Core.Controllers
 
                         _fileHelper.CreateDirectoryIfNotExists(Path.Combine(UploadsDirectory, "default"));
 
-                        if (await _settings.GetOrDefault(Notifications.Alerts.DestructiveAction, true))
+                        if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Alerts.DestructiveAction, true))
                         {
                             await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"The destructive action 'Wipe' was performed on all galleries'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                         }
@@ -1264,7 +1264,7 @@ namespace Memtly.Core.Controllers
                         var galleryDir = Path.Combine(UploadsDirectory, gallery.Identifier);
                         _fileHelper.DeleteDirectoryIfExists(galleryDir);
 
-                        if (await _settings.GetOrDefault(Notifications.Alerts.DestructiveAction, true))
+                        if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Alerts.DestructiveAction, true))
                         {
                             await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"The destructive action 'Delete' was performed on gallery '{gallery.Name}'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                         }
@@ -1565,7 +1565,7 @@ namespace Memtly.Core.Controllers
                             await RemoveCustomResource(customResource.Id);
                         }
 
-                        if (await _settings.GetOrDefault(Notifications.Alerts.DestructiveAction, true))
+                        if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Alerts.DestructiveAction, true))
                         {
                             await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"The destructive action 'Delete' was performed on user '{user.Username}'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                         }
@@ -2075,7 +2075,7 @@ namespace Memtly.Core.Controllers
         {
             try
             {
-                if (await _settings.GetOrDefault(Notifications.Alerts.FailedLogin, true))
+                if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Alerts.FailedLogin, true))
                 {
                     var ipAddress = Request.HttpContext.TryGetIpAddress();
                     var country = Request.HttpContext.TryGetCountry();
@@ -2084,12 +2084,12 @@ namespace Memtly.Core.Controllers
                 }
 
                 var failedAttempts = await _database.IncrementLockoutCount(user.Id);
-                if (failedAttempts >= await _settings.GetOrDefault(Settings.Account.LockoutAttempts, 5))
+                if (failedAttempts >= await _settings.GetOrDefault(MemtlyConfiguration.Account.LockoutAttempts, 5))
                 {
-                    var timeout = await _settings.GetOrDefault(Settings.Account.LockoutMins, 60);
+                    var timeout = await _settings.GetOrDefault(MemtlyConfiguration.Account.LockoutMins, 60);
                     await _database.SetLockout(user.Id, DateTime.UtcNow.AddMinutes(timeout));
 
-                    if (await _settings.GetOrDefault(Notifications.Alerts.AccountLockout, true))
+                    if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Alerts.AccountLockout, true))
                     {
                         await _notificationHelper.Send("Account Lockout", $"Account '{model?.Username}' has been locked out for {timeout} minutes due to too many failed login attempts.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                     }

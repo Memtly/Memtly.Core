@@ -34,7 +34,7 @@ namespace Memtly.Core.Controllers
                 var selectedTheme = HttpContext.Session.GetString(SessionKey.Theme.Selected);
                 if (string.IsNullOrWhiteSpace(selectedTheme))
                 {
-                    selectedTheme = await _settings.GetOrDefault(Settings.Themes.Default, Themes.AutoDetect.ToString());
+                    selectedTheme = await _settings.GetOrDefault(MemtlyConfiguration.Themes.Default, Themes.AutoDetect.ToString());
                 }
 
                 foreach (Themes item in Enum.GetValues(typeof(Themes)))
@@ -62,7 +62,7 @@ namespace Memtly.Core.Controllers
         {
             try
             {
-                var selectedTheme = await _settings.GetOrDefault(Settings.Themes.Default, Themes.AutoDetect.ToString());
+                var selectedTheme = await _settings.GetOrDefault(MemtlyConfiguration.Themes.Default, Themes.AutoDetect.ToString());
                 foreach (Themes item in Enum.GetValues(typeof(Themes)))
                 {
                     if (item.ToString().Equals(theme, StringComparison.OrdinalIgnoreCase))

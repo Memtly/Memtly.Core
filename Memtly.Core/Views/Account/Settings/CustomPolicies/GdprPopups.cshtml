@@ -6,10 +6,10 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Enabled"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Policies.Enabled">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Policies.Enabled">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(Settings.Policies.Enabled.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Policies.Enabled.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -26,7 +26,7 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_CustomCookiePolicy_Label"].Value</label>
-            <textarea class="setting-field form-control" data-setting-name="@Settings.Policies.CookiePolicy">@Model.GetValue(Settings.Policies.CookiePolicy.ToUpper(), string.Empty)</textarea>
+            <textarea class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Policies.CookiePolicy">@Model.GetValue(MemtlyConfiguration.Policies.CookiePolicy.ToUpper(), string.Empty)</textarea>
             <div class="setting-hint form-text">@_localizer["Settings_CustomCookiePolicy_Help"].Value</div>
         </div>
     </div>

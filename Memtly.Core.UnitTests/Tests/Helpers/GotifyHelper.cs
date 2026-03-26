@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Notifications;
 using Memtly.Core.UnitTests.Helpers;
+using Memtly.Core.Constants;
 
 namespace Memtly.Core.UnitTests.Tests.Helpers
 {
@@ -24,10 +25,10 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 
             _clientFactory.CreateClient(Arg.Any<string>()).Returns(client);
 
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Gotify.Enabled, Arg.Any<bool>()).Returns(true);
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Gotify.Endpoint, Arg.Any<string>()).Returns("https://unit.test.com/");
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Gotify.Token, Arg.Any<string>()).Returns("UnitTest");
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Gotify.Priority, Arg.Any<int>()).Returns(4);
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Gotify.Enabled, Arg.Any<bool>()).Returns(true);
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Gotify.Endpoint, Arg.Any<string>()).Returns("https://unit.test.com/");
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Gotify.Token, Arg.Any<string>()).Returns("UnitTest");
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Gotify.Priority, Arg.Any<int>()).Returns(4);
         }
 
         [TestCase("unit", "test")]
@@ -41,7 +42,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase(false, false)]
         public async Task GotifyHelper_Enabled(bool enabled, bool expected)
         {
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Gotify.Enabled, Arg.Any<bool>()).Returns(enabled);
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Gotify.Enabled, Arg.Any<bool>()).Returns(enabled);
 
             var actual = await new GotifyHelper(_settings, _clientFactory, _logger).Send("unit", "test");
             Assert.That(actual, Is.EqualTo(expected));
@@ -52,7 +53,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase("https://unittest.com", true)]
         public async Task GotifyHelper_Endpoint(string? endpoint, bool expected)
         {
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Gotify.Endpoint, Arg.Any<string>()).Returns(endpoint);
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Gotify.Endpoint, Arg.Any<string>()).Returns(endpoint);
 
             var client = new HttpClient(new MockHttpMessageHandler(HttpStatusCode.OK));
             _clientFactory.CreateClient(Arg.Any<string>()).Returns(client);
@@ -66,7 +67,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase("UnitTest", true)]
         public async Task GotifyHelper_Token(string? token, bool expected)
         {
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Gotify.Token, Arg.Any<string>()).Returns(token);
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Gotify.Token, Arg.Any<string>()).Returns(token);
 
             var actual = await new GotifyHelper(_settings, _clientFactory, _logger).Send("unit", "test");
             Assert.That(actual, Is.EqualTo(expected));
@@ -79,7 +80,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase(100, true)]
         public async Task GotifyHelper_Priority(int priority, bool expected)
         {
-            _settings.GetOrDefault(Memtly.Core.Constants.Notifications.Gotify.Priority, Arg.Any<int>()).Returns(priority);
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Gotify.Priority, Arg.Any<int>()).Returns(priority);
 
             var actual = await new GotifyHelper(_settings, _clientFactory, _logger).Send("unit", "test");
             Assert.That(actual, Is.EqualTo(expected));

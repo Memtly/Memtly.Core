@@ -31,7 +31,7 @@ namespace Memtly.Core.Helpers
 
         public async Task<bool> LogAction(int? userId, string? action, AuditSeverity severity = AuditSeverity.Information)
         {
-            if (!string.IsNullOrWhiteSpace(action) && await _settings.GetOrDefault(Audit.Enabled, true))
+            if (!string.IsNullOrWhiteSpace(action) && await _settings.GetOrDefault(MemtlyConfiguration.Audit.Enabled, true))
             {
                 try 
                 {

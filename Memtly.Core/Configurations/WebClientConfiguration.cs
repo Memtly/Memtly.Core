@@ -10,7 +10,7 @@ namespace Memtly.Core.Configurations
             services.AddHttpClient("SponsorsClient", (client) =>
             {
                 var config = services.BuildServiceProvider().GetRequiredService<IConfigHelper>();
-                client.BaseAddress = new Uri(config.GetOrDefault(Sponsors.Url, "http://localhost:5000/"));
+                client.BaseAddress = new Uri(config.GetOrDefault(MemtlyConfiguration.Sponsors.Url, "http://localhost:5000/"));
                 client.Timeout = TimeSpan.FromSeconds(5);
             });
         }

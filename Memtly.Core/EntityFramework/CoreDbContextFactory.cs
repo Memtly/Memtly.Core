@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Memtly.Core.Constants;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
 namespace Memtly.Core.EntityFramework
@@ -13,7 +14,7 @@ namespace Memtly.Core.EntityFramework
                 .AddEnvironmentVariables()
                 .Build();
 
-            var provider = config[Constants.Database.Type]!;
+            var provider = config[MemtlyConfiguration.Database.Type]!;
             var assemblyName = typeof(CoreDbContext).Assembly.GetName().Name;
 
             var options = new DbContextOptionsBuilder<CoreDbContext>();

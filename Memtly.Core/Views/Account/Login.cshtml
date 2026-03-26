@@ -1,8 +1,8 @@
 ﻿@using Memtly.Core.Views.Account
 
 @{
-    var isDemoMode = await _settings.GetOrDefault(Settings.IsDemoMode, false);
-    var isRegistrationEnabled = await _settings.GetOrDefault(Settings.Account.Registration.Enabled, true);
+    var isDemoMode = await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false);
+    var isRegistrationEnabled = await _settings.GetOrDefault(MemtlyConfiguration.Account.Registration.Enabled, true);
 }
 
 <div id="main-content">

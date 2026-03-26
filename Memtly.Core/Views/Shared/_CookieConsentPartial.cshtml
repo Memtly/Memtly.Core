@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Http.Features
 
 @{
-    var enabled = await _settings.GetOrDefault(Settings.Policies.Enabled, true);
+    var enabled = await _settings.GetOrDefault(MemtlyConfiguration.Policies.Enabled, true);
     var consentFeature = Context.Features.Get<ITrackingConsentFeature>();
     var consentGranted = consentFeature?.CanTrack ?? false;
 

@@ -32,8 +32,8 @@ namespace Memtly.Core.Helpers
         {
             if (ctx != null)
             {
-                var scheme = _settings.GetOrDefault(Settings.Basic.ForceHttps, false).Result ? "https" : ctx.Scheme;
-                var host = ExtractHost(_settings.GetOrDefault(Settings.Basic.BaseUrl, ctx.Host.Value).Result);
+                var scheme = _settings.GetOrDefault(MemtlyConfiguration.Basic.ForceHttps, false).Result ? "https" : ctx.Scheme;
+                var host = ExtractHost(_settings.GetOrDefault(MemtlyConfiguration.Basic.BaseUrl, ctx.Host.Value).Result);
 
                 return $"{scheme}://{host}/{path?.TrimStart('/')}";
             }

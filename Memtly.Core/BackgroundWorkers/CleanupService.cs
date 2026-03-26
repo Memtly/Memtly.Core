@@ -9,15 +9,15 @@ namespace Memtly.Core.BackgroundWorkers
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var enabled = await settingsHelper.GetOrDefault(BackgroundServices.Cleanup.Enabled, true);
+            var enabled = await settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.Cleanup.Enabled, true);
             if (enabled)
             {
-                var cron = await settingsHelper.GetOrDefault(BackgroundServices.Cleanup.Schedule, "0 4 * * *");
+                var cron = await settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.Cleanup.Schedule, "0 4 * * *");
                 var nextExecutionTime = DateTime.Now.AddMinutes(1);
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    var currentCron = await settingsHelper.GetOrDefault(BackgroundServices.Cleanup.Schedule, "0 4 * * *");
+                    var currentCron = await settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.Cleanup.Schedule, "0 4 * * *");
 
                     var now = DateTime.Now;
                     if (now >= nextExecutionTime)
@@ -115,7 +115,7 @@ namespace Memtly.Core.BackgroundWorkers
         {
             try
             {
-                var days = await settingsHelper.GetOrDefault(Audit.Retention, 30);
+                var days = await settingsHelper.GetOrDefault(MemtlyConfiguration.Audit.Retention, 30);
                 if (days > 0)
                 {
                     using (var scope = scopeFactory.CreateScope())

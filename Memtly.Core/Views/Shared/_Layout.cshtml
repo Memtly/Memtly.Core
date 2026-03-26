@@ -9,13 +9,13 @@
     var galleryIdentifier = (!string.IsNullOrWhiteSpace(ViewBag?.GalleryIdentifier) && !ViewBag.GalleryIdentifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase)) ? ViewBag.GalleryIdentifier.ToLower() : "default";
     var galleryId = (_database?.GetGalleryId(galleryIdentifier)?.Result) ?? 1;
 
-    var title = await _settings.GetOrDefault(Settings.Basic.Title, "Memtly", galleryId);
-    var isDemoMode = await _settings.GetOrDefault(Settings.IsDemoMode, false);
+    var title = await _settings.GetOrDefault(MemtlyConfiguration.Basic.Title, "Memtly", galleryId);
+    var isDemoMode = await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false);
 
     var logo = "/images/logo.png";
     try
     {
-        logo = await _settings.GetOrDefault(Settings.Basic.Logo, "/images/logo.png", galleryId);
+        logo = await _settings.GetOrDefault(MemtlyConfiguration.Basic.Logo, "/images/logo.png", galleryId);
     }
     catch
     {
@@ -24,7 +24,7 @@
 
     var viewMode = ViewBag?.ViewMode != null ? ViewBag.ViewMode : ViewMode.Default;
 
-    string theme = await _settings.GetOrDefault(Settings.Themes.Default, Themes.AutoDetect.ToString().ToLower());
+    string theme = await _settings.GetOrDefault(MemtlyConfiguration.Themes.Default, Themes.AutoDetect.ToString().ToLower());
     try
     {
         var selectedTheme = Context?.Request?.Cookies["Theme"]?.Trim();
@@ -51,7 +51,7 @@
         culture = Context?.Session?.GetString(SessionKey.Language.Selected)?.Trim();
         if (string.IsNullOrEmpty(culture))
         {
-            culture = await _language.GetOrFallbackCulture(string.Empty, await _settings.GetOrDefault(Settings.Languages.Default, "en-GB"));
+            culture = await _language.GetOrFallbackCulture(string.Empty, await _settings.GetOrDefault(MemtlyConfiguration.Languages.Default, "en-GB"));
         }
     }
     catch
@@ -59,7 +59,7 @@
         culture = "en-GB";
     }
 
-    bool identityCheck = (await _settings.GetOrDefault(Settings.IdentityCheck.Enabled, true) && await _settings.GetOrDefault(Settings.IdentityCheck.ShowOnPageLoad, true) && string.IsNullOrWhiteSpace(Context?.Session?.GetString(SessionKey.Viewer.Identity)));
+    bool identityCheck = (await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.Enabled, true) && await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.ShowOnPageLoad, true) && string.IsNullOrWhiteSpace(Context?.Session?.GetString(SessionKey.Viewer.Identity)));
 }
 
 <!DOCTYPE html>
@@ -96,7 +96,7 @@
         <!-- Navigation -->
         <nav class="navbar navbar-expand-lg">
             <div class="container px-3 px-lg-5 @(viewMode == ViewMode.Presentation || viewMode == ViewMode.Slideshow ? "justify-content-center" : string.Empty)">
-                <a class="navbar-brand" href="@(await _settings.GetOrDefault(Settings.Basic.HomeLink, true) ? "/" : "#")">
+                <a class="navbar-brand" href="@(await _settings.GetOrDefault(MemtlyConfiguration.Basic.HomeLink, true) ? "/" : "#")">
                     <img class="navbar-logo" src="@logo" onerror="this.onerror=null;this.src='/_content/Memtly.Core/images/logo.png';" />
                     <span class="navbar-title">@title</span>
                 </a>
@@ -106,7 +106,7 @@
                     <div class="navbar-options presentation-hidden">
                         <div class="mx-0 mx-lg-4 my-1 float-start">
                             <!-- ( Change Language ) -->
-                            @if (await _settings.GetOrDefault(Settings.Languages.Enabled, true))
+                            @if (await _settings.GetOrDefault(MemtlyConfiguration.Languages.Enabled, true))
                             {
                                 var tooltip = _localizer["Language_Change"].Value;
                                 <span alt="@tooltip" title="@tooltip">
@@ -115,7 +115,7 @@
                             }
 
                             <!-- ( Change Theme ) -->
-                            @if (await _settings.GetOrDefault(Settings.Themes.Enabled, true))
+                            @if (await _settings.GetOrDefault(MemtlyConfiguration.Themes.Enabled, true))
                             {
                                 var tooltip = _localizer["Change_Theme"].Value;
                                 <span alt="@tooltip" title="@tooltip">
@@ -124,9 +124,9 @@
                             }
 
                             <!-- ( Change Identity ) -->
-                            @if (await _settings.GetOrDefault(Settings.IdentityCheck.Enabled, true))
+                            @if (await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.Enabled, true))
                             {
-                                var requireEmail = await _settings.GetOrDefault(Settings.IdentityCheck.RequireEmail, false);
+                                var requireEmail = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.RequireEmail, false);
                                 var tooltip = _localizer["Change_Identity"].Value;
                                 <span alt="@tooltip" title="@tooltip">
                                     <i class="change-identity fas fa-id-card fa-1x text-secondary pointer mx-2" data-identity-name="@Context?.Session.GetString(SessionKey.Viewer.Identity)" @(requireEmail ? $"data-identity-email={Context?.Session.GetString(SessionKey.Viewer.EmailAddress)}" : string.Empty)></i>
@@ -143,7 +143,7 @@
                             }
                         </div>
                         <div class="profile-icon my-1 m-lg-0 float-end">
-                            @if (await _settings.GetOrDefault(Settings.Account.ShowProfileIcon, true))
+                            @if (await _settings.GetOrDefault(MemtlyConfiguration.Account.ShowProfileIcon, true))
                             {
                                 if (!string.IsNullOrWhiteSpace(Context?.Request.Path.Value) && Context.Request.Path.Value.Contains("/Account", StringComparison.OrdinalIgnoreCase) && !Context.Request.Path.Value.Contains("/Login", StringComparison.OrdinalIgnoreCase) && !Context.Request.Path.Value.Contains("/Register", StringComparison.OrdinalIgnoreCase) && !Context.Request.Path.Value.Contains("/ForgotPassword", StringComparison.OrdinalIgnoreCase))
                                 {
@@ -226,10 +226,10 @@
 
         @await RenderSectionAsync("Scripts", required: false)
         @{
-            var umamiEndpoint = await _settings.GetOrDefault(Trackers.Umami.Endpoint, string.Empty);
+            var umamiEndpoint = await _settings.GetOrDefault(MemtlyConfiguration.Trackers.Umami.Endpoint, string.Empty);
             if (!string.IsNullOrWhiteSpace(umamiEndpoint))
             {
-                var umamiWebsiteId = await _settings.GetOrDefault(Trackers.Umami.WebsiteId, string.Empty);
+                var umamiWebsiteId = await _settings.GetOrDefault(MemtlyConfiguration.Trackers.Umami.WebsiteId, string.Empty);
                 if (!string.IsNullOrWhiteSpace(umamiWebsiteId))
                 {
                     <script async defer data-website-id="@umamiWebsiteId" src="@(umamiEndpoint.Replace("umami.js", string.Empty).TrimEnd('/'))/umami.js"></script>

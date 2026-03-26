@@ -6,10 +6,10 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Enabled"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Notifications.Smtp.Enabled">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Notifications.Smtp.Enabled">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(Notifications.Smtp.Enabled.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Notifications.Smtp.Enabled.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -26,7 +26,7 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Smtp_Recipient_Label"].Value</label>
-            <input class="setting-field form-control" data-setting-name="@Notifications.Smtp.Recipient" placeholder="name1@your-domain.com,name2@your-domain.com" value="@Model.GetValue(Notifications.Smtp.Recipient.ToUpper(), string.Empty)" type="text" />
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Notifications.Smtp.Recipient" placeholder="name1@your-domain.com,name2@your-domain.com" value="@Model.GetValue(MemtlyConfiguration.Notifications.Smtp.Recipient.ToUpper(), string.Empty)" type="text" />
             <div class="setting-hint form-text">@_localizer["Settings_Smtp_Recipient_Help"].Value</div>
         </div>
     </div>
@@ -34,7 +34,7 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Smtp_Host_Label"].Value</label>
-            <input class="setting-field form-control" data-setting-name="@Notifications.Smtp.Host" placeholder="smtp.your-domain.com" value="@Model.GetValue(Notifications.Smtp.Host.ToUpper(), string.Empty)" type="text" />
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Notifications.Smtp.Host" placeholder="smtp.your-domain.com" value="@Model.GetValue(MemtlyConfiguration.Notifications.Smtp.Host.ToUpper(), string.Empty)" type="text" />
             <div class="setting-hint form-text">@_localizer["Settings_Smtp_Host_Help"].Value</div>
         </div>
     </div>
@@ -42,7 +42,7 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Smtp_Port_Label"].Value</label>
-            <input class="setting-field form-control" data-setting-name="@Notifications.Smtp.Port" placeholder="587" value="@Model.GetValue(Notifications.Smtp.Port.ToUpper(), "587")" type="number" min="0" />
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Notifications.Smtp.Port" placeholder="587" value="@Model.GetValue(MemtlyConfiguration.Notifications.Smtp.Port.ToUpper(), "587")" type="number" min="0" />
             <div class="setting-hint form-text">@_localizer["Settings_Smtp_Port_Help"].Value</div>
         </div>
     </div>
@@ -50,7 +50,7 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Smtp_Username_Label"].Value</label>
-            <input class="setting-field form-control" data-setting-name="@Notifications.Smtp.Username" placeholder="username" value="@Model.GetValue(Notifications.Smtp.Username.ToUpper(), string.Empty)" type="text" />
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Notifications.Smtp.Username" placeholder="username" value="@Model.GetValue(MemtlyConfiguration.Notifications.Smtp.Username.ToUpper(), string.Empty)" type="text" />
             <div class="setting-hint form-text">@_localizer["Settings_Smtp_Username_Help"].Value</div>
         </div>
     </div>
@@ -58,7 +58,7 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Smtp_Password_Label"].Value</label>
-            <input class="setting-field form-control" data-setting-name="@Notifications.Smtp.Password" placeholder="password" value="@Model.GetValue(Notifications.Smtp.Password.ToUpper(), string.Empty)" type="password" />
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Notifications.Smtp.Password" placeholder="password" value="@Model.GetValue(MemtlyConfiguration.Notifications.Smtp.Password.ToUpper(), string.Empty)" type="password" />
             <div class="setting-hint form-text">@_localizer["Settings_Smtp_Password_Help"].Value</div>
         </div>
     </div>
@@ -66,7 +66,7 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Smtp_From_Label"].Value</label>
-            <input class="setting-field form-control" data-setting-name="@Notifications.Smtp.From" placeholder="no-reply@your-domain.com" value="@Model.GetValue(Notifications.Smtp.From.ToUpper(), string.Empty)" type="text" />
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Notifications.Smtp.From" placeholder="no-reply@your-domain.com" value="@Model.GetValue(MemtlyConfiguration.Notifications.Smtp.From.ToUpper(), string.Empty)" type="text" />
             <div class="setting-hint form-text">@_localizer["Settings_Smtp_From_Help"].Value</div>
         </div>
     </div>
@@ -74,7 +74,7 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Smtp_Display_Name_Label"].Value</label>
-            <input class="setting-field form-control" data-setting-name="@Notifications.Smtp.DisplayName" placeholder="" value="@Model.GetValue(Notifications.Smtp.DisplayName.ToUpper(), string.Empty)" type="text" />
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Notifications.Smtp.DisplayName" placeholder="" value="@Model.GetValue(MemtlyConfiguration.Notifications.Smtp.DisplayName.ToUpper(), string.Empty)" type="text" />
             <div class="setting-hint form-text">@_localizer["Settings_Smtp_Display_Name_Help"].Value</div>
         </div>
     </div>
@@ -82,10 +82,10 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Smtp_Use_SSL_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Notifications.Smtp.UseSSL">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Notifications.Smtp.UseSSL">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(Notifications.Smtp.UseSSL.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Notifications.Smtp.UseSSL.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }

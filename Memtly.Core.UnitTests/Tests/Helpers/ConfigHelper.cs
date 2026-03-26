@@ -58,10 +58,10 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         {
         }
 
-        [TestCase("SETTINGS:ENVKEY:1", "EnvValue1")]
-        [TestCase("SETTINGS:ENVKEY:2", "EnvValue2")]
-        [TestCase("SETTINGS:ENVKEY:3", "EnvValue3")]
-        [TestCase("SETTINGS:ENVKEY:4", null)]
+        [TestCase("Memtly:ENVKEY:1", "EnvValue1")]
+        [TestCase("Memtly:ENVKEY:2", "EnvValue2")]
+        [TestCase("Memtly:ENVKEY:3", "EnvValue3")]
+        [TestCase("Memtly:ENVKEY:4", null)]
         [TestCase("RELEASE:VERSION", null)]
         public void ConfigHelper_GetEnvironmentVariable(string section, string? expected)
         {

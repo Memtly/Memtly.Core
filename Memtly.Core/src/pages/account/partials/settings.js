@@ -61,14 +61,14 @@ function bindTestNotificationButtons() {
             url: '/Notification/SendTestEmailNotification',
             method: 'POST',
             data: {
-                recipients: $('input[data-setting-name="Notifications:Smtp:Recipient"]').val(),
-                host: $('input[data-setting-name="Notifications:Smtp:Host"]').val(),
-                port: $('input[data-setting-name="Notifications:Smtp:Port"]').val(),
-                username: $('input[data-setting-name="Notifications:Smtp:Username"]').val(),
-                password: $('input[data-setting-name="Notifications:Smtp:Password"]').val(),
-                from: $('input[data-setting-name="Notifications:Smtp:From"]').val(),
-                display_name: $('input[data-setting-name="Notifications:Smtp:DisplayName"]').val(),
-                enable_ssl: $('input[data-setting-name="Notifications:Smtp:Use_SSL"]').val(),
+                recipients: $('input[data-setting-name="Memtly:Notifications:Smtp:Recipient"]').val(),
+                host: $('input[data-setting-name="Memtly:Notifications:Smtp:Host"]').val(),
+                port: $('input[data-setting-name="Memtly:Notifications:Smtp:Port"]').val(),
+                username: $('input[data-setting-name="Memtly:Notifications:Smtp:Username"]').val(),
+                password: $('input[data-setting-name="Memtly:Notifications:Smtp:Password"]').val(),
+                from: $('input[data-setting-name="Memtly:Notifications:Smtp:From"]').val(),
+                display_name: $('input[data-setting-name="Memtly:Notifications:Smtp:DisplayName"]').val(),
+                enable_ssl: $('input[data-setting-name="Memtly:Notifications:Smtp:Use_SSL"]').val(),
             }
         })
             .done(data => {
@@ -91,10 +91,10 @@ function bindTestNotificationButtons() {
             url: '/Notification/SendTestNtfyNotification',
             method: 'POST',
             data: {
-                endpoint: $('input[data-setting-name="Notifications:Ntfy:Endpoint"]').val(),
-                token: $('input[data-setting-name="Notifications:Ntfy:Token"]').val(),
-                topic: $('input[data-setting-name="Notifications:Ntfy:Topic"]').val(),
-                priority: $('input[data-setting-name="Notifications:Ntfy:Priority"]').val(),
+                endpoint: $('input[data-setting-name="Memtly:Notifications:Ntfy:Endpoint"]').val(),
+                token: $('input[data-setting-name="Memtly:Notifications:Ntfy:Token"]').val(),
+                topic: $('input[data-setting-name="Memtly:Notifications:Ntfy:Topic"]').val(),
+                priority: $('input[data-setting-name="Memtly:Notifications:Ntfy:Priority"]').val(),
             }
         })
             .done(data => {
@@ -117,9 +117,9 @@ function bindTestNotificationButtons() {
             url: '/Notification/SendTestGotifyNotification',
             method: 'POST',
             data: {
-                endpoint: $('input[data-setting-name="Notifications:Gotify:Endpoint"]').val(),
-                token: $('input[data-setting-name="Notifications:Gotify:Token"]').val(),
-                priority: $('input[data-setting-name="Notifications:Ntfy:Priority"]').val(),
+                endpoint: $('input[data-setting-name="Memtly:Notifications:Gotify:Endpoint"]').val(),
+                token: $('input[data-setting-name="Memtly:Notifications:Gotify:Token"]').val(),
+                priority: $('input[data-setting-name="Memtly:Notifications:Ntfy:Priority"]').val(),
             }
         })
             .done(data => {

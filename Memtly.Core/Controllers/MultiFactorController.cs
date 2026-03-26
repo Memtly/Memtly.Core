@@ -37,9 +37,9 @@ namespace Memtly.Core.Controllers
         [RequiresRole(UserPermission = UserPermissions.Login)]
         public async Task<IActionResult> GenerateToken()
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated && await _settings.GetOrDefault(Settings.IsDemoMode, false) == false)
+            if (User?.Identity != null && User.Identity.IsAuthenticated && await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false) == false)
             {
-                var title = await _settings.GetOrDefault(Settings.Basic.Title, "Memtly");
+                var title = await _settings.GetOrDefault(MemtlyConfiguration.Basic.Title, "Memtly");
                 var tfa = new TwoFactorAuth(title);
 
                 var secret = tfa.CreateSecret(160);
@@ -57,11 +57,11 @@ namespace Memtly.Core.Controllers
         {
             if (!string.IsNullOrWhiteSpace(secret) && !string.IsNullOrWhiteSpace(code))
             {
-                if (User?.Identity != null && User.Identity.IsAuthenticated && await _settings.GetOrDefault(Settings.IsDemoMode, false) == false)
+                if (User?.Identity != null && User.Identity.IsAuthenticated && await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false) == false)
                 {
                     try
                     {
-                        var tfa = new TwoFactorAuth(await _settings.GetOrDefault(Settings.Basic.Title, "Memtly"));
+                        var tfa = new TwoFactorAuth(await _settings.GetOrDefault(MemtlyConfiguration.Basic.Title, "Memtly"));
 
                         var valid = tfa.VerifyCode(secret, code);
                         if (valid)

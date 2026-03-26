@@ -8,10 +8,10 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Gallery_Download_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Gallery.Download">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.Download">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(Settings.Gallery.Download.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Gallery.Download.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }

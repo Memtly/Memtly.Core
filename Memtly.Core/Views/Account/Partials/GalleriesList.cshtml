@@ -58,14 +58,14 @@
                         <i class="fas @(gallery.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase) || !string.IsNullOrWhiteSpace(gallery.SecretKey) ? "fa-lock" : "fa-lock-open") m-0"></i>
                     </td>
                     <td class="d-none d-md-table-cell text-center">
-                        @(gallery.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase) ? _file.BytesToHumanReadable(gallery.TotalGallerySize, 2) : $"{_file.BytesToHumanReadable(gallery.TotalGallerySize, 2)} ({gallery.CalculateUsage(await _settings.GetOrDefault(Settings.Gallery.MaxSizeMB, long.MaxValue, gallery?.Id))})")
+                        @(gallery.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase) ? _file.BytesToHumanReadable(gallery.TotalGallerySize, 2) : $"{_file.BytesToHumanReadable(gallery.TotalGallerySize, 2)} ({gallery.CalculateUsage(await _settings.GetOrDefault(MemtlyConfiguration.Gallery.MaxSizeMB, long.MaxValue, gallery?.Id))})")
                     </td>
                     <td>
                         <!-- ( Open Gallery ) -->
                         @if (userPermissions.Gallery.HasFlag(GalleryPermissions.View))
                         {
                             var tooltip = _localizer["Open"].Value;
-                            <button class="btnOpenGallery btn btn-primary-3" data-url="@_url.GenerateFullUrl(Context?.Request, "/Gallery", append, new List<string>() { "partial" })" data-target="@(await _settings.GetOrDefault(Settings.Basic.LinksOpenNewTab, true) ? "_blank" : "_self")" alt="@tooltip" title="@tooltip">
+                            <button class="btnOpenGallery btn btn-primary-3" data-url="@_url.GenerateFullUrl(Context?.Request, "/Gallery", append, new List<string>() { "partial" })" data-target="@(await _settings.GetOrDefault(MemtlyConfiguration.Basic.LinksOpenNewTab, true) ? "_blank" : "_self")" alt="@tooltip" title="@tooltip">
                                 <i class="fas fa-up-right-from-square"></i>
                             </button>
                         }

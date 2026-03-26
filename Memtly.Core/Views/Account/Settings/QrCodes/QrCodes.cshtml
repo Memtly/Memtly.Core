@@ -6,10 +6,10 @@
     <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Basic_HideKeyFromQRCode_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Basic.HideKeyFromQRCode">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Basic.HideKeyFromQRCode">
                 @foreach (var option in ViewOptions.YesNoInverted)
                 {
-                    if (Model.GetValue(Settings.Basic.HideKeyFromQRCode.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Basic.HideKeyFromQRCode.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }

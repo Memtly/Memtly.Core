@@ -37,7 +37,7 @@ namespace Memtly.Core.Controllers
                 var selectedLang = HttpContext.Session.GetString(SessionKey.Language.Selected);
                 if (string.IsNullOrWhiteSpace(selectedLang))
                 {
-                    selectedLang = await _languageHelper.GetOrFallbackCulture(string.Empty, await _settings.GetOrDefault(Settings.Languages.Default, "en-GB"));
+                    selectedLang = await _languageHelper.GetOrFallbackCulture(string.Empty, await _settings.GetOrDefault(MemtlyConfiguration.Languages.Default, "en-GB"));
                 }
 
                 var detected = await _languageHelper.DetectSupportedCulturesAsync();
@@ -95,7 +95,7 @@ namespace Memtly.Core.Controllers
         {
             try
             {
-                culture = await _languageHelper.GetOrFallbackCulture(culture, await _settings.GetOrDefault(Settings.Languages.Default, "en-GB"));
+                culture = await _languageHelper.GetOrFallbackCulture(culture, await _settings.GetOrDefault(MemtlyConfiguration.Languages.Default, "en-GB"));
 
                 HttpContext.Session.SetString(SessionKey.Language.Selected, culture);
                 Response.Cookies.Append(

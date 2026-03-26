@@ -923,7 +923,7 @@ namespace Memtly.Core.Helpers.Database
                 );
 
             await _db.GallerySettings
-                .Where(gs => gs.Setting!.Key.ToLower().Equals(Settings.Gallery.BannerImage.ToLower()) && gs.Value.ToLower().Equals($"/custom_resources/{model.FileName}".ToLower()))
+                .Where(gs => gs.Setting!.Key.ToLower().Equals(MemtlyConfiguration.Gallery.BannerImage.ToLower()) && gs.Value.ToLower().Equals($"/custom_resources/{model.FileName}".ToLower()))
                 .ExecuteDeleteAsync();
 
             await _db.CustomResources

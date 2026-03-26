@@ -3,6 +3,7 @@ using System.Net.Mail;
 using Microsoft.Extensions.Localization;
 using Razor.Templating.Core;
 using Memtly.Core.Resources.Templates.Email;
+using Memtly.Core.Constants;
 
 namespace Memtly.Core.Helpers.Notifications
 {
@@ -23,7 +24,7 @@ namespace Memtly.Core.Helpers.Notifications
 
         public async Task<bool> Send(string title, string message, string? actionLink = null)
         {
-            return await this.SendTo(await _settings.GetOrDefault(Constants.Notifications.Smtp.Recipient, string.Empty), title, new BasicEmail()
+            return await this.SendTo(await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Recipient, string.Empty), title, new BasicEmail()
             {
                 Title = title,
                 Message = message,
@@ -43,18 +44,18 @@ namespace Memtly.Core.Helpers.Notifications
 
         public async Task<bool> SendTo(string recipients, string title, string message)
         {
-            if (await _settings.GetOrDefault(Constants.Notifications.Smtp.Enabled, false))
+            if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Enabled, false))
             {
                 try
                 { 
-                    var host = await _settings.GetOrDefault(Constants.Notifications.Smtp.Host, string.Empty);
-                    var port = await _settings.GetOrDefault(Constants.Notifications.Smtp.Port, 587);
-                    var from = await _settings.GetOrDefault(Constants.Notifications.Smtp.From, string.Empty);
-                    var displayName = await _settings.GetOrDefault(Constants.Notifications.Smtp.DisplayName, "Memtly");
-                    var enableSSL = await _settings.GetOrDefault(Constants.Notifications.Smtp.UseSSL, false);
+                    var host = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Host, string.Empty);
+                    var port = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Port, 587);
+                    var from = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.From, string.Empty);
+                    var displayName = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.DisplayName, "Memtly");
+                    var enableSSL = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.UseSSL, false);
 
-                    var username = await _settings.GetOrDefault(Constants.Notifications.Smtp.Username, string.Empty);
-                    var password = await _settings.GetOrDefault(Constants.Notifications.Smtp.Password, string.Empty);
+                    var username = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Username, string.Empty);
+                    var password = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Password, string.Empty);
 
                     NetworkCredential? credentials = null;
                     if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))

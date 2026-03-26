@@ -75,9 +75,9 @@ namespace Memtly.Core.Controllers
             GalleryModel? gallery = galleryId != null ? await _database.GetGallery(galleryId.Value) : null;
             if (gallery == null)
             {
-                if (User?.Identity != null || await _settings.GetOrDefault(Settings.Basic.GuestGalleryCreation, false))
+                if (User?.Identity != null || await _settings.GetOrDefault(MemtlyConfiguration.Basic.GuestGalleryCreation, false))
                 { 
-                    if (await _database.GetGalleryCount() < await _settings.GetOrDefault(Settings.Basic.MaxGalleryCount, 1000000))
+                    if (await _database.GetGalleryCount() < await _settings.GetOrDefault(MemtlyConfiguration.Basic.MaxGalleryCount, 1000000))
                     {
                         gallery = await _database.AddGallery(new GalleryModel()
                         {
@@ -155,7 +155,7 @@ namespace Memtly.Core.Controllers
 
                 try
                 {
-                    ViewBag.ViewMode = mode ?? (ViewMode)await _settings.GetOrDefault(Settings.Gallery.DefaultView, (int)ViewMode.Default, galleryId);
+                    ViewBag.ViewMode = mode ?? (ViewMode)await _settings.GetOrDefault(MemtlyConfiguration.Gallery.DefaultView, (int)ViewMode.Default, galleryId);
                 }
                 catch
                 {
@@ -188,9 +188,9 @@ namespace Memtly.Core.Controllers
                     }
                     catch { }
 
-                    var galleryGroup = group ?? (GalleryGroup)(await _settings.GetOrDefault(Settings.Gallery.DefaultGroup, (int)GalleryGroup.None, gallery?.Id));
-                    var galleryOrder = order ?? (GalleryOrder)(await _settings.GetOrDefault(Settings.Gallery.DefaultOrder, (int)GalleryOrder.Descending, gallery?.Id));
-                    var galleryFilter = filter ?? (GalleryFilter)(await _settings.GetOrDefault(Settings.Gallery.DefaultFilter, (int)GalleryFilter.All, gallery?.Id));
+                    var galleryGroup = group ?? (GalleryGroup)(await _settings.GetOrDefault(MemtlyConfiguration.Gallery.DefaultGroup, (int)GalleryGroup.None, gallery?.Id));
+                    var galleryOrder = order ?? (GalleryOrder)(await _settings.GetOrDefault(MemtlyConfiguration.Gallery.DefaultOrder, (int)GalleryOrder.Descending, gallery?.Id));
+                    var galleryFilter = filter ?? (GalleryFilter)(await _settings.GetOrDefault(MemtlyConfiguration.Gallery.DefaultFilter, (int)GalleryFilter.All, gallery?.Id));
 
                     var mediaType = MediaType.All;
                     if (mode == ViewMode.Slideshow)
@@ -230,18 +230,18 @@ namespace Memtly.Core.Controllers
                             break;
                     }
 
-                    var itemsPerPage = await _settings.GetOrDefault(Settings.Gallery.ItemsPerPage, 50, gallery?.Id);
-                    var allowedFileTypes = (await _settings.GetOrDefault(Settings.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", gallery?.Id)).Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                    var itemsPerPage = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.ItemsPerPage, 50, gallery?.Id);
+                    var allowedFileTypes = (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", gallery?.Id)).Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
                     var items = (await _database.GetGalleryItems(null, gallery?.Id, GalleryItemState.Approved, mediaType, orientation, galleryGroup, galleryOrder, currentPage, itemsPerPage))?.Where(x => allowedFileTypes.Any(y => string.Equals(Path.GetExtension(x.Title).Trim('.'), y.Trim('.'), StringComparison.OrdinalIgnoreCase)));
 
                     var isGalleryAdmin = User?.Identity != null && User.Identity.IsAuthenticated && userPermissions.Gallery.HasFlag(GalleryPermissions.Upload);
                     
-                    var uploadActvated = !gallery!.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase) && (isGalleryAdmin || await _settings.GetOrDefault(Settings.Gallery.Upload, true, gallery?.Id));
+                    var uploadActvated = !gallery!.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase) && (isGalleryAdmin || await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Upload, true, gallery?.Id));
                     if (uploadActvated)
                     {
                         try
                         {
-                            var periods = (await _settings.GetOrDefault(Settings.Gallery.UploadPeriod, "1970-01-01 00:00", gallery?.Id))?.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                            var periods = (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.UploadPeriod, "1970-01-01 00:00", gallery?.Id))?.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                             if (periods != null)
                             {
                                 uploadActvated = false;
@@ -348,7 +348,7 @@ namespace Memtly.Core.Controllers
                     {
                         var galleryOwner = await _database.GetUser(gallery.Owner);
                         var isFreeGallery = gallery.Owner > 0 && (galleryOwner?.Level ?? UserLevel.Basic) == UserLevel.Basic;
-                        var requiresReview = !isFreeGallery && await _settings.GetOrDefault(Settings.Gallery.RequireReview, true, gallery.Id);
+                        var requiresReview = !isFreeGallery && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.RequireReview, true, gallery.Id);
 
                         var uploaded = 0;
                         var errors = new List<string>();
@@ -357,11 +357,11 @@ namespace Memtly.Core.Controllers
                             try
                             {
                                 var extension = Path.GetExtension(file.FileName);
-                                var maxGallerySize = await _settings.GetOrDefault(Settings.Gallery.MaxSizeMB, 1024L, gallery.Id) * 1000000;
-                                var maxFilesSize = await _settings.GetOrDefault(Settings.Gallery.MaxFileSizeMB, 50L, gallery.Id) * 1000000;
+                                var maxGallerySize = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.MaxSizeMB, 1024L, gallery.Id) * 1000000;
+                                var maxFilesSize = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.MaxFileSizeMB, 50L, gallery.Id) * 1000000;
                                 var galleryPath = Path.Combine(UploadsDirectory, gallery.Identifier);
 
-                                var allowedFileTypes = (await _settings.GetOrDefault(Settings.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", gallery.Id)).Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                                var allowedFileTypes = (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", gallery.Id)).Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
                                 if (!allowedFileTypes.Any(x => string.Equals(x.Trim('.'), extension.Trim('.'), StringComparison.OrdinalIgnoreCase)))
                                 {
                                     errors.Add($"{_localizer["File_Upload_Failed"].Value}. {_localizer["Invalid_File_Type"].Value}");
@@ -384,7 +384,7 @@ namespace Memtly.Core.Controllers
                                     var filePath = Path.Combine(galleryPath, fileName);
                                     if (!string.IsNullOrWhiteSpace(filePath))
                                     {
-                                        var isDemoMode = await _settings.GetOrDefault(Settings.IsDemoMode, false);
+                                        var isDemoMode = await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false);
                                         if (!isDemoMode)
                                         {
                                             await _fileHelper.SaveFile(file, filePath, FileMode.Create);
@@ -395,7 +395,7 @@ namespace Memtly.Core.Controllers
                                         }
 
                                         var checksum = await _fileHelper.GetChecksum(filePath);
-                                        if (await _settings.GetOrDefault(Settings.Gallery.PreventDuplicates, true, gallery.Id) && (string.IsNullOrWhiteSpace(checksum) || await _database.GetGalleryItemByChecksum(gallery.Id, checksum) != null))
+                                        if (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.PreventDuplicates, true, gallery.Id) && (string.IsNullOrWhiteSpace(checksum) || await _database.GetGalleryItemByChecksum(gallery.Id, checksum) != null))
                                         {
                                             errors.Add($"{_localizer["File_Upload_Failed"].Value}. {_localizer["Duplicate_Item_Detected"].Value}");
                                             _fileHelper.DeleteFileIfExists(filePath);
@@ -408,7 +408,7 @@ namespace Memtly.Core.Controllers
                                             _fileHelper.CreateDirectoryIfNotExists(gallerySavePath);
 
                                             var savePath = Path.Combine(gallerySavePath, $"{Path.GetFileNameWithoutExtension(filePath)}.webp");
-                                            await _imageHelper.GenerateThumbnail(filePath, savePath, await _settings.GetOrDefault(Settings.Basic.ThumbnailSize, 720));
+                                            await _imageHelper.GenerateThumbnail(filePath, savePath, await _settings.GetOrDefault(MemtlyConfiguration.Basic.ThumbnailSize, 720));
                                             
                                             var item = await _database.AddGalleryItem(new GalleryItemModel()
                                             {
@@ -485,10 +485,10 @@ namespace Memtly.Core.Controllers
 
                     var galleryOwner = await _database.GetUser(gallery.Owner);
                     var isFreeGallery = gallery.Owner > 0 && (galleryOwner?.Level ?? UserLevel.Basic) == UserLevel.Basic;
-                    var requiresReview = !isFreeGallery && await _settings.GetOrDefault(Settings.Gallery.RequireReview, true, gallery.Id);
+                    var requiresReview = !isFreeGallery && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.RequireReview, true, gallery.Id);
 
                     int uploaded = int.Parse((Request?.Form?.FirstOrDefault(x => string.Equals("Count", x.Key, StringComparison.OrdinalIgnoreCase)).Value)?.ToString() ?? "0");
-                    if (uploaded > 0 && requiresReview && await _settings.GetOrDefault(Notifications.Alerts.PendingReview, true))
+                    if (uploaded > 0 && requiresReview && await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Alerts.PendingReview, true))
                     {
                         await _notificationHelper.Send(_localizer["New_Items_Pending_Review"].Value, $"{uploaded} new item(s) have been uploaded to gallery '{gallery.Name}' by '{(!string.IsNullOrWhiteSpace(uploadedBy) ? uploadedBy : "Anonymous")}' and are awaiting your review.", _urlHelper.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                     }
@@ -526,7 +526,7 @@ namespace Memtly.Core.Controllers
                         return Json(new { success = false, message = _localizer["Failed_Download_Gallery_Invalid_Key"].Value });
                     }
 
-                    if (await _settings.GetOrDefault(Settings.Gallery.Download, true, gallery?.Id) || (User?.Identity != null && User.Identity.IsAuthenticated))
+                    if (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Download, true, gallery?.Id) || (User?.Identity != null && User.Identity.IsAuthenticated))
                     {
                         var galleryDir = id > 0 ? Path.Combine(UploadsDirectory, gallery.Identifier) : UploadsDirectory;
                         if (_fileHelper.DirectoryExists(galleryDir))

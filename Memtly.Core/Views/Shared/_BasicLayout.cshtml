@@ -2,20 +2,20 @@
 @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostEnvironment
 
 @{
-    var title = await _settings.GetOrDefault(Settings.Basic.Title, "Memtly");
-    var isDemoMode = await _settings.GetOrDefault(Settings.IsDemoMode, false);
+    var title = await _settings.GetOrDefault(MemtlyConfiguration.Basic.Title, "Memtly");
+    var isDemoMode = await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false);
 
     string logo;
     try
     {
-        logo = await _settings.GetOrDefault(Settings.Basic.Logo, "/images/logo.png");
+        logo = await _settings.GetOrDefault(MemtlyConfiguration.Basic.Logo, "/images/logo.png");
     }
     catch
     {
         logo = "/images/logo.png";
     }
 
-    string theme = await _settings.GetOrDefault(Settings.Themes.Default, Themes.AutoDetect.ToString().ToLower());
+    string theme = await _settings.GetOrDefault(MemtlyConfiguration.Themes.Default, Themes.AutoDetect.ToString().ToLower());
     try
     {
         var selectedTheme = Context?.Request?.Cookies["Theme"]?.Trim();
@@ -71,7 +71,7 @@
         <!-- Navigation -->
         <nav class="navbar navbar-expand-lg">
             <div class="container px-3 px-lg-5">
-                <a class="navbar-brand" href="@(await _settings.GetOrDefault(Settings.Basic.HomeLink, true) ? "/" : "#")">
+                <a class="navbar-brand" href="@(await _settings.GetOrDefault(MemtlyConfiguration.Basic.HomeLink, true) ? "/" : "#")">
                     <img class="navbar-logo" src="@logo" onerror="this.onerror=null;this.src='/images/logo.png';" />
                     <span class="navbar-title">@title</span>
                 </a>
@@ -114,10 +114,10 @@
 
         @await RenderSectionAsync("Scripts", required: false)
         @{
-            var umamiEndpoint = await _settings.GetOrDefault(Trackers.Umami.Endpoint, string.Empty);
+            var umamiEndpoint = await _settings.GetOrDefault(MemtlyConfiguration.Trackers.Umami.Endpoint, string.Empty);
             if (!string.IsNullOrWhiteSpace(umamiEndpoint))
             {
-                var umamiWebsiteId = await _settings.GetOrDefault(Trackers.Umami.WebsiteId, string.Empty);
+                var umamiWebsiteId = await _settings.GetOrDefault(MemtlyConfiguration.Trackers.Umami.WebsiteId, string.Empty);
                 if (!string.IsNullOrWhiteSpace(umamiWebsiteId))
                 {
                     <script async defer data-website-id="@umamiWebsiteId" src="@(umamiEndpoint.Replace("umami.js", string.Empty).TrimEnd('/'))/umami.js"></script>

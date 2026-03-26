@@ -7,19 +7,19 @@
 @{
     var qrAppend = new List<KeyValuePair<string, string>>();
 
-    var qrDefaultView = await _settings.GetOrDefault(Settings.Gallery.QRCode.DefaultView, string.Empty, Model?.Gallery?.Id);
+    var qrDefaultView = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.QRCode.DefaultView, string.Empty, Model?.Gallery?.Id);
     if (!string.IsNullOrWhiteSpace(qrDefaultView))
     {
         qrAppend.Add(new KeyValuePair<string, string>("mode", qrDefaultView));
     }
 
-    var qrDefaultOrder = await _settings.GetOrDefault(Settings.Gallery.QRCode.DefaultSort, string.Empty, Model?.Gallery?.Id);
+    var qrDefaultOrder = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.QRCode.DefaultSort, string.Empty, Model?.Gallery?.Id);
     if (!string.IsNullOrWhiteSpace(qrDefaultOrder))
     {
         qrAppend.Add(new KeyValuePair<string, string>("order", qrDefaultOrder));
     }
 
-    if (await _settings.GetOrDefault(Settings.Gallery.QRCode.IncludeCulture, true, Model?.Gallery?.Id))
+    if (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.QRCode.IncludeCulture, true, Model?.Gallery?.Id))
     {
         try
         {
@@ -33,7 +33,7 @@
     }
 
     var qrExclude = new List<string>() { "partial" };
-    if (await _settings.GetOrDefault(Settings.Basic.HideKeyFromQRCode, false))
+    if (await _settings.GetOrDefault(MemtlyConfiguration.Basic.HideKeyFromQRCode, false))
     {
         qrExclude.Add("key");
         qrExclude.Add("enc");
@@ -44,8 +44,8 @@
 
 @if (Model?.UploadActivated != null && Model.UploadActivated && Model.ViewMode != ViewMode.Presentation && Model.ViewMode != ViewMode.Slideshow)
 {
-    var allowedFileTypes = (await _settings.GetOrDefault(Settings.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", Model?.Gallery?.Id))?.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)?.Select(x => $".{x.Trim('.')}")?.OrderBy(x => x)?.ToList() ?? new List<string>();
-    var identityRequired = await _settings.GetOrDefault(Settings.IdentityCheck.RequireIdentityForUpload, false);
+    var allowedFileTypes = (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", Model?.Gallery?.Id))?.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)?.Select(x => $".{x.Trim('.')}")?.OrderBy(x => x)?.ToList() ?? new List<string>();
+    var identityRequired = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.RequireIdentityForUpload, false);
 
     <header class="file-uploader bg-dark py-1 py-lg-4">
         <div class="container px-0 px-lg-2">
@@ -61,7 +61,7 @@
                     <p class="small my-2">@(ViewBag.IsMobile ?? false ? _localizer["Click_To_Upload"].Value : _localizer["Drag_And_Drop"].Value)</p>
                     <p class="small my-2">(@string.Join(", ", allowedFileTypes).ToLower())</p>
 
-                    <input class="position-absolute invisible upload-input" data-post-gallery-id="@Model?.Gallery?.Id" data-post-url="/Gallery/UploadImage" data-post-key="@Model?.SecretKey" data-post-allow-camera="@(((ViewBag.IsMobile ?? false) && await _settings.GetOrDefault(Settings.Gallery.CameraUploads, false)).ToString().ToLower())" type="file" multiple accept="image/*,video/*" />
+                    <input class="position-absolute invisible upload-input" data-post-gallery-id="@Model?.Gallery?.Id" data-post-url="/Gallery/UploadImage" data-post-key="@Model?.SecretKey" data-post-allow-camera="@(((ViewBag.IsMobile ?? false) && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.CameraUploads, false)).ToString().ToLower())" type="file" multiple accept="image/*,video/*" />
                 </fieldset>
             </form>
         </div>
@@ -78,7 +78,7 @@
 
 <section class="py-1 py-lg-4">
     <div class="row mt-3 mt-lg-0">
-        @if (await _settings.GetOrDefault(Settings.Gallery.FullWidth, false, Model?.Gallery?.Id))
+        @if (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.FullWidth, false, Model?.Gallery?.Id))
         {
             <div id="main-gallery" class="col-12 px-3 px-lg-5">
                 <partial name="~/Views/Gallery/GalleryWrapper.cshtml" model="Model" />
@@ -97,7 +97,7 @@
     </div>
 </section>
 
-@if (await _settings.GetOrDefault(Settings.Gallery.FullWidth, false, Model?.Gallery?.Id) && User?.Identity != null && User.Identity.IsAuthenticated && !Model.Gallery.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))
+@if (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.FullWidth, false, Model?.Gallery?.Id) && User?.Identity != null && User.Identity.IsAuthenticated && !Model.Gallery.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))
 {
     <!-- Settings Button -->
     <i id="btn-full-width-settings" class="fas fa-gear btnGallerySettings" data-gallery-name="@Model?.Gallery?.Name" data-gallery-id="@Model?.Gallery?.Id"></i>

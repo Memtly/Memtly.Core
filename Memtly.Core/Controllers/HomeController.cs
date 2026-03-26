@@ -45,7 +45,7 @@ namespace Memtly.Core.Controllers
                     HttpContext.Session.SetString(SessionKey.Device.Type, deviceType ?? "Desktop");
                 }
 
-                if (await _settings.GetOrDefault(Settings.Basic.SingleGalleryMode, false))
+                if (await _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, false))
                 {
                     var gallery = await _database.GetGallery(1);
                     if (string.IsNullOrWhiteSpace(gallery?.SecretKey))
@@ -54,10 +54,10 @@ namespace Memtly.Core.Controllers
                     }
                 }
 
-                var isDropdownMode = await _settings.GetOrDefault(Settings.GallerySelector.Dropdown, false);
-                var showUsernames = await _settings.GetOrDefault(Settings.GallerySelector.ShowUsernames, false);
+                var isDropdownMode = await _settings.GetOrDefault(MemtlyConfiguration.GallerySelector.Dropdown, false);
+                var showUsernames = await _settings.GetOrDefault(MemtlyConfiguration.GallerySelector.ShowUsernames, false);
                 var galleryNames = isDropdownMode ? (await _database.GetGalleryNames(showUsernames)).Where(x => !x.Value.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase)) : new Dictionary<string, string>();
-                if (await _settings.GetOrDefault(Settings.GallerySelector.HideDefaultOption, false))
+                if (await _settings.GetOrDefault(MemtlyConfiguration.GallerySelector.HideDefaultOption, false))
                 {
                     galleryNames = galleryNames.Where(x => !x.Key.Equals("default", StringComparison.OrdinalIgnoreCase));
                 }
@@ -77,9 +77,9 @@ namespace Memtly.Core.Controllers
         [Route("Home/CookiePolicy")]
         public async Task<IActionResult> CookiePolicy()
         {
-            ViewBag.CompanyName = await _settings.GetOrDefault(Settings.Basic.Title, "Memtly");
-            ViewBag.SiteHostname = await _settings.GetOrDefault(Settings.Basic.BaseUrl, "www.memtly.com");
-            ViewBag.CustomPolicy = await _settings.GetOrDefault(Settings.Policies.CookiePolicy, string.Empty);
+            ViewBag.CompanyName = await _settings.GetOrDefault(MemtlyConfiguration.Basic.Title, "Memtly");
+            ViewBag.SiteHostname = await _settings.GetOrDefault(MemtlyConfiguration.Basic.BaseUrl, "www.memtly.com");
+            ViewBag.CustomPolicy = await _settings.GetOrDefault(MemtlyConfiguration.Policies.CookiePolicy, string.Empty);
 
             return View("~/Views/Home/CookiePolicy.cshtml");
         }
@@ -89,7 +89,7 @@ namespace Memtly.Core.Controllers
         {
             try
             {
-                var emailRequired = await _settings.GetOrDefault(Settings.IdentityCheck.RequireEmail, false);
+                var emailRequired = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.RequireEmail, false);
 
                 if (string.IsNullOrWhiteSpace(name) || HtmlSanitizer.MayContainXss(name))
                 {

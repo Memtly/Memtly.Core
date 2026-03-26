@@ -13,15 +13,15 @@ namespace Memtly.Core.BackgroundWorkers
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var enabled = await settingsHelper.GetOrDefault(BackgroundServices.DirectoryScanner.Enabled, true);
+            var enabled = await settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.DirectoryScanner.Enabled, true);
             if (enabled)
             {
-                var cron = await settingsHelper.GetOrDefault(BackgroundServices.DirectoryScanner.Schedule, "*/30 * * * *");
+                var cron = await settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.DirectoryScanner.Schedule, "*/30 * * * *");
                 var nextExecutionTime = DateTime.Now.AddMinutes(5);
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    var currentCron = await settingsHelper.GetOrDefault(BackgroundServices.DirectoryScanner.Schedule, "*/30 * * * *");
+                    var currentCron = await settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.DirectoryScanner.Schedule, "*/30 * * * *");
 
                     var now = DateTime.Now;
                     if (now >= nextExecutionTime)
@@ -80,7 +80,7 @@ namespace Memtly.Core.BackgroundWorkers
                                     var identifier = galleryName;
 
                                     var galleryId = await db.GetGalleryId(identifier);
-                                    if (galleryId == null && await db.GetGalleryCount() < await settingsHelper.GetOrDefault(Settings.Basic.MaxGalleryCount, 1000000))
+                                    if (galleryId == null && await db.GetGalleryCount() < await settingsHelper.GetOrDefault(MemtlyConfiguration.Basic.MaxGalleryCount, 1000000))
                                     {
                                         identifier = GalleryHelper.IsValidGalleryIdentifier(galleryName) ? galleryName : GalleryHelper.GenerateGalleryIdentifier();
                                         galleryId = (await db.AddGallery(new GalleryModel()
@@ -104,7 +104,7 @@ namespace Memtly.Core.BackgroundWorkers
                                                 fileHelper.MoveDirectoryIfExists(galleryDir, galleryPath);
                                             }
 
-                                            var allowedFileTypes = settingsHelper.GetOrDefault(Settings.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", galleryItem?.Id).Result.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                                            var allowedFileTypes = settingsHelper.GetOrDefault(MemtlyConfiguration.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", galleryItem?.Id).Result.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
                                             var galleryItems = await db.GetGalleryItems(null, galleryItem!.Id);
 
                                             if (Path.Exists(galleryPath))
@@ -138,7 +138,7 @@ namespace Memtly.Core.BackgroundWorkers
                                                             if (!fileHelper.FileExists(thumbnailPath))
                                                             {
                                                                 fileHelper.CreateDirectoryIfNotExists(thumbnailDir);
-                                                                await imageHelper.GenerateThumbnail(file, thumbnailPath, settingsHelper.GetOrDefault(Settings.Basic.ThumbnailSize, 720).Result);
+                                                                await imageHelper.GenerateThumbnail(file, thumbnailPath, settingsHelper.GetOrDefault(MemtlyConfiguration.Basic.ThumbnailSize, 720).Result);
                                                                 fileHelper.DeleteFileIfExists(Path.Combine(thumbnailsDirectory, $"{Path.GetFileNameWithoutExtension(file)}.webp"));
                                                             }
                                                             else
@@ -159,12 +159,6 @@ namespace Memtly.Core.BackgroundWorkers
                                                             if (g != null)
                                                             {
                                                                 var updated = false;
-
-                                                                if (g.UploadedDate == null)
-                                                                {
-                                                                    g.UploadedDate = new FileInfo(file).CreationTimeUtc;
-                                                                    updated = true;
-                                                                }
 
                                                                 if (g.MediaType == MediaType.Unknown)
                                                                 {

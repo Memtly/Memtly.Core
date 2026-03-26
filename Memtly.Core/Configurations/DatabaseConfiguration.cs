@@ -18,8 +18,8 @@ namespace Memtly.Core.Configurations
         {
             var config = services.BuildServiceProvider().GetRequiredService<IConfigHelper>();
             
-            var provider = config.GetOrDefault(Database.Type, "sqlite");
-            var connString = config.GetOrDefault(Database.ConnectionString, "Data Source=./config/memtly.db");
+            var provider = config.GetOrDefault(MemtlyConfiguration.Database.Type, "sqlite");
+            var connString = config.GetOrDefault(MemtlyConfiguration.Database.ConnectionString, "Data Source=./config/memtly.db");
             var assemblyName = typeof(CoreDbContext).Assembly.GetName().Name;
 
             services.AddDbContext<CoreDbContext>(options =>
@@ -97,10 +97,10 @@ namespace Memtly.Core.Configurations
 
         private static void InitializeDatabase(IConfigHelper config, IDatabaseHelper database, IEncryptionHelper encryption, ILogger logger)
         {
-            var isDemoMode = config.GetOrDefault(Settings.IsDemoMode, false);
-            var password = encryption.Encrypt(!isDemoMode ? config.GetOrDefault(Settings.Account.Admin.Password, config.GetOrDefault(Settings.Account.Admin.Password, "admin")) : "demo", UserAccounts.AdminUser.ToLower());
-            var allowInsecureGalleries = config.GetOrDefault(Settings.Basic.AllowInsecureGalleries, true);
-            var defaultSecretKey = config.GetOrDefault(Settings.Basic.DefaultGallerySecretKey, string.Empty);
+            var isDemoMode = config.GetOrDefault(MemtlyConfiguration.IsDemoMode, false);
+            var password = encryption.Encrypt(!isDemoMode ? config.GetOrDefault(MemtlyConfiguration.Account.Admin.Password, config.GetOrDefault(MemtlyConfiguration.Account.Admin.Password, "admin")) : "demo", UserAccounts.AdminUser.ToLower());
+            var allowInsecureGalleries = config.GetOrDefault(MemtlyConfiguration.Basic.AllowInsecureGalleries, true);
+            var defaultSecretKey = config.GetOrDefault(MemtlyConfiguration.Basic.DefaultGallerySecretKey, string.Empty);
 
             Task.Run(async () =>
             {
@@ -172,7 +172,7 @@ namespace Memtly.Core.Configurations
                     }
                 }
 
-                if (config.GetOrDefault(Constants.Database.SyncFromConfig, false))
+                if (config.GetOrDefault(MemtlyConfiguration.Database.SyncFromConfig, false))
                 {
                     logger.LogWarning($"Sync_From_Config set to true, wiping settings database and re-pulling values from config");
                     await database.DeleteAllSettings();
@@ -182,17 +182,17 @@ namespace Memtly.Core.Configurations
 
                 await database.SetSetting(new SettingModel()
                 {
-                    Id = Settings.IsDemoMode.ToUpper(),
+                    Id = MemtlyConfiguration.IsDemoMode.ToUpper(),
                     Value = isDemoMode.ToString()
                 });
 
                 await database.SetSetting(new SettingModel()
                 {
-                    Id = Settings.Themes.Default.ToUpper(),
-                    Value = config.GetOrDefault(Settings.Themes.Default, Themes.AutoDetect.ToString())
+                    Id = MemtlyConfiguration.Themes.Default.ToUpper(),
+                    Value = config.GetOrDefault(MemtlyConfiguration.Themes.Default, Themes.AutoDetect.ToString())
                 });
 
-                if (config.GetOrDefault(Security.MultiFactor.ResetToDefault, false))
+                if (config.GetOrDefault(MemtlyConfiguration.Security.MultiFactor.ResetToDefault, false))
                 {
                     await database.ResetMultiFactorToDefault();
                 }
@@ -206,7 +206,7 @@ namespace Memtly.Core.Configurations
                 var galleries = (await database.GetGalleries())?.Where(x => !x.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase));
 
                 var settings = await database.GetAllSettings();
-                if (settings == null || !settings.Any(setting => setting.Id.StartsWith(Settings.Basic.BaseKey, StringComparison.OrdinalIgnoreCase)))
+                if (settings == null || !settings.Any(setting => setting.Id.StartsWith(MemtlyConfiguration.Basic.BaseKey, StringComparison.OrdinalIgnoreCase)))
                 {
                     var systemKeys = GetAllKeys();
                     foreach (var key in systemKeys)
@@ -231,7 +231,7 @@ namespace Memtly.Core.Configurations
 
                     if (galleries != null && galleries.Any())
                     {
-                        var galleryKeys = GetKeys<Settings.Gallery>();
+                        var galleryKeys = GetKeys<MemtlyConfiguration.Gallery>();
                         foreach (var gallery in galleries)
                         {
                             if (!string.IsNullOrWhiteSpace(gallery?.Name))
@@ -260,14 +260,14 @@ namespace Memtly.Core.Configurations
                 // Protect any galleries without a secret key by forcing a new one
                 if (galleries != null && galleries.Any())
                 {
-                    var allowInsecureGalleries = config.GetOrDefault(Settings.Basic.AllowInsecureGalleries, true);
+                    var allowInsecureGalleries = config.GetOrDefault(MemtlyConfiguration.Basic.AllowInsecureGalleries, true);
                     if (!allowInsecureGalleries)
                     {
                         foreach (var gallery in galleries.Where(gallery => string.IsNullOrWhiteSpace(gallery.SecretKey)))
                         {
                             try
                             {
-                                gallery.SecretKey = config.GetOrDefault(Settings.Basic.DefaultGallerySecretKey, allowInsecureGalleries ? string.Empty : PasswordHelper.GenerateGallerySecretKey());
+                                gallery.SecretKey = config.GetOrDefault(MemtlyConfiguration.Basic.DefaultGallerySecretKey, allowInsecureGalleries ? string.Empty : PasswordHelper.GenerateGallerySecretKey());
 
                                 await database.EditGallery(gallery);
                             }
@@ -288,10 +288,10 @@ namespace Memtly.Core.Configurations
 
             try
             {
-                keys.AddRange(GetKeys<BackgroundServices>());
-                keys.AddRange(GetKeys<Notifications>());
-                keys.AddRange(GetKeys<Security>());
-                keys.AddRange(GetKeys<Settings>());
+                keys.AddRange(GetKeys<MemtlyConfiguration.BackgroundServices>());
+                keys.AddRange(GetKeys<MemtlyConfiguration.Notifications>());
+                keys.AddRange(GetKeys<MemtlyConfiguration.Security>());
+                keys.AddRange(GetKeys<MemtlyConfiguration.Basic>());
             }
             catch { }
 

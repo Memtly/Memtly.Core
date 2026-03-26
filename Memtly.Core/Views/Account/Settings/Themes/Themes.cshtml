@@ -6,10 +6,10 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Enabled"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Themes.Enabled">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Themes.Enabled">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(Settings.Themes.Enabled.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Themes.Enabled.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -26,10 +26,10 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Themes_Default_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Themes.Default">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Themes.Default">
                 @foreach (Themes t in Enum.GetValues(typeof(Themes)))
                 {
-                    if (Model.GetValue(Settings.Themes.Default.ToUpper(), Themes.AutoDetect.ToString()).Equals(t.ToString(), StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Themes.Default.ToUpper(), Themes.AutoDetect.ToString()).Equals(t.ToString(), StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@t.ToString()" selected="selected">@t.ToString()</option>
                     }

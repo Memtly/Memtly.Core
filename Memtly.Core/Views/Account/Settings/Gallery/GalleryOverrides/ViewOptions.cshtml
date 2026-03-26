@@ -8,10 +8,10 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Gallery_ShowFilters_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Gallery.ShowFilters">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.ShowFilters">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(Settings.Gallery.ShowFilters.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Gallery.ShowFilters.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -28,10 +28,10 @@
     <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Gallery_DefaultView_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Gallery.DefaultView">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.DefaultView">
                 @foreach (var option in ViewOptions.GalleryDefaultView)
                 {
-                    if (Model.GetValue(Settings.Gallery.DefaultView.ToUpper(), "default").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Gallery.DefaultView.ToUpper(), "default").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -48,10 +48,10 @@
     <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Gallery_DefaultGroup_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Gallery.DefaultGroup">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.DefaultGroup">
                 @foreach (var option in ViewOptions.GalleryDefaultGroup)
                 {
-                    if (Model.GetValue(Settings.Gallery.DefaultGroup.ToUpper(), "0").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Gallery.DefaultGroup.ToUpper(), "0").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -68,10 +68,10 @@
     <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Gallery_DefaultOrder_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Gallery.DefaultOrder">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.DefaultOrder">
                 @foreach (var option in ViewOptions.GalleryDefaultOrder)
                 {
-                    if (Model.GetValue(Settings.Gallery.DefaultOrder.ToUpper(), "1").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Gallery.DefaultOrder.ToUpper(), "1").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -88,10 +88,10 @@
     <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Gallery_DefaultFilter_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Gallery.DefaultFilter">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.DefaultFilter">
                 @foreach (var option in ViewOptions.GalleryDefaultFilter)
                 {
-                    if (Model.GetValue(Settings.Gallery.DefaultFilter.ToUpper(), "0").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Gallery.DefaultFilter.ToUpper(), "0").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }

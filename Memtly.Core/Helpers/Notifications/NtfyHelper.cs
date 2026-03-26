@@ -18,14 +18,14 @@ namespace Memtly.Core.Helpers.Notifications
 
         public async Task<bool> Send(string title, string message, string? actionLink = null)
         {
-            if (await _settings.GetOrDefault(Constants.Notifications.Ntfy.Enabled, false))
+            if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Enabled, false))
             {
                 try
                 {
-                    var endpoint = await _settings.GetOrDefault(Constants.Notifications.Ntfy.Endpoint, string.Empty);
-                    var token = await _settings.GetOrDefault(Constants.Notifications.Ntfy.Token, string.Empty);
-                    var topic = await _settings.GetOrDefault(Constants.Notifications.Ntfy.Topic, "Memtly");
-                    var priority = await _settings.GetOrDefault(Constants.Notifications.Ntfy.Priority, 4);
+                    var endpoint = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Endpoint, string.Empty);
+                    var token = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Token, string.Empty);
+                    var topic = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Topic, "Memtly");
+                    var priority = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Priority, 4);
 
                     return await Send(endpoint, topic, token, priority, title, message, actionLink);
                 }
@@ -56,7 +56,7 @@ namespace Memtly.Core.Helpers.Notifications
                 if (priority > 0)
                 {
                     var defaultIcon = "https://github.com/Memtly/Memtly.Core/blob/master/Memtly.Core/wwwroot/images/logo.png?raw=true";
-                    var icon = await _settings.GetOrDefault(Settings.Basic.Logo, defaultIcon);
+                    var icon = await _settings.GetOrDefault(MemtlyConfiguration.Basic.Logo, defaultIcon);
                     icon = !icon.StartsWith('.') && !icon.StartsWith('/') ? icon : defaultIcon;
 
                     var client = _clientFactory.CreateClient("NtfyClient");

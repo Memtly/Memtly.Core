@@ -8,7 +8,7 @@
     <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Gallery_MaxSizeMb_Label"].Value</label>
-            <input class="setting-field form-control" data-setting-name="@Settings.Gallery.MaxSizeMB" placeholder="1024" value="@Model.GetValue(Settings.Gallery.MaxSizeMB.ToUpper(), string.Empty)" type="number" min="100" step="1" />
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.MaxSizeMB" placeholder="1024" value="@Model.GetValue(MemtlyConfiguration.Gallery.MaxSizeMB.ToUpper(), string.Empty)" type="number" min="100" step="1" />
             <div class="setting-hint form-text">@_localizer["Settings_Gallery_MaxSizeMb_Help"].Value</div>
         </div>
     </div>
@@ -16,7 +16,7 @@
     <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Gallery_MaxFileSizeMb_Label"].Value</label>
-            <input class="setting-field form-control" data-setting-name="@Settings.Gallery.MaxFileSizeMB" placeholder="50" value="@Model.GetValue(Settings.Gallery.MaxFileSizeMB.ToUpper(), string.Empty)" type="number" min="1" step="1" />
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.MaxFileSizeMB" placeholder="50" value="@Model.GetValue(MemtlyConfiguration.Gallery.MaxFileSizeMB.ToUpper(), string.Empty)" type="number" min="1" step="1" />
             <div class="setting-hint form-text">@_localizer["Settings_Gallery_MaxFileSizeMb_Help"].Value</div>
         </div>
     </div>

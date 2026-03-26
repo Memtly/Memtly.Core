@@ -7,10 +7,10 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Enabled"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Languages.Enabled">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Languages.Enabled">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(Settings.Languages.Enabled.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Languages.Enabled.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -27,11 +27,11 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Languages_Default_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@Settings.Languages.Default">
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Languages.Default">
                 @foreach (var option in _lang.DetectSupportedCultures().OrderBy(x => x.EnglishName))
                 {
                     var val = (option.EnglishName.Contains("(") ? option.EnglishName.Substring(0, option.EnglishName.IndexOf("(")) : option.EnglishName).Trim();
-                    if (Model.GetValue(Settings.Languages.Default.ToUpper(), "en-GB").Equals(option.Name, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Languages.Default.ToUpper(), "en-GB").Equals(option.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Name" selected="selected">@val (@option.Name)</option>
                     }

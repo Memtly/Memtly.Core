@@ -3,9 +3,9 @@
 @using Memtly.Core.Views.Home
 
 @{
-    var singleGalleryMode = await _settings.GetOrDefault(Settings.Basic.SingleGalleryMode, false);
-    var galleryNameDropdown = await _settings.GetOrDefault(Settings.GallerySelector.Dropdown, false);
-    var isDemoMode = await _settings.GetOrDefault(Settings.IsDemoMode, false);
+    var singleGalleryMode = await _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, false);
+    var galleryNameDropdown = await _settings.GetOrDefault(MemtlyConfiguration.GallerySelector.Dropdown, false);
+    var isDemoMode = await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false);
 }
 <div id="main-content">
     <div class="container px-3 px-lg-1 pb-4">
@@ -42,7 +42,7 @@
                             else
                             {
                                 <input type="text" id="gallery-id" class="form-control" aria-describedby="gallery-id-help" placeholder="@_localizer["Gallery_Identifier_Placeholder"].Value" aria-label="@_localizer["Gallery_Name"].Value" />
-                                @if (await _settings.GetOrDefault(Settings.Basic.GuestGalleryCreation, false) || (User?.Identity != null && User.Identity.IsAuthenticated))
+                                @if (await _settings.GetOrDefault(MemtlyConfiguration.Basic.GuestGalleryCreation, false) || (User?.Identity != null && User.Identity.IsAuthenticated))
                                 {
                                     <input type="button" id="btnGenerateGalleryName" class="btn btn-primary-2" value="@_localizer["Generate"].Value" />
                                 }
