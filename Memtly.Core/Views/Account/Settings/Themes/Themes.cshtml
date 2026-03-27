@@ -29,6 +29,11 @@
             <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Themes.Default">
                 @foreach (Themes t in Enum.GetValues(typeof(Themes)))
                 {
+                    if (MemtlyCore.Version == MemtlyVersion.Community && (t == Themes.Green || t == Themes.DarkGreen))
+                    {
+                        continue;
+                    }
+
                     if (Model.GetValue(MemtlyConfiguration.Themes.Default.ToUpper(), Themes.AutoDetect.ToString()).Equals(t.ToString(), StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@t.ToString()" selected="selected">@t.ToString()</option>

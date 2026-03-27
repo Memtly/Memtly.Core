@@ -32,6 +32,11 @@
         { 
             foreach (Themes t in Enum.GetValues(typeof(Themes)))
             {
+                if (MemtlyCore.Version == MemtlyVersion.Community && (t == Themes.Green || t == Themes.DarkGreen))
+                {
+                    continue;
+                }
+
                 if (selectedTheme.Equals(t.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
                     theme = t.ToString().ToLower();

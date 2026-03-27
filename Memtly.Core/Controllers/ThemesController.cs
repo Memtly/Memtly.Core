@@ -65,6 +65,11 @@ namespace Memtly.Core.Controllers
                 var selectedTheme = await _settings.GetOrDefault(MemtlyConfiguration.Themes.Default, Themes.AutoDetect.ToString());
                 foreach (Themes item in Enum.GetValues(typeof(Themes)))
                 {
+                    if (MemtlyCore.Version == MemtlyVersion.Community && (item == Themes.Green || item == Themes.DarkGreen))
+                    {
+                        continue;
+                    }
+
                     if (item.ToString().Equals(theme, StringComparison.OrdinalIgnoreCase))
                     {
                         selectedTheme = item.ToString();
