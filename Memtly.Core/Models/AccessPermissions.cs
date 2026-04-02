@@ -34,8 +34,8 @@ namespace Memtly.Core.Models
             : base()
         {
             Account =
-                AccountPermissions.View
-                | AccountPermissions.Payments;
+                MemtlyCore.Version == MemtlyVersion.Enterprise ? (AccountPermissions.View
+                | AccountPermissions.Payments) : AccountPermissions.None;
             Features = 
                 FeaturePermissions.UpgradeToUnlock;
             Gallery =
@@ -58,8 +58,8 @@ namespace Memtly.Core.Models
             : base()
         {
             Account =
-                AccountPermissions.View
-                | AccountPermissions.Payments;
+                MemtlyCore.Version == MemtlyVersion.Enterprise ? (AccountPermissions.View
+                | AccountPermissions.Payments) : AccountPermissions.None;
             Review =
                 ReviewPermissions.View
                 | ReviewPermissions.Approve
@@ -96,7 +96,7 @@ namespace Memtly.Core.Models
             : base()
         {
             Account =
-                AccountPermissions.View;
+                MemtlyCore.Version == MemtlyVersion.Enterprise ? AccountPermissions.View : AccountPermissions.None;
             Review =
                 ReviewPermissions.View
                 | ReviewPermissions.Approve
@@ -115,7 +115,7 @@ namespace Memtly.Core.Models
             : base()
         {
             Account =
-                AccountPermissions.View;
+                MemtlyCore.Version == MemtlyVersion.Enterprise ? AccountPermissions.View : AccountPermissions.None;
             Review =
                 ReviewPermissions.View
                 | ReviewPermissions.Approve
@@ -144,7 +144,7 @@ namespace Memtly.Core.Models
             : base()
         {
             Account =
-                AccountPermissions.View;
+                MemtlyCore.Version == MemtlyVersion.Enterprise ? AccountPermissions.View : AccountPermissions.None;
             Review =
                  ReviewPermissions.View
                  | ReviewPermissions.Approve

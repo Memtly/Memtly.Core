@@ -84,7 +84,7 @@ namespace Memtly.Core.Helpers.Database
             }
 
             return (await _db.Galleries
-               .FirstOrDefaultAsync(g => g.Identifier.Equals(identifier))
+               .FirstOrDefaultAsync(g => g.Identifier.ToLower().Equals(identifier.ToLower()))
             )?.Id;
         }
 

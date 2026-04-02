@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Security.Principal;
+using Memtly.Core;
 using Memtly.Core.Enums;
 using Memtly.Core.Models;
 
@@ -40,20 +41,23 @@ namespace Memtly.Core.Extensions
 
         public static PaidTier GetPaidTier(this IIdentity identity)
         {
-            try
-            {
-                var role = ((ClaimsIdentity)identity).Claims.FirstOrDefault(x => string.Equals(ClaimTypes.Role, x.Type, StringComparison.OrdinalIgnoreCase))?.Value ?? $"{UserLevel.Basic}|{PaidTier.None}";
-                var tier = role.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)[1];
-
-                foreach (PaidTier t in Enum.GetValues(typeof(PaidTier)))
+            if (MemtlyCore.Version == MemtlyVersion.Enterprise)
+            { 
+                try
                 {
-                    if (t.ToString().Equals(tier, StringComparison.OrdinalIgnoreCase))
+                    var role = ((ClaimsIdentity)identity).Claims.FirstOrDefault(x => string.Equals(ClaimTypes.Role, x.Type, StringComparison.OrdinalIgnoreCase))?.Value ?? $"{UserLevel.Basic}|{PaidTier.None}";
+                    var tier = role.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)[1];
+
+                    foreach (PaidTier t in Enum.GetValues(typeof(PaidTier)))
                     {
-                        return t;
+                        if (t.ToString().Equals(tier, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return t;
+                        }
                     }
                 }
+                catch { }
             }
-            catch { }
 
             return PaidTier.None;
         }
@@ -88,7 +92,7 @@ namespace Memtly.Core.Extensions
                     case UserLevel.Basic:
                         return new BasicUserPermissions();
                     case UserLevel.Paid:
-                        return new PaidUserPermissions();
+                        return MemtlyCore.Version == MemtlyVersion.Enterprise ? new PaidUserPermissions() : new BasicUserPermissions();
                     case UserLevel.Reviewer:
                         return new ReviewerPermissions();
                     case UserLevel.Moderator:
@@ -106,35 +110,40 @@ namespace Memtly.Core.Extensions
 
         public static int GetGalleryLimit(this IIdentity identity)
         {
-            try
+            if (MemtlyCore.Version == MemtlyVersion.Enterprise)
             {
-                switch (identity.GetUserLevel())
+                try
                 {
-                    case UserLevel.Basic:
-                        return 1;
-                    case UserLevel.Paid:
-                        switch (identity.GetPaidTier())
-                        {
-                            case PaidTier.Basic:
-                                return 3;
-                            case PaidTier.Advanced:
-                                return 5;
-                            case PaidTier.Premium:
-                                return 10;
-                            default: 
-                                return 1;
-                        }
-                    case UserLevel.Reviewer:
-                        return 0;
-                    case UserLevel.Moderator:
-                        return 3;
-                    case UserLevel.Admin:
-                        return int.MaxValue;
+                    switch (identity.GetUserLevel())
+                    {
+                        case UserLevel.Basic:
+                            return 1;
+                        case UserLevel.Paid:
+                            switch (identity.GetPaidTier())
+                            {
+                                case PaidTier.Basic:
+                                    return 3;
+                                case PaidTier.Advanced:
+                                    return 5;
+                                case PaidTier.Premium:
+                                    return 10;
+                                default:
+                                    return 1;
+                            }
+                        case UserLevel.Reviewer:
+                            return 0;
+                        case UserLevel.Moderator:
+                            return 3;
+                        case UserLevel.Admin:
+                            return int.MaxValue;
+                    }
                 }
-            }
-            catch { }
+                catch { }
 
-            return 0;
+                return 0;
+            }
+
+            return int.MaxValue;
         }
 
         public static AccountTabs GetDefaultTab(this IIdentity identity)
