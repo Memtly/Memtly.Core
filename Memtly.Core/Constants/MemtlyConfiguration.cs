@@ -16,23 +16,28 @@
         {
             public class Encryption
             {
-                public const string Key = "Memtly:Security:Encryption:Key";
-                public const string Salt = "Memtly:Security:Encryption:Salt";
-                public const string Iterations = "Memtly:Security:Encryption:Iterations";
-                public const string HashType = "Memtly:Security:Encryption:HashType";
+                public const string Key = "Memtly:Encryption:Key";
+                public const string Salt = "Memtly:Encryption:Salt";
+                public const string Iterations = "Memtly:Encryption:Iterations";
+                public const string HashType = "Memtly:Encryption:HashType";
             }
 
             public class Headers
             {
-                public const string Enabled = "Memtly:Security:Headers:Enabled";
-                public const string XFrameOptions = "Memtly:Security:Headers:X_Frame_Options";
-                public const string XContentTypeOptions = "Memtly:Security:Headers:X_Content_Type_Options";
-                public const string CSP = "Memtly:Security:Headers:CSP";
+                public const string Enabled = "Memtly:Headers:Enabled";
+                public const string XFrameOptions = "Memtly:Headers:X_Frame_Options";
+                public const string XContentTypeOptions = "Memtly:Headers:X_Content_Type_Options";
+                public const string CSP = "Memtly:Headers:CSP";
             }
 
             public class MultiFactor
             {
-                public const string ResetToDefault = "Memtly:Security:2FA:Reset_To_Default";
+                public const string ResetToDefault = "Memtly:MultiFactor:Reset_To_Default";
+            }
+
+            public class Hardening
+            { 
+                public const string AllowInsecureGalleries = "Memtly:Allow_Insecure_Galleries";
             }
         }
 
@@ -43,7 +48,6 @@
             public const string Logo = "Memtly:Logo";
             public const string BaseUrl = "Memtly:Base_Url";
             public const string DefaultGallerySecretKey = "Memtly:Gallery_Secret_Key";
-            public const string AllowInsecureGalleries = "Memtly:Allow_Insecure_Galleries";
             public const string ForceHttps = "Memtly:Force_Https";
             public const string SingleGalleryMode = "Memtly:Single_Gallery_Mode";
             public const string MaxGalleryCount = "Memtly:Max_Gallery_Count";
@@ -52,7 +56,6 @@
             public const string HideKeyFromQRCode = "Memtly:Hide_Key_From_QR_Code";
             public const string LinksOpenNewTab = "Memtly:Links_Open_New_Tab";
             public const string ThumbnailSize = "Memtly:Thumbnail_Size";
-            public const string EmailReport = "Memtly:Email_Report";
         }
 
         public class Account
@@ -130,16 +133,29 @@
             public const string Limit = "Memtly:Slideshow:Limit";
             public const string IncludeShareSlide = "Memtly:Slideshow:Include_Share_Slide";
         }
+        
+        public class Alerts
+        {
+            public const string BaseKey = "Memtly:Alerts:";
+            public const string FailedLogin = "Memtly:Alerts:Failed_Login";
+            public const string AccountLockout = "Memtly:Alerts:Account_Lockout";
+            public const string DestructiveAction = "Memtly:Alerts:Destructive_Action";
+            public const string PendingReview = "Memtly:Alerts:Pending_Review";
+        }
+
+        public class Reports
+        {
+            public const string BaseKey = "Memtly:Reports:";
+
+            public class Email
+            {
+                public const string Enabled = "Memtly:Reports:Email:Enabled";
+                public const string Schedule = "Memtly:Reports:Email:Schedule";
+            }
+        }
 
         public class Notifications
         {
-            public class Alerts
-            {
-                public const string FailedLogin = "Memtly:Notifications:Alerts:Failed_Login";
-                public const string AccountLockout = "Memtly:Notifications:Alerts:Account_Lockout";
-                public const string DestructiveAction = "Memtly:Notifications:Alerts:Destructive_Action";
-                public const string PendingReview = "Memtly:Notifications:Alerts:Pending_Review";
-            }
 
             public class Gotify
             {
@@ -241,13 +257,6 @@
                 public const string BaseKey = "Memtly:BackgroundServices:Directory_Scanner:";
                 public const string Enabled = "Memtly:BackgroundServices:Directory_Scanner:Enabled";
                 public const string Schedule = "Memtly:BackgroundServices:Directory_Scanner:Schedule";
-            }
-
-            public class EmailReport
-            {
-                public const string BaseKey = "Memtly:BackgroundServices:Email_Report:";
-                public const string Enabled = "Memtly:BackgroundServices:Email_Report:Enabled";
-                public const string Schedule = "Memtly:BackgroundServices:Email_Report:Schedule";
             }
 
             public class Cleanup

@@ -110,24 +110,4 @@
             <div class="setting-hint form-text">@_localizer["Settings_Basic_LinksOpenNewTab_Help"].Value</div>
         </div>
     </div>
-
-    <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
-        <div class="col-12">
-            <label class="setting-label">@_localizer["Settings_Basic_EmailReport_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Basic.EmailReport">
-                @foreach (var option in ViewOptions.YesNo)
-                {
-                    if (Model.Settings.GetValue(MemtlyConfiguration.Basic.EmailReport.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
-                    {
-                        <option value="@option.Value" selected="selected">@option.Key</option>
-                    }
-                    else
-                    {
-                        <option value="@option.Value">@option.Key</option>
-                    }
-                }
-            </select>
-            <div class="setting-hint form-text">@_localizer["Settings_Basic_EmailReport_Help"].Value</div>
-        </div>
-    </div>
 }

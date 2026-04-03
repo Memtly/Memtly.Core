@@ -488,7 +488,7 @@ namespace Memtly.Core.Controllers
                     var requiresReview = !isFreeGallery && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.RequireReview, true, gallery.Id);
 
                     int uploaded = int.Parse((Request?.Form?.FirstOrDefault(x => string.Equals("Count", x.Key, StringComparison.OrdinalIgnoreCase)).Value)?.ToString() ?? "0");
-                    if (uploaded > 0 && requiresReview && await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Alerts.PendingReview, true))
+                    if (uploaded > 0 && requiresReview && await _settings.GetOrDefault(MemtlyConfiguration.Alerts.PendingReview, true))
                     {
                         await _notificationHelper.Send(_localizer["New_Items_Pending_Review"].Value, $"{uploaded} new item(s) have been uploaded to gallery '{gallery.Name}' by '{(!string.IsNullOrWhiteSpace(uploadedBy) ? uploadedBy : "Anonymous")}' and are awaiting your review.", _urlHelper.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                     }

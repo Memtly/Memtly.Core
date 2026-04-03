@@ -1183,7 +1183,7 @@ namespace Memtly.Core.Controllers
                             _fileHelper.DeleteDirectoryIfExists(galleryDir);
                             _fileHelper.CreateDirectoryIfNotExists(galleryDir);
 
-                            if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Alerts.DestructiveAction, true))
+                            if (await _settings.GetOrDefault(MemtlyConfiguration.Alerts.DestructiveAction, true))
                             { 
                                 await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"The destructive action 'Wipe' was performed on gallery '{gallery.Name}'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                             }
@@ -1230,7 +1230,7 @@ namespace Memtly.Core.Controllers
 
                         _fileHelper.CreateDirectoryIfNotExists(Path.Combine(UploadsDirectory, "default"));
 
-                        if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Alerts.DestructiveAction, true))
+                        if (await _settings.GetOrDefault(MemtlyConfiguration.Alerts.DestructiveAction, true))
                         {
                             await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"The destructive action 'Wipe' was performed on all galleries'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                         }
@@ -1264,7 +1264,7 @@ namespace Memtly.Core.Controllers
                         var galleryDir = Path.Combine(UploadsDirectory, gallery.Identifier);
                         _fileHelper.DeleteDirectoryIfExists(galleryDir);
 
-                        if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Alerts.DestructiveAction, true))
+                        if (await _settings.GetOrDefault(MemtlyConfiguration.Alerts.DestructiveAction, true))
                         {
                             await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"The destructive action 'Delete' was performed on gallery '{gallery.Name}'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                         }
@@ -1565,7 +1565,7 @@ namespace Memtly.Core.Controllers
                             await RemoveCustomResource(customResource.Id);
                         }
 
-                        if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Alerts.DestructiveAction, true))
+                        if (await _settings.GetOrDefault(MemtlyConfiguration.Alerts.DestructiveAction, true))
                         {
                             await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"The destructive action 'Delete' was performed on user '{user.Username}'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                         }
@@ -2075,7 +2075,7 @@ namespace Memtly.Core.Controllers
         {
             try
             {
-                if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Alerts.FailedLogin, true))
+                if (await _settings.GetOrDefault(MemtlyConfiguration.Alerts.FailedLogin, true))
                 {
                     var ipAddress = Request.HttpContext.TryGetIpAddress();
                     var country = Request.HttpContext.TryGetCountry();
@@ -2089,7 +2089,7 @@ namespace Memtly.Core.Controllers
                     var timeout = await _settings.GetOrDefault(MemtlyConfiguration.Account.LockoutMins, 60);
                     await _database.SetLockout(user.Id, DateTime.UtcNow.AddMinutes(timeout));
 
-                    if (await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Alerts.AccountLockout, true))
+                    if (await _settings.GetOrDefault(MemtlyConfiguration.Alerts.AccountLockout, true))
                     {
                         await _notificationHelper.Send("Account Lockout", $"Account '{model?.Username}' has been locked out for {timeout} minutes due to too many failed login attempts.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                     }

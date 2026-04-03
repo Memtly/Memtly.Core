@@ -14,7 +14,7 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_BackgroundServices_EmailReport_Label"].Value</label>
-            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.BackgroundServices.EmailReport.Schedule" placeholder="0 0 * * *" value="@Model.GetValue(MemtlyConfiguration.BackgroundServices.EmailReport.Schedule.ToUpper(), "0 0 * * *")" type="text" />
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Reports.Email.Schedule" placeholder="0 0 * * *" value="@Model.GetValue(MemtlyConfiguration.Reports.Email.Schedule.ToUpper(), "0 0 * * *")" type="text" />
             <div class="setting-hint form-text">@_localizer["Settings_BackgroundServices_EmailReport_Help"].Value</div>
         </div>
     </div>

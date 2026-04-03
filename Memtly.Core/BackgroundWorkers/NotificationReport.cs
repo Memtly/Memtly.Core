@@ -12,20 +12,20 @@ namespace Memtly.Core.BackgroundWorkers
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var enabled = await settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.EmailReport.Enabled, true);
+            var enabled = await settingsHelper.GetOrDefault(MemtlyConfiguration.Reports.Email.Enabled, true);
             if (enabled)
             {
-                var cron = await settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.EmailReport.Schedule, "0 0 * * *");
+                var cron = await settingsHelper.GetOrDefault(MemtlyConfiguration.Reports.Email.Schedule, "0 0 * * *");
                 var nextExecutionTime = DateTime.Now.AddMinutes(1);
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    var currentCron = await settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.EmailReport.Schedule, "0 0 * * *");
+                    var currentCron = await settingsHelper.GetOrDefault(MemtlyConfiguration.Reports.Email.Schedule, "0 0 * * *");
 
                     var now = DateTime.Now;
                     if (now >= nextExecutionTime)
                     {
-                        if (await settingsHelper.GetOrDefault(MemtlyConfiguration.Basic.EmailReport, true) && await settingsHelper.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Enabled, false))
+                        if (await settingsHelper.GetOrDefault(MemtlyConfiguration.Reports.Email.Enabled, true) && await settingsHelper.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Enabled, false))
                         {
                             await SendReport();
                         }

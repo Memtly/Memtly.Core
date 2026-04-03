@@ -99,7 +99,7 @@ namespace Memtly.Core.Configurations
         {
             var isDemoMode = config.GetOrDefault(MemtlyConfiguration.IsDemoMode, false);
             var password = encryption.Encrypt(!isDemoMode ? config.GetOrDefault(MemtlyConfiguration.Account.Admin.Password, config.GetOrDefault(MemtlyConfiguration.Account.Admin.Password, "admin")) : "demo", UserAccounts.AdminUser.ToLower());
-            var allowInsecureGalleries = config.GetOrDefault(MemtlyConfiguration.Basic.AllowInsecureGalleries, true);
+            var allowInsecureGalleries = config.GetOrDefault(MemtlyConfiguration.Security.Hardening.AllowInsecureGalleries, true);
             var defaultSecretKey = config.GetOrDefault(MemtlyConfiguration.Basic.DefaultGallerySecretKey, string.Empty);
 
             Task.Run(async () =>
@@ -260,7 +260,7 @@ namespace Memtly.Core.Configurations
                 // Protect any galleries without a secret key by forcing a new one
                 if (galleries != null && galleries.Any())
                 {
-                    var allowInsecureGalleries = config.GetOrDefault(MemtlyConfiguration.Basic.AllowInsecureGalleries, true);
+                    var allowInsecureGalleries = config.GetOrDefault(MemtlyConfiguration.Security.Hardening.AllowInsecureGalleries, true);
                     if (!allowInsecureGalleries)
                     {
                         foreach (var gallery in galleries.Where(gallery => string.IsNullOrWhiteSpace(gallery.SecretKey)))
