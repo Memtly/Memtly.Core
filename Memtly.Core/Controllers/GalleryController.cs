@@ -59,17 +59,13 @@ namespace Memtly.Core.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string? id, string? identifier, string? key = null)
+        public async Task<IActionResult> Login(string? identifier, string? key = null)
         {
             int? galleryId = 0;
 
             if (!string.IsNullOrWhiteSpace(identifier))
             {
-                galleryId = await _database.GetGalleryId(identifier);
-            }
-            else if (!string.IsNullOrWhiteSpace(id))
-            {
-                galleryId = await _database.GetGalleryIdByName(id);
+                galleryId = await _database.GetGalleryId(identifier.ToLower());
             }
 
             GalleryModel? gallery = galleryId != null ? await _database.GetGallery(galleryId.Value) : null;
@@ -81,7 +77,7 @@ namespace Memtly.Core.Controllers
                     {
                         gallery = await _database.AddGallery(new GalleryModel()
                         {
-                            Name = id?.ToLower() ?? GalleryHelper.GenerateGalleryIdentifier(),
+                            Name = identifier?.ToLower() ?? GalleryHelper.GenerateGalleryIdentifier(),
                             SecretKey = key,
                             Owner = User?.Identity?.GetUserId() ?? 0
                         });
@@ -97,9 +93,14 @@ namespace Memtly.Core.Controllers
                 }
             }
 
+            if (string.IsNullOrWhiteSpace(gallery?.Identifier))
+            {
+                return new RedirectToActionResult("Index", "Error", new { Reason = ErrorCode.InvalidGalleryId }, false);
+            }
+
             var append = new List<KeyValuePair<string, string>>()
             {
-                new KeyValuePair<string, string>("identifier", gallery.Identifier)
+                new KeyValuePair<string, string>("identifier", gallery!.Identifier)
             };
 
             if (!string.IsNullOrWhiteSpace(key))
@@ -117,17 +118,13 @@ namespace Memtly.Core.Controllers
         [HttpGet]
         [RequiresSecretKey]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public async Task<IActionResult> Index(string? id, string? identifier, string? key = null, ViewMode? mode = null, GalleryGroup? group = null, GalleryOrder? order = null, GalleryFilter? filter = null, string? culture = null, bool partial = false)
+        public async Task<IActionResult> Index(string? identifier, string? key = null, ViewMode? mode = null, GalleryGroup? group = null, GalleryOrder? order = null, GalleryFilter? filter = null, string? culture = null, bool partial = false)
         {
             int? galleryId = null;
 
             if (!string.IsNullOrWhiteSpace(identifier))
             {
-                galleryId = await _database.GetGalleryId(identifier);
-            }
-            else if (!string.IsNullOrWhiteSpace(id))
-            {
-                galleryId = await _database.GetGalleryIdByName(id);
+                galleryId = await _database.GetGalleryId(identifier.ToLower());
             }
 
             if (galleryId != null)

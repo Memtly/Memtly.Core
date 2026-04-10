@@ -39,7 +39,7 @@
             { 
                 var append = new List<KeyValuePair<string, string>>()
                 {
-                    new KeyValuePair<string, string>("identifier", gallery.Identifier)
+                    new KeyValuePair<string, string>("identifier", gallery.Identifier.ToLower())
                 };
 
                 if (!string.IsNullOrWhiteSpace(gallery.SecretKey))
