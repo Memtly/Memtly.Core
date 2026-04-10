@@ -156,7 +156,7 @@ namespace Memtly.Core.Configurations
                 adminAccount = await database.GetUserByUsername(UserAccounts.AdminUser);
                 if (adminAccount != null)
                 {
-                    var defaultGalleryId = await database.GetGalleryId(SystemGalleries.DefaultGallery);
+                    var defaultGalleryId = await database.GetGalleryId(SystemGalleries.DefaultGallery.ToLower());
                     var defaultGallery = defaultGalleryId != null ? await database.GetGallery(defaultGalleryId.Value) : null;
 
                     if (defaultGallery == null)
@@ -164,7 +164,7 @@ namespace Memtly.Core.Configurations
                         var secretKey = !string.IsNullOrWhiteSpace(defaultSecretKey) || allowInsecureGalleries ? defaultSecretKey : PasswordHelper.GenerateGallerySecretKey();
                         await database.AddGallery(new GalleryModel
                         {
-                            Identifier = SystemGalleries.DefaultGallery,
+                            Identifier = SystemGalleries.DefaultGallery.ToLower(),
                             Name = SystemGalleries.DefaultGallery,
                             SecretKey = secretKey,
                             Owner = adminAccount.Id

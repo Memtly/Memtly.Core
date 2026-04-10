@@ -14,7 +14,7 @@ function bindGallerySelector() {
     $(document).off('submit', '#frmSelectGallery').on('submit', '#frmSelectGallery', function (e) {
         preventDefaults(e);
 
-        var galleryId = $('input#gallery-id,select#gallery-id').val().trim();
+        var galleryId = $('input#gallery-id,select#gallery-id').val().trim().toLowerCase();
         var secretKey = $('input#gallery-key').val().trim();
 
         const regex = /^[a-zA-Z0-9\-\s\-_~]+$/;
