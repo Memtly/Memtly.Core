@@ -1,10 +1,3 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
-using NSubstitute.ReturnsExtensions;
 using Memtly.Core.Constants;
 using Memtly.Core.Controllers;
 using Memtly.Core.Enums;
@@ -14,6 +7,15 @@ using Memtly.Core.Helpers.Notifications;
 using Memtly.Core.Models;
 using Memtly.Core.Models.Database;
 using Memtly.Core.UnitTests.Helpers;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
+using Mysqlx.Crud;
+using NSubstitute.ReturnsExtensions;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace Memtly.Core.UnitTests.Tests.Helpers
 {
@@ -101,7 +103,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 
 			if (existing)
 			{
-				ViewResult actual = (ViewResult)await controller.Index(identifier, name, key, mode, group, order);
+				ViewResult actual = (ViewResult)await controller.Index(identifier, key, mode, group, order);
 				Assert.That(actual, Is.TypeOf<ViewResult>());
                 Assert.That(actual?.Model, Is.Not.Null);
 
@@ -114,15 +116,16 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 			}
 			else
 			{
-                RedirectToActionResult actual = (RedirectToActionResult)await controller.Index(identifier, name, key, mode, group, order);
+                RedirectToActionResult actual = (RedirectToActionResult)await controller.Index(identifier, key, mode, group, order);
 				Assert.That(actual, Is.TypeOf<RedirectToActionResult>());
 			}
         }
 
-        [TestCase(null, "default", "default")]
-        [TestCase("default", null, "default")]
-        [TestCase("default", "blaa", "blaa")]
-        public async Task GalleryController_Index_GetByIdentifier(string? id, string? identifier, string expected)
+        [TestCase("default", "default")]
+        [TestCase("Default", "default")]
+        [TestCase(null, null)]
+        [TestCase("blaa", "blaa")]
+        public async Task GalleryController_Index_GetByIdentifier(string? identifier, string? expected)
         {
             _deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(DeviceType.Desktop);
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(false);
@@ -131,12 +134,20 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
 
-            ViewResult actual = (ViewResult)await controller.Index(id, identifier, "password", ViewMode.Default, GalleryGroup.None, GalleryOrder.Random);
-            Assert.That(actual, Is.TypeOf<ViewResult>());
-            Assert.That(actual?.Model, Is.Not.Null);
+			if (expected != null)
+			{
+				ViewResult actual = (ViewResult)await controller.Index(identifier, "password", ViewMode.Default, GalleryGroup.None, GalleryOrder.Random);
+				Assert.That(actual, Is.TypeOf<ViewResult>());
+				Assert.That(actual?.Model, Is.Not.Null);
 
-            PhotoGallery model = (PhotoGallery)actual.Model;
-            Assert.That(model?.Gallery?.Identifier, Is.EqualTo(expected));
+				PhotoGallery model = (PhotoGallery)actual.Model;
+				Assert.That(model?.Gallery?.Identifier, Is.EqualTo(expected));
+			}
+			else
+			{
+                RedirectToActionResult actual = (RedirectToActionResult)await controller.Index(identifier, "password", ViewMode.Default, GalleryGroup.None, GalleryOrder.Random);
+                Assert.That(actual, Is.TypeOf<RedirectToActionResult>());
+            }
         }
 
         [TestCase(true, true)]
@@ -150,7 +161,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
 
-            ViewResult actual = (ViewResult)await controller.Index("default", "default", "password", ViewMode.Default, GalleryGroup.None, GalleryOrder.Descending);
+            ViewResult actual = (ViewResult)await controller.Index("default", "password", ViewMode.Default, GalleryGroup.None, GalleryOrder.Descending);
             Assert.That(actual, Is.TypeOf<ViewResult>());
             Assert.That(actual?.Model, Is.Not.Null);
 
@@ -172,7 +183,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
 
-            ViewResult actual = (ViewResult)await controller.Index("default", "default", "password", ViewMode.Default, GalleryGroup.None, GalleryOrder.Descending);
+            ViewResult actual = (ViewResult)await controller.Index("default", "password", ViewMode.Default, GalleryGroup.None, GalleryOrder.Descending);
             Assert.That(actual, Is.TypeOf<ViewResult>());
             Assert.That(actual?.Model, Is.Not.Null);
 
@@ -191,7 +202,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 			var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext();
 
-			ViewResult actual = (ViewResult)await controller.Index("default", "default", "password", mode, group, order);
+			ViewResult actual = (ViewResult)await controller.Index("default", "password", mode, group, order);
 			Assert.That(actual, Is.TypeOf<ViewResult>());
 			Assert.That(actual?.Model, Is.Not.Null);
 
