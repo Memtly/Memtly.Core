@@ -37,7 +37,7 @@
 
             public class Hardening
             { 
-                public const string AllowInsecureGalleries = "Memtly:Security:Allow_Insecure_Galleries";
+                public const string AllowInsecureGalleries = "Memtly:Security:Hardening:Allow_Insecure_Galleries";
             }
         }
 
