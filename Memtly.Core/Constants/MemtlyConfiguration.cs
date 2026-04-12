@@ -16,28 +16,28 @@
         {
             public class Encryption
             {
-                public const string Key = "Memtly:Encryption:Key";
-                public const string Salt = "Memtly:Encryption:Salt";
-                public const string Iterations = "Memtly:Encryption:Iterations";
-                public const string HashType = "Memtly:Encryption:HashType";
+                public const string Key = "Memtly:Security:Encryption:Key";
+                public const string Salt = "Memtly:Security:Encryption:Salt";
+                public const string Iterations = "Memtly:Security:Encryption:Iterations";
+                public const string HashType = "Memtly:Security:Encryption:HashType";
             }
 
             public class Headers
             {
-                public const string Enabled = "Memtly:Headers:Enabled";
-                public const string XFrameOptions = "Memtly:Headers:X_Frame_Options";
-                public const string XContentTypeOptions = "Memtly:Headers:X_Content_Type_Options";
-                public const string CSP = "Memtly:Headers:CSP";
+                public const string Enabled = "Memtly:Security:Headers:Enabled";
+                public const string XFrameOptions = "Memtly:Security:Headers:X_Frame_Options";
+                public const string XContentTypeOptions = "Memtly:Security:Headers:X_Content_Type_Options";
+                public const string CSP = "Memtly:Security:Headers:CSP";
             }
 
             public class MultiFactor
             {
-                public const string ResetToDefault = "Memtly:MultiFactor:Reset_To_Default";
+                public const string ResetToDefault = "Memtly:Security:MultiFactor:Reset_To_Default";
             }
 
             public class Hardening
             { 
-                public const string AllowInsecureGalleries = "Memtly:Allow_Insecure_Galleries";
+                public const string AllowInsecureGalleries = "Memtly:Security:Allow_Insecure_Galleries";
             }
         }
 
