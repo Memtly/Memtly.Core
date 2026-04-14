@@ -236,6 +236,11 @@ function bindEditGalleryButton() {
                 Value: row.data('gallery-id'),
                 Type: 'hidden'
             }, {
+                Id: 'gallery-identifier',
+                Name: localization.translate('Gallery_Identifier'),
+                Value: row.data('gallery-identifier'),
+                Disabled: true
+            }, {
                 Id: 'gallery-name',
                 Name: localization.translate('Gallery_Name'),
                 Value: row.data('gallery-name'),

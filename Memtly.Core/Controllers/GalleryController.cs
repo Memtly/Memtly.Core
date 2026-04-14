@@ -75,12 +75,30 @@ namespace Memtly.Core.Controllers
                 { 
                     if (await _database.GetGalleryCount() < await _settings.GetOrDefault(MemtlyConfiguration.Basic.MaxGalleryCount, 1000000))
                     {
-                        gallery = await _database.AddGallery(new GalleryModel()
+                        var galleryOwner = User?.Identity?.GetUserId();
+                        if (galleryOwner == null || galleryOwner <= 0)
                         {
-                            Name = identifier?.ToLower() ?? GalleryHelper.GenerateGalleryIdentifier(),
-                            SecretKey = key,
-                            Owner = User?.Identity?.GetUserId() ?? 0
-                        });
+                            var systemAccount = await _database.GetUserByUsername(UserAccounts.SystemUser);
+                            if (systemAccount != null)
+                            {
+                                galleryOwner = systemAccount?.Id;
+                            }
+                        }
+
+                        if (galleryOwner != null && galleryOwner > 0)
+                        {
+                            gallery = await _database.AddGallery(new GalleryModel()
+                            {
+                                Identifier = identifier?.ToLower() ?? GalleryHelper.GenerateGalleryIdentifier(),
+                                Name = identifier?.ToLower() ?? GalleryHelper.GenerateGalleryIdentifier(),
+                                SecretKey = key,
+                                Owner = galleryOwner ?? 0
+                            });
+                        }
+                        else
+                        {
+                            return new RedirectToActionResult("Index", "Error", new { Reason = ErrorCode.GalleryCreationNotAllowed }, false);
+                        }
                     }
                     else
                     {

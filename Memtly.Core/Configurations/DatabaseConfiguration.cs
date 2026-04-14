@@ -151,6 +151,7 @@ namespace Memtly.Core.Configurations
                     adminAccount.Level = UserLevel.Admin;
 
                     await database.EditUser(adminAccount);
+                    await database.ChangePassword(adminAccount);
                 }
 
                 adminAccount = await database.GetUserByUsername(UserAccounts.AdminUser);
