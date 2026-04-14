@@ -112,7 +112,7 @@
   <ItemGroup>
     <PackageReference Include="dbup-mysql" Version="6.1.0" />
     <PackageReference Include="dbup-sqlite" Version="6.0.4" />
-    <PackageReference Include="Memtly.Localization" Version="1.0.0.6" />
+    <PackageReference Include="Memtly.Localization" Version="1.0.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.14" />

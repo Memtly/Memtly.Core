@@ -1251,6 +1251,53 @@ namespace Memtly.Core.Controllers
         }
 
         [HttpDelete]
+        [RequiresRole(DataPermission = DataPermissions.Wipe)]
+        public async Task<IActionResult> WipeSystem()
+        {
+            if (User?.Identity != null && User.Identity.IsAuthenticated && (User?.Identity?.IsPrivilegedUser() ?? false))
+            {
+                try
+                {
+                    if (_fileHelper.DirectoryExists(UploadsDirectory))
+                    {
+                        foreach (var gallery in _fileHelper.GetDirectories(UploadsDirectory, "*", SearchOption.TopDirectoryOnly))
+                        {
+                            _fileHelper.DeleteDirectoryIfExists(gallery);
+                        }
+
+                        foreach (var thumbnail in _fileHelper.GetFiles(ThumbnailsDirectory, "*.*", SearchOption.AllDirectories))
+                        {
+                            _fileHelper.DeleteFileIfExists(thumbnail);
+                        }
+
+                        foreach (var custom_resource in _fileHelper.GetFiles(CustomResourcesDirectory, "*.*", SearchOption.AllDirectories))
+                        {
+                            _fileHelper.DeleteFileIfExists(custom_resource);
+                        }
+
+                        _fileHelper.CreateDirectoryIfNotExists(Path.Combine(UploadsDirectory, "default"));
+
+                        if (await _settings.GetOrDefault(MemtlyConfiguration.Alerts.DestructiveAction, true))
+                        {
+                            await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"The destructive action 'Wipe' was performed on the system'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
+                        }
+                    }
+
+                    await _database.WipeSystem();
+                    await _audit.LogAction(User?.Identity?.GetUserId(), _localizer["Audit_WipeSystem"].Value, AuditSeverity.Warning);
+
+                    return Json(new { success = true });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"{_localizer["Failed_Wipe_System"].Value} - {ex?.Message}");
+                }
+            }
+
+            return Json(new { success = false });
+        }
+
+        [HttpDelete]
         [RequiresRole(GalleryPermission = GalleryPermissions.Delete)]
         public async Task<IActionResult> DeleteGallery(int id)
         {

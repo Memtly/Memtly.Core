@@ -11,6 +11,7 @@ function init() {
 function bindEventHandlers() {
     bindImportButton();
     bindExportButton();
+    bindWipeButton();
 }
 
 function bindImportButton() {
@@ -151,6 +152,47 @@ function bindExportButton() {
                         })
                         .fail((xhr, error) => {
                             displayMessage(localization.translate('Export_Data'), localization.translate('Export_Data_Failed'), [error]);
+                        });
+                }
+            }, {
+                Text: localization.translate('Close')
+            }]
+        });
+    });
+}
+
+function bindWipeButton() {
+    $(document).off('click', '.btnWipeSystem').on('click', '.btnWipeSystem', function (e) {
+        preventDefaults(e);
+
+        if ($(this).attr('disabled') == 'disabled') {
+            return;
+        }
+
+        displayPopup({
+            Title: localization.translate('Wipe_Data'),
+            Message: localization.translate('Wipe_Data_Message'),
+            Buttons: [{
+                Text: localization.translate('Wipe'),
+                Class: 'btn-danger',
+                Callback: function () {
+                    displayLoader(localization.translate('Loading'));
+
+                    $.ajax({
+                        url: '/Account/WipeSystem',
+                        method: 'DELETE'
+                    })
+                        .done(data => {
+                            if (data.success === true) {
+                                displayMessage(localization.translate('Wipe_Data'), localization.translate('Wipe_Data_Success'));
+                            } else if (data.message) {
+                                displayMessage(localization.translate('Wipe_Data'), localization.translate('Wipe_Data_Failed'), [data.message]);
+                            } else {
+                                displayMessage(localization.translate('Wipe_Data'), localization.translate('Wipe_Data_Failed'));
+                            }
+                        })
+                        .fail((xhr, error) => {
+                            displayMessage(localization.translate('Wipe_Data'), localization.translate('Wipe_Data_Failed'), [error]);
                         });
                 }
             }, {

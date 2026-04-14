@@ -236,6 +236,15 @@ namespace Memtly.Core.Helpers.Database
                 .Where(g => g.Id == model.Id)
                 .ExecuteDeleteAsync();
         }
+        public async Task DeleteAllGalleries()
+        {
+            await _db.Galleries
+                .Where(g =>
+                    !string.Equals(g.Identifier, SystemGalleries.AllGallery)
+                    && !string.Equals(g.Identifier, SystemGalleries.DefaultGallery)
+                )
+                .ExecuteDeleteAsync();
+        }
         #endregion
 
         #region Gallery Items
@@ -406,6 +415,11 @@ namespace Memtly.Core.Helpers.Database
                 .Where(gi => gi.Id == model.Id)
                 .ExecuteDeleteAsync();
         }
+        public async Task DeleteAllGalleryItems()
+        {
+            await _db.GalleryItems
+                .ExecuteDeleteAsync();
+        }
         #endregion
 
         #region Gallery Item Likes
@@ -496,6 +510,11 @@ namespace Memtly.Core.Helpers.Database
         {
             await _db.GalleryLikes
                 .Where(gl => gl.GalleryItemId == galleryItemId)
+                .ExecuteDeleteAsync();
+        }
+        public async Task DeleteAllGalleryItemLikes()
+        {
+            await _db.GalleryLikes
                 .ExecuteDeleteAsync();
         }
         #endregion
@@ -656,6 +675,17 @@ namespace Memtly.Core.Helpers.Database
         {
             await _db.Users
                 .Where(u => u.Level != UserLevel.System && u.Id == model.Id)
+                .ExecuteDeleteAsync();
+        }
+
+        public async Task DeleteAllUsers()
+        {
+            await _db.Users
+                .Where(u => 
+                    u.Level != UserLevel.System
+                    && !string.Equals(u.Username.ToLower(), UserAccounts.SystemUser.ToLower())
+                    && !string.Equals(u.Username.ToLower(), UserAccounts.AdminUser.ToLower())
+                )
                 .ExecuteDeleteAsync();
         }
 
@@ -928,6 +958,21 @@ namespace Memtly.Core.Helpers.Database
 
             await _db.CustomResources
                 .Where(cr => cr.Id == model.Id)
+                .ExecuteDeleteAsync();
+        }
+        public async Task DeleteAllCustomResources()
+        {
+            await _db.Settings
+                .Where(s => s.Value.ToLower().StartsWith($"/custom_resources/".ToLower()))
+                .ExecuteUpdateAsync(setter => setter
+                    .SetProperty(s => s.Value, string.Empty)
+                );
+
+            await _db.GallerySettings
+                .Where(gs => gs.Setting!.Key.ToLower().Equals(MemtlyConfiguration.Gallery.BannerImage.ToLower()) && gs.Value.ToLower().StartsWith($"/custom_resources/".ToLower()))
+                .ExecuteDeleteAsync();
+
+            await _db.CustomResources
                 .ExecuteDeleteAsync();
         }
         #endregion
@@ -1242,6 +1287,25 @@ namespace Memtly.Core.Helpers.Database
             await _db.AuditLogs
                 .Where(al => al.CreatedAt < flushDate)
                 .ExecuteDeleteAsync();
+        }
+
+        public async Task DeleteAllAuditLogs()
+        {
+            await _db.AuditLogs
+                .ExecuteDeleteAsync();
+        }
+        #endregion
+
+        #region Other
+        public async Task WipeSystem()
+        {
+            await DeleteAllGalleryItemLikes();
+            await DeleteAllGalleryItems();
+            await DeleteAllGalleries();
+            //await DeleteAllSettings();
+            await DeleteAllCustomResources();
+            await DeleteAllUsers();
+            await DeleteAllAuditLogs();
         }
         #endregion
     }

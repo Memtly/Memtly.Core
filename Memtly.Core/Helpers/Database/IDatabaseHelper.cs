@@ -21,6 +21,7 @@ namespace Memtly.Core.Helpers.Database
         Task WipeGallery(GalleryModel model);
         Task WipeAllGalleries();
         Task DeleteGallery(GalleryModel model);
+        Task DeleteAllGalleries();
         #endregion
 
         #region Gallery Items
@@ -31,6 +32,7 @@ namespace Memtly.Core.Helpers.Database
         Task<GalleryItemModel?> AddGalleryItem(GalleryItemModel model);
         Task<GalleryItemModel?> EditGalleryItem(GalleryItemModel model);
         Task DeleteGalleryItem(GalleryItemModel model);
+        Task DeleteAllGalleryItems();
         #endregion
 
         #region Gallery Item Likes
@@ -42,6 +44,7 @@ namespace Memtly.Core.Helpers.Database
         Task<long> LikeGalleryItem(GalleryItemLikeModel model);
         Task<long> UnLikeGalleryItem(GalleryItemLikeModel model);
         Task WipeGalleryItemLikes(int galleryItemId);
+        Task DeleteAllGalleryItemLikes();
         #endregion
 
         #region Users
@@ -54,6 +57,7 @@ namespace Memtly.Core.Helpers.Database
         Task<UserModel?> AddUser(UserModel model);
         Task<UserModel?> EditUser(UserModel model);
         Task DeleteUser(UserModel model);
+        Task DeleteAllUsers();
         Task<bool> ChangePassword(UserModel model);
         Task<string> SetUserSecret(int id, string secretCode);
         Task<bool> VerifyUserSecret(int id, string secretCode);
@@ -84,6 +88,7 @@ namespace Memtly.Core.Helpers.Database
         Task<CustomResourceModel?> EditCustomResource(CustomResourceModel model);
         Task<CustomResourceModel?> RelinkCustomResource(CustomResourceModel model);
         Task DeleteCustomResource(CustomResourceModel model);
+        Task DeleteAllCustomResources();
         #endregion
 
         #region Audit
@@ -91,6 +96,11 @@ namespace Memtly.Core.Helpers.Database
         Task<IEnumerable<AuditLogModel>?> GetAuditLogs(int? userId = null, string term = "", AuditSeverity severity = AuditSeverity.Information, int limit = 100);
         Task<AuditLogModel?> AddAuditLog(AuditLogModel model);
         Task FlushLogsOlderThan(int days = 30);
+        Task DeleteAllAuditLogs();
+        #endregion
+
+        #region Other
+        Task WipeSystem();
         #endregion
     }
 }
