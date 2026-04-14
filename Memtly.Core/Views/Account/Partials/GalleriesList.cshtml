@@ -49,7 +49,7 @@
                     append.Add(new KeyValuePair<string, string>("enc", enc.ToString().ToLower()));
                 }
 
-                <tr data-gallery-id="@gallery.Id" data-gallery-name="@gallery.Name" data-gallery-username="@gallery.OwnerName" data-gallery-key="@gallery.SecretKey">
+                <tr data-gallery-id="@gallery.Id" data-gallery-identifier="@gallery.Identifier" data-gallery-name="@gallery.Name" data-gallery-username="@gallery.OwnerName" data-gallery-key="@gallery.SecretKey">
                     <td class="gallery-name text-capitalize">@gallery.Name (@gallery.OwnerName)</td>
                     <td class="d-none d-md-table-cell text-center">@gallery.TotalItems</td>
                     <td class="d-none d-md-table-cell text-center">@gallery.ApprovedItems</td>
