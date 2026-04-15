@@ -58,6 +58,28 @@ namespace Memtly.Core.Controllers
             ThumbnailsDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.Thumbnails);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Login(string identifier)
+        {
+            int? galleryId = 0;
+
+            if (!string.IsNullOrWhiteSpace(identifier))
+            {
+                galleryId = await _database.GetGalleryId(identifier.ToLower());
+            }
+
+            GalleryModel? gallery = galleryId != null ? await _database.GetGallery(galleryId.Value) : null;
+            if (string.IsNullOrWhiteSpace(gallery?.Identifier))
+            {
+                return new RedirectToActionResult("Index", "Error", new { Reason = ErrorCode.InvalidGalleryId }, false);
+            }
+
+            return View(new Views.Gallery.LoginModel() 
+            {
+                Identifier = gallery.Identifier
+            });
+        }
+
         [HttpPost]
         public async Task<IActionResult> Login(string? identifier, string? key = null)
         {

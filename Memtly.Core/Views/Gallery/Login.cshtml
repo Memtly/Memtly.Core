@@ -1,0 +1,32 @@
+﻿@model Memtly.Core.Views.Gallery.LoginModel
+
+<div id="main-content">
+    <div class="container px-3 px-lg-1 pb-4">
+        <div class="card">
+            <div class="card-header">
+                <h1 class="display-6">@_localizer["Gallery_Selector_Title"].Value</h1>
+            </div>
+            <div class="card-body m-1 m-lg-5">
+                <form id="frmSelectGallery">
+                    @Html.AntiForgeryToken()
+
+                    <div class="input-group">
+                        <input type="text" id="gallery-id" class="form-control" aria-describedby="gallery-id-help" placeholder="@_localizer["Gallery_Identifier_Placeholder"].Value" aria-label="@_localizer["Gallery_Name"].Value" value="@Model.Identifier" disabled="disabled" />
+                    </div>
+                    <div id="gallery-id-help" class="form-text mb-4 mb-lg-5">
+                        @_localizer["Gallery_Identifier_Help"].Value
+                    </div>
+
+                    <input type="text" id="gallery-key" class="form-control" aria-describedby="gallery-key-help" placeholder="@_localizer["Gallery_Key_Placeholder"].Value" aria-label="@_localizer["Gallery_Key"].Value" />
+                    <div id="gallery-key-help" class="form-text mb-4 mb-lg-5">
+                        @_localizer["Gallery_Key_Help"].Value
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button id="btnVisitGallery" class="btn btn-primary-2" type="submit">@_localizer["Visit"].Value</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

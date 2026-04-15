@@ -2,7 +2,7 @@
 import { displayPopup, hidePopup } from '@modules/popups';
 import { displayLoader, hideLoader } from '@modules/loader';
 import { displayIdentityCheck } from '@modules/identity-check';
-import { refreshGalleryPage } from '@pages/gallery';
+import { refreshGalleryPage } from '@pages/gallery/gallery';
 
 class UploadBox {
     constructor() {

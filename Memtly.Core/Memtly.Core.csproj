@@ -93,7 +93,9 @@
     <Content Include="src\pages\account\partials\user.js" />
     <Content Include="src\pages\account\password-reset.js" />
     <Content Include="src\pages\account\registration.js" />
+    <Content Include="src\pages\gallery\gallery.js" />
     <Content Include="src\pages\gallery\index.js" />
+    <Content Include="src\pages\gallery\login.js" />
     <Content Include="src\pages\homepage\index.js" />
     <Content Include="src\themes\darkblue.css" />
     <Content Include="src\themes\darkpink.css" />

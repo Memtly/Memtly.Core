@@ -1,9 +1,10 @@
 ﻿using System.Web;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Memtly.Core.Constants;
 using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Database;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Memtly.Core.Attributes
 {
@@ -54,17 +55,24 @@ namespace Memtly.Core.Attributes
                                     filterContext.Result = new RedirectResult($"/Gallery?{queryString.ToString()}");
                                 }
                                 else if (!string.IsNullOrWhiteSpace(gallery.SecretKey))
-                                { 
-                                    var secretKey = encryptionHelper.IsEncryptionEnabled() ? encryptionHelper.Encrypt(gallery.SecretKey) : gallery.SecretKey;
-                                    if (!string.IsNullOrWhiteSpace(secretKey) && !string.Equals(secretKey, key))
+                                {
+                                    if (!string.IsNullOrWhiteSpace(key))
                                     {
-                                        var logger = filterContext.HttpContext.RequestServices.GetService<ILogger<RequiresSecretKeyAttribute>>();
-                                        if (logger != null)
+                                        var secretKey = encryptionHelper.IsEncryptionEnabled() ? encryptionHelper.Encrypt(gallery.SecretKey) : gallery.SecretKey;
+                                        if (!string.IsNullOrWhiteSpace(secretKey) && !string.Equals(secretKey, key))
                                         {
-                                            logger.LogWarning($"A request was made to an endpoint with an invalid secure key");
-                                        }
+                                            var logger = filterContext.HttpContext.RequestServices.GetService<ILogger<RequiresSecretKeyAttribute>>();
+                                            if (logger != null)
+                                            {
+                                                logger.LogWarning($"A request was made to an endpoint with an invalid secure key");
+                                            }
 
-                                        filterContext.Result = new RedirectToActionResult("Index", "Error", new { Reason = ErrorCode.InvalidSecretKey }, false);
+                                            filterContext.Result = new RedirectToActionResult("Index", "Error", new { Reason = ErrorCode.InvalidSecretKey }, false);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        filterContext.Result = new RedirectResult($"/Gallery/Login?identifier={gallery.Identifier}");
                                     }
                                 }
                             }
