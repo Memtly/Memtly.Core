@@ -68,6 +68,7 @@
             public class Admin
             {
                 public const string BaseKey = "Memtly:Account:Admin:";
+                public const string EmailAddress = "Memtly:Account:Admin:Email";
                 public const string Password = "Memtly:Account:Admin:Password";
             }
 

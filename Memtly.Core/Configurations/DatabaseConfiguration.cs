@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Reflection;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
+using System.Text.RegularExpressions;
 using Memtly.Core.Constants;
 using Memtly.Core.EntityFramework;
 using Memtly.Core.Enums;
 using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Database;
 using Memtly.Core.Models.Database;
-using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
+using static Memtly.Core.Constants.MemtlyConfiguration.Reports;
 
 namespace Memtly.Core.Configurations
 {
@@ -134,7 +135,7 @@ namespace Memtly.Core.Configurations
                     await database.AddUser(new UserModel
                     {
                         Username = UserAccounts.AdminUser.ToLower(),
-                        Email = $"admin@example.com",
+                        Email = config.GetOrDefault(MemtlyConfiguration.Account.Admin.EmailAddress, "admin@example.com"),
                         Firstname = "Admin",
                         Lastname = "User",
                         Password = password,
@@ -144,6 +145,7 @@ namespace Memtly.Core.Configurations
                 }
                 else
                 {
+                    adminAccount.Email = config.GetOrDefault(MemtlyConfiguration.Account.Admin.EmailAddress, "admin@example.com");
                     adminAccount.Firstname = "Admin";
                     adminAccount.Lastname = "User";
                     adminAccount.Password = password;
