@@ -65,7 +65,7 @@
                         @if (userPermissions.Gallery.HasFlag(GalleryPermissions.View))
                         {
                             var tooltip = _localizer["Open"].Value;
-                            <button class="btnOpenGallery btn btn-primary-3" data-url="@_url.GenerateFullUrl(Context?.Request, "/Gallery", append, new List<string>() { "partial" })" data-target="@(await _settings.GetOrDefault(MemtlyConfiguration.Basic.LinksOpenNewTab, true) ? "_blank" : "_self")" alt="@tooltip" title="@tooltip">
+                            <button class="btnOpenGallery btn btn-primary-3" data-url="@_url.GenerateFullUrl(Context?.Request, "/Gallery", append, new List<string>() { "partial", "tab" })" data-target="@(await _settings.GetOrDefault(MemtlyConfiguration.Basic.LinksOpenNewTab, true) ? "_blank" : "_self")" alt="@tooltip" title="@tooltip">
                                 <i class="fas fa-up-right-from-square"></i>
                             </button>
                         }
