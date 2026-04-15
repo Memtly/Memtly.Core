@@ -307,11 +307,6 @@ namespace Memtly.Core.Configurations
                 keys.AddRange(GetKeys<MemtlyConfiguration.Sponsors>());
                 keys.AddRange(GetKeys<MemtlyConfiguration.Themes>());
                 keys.AddRange(GetKeys<MemtlyConfiguration.Trackers>());
-
-                keys.AddRange(GetKeys<MemtlyConfiguration.BackgroundServices>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Notifications>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Security>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Basic>());
             }
             catch { }
 
