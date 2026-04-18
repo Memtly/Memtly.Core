@@ -232,7 +232,7 @@ namespace Memtly.Core.Helpers
 
         public string GetReleaseVersion(int places = 3)
         {
-            return GetReleaseVersion(Assembly.GetExecutingAssembly()?.GetName()?.Version?.ToString() ?? "1.0.0.0", places);
+            return GetReleaseVersion(Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "1.0.0.0", places);
         }
 
         public string GetReleaseVersion(string version, int places = 3)
