@@ -14,13 +14,13 @@ using Memtly.Core.Helpers.Database;
 using Memtly.Core.Helpers.Notifications;
 using Memtly.Core.Models;
 using Memtly.Core.Models.Database;
+using System.Reflection;
 
 namespace Memtly.Core.Controllers
 {
     [AllowAnonymous]
     public class GalleryController : BaseController
     {
-        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly ISettingsHelper _settings;
         private readonly IDatabaseHelper _database;
         private readonly IFileHelper _fileHelper;
@@ -32,15 +32,15 @@ namespace Memtly.Core.Controllers
         private readonly ILogger _logger;
         private readonly IStringLocalizer<Localization.Translations> _localizer;
 
+        private readonly string RootDirectory;
         private readonly string AssetsDirectory;
         private readonly string TempDirectory;
         private readonly string UploadsDirectory;
         private readonly string ThumbnailsDirectory;
 
-        public GalleryController(IWebHostEnvironment hostingEnvironment, ISettingsHelper settings, IDatabaseHelper database, IFileHelper fileHelper, IDeviceDetector deviceDetector, IImageHelper imageHelper, INotificationHelper notificationHelper, IEncryptionHelper encryptionHelper, Helpers.IUrlHelper urlHelper, ILogger<GalleryController> logger, IStringLocalizer<Localization.Translations> localizer)
+        public GalleryController(ISettingsHelper settings, IDatabaseHelper database, IFileHelper fileHelper, IDeviceDetector deviceDetector, IImageHelper imageHelper, INotificationHelper notificationHelper, IEncryptionHelper encryptionHelper, Helpers.IUrlHelper urlHelper, ILogger<GalleryController> logger, IStringLocalizer<Localization.Translations> localizer)
             : base()
         {
-            _hostingEnvironment = hostingEnvironment;
             _settings = settings;
             _database = database;
             _fileHelper = fileHelper;
@@ -52,10 +52,11 @@ namespace Memtly.Core.Controllers
             _logger = logger;
             _localizer = localizer;
 
-            AssetsDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Private.Assets);
-            TempDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.TempFiles);
-            UploadsDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.Uploads);
-            ThumbnailsDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.Thumbnails);
+            RootDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!;
+            AssetsDirectory = Path.Combine(RootDirectory, Directories.Private.Assets);
+            TempDirectory = Path.Combine(RootDirectory, Directories.Public.TempFiles);
+            UploadsDirectory = Path.Combine(RootDirectory, Directories.Public.Uploads);
+            ThumbnailsDirectory = Path.Combine(RootDirectory, Directories.Public.Thumbnails);
         }
 
         [HttpGet]
@@ -332,8 +333,8 @@ namespace Memtly.Core.Controllers
                                 UploadedBy = x.UploadedBy ?? "Unknown",
                                 UploaderEmailAddress = x.UploaderEmailAddress,
                                 UploadDate = x.UploadedDate,
-                                ImagePath = $"/{Path.Combine(UploadsDirectory, galleryIdentifier).Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/{x.Title}",
-                                ThumbnailPath = $"/{Path.Combine(ThumbnailsDirectory, galleryIdentifier).Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(x.Title)}.webp",
+                                ImagePath = $"/{Path.Combine(UploadsDirectory, galleryIdentifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{x.Title}",
+                                ThumbnailPath = $"/{Path.Combine(ThumbnailsDirectory, galleryIdentifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(x.Title)}.webp",
                                 MediaType = x.MediaType
                             };
                         })?.ToList(),

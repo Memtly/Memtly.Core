@@ -1,15 +1,16 @@
-﻿using NCrontab;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
+﻿using System.Reflection;
 using Memtly.Core.Constants;
 using Memtly.Core.Enums;
 using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Database;
 using Memtly.Core.Models.Database;
+using NCrontab;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 namespace Memtly.Core.BackgroundWorkers
 {
-    public sealed class DirectoryScanner(IServiceScopeFactory scopeFactory, IWebHostEnvironment hostingEnvironment, ISettingsHelper settingsHelper, IFileHelper fileHelper, IImageHelper imageHelper, IAuditHelper auditHelper, ILogger<DirectoryScanner> logger) : BackgroundService
+    public sealed class DirectoryScanner(IServiceScopeFactory scopeFactory, ISettingsHelper settingsHelper, IFileHelper fileHelper, IImageHelper imageHelper, IAuditHelper auditHelper, ILogger<DirectoryScanner> logger) : BackgroundService
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -55,11 +56,12 @@ namespace Memtly.Core.BackgroundWorkers
         private async Task ScanGalleryImages()
         {
             try
-            { 
-                var thumbnailsDirectory = Path.Combine(hostingEnvironment.ContentRootPath, Directories.Public.Thumbnails);
+            {
+                var rootDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!;
+                var thumbnailsDirectory = Path.Combine(rootDirectory, Directories.Public.Thumbnails);
                 fileHelper.CreateDirectoryIfNotExists(thumbnailsDirectory);
 
-                var uploadsDirectory = Path.Combine(hostingEnvironment.ContentRootPath, Directories.Public.Uploads);
+                var uploadsDirectory = Path.Combine(rootDirectory, Directories.Public.Uploads);
                 if (fileHelper.DirectoryExists(uploadsDirectory))
                 {
                     var galleryDirs = fileHelper.GetDirectories(uploadsDirectory, "*", SearchOption.TopDirectoryOnly)?.Where(x => !Path.GetFileName(x).StartsWith("."));
@@ -254,7 +256,7 @@ namespace Memtly.Core.BackgroundWorkers
 
                     var existing = await db.GetCustomResources();
 
-                    var customResourcesDirectory = Path.Combine(hostingEnvironment.ContentRootPath, Directories.Public.CustomResources);
+                    var customResourcesDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!, Directories.Public.CustomResources);
                     fileHelper.CreateDirectoryIfNotExists(customResourcesDirectory);
 
                     foreach (var resource in fileHelper.GetFiles(customResourcesDirectory))

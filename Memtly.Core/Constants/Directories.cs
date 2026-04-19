@@ -12,7 +12,7 @@
 
         public class Private
         {
-            public const string Assets = "assets";
+            public const string Assets = "Assets";
             public const string Config = "config";
         }
     }

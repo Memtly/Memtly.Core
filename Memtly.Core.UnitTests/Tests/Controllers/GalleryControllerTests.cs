@@ -21,7 +21,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 {
     public class GalleryControllerTests
     {
-        private readonly IWebHostEnvironment _env = Substitute.For<IWebHostEnvironment>();
         private readonly ISettingsHelper _settings = Substitute.For<ISettingsHelper>();
         private readonly IDatabaseHelper _database = Substitute.For<IDatabaseHelper>();
         private readonly IFileHelper _file = Substitute.For<IFileHelper>();
@@ -40,8 +39,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [SetUp]
         public void Setup()
         {
-            _env.ContentRootPath.Returns("/app/wwwroot");
-
 			var mockData = GetMockData();
 
             _database.GetGallery(1).Returns(Task.FromResult<GalleryModel?>(mockData["default"]));
@@ -98,7 +95,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(false);
             _settings.GetOrDefault(MemtlyConfiguration.Basic.GuestGalleryCreation, Arg.Any<bool>()).Returns(false);
 
-            var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
+            var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
 
 			if (existing)
@@ -131,7 +128,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(false);
             _settings.GetOrDefault(MemtlyConfiguration.Basic.GuestGalleryCreation, Arg.Any<bool>()).Returns(false);
 
-            var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
+            var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
 
 			if (expected != null)
@@ -158,7 +155,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(false);
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.Upload, Arg.Any<bool>(), Arg.Any<int>()).Returns(enabled);
 
-            var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
+            var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
 
             ViewResult actual = (ViewResult)await controller.Index("default", "password", ViewMode.Default, GalleryGroup.None, GalleryOrder.Descending);
@@ -180,7 +177,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(false);
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.UploadPeriod, Arg.Any<string>(), Arg.Any<int>()).Returns(uploadPeriod);
 
-            var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
+            var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
 
             ViewResult actual = (ViewResult)await controller.Index("default", "password", ViewMode.Default, GalleryGroup.None, GalleryOrder.Descending);
@@ -199,7 +196,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 			_deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(deviceType);
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(true);
 
-			var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
+			var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext();
 
 			ViewResult actual = (ViewResult)await controller.Index("default", "password", mode, group, order);
@@ -231,7 +228,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 			var session = new MockSession();
 			session.Set(SessionKey.Viewer.Identity, uploadedBy ?? string.Empty);
 
-			var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
+			var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext(
 				session: session,
 				form: new Dictionary<string, StringValues>
@@ -261,7 +258,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             var session = new MockSession();
             session.Set(SessionKey.Viewer.Identity, string.Empty);
 
-            var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
+            var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext(
                 session: session,
                 form: new Dictionary<string, StringValues>
@@ -283,7 +280,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 		[TestCase("")]
 		public async Task GalleryController_UploadImage_InvalidGallery(string? id)
 		{
-			var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
+			var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext(form: new Dictionary<string, StringValues>
 			{
 				{ "Id", id }
@@ -301,7 +298,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 		[TestCase("")]
 		public async Task GalleryController_UploadImage_InvalidSecretKey(string? key)
 		{
-			var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
+			var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext(form: new Dictionary<string, StringValues>
 			{
 				{ "Id", "1" },
@@ -319,7 +316,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 		[TestCase()]
 		public async Task GalleryController_UploadImage_MissingGallery()
 		{
-			var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
+			var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext(form: new Dictionary<string, StringValues>
 			{
 				{ "Id", Guid.NewGuid().ToString() }
@@ -336,7 +333,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 		[TestCase()]
 		public async Task GalleryController_UploadImage_NoFiles()
 		{
-			var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
+			var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext(form: new Dictionary<string, StringValues>
 			{
 				{ "Id", "1" },
@@ -354,7 +351,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 		[TestCase()]
 		public async Task GalleryController_UploadImage_FileTooBig()
 		{
-			var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
+			var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext(
 				form: new Dictionary<string, StringValues>
 				{
@@ -376,7 +373,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 		[TestCase()]
 		public async Task GalleryController_UploadImage_InvalidFileType()
 		{
-			var controller = new GalleryController(_env, _settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
+			var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext(
 				form: new Dictionary<string, StringValues>
 				{

@@ -1,7 +1,5 @@
+using System.Reflection;
 using System.Text;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Memtly.Core.Attributes;
 using Memtly.Core.Constants;
 using Memtly.Core.Enums;
@@ -11,33 +9,36 @@ using Memtly.Core.Helpers.Database;
 using Memtly.Core.Models;
 using Memtly.Core.Models.Database;
 using Memtly.Core.Views.MediaViewer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Memtly.Core.Controllers
 {
     public class MediaViewerController : BaseController
     {
-        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly ISettingsHelper _settings;
         private readonly IDatabaseHelper _database;
         private readonly ILogger _logger;
         private readonly IStringLocalizer<Localization.Translations> _localizer;
 
+        private readonly string RootDirectory;
         private readonly string UploadsDirectory;
         private readonly string ThumbnailsDirectory;
         private readonly string CustomResourcesDirectory;
 
-        public MediaViewerController(IWebHostEnvironment hostingEnvironment, ISettingsHelper settings, IDatabaseHelper database, ILogger<MediaViewerController> logger, IStringLocalizer<Localization.Translations> localizer)
+        public MediaViewerController(ISettingsHelper settings, IDatabaseHelper database, ILogger<MediaViewerController> logger, IStringLocalizer<Localization.Translations> localizer)
             : base()
         {
-            _hostingEnvironment = hostingEnvironment;
             _settings = settings;
             _database = database;
             _logger = logger;
             _localizer = localizer;
 
-            UploadsDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.Uploads);
-            ThumbnailsDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.Thumbnails);
-            CustomResourcesDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.CustomResources);
+            RootDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!;
+            UploadsDirectory = Path.Combine(RootDirectory, Directories.Public.Uploads);
+            ThumbnailsDirectory = Path.Combine(RootDirectory, Directories.Public.Thumbnails);
+            CustomResourcesDirectory = Path.Combine(RootDirectory, Directories.Public.CustomResources);
         }
 
         [AllowAnonymous]
@@ -84,8 +85,8 @@ namespace Memtly.Core.Controllers
                             {
                                 Id = id,
                                 Collection = gallery.Name,
-                                Source = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/{galleryItem.Title}",
-                                Thumbnail = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(galleryItem.Title)}.webp",
+                                Source = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{galleryItem.Title}",
+                                Thumbnail = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(galleryItem.Title)}.webp",
                                 Author = author,
                                 Type = galleryItem.MediaType.ToString().ToLower(),
                                 Likes = new PhotoGalleryImageLikes()
@@ -127,7 +128,7 @@ namespace Memtly.Core.Controllers
                         {
                             Id = id,
                             Collection = "custom_resources",
-                            Source = $"/{CustomResourcesDirectory.Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/{resource.FileName}",
+                            Source = $"/{CustomResourcesDirectory.Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{resource.FileName}",
                             Title = resource.Title,
                             Author = $"{_localizer["Uploaded_By"].Value}: {(!string.IsNullOrWhiteSpace(resource?.OwnerName) ? resource.OwnerName : "Anonymous")}",
                             Type = MediaType.Image.ToString().ToLower(),
@@ -189,8 +190,8 @@ namespace Memtly.Core.Controllers
                             {
                                 Id = id,
                                 Collection = gallery.Name,
-                                Source = $"/{Path.Combine(UploadsDirectory, gallery.Identifier, "Pending").Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/{galleryItem.Title}",
-                                Thumbnail = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(galleryItem.Title)}.webp",
+                                Source = $"/{Path.Combine(UploadsDirectory, gallery.Identifier, "Pending").Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{galleryItem.Title}",
+                                Thumbnail = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(galleryItem.Title)}.webp",
                                 Title = null,
                                 Description = null,
                                 Author = author,

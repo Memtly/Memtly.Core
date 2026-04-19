@@ -1,15 +1,10 @@
 using System.IO.Compression;
 using System.Net;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Web;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
-using TwoFactorAuthNet;
 using Memtly.Core.Attributes;
 using Memtly.Core.Constants;
 using Memtly.Core.Enums;
@@ -22,13 +17,18 @@ using Memtly.Core.Models.Database;
 using Memtly.Core.Resources.Templates.Email;
 using Memtly.Core.Views.Account;
 using Memtly.Core.Views.Account.Tabs;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using TwoFactorAuthNet;
 
 namespace Memtly.Core.Controllers
 {
     [Authorize]
     public class AccountController : BaseController
     {
-        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly ISettingsHelper _settings;
         private readonly IDatabaseHelper _database;
         private readonly IDeviceDetector _deviceDetector;
@@ -42,15 +42,15 @@ namespace Memtly.Core.Controllers
         private readonly ILogger _logger;
         private readonly IStringLocalizer<Localization.Translations> _localizer;
 
+        private readonly string RootDirectory;
         private readonly string TempDirectory;
         private readonly string UploadsDirectory;
         private readonly string ThumbnailsDirectory;
         private readonly string CustomResourcesDirectory;
 
-        public AccountController(IWebHostEnvironment hostingEnvironment, ISettingsHelper settings, IDatabaseHelper database, IDeviceDetector deviceDetector, IFileHelper fileHelper, IEncryptionHelper encryption, INotificationHelper notificationHelper, ISmtpClientWrapper smtpClientWrapper, Helpers.IUrlHelper url, IAuditHelper audit, ILoggerFactory loggerFactory, IStringLocalizer<Localization.Translations> localizer)
+        public AccountController(ISettingsHelper settings, IDatabaseHelper database, IDeviceDetector deviceDetector, IFileHelper fileHelper, IEncryptionHelper encryption, INotificationHelper notificationHelper, ISmtpClientWrapper smtpClientWrapper, Helpers.IUrlHelper url, IAuditHelper audit, ILoggerFactory loggerFactory, IStringLocalizer<Localization.Translations> localizer)
             : base()
         {
-            _hostingEnvironment = hostingEnvironment;
             _settings = settings;
             _database = database;
             _deviceDetector = deviceDetector;
@@ -64,10 +64,11 @@ namespace Memtly.Core.Controllers
             _logger = loggerFactory.CreateLogger<AccountController>();
             _localizer = localizer;
 
-            TempDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.TempFiles);
-            UploadsDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.Uploads);
-            ThumbnailsDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.Thumbnails);
-            CustomResourcesDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, Directories.Public.CustomResources);
+            RootDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!;
+            TempDirectory = Path.Combine(RootDirectory, Directories.Public.TempFiles);
+            UploadsDirectory = Path.Combine(RootDirectory, Directories.Public.Uploads);
+            ThumbnailsDirectory = Path.Combine(RootDirectory, Directories.Public.Thumbnails);
+            CustomResourcesDirectory = Path.Combine(RootDirectory, Directories.Public.CustomResources);
         }
 
         [AllowAnonymous]
@@ -2175,8 +2176,8 @@ namespace Memtly.Core.Controllers
                                 UploadedBy = x.UploadedBy ?? "Unknown",
                                 UploaderEmailAddress = x.UploaderEmailAddress,
                                 UploadDate = x.UploadedDate,
-                                ImagePath = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/Pending/{x.Title}",
-                                ThumbnailPath = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(_hostingEnvironment.ContentRootPath).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(x.Title)}.webp",
+                                ImagePath = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/Pending/{x.Title}",
+                                ThumbnailPath = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(x.Title)}.webp",
                                 MediaType = x.MediaType
                             })?.ToList(),
                             ItemsPerPage = int.MaxValue,

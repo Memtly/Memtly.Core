@@ -1,11 +1,12 @@
-﻿using NCrontab;
+﻿using System.Reflection;
 using Memtly.Core.Constants;
 using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Database;
+using NCrontab;
 
 namespace Memtly.Core.BackgroundWorkers
 {
-    public sealed class CleanupService(IServiceScopeFactory scopeFactory, IWebHostEnvironment hostingEnvironment, ISettingsHelper settingsHelper, IFileHelper fileHelper, ILogger<CleanupService> logger) : BackgroundService
+    public sealed class CleanupService(IServiceScopeFactory scopeFactory, ISettingsHelper settingsHelper, IFileHelper fileHelper, ILogger<CleanupService> logger) : BackgroundService
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -52,7 +53,7 @@ namespace Memtly.Core.BackgroundWorkers
                 {
                     var paths = new List<string>()
                     {
-                        Path.Combine(hostingEnvironment.ContentRootPath, Directories.Public.TempFiles)
+                        Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!, Directories.Public.TempFiles)
                     };
 
                     if (paths != null)
