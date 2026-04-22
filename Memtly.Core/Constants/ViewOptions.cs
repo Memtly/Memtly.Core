@@ -34,9 +34,10 @@
 
         public static IDictionary<string, string> GalleryDefaultView = new Dictionary<string, string>()
         {
-            { "Default", "default" },
-            { "Presentation", "presentation" },
-            { "Slideshow", "slideshow" }
+            { "Default", "0" },
+            { "Presentation", "1" },
+            { "Slideshow", "2" },
+            { "Single", "3" }
         };
 
         public static IDictionary<string, string> GalleryDefaultGroup = new Dictionary<string, string>()

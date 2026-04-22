@@ -31,7 +31,7 @@
             <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.DefaultView">
                 @foreach (var option in ViewOptions.GalleryDefaultView)
                 {
-                    if (Model.GetValue(MemtlyConfiguration.Gallery.DefaultView.ToUpper(), "default").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Gallery.DefaultView.ToUpper(), ((int)ViewMode.Default).ToString()).Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -51,7 +51,7 @@
             <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.DefaultGroup">
                 @foreach (var option in ViewOptions.GalleryDefaultGroup)
                 {
-                    if (Model.GetValue(MemtlyConfiguration.Gallery.DefaultGroup.ToUpper(), "0").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Gallery.DefaultGroup.ToUpper(), ((int)GalleryGroup.None).ToString()).Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -71,7 +71,7 @@
             <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.DefaultOrder">
                 @foreach (var option in ViewOptions.GalleryDefaultOrder)
                 {
-                    if (Model.GetValue(MemtlyConfiguration.Gallery.DefaultOrder.ToUpper(), "1").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Gallery.DefaultOrder.ToUpper(), ((int)GalleryOrder.Descending).ToString()).Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -91,7 +91,7 @@
             <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.DefaultFilter">
                 @foreach (var option in ViewOptions.GalleryDefaultFilter)
                 {
-                    if (Model.GetValue(MemtlyConfiguration.Gallery.DefaultFilter.ToUpper(), "0").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Gallery.DefaultFilter.ToUpper(), ((int)GalleryFilter.All).ToString()).Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }

@@ -31,7 +31,7 @@
             <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.QRCode.DefaultView">
                 @foreach (var option in ViewOptions.GalleryDefaultView)
                 {
-                    if (Model.GetValue(MemtlyConfiguration.Gallery.QRCode.DefaultView.ToUpper(), "default").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Gallery.QRCode.DefaultView.ToUpper(), ((int)ViewMode.Default).ToString()).Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }
@@ -51,7 +51,7 @@
             <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.QRCode.DefaultSort">
                 @foreach (var option in ViewOptions.GalleryDefaultOrder)
                 {
-                    if (Model.GetValue(MemtlyConfiguration.Gallery.QRCode.DefaultSort.ToUpper(), "1").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.Gallery.QRCode.DefaultSort.ToUpper(), ((int)GalleryOrder.Descending).ToString()).Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }

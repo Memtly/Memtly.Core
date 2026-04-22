@@ -15,6 +15,7 @@ namespace Memtly.Core.Helpers
         Task<double> GetOrDefault(string key, double defaultValue, int? galleryId = null);
         Task<bool> GetOrDefault(string key, bool defaultValue, int? galleryId = null);
         Task<DateTime?> GetOrDefault(string key, DateTime? defaultValue, int? galleryId = null);
+        Task<T> GetOrDefault<T>(string key, T defaultValue, int? galleryId = null);
         Task<SettingModel?> SetSetting(string key, string value, int? galleryId = null);
         Task<bool> DeleteSetting(string key, int? galleryId = null);
         string GetReleaseVersion(int places = 3);
@@ -181,6 +182,23 @@ namespace Memtly.Core.Helpers
             return defaultValue;
         }
 
+        public async Task<T> GetOrDefault<T>(string key, T defaultValue, int? galleryId = null)
+        {
+            try
+            {
+                var value = await this.GetOrDefault(key, string.Empty, galleryId);
+                foreach (T t in Enum.GetValues(typeof(T)))
+                {
+                    if (string.Equals(value, t.ToString(), StringComparison.OrdinalIgnoreCase) || string.Equals(value, Convert.ToInt32(t).ToString(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        return t;
+                    }
+                }
+            }
+            catch { }
+
+            return defaultValue;
+        }
         public async Task<SettingModel?> SetSetting(string key, string value, int? galleryId = null)
         {
             if (!string.IsNullOrWhiteSpace(key))

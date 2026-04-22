@@ -4,6 +4,7 @@ using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Database;
 using Memtly.Core.Models.Database;
 using Memtly.Core.UnitTests.Helpers;
+using Memtly.Core.Enums;
 
 namespace Memtly.Core.UnitTests.Tests.Helpers
 {
@@ -60,6 +61,11 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
                 { "DateTime1:Key1", "1987-11-20 08:00:00" },
                 { "DateTime1:Key2", "2000-08-12 12:00:00" },
                 { "DateTime2:Key1", "2018-01-01 20:30:10" },
+
+                { "ViewMode:Key1", "0" },
+                { "ViewMode:Key2", "1" },
+                { "ViewMode:Key3", "2" },
+                { "ViewMode:Key4", "3" },
             });
             _config = new ConfigHelper(environment, configuration, Substitute.For<ILogger<ConfigHelper>>());
 
@@ -178,6 +184,20 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         {
             var actual = await new SettingsHelper(_scopeFactory, _config, _logger).GetOrDefault(key, defaultValue);
             Assert.That(actual, Is.EqualTo(!string.IsNullOrWhiteSpace(expected) ? DateTime.Parse(expected) : null));
+        }
+
+        [TestCase("ViewMode:Key1", ViewMode.Presentation, 0)]
+        [TestCase("ViewMode:Key2", ViewMode.Default, 1)]
+        [TestCase("ViewMode:Key3", ViewMode.Default, 2)]
+        [TestCase("ViewMode:Key4", ViewMode.Default, 3)]
+        [TestCase("ViewMode:Key5", ViewMode.Default, 0)]
+        [TestCase("ViewMode:Key5", ViewMode.Presentation, 1)]
+        [TestCase("ViewMode:Key5", ViewMode.Slideshow, 2)]
+        [TestCase("ViewMode:Key5", ViewMode.Single, 3)]
+        public async Task SettingsHelper_GetOrDefault(string key, ViewMode defaultValue, int expected)
+        {
+            var actual = await new SettingsHelper(_scopeFactory, _config, _logger).GetOrDefault(key, defaultValue);
+            Assert.That((int)actual, Is.EqualTo(expected));
         }
 
         [TestCase("1.0.0", 3, "1.0.0")]
