@@ -43,6 +43,7 @@ namespace Memtly.Core.Controllers
         private readonly IStringLocalizer<Localization.Translations> _localizer;
 
         private readonly string RootDirectory;
+        private readonly string AssetsDirectory;
         private readonly string TempDirectory;
         private readonly string UploadsDirectory;
         private readonly string ThumbnailsDirectory;
@@ -65,6 +66,7 @@ namespace Memtly.Core.Controllers
             _localizer = localizer;
 
             RootDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!;
+            AssetsDirectory = Path.Combine(RootDirectory, Directories.Private.Assets);
             TempDirectory = Path.Combine(RootDirectory, Directories.Public.TempFiles);
             UploadsDirectory = Path.Combine(RootDirectory, Directories.Public.Uploads);
             ThumbnailsDirectory = Path.Combine(RootDirectory, Directories.Public.Thumbnails);
@@ -170,6 +172,14 @@ namespace Memtly.Core.Controllers
                     {
                         return Json(new { success = false, message = _localizer["Registration_Invalid_Username"].Value });
                     }
+                    else if (string.IsNullOrWhiteSpace(model?.Firstname) || model.Firstname.Length < 1 || model.Firstname.Length > 50)
+                    {
+                        return Json(new { success = false, message = _localizer["Registration_Invalid_Firstname"].Value });
+                    }
+                    else if (string.IsNullOrWhiteSpace(model?.Lastname) || model.Lastname.Length < 1 || model.Lastname.Length > 50)
+                    {
+                        return Json(new { success = false, message = _localizer["Registration_Invalid_Lastname"].Value });
+                    }
                     else if (string.IsNullOrWhiteSpace(model?.EmailAddress) || !EmailValidationHelper.IsValid(model.EmailAddress))
                     {
                         return Json(new { success = false, message = _localizer["Registration_Invalid_Email"].Value });
@@ -202,6 +212,8 @@ namespace Memtly.Core.Controllers
                         var user = await _database.AddUser(new UserModel()
                         {
                             Username = model.Username.Trim().ToLower(),
+                            Firstname = model.Firstname,
+                            Lastname = model.Lastname,
                             Email = model.EmailAddress.Trim().ToLower(),
                             Password = _encryption.Encrypt(model.Password, model.Username.ToLower()),
                             State = requireEmailValidation ? AccountState.PendingActivation : AccountState.Active,
@@ -217,13 +229,13 @@ namespace Memtly.Core.Controllers
                                 if (requireEmailValidation)
                                 {
                                     await emailHelper.SendTo(user.Email, _localizer["Registration_Success_Title"].Value, new BasicEmail()
+                                    {
+                                        Title = _localizer["Registration_Success_Title"].Value,
+                                        Message = _localizer["Registration_Success_Verification"].Value,
+                                        Link = new BasicEmailLink()
                                         {
-                                            Title = _localizer["Registration_Success_Title"].Value,
-                                            Message = _localizer["Registration_Success_Verification"].Value,
-                                            Link = new BasicEmailLink()
-                                            {
-                                                Heading = _localizer["Verify"].Value,
-                                                Value = _url.GenerateFullUrl(HttpContext?.Request, "/Account/VerifyEmail", new List<KeyValuePair<string, string>>
+                                            Heading = _localizer["Verify"].Value,
+                                            Value = _url.GenerateFullUrl(HttpContext?.Request, "/Account/VerifyEmail", new List<KeyValuePair<string, string>>
                                                 {
                                                     new KeyValuePair<string, string>("data", EncodingHelper.Base64Encode(JsonSerializer.Serialize(new EmailVerificationModel()
                                                     {
@@ -231,8 +243,8 @@ namespace Memtly.Core.Controllers
                                                         Validator = await _database.SetUserSecret(user.Id, PasswordHelper.GenerateSecretCode())
                                                     })))
                                                 })
-                                            }
-                                        });
+                                        }
+                                    });
                                 }
                                 else
                                 {
@@ -1726,6 +1738,12 @@ namespace Memtly.Core.Controllers
         [RequiresRole(DataPermission = DataPermissions.Import)]
         public async Task<IActionResult> ImportBackup()
         {
+            var isDemoMode = await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false);
+            if (isDemoMode)
+            {
+                return Json(new { success = false, message = _localizer["Feature_Unavailable_Demo_Mode"].Value });
+            }
+
             if (User?.Identity != null && User.Identity.IsAuthenticated && (User?.Identity?.IsPrivilegedUser() ?? false))
             {
                 var importDir = Path.Combine(TempDirectory, "Import");
@@ -1825,7 +1843,16 @@ namespace Memtly.Core.Controllers
                                 else
                                 {
                                     _fileHelper.CreateDirectoryIfNotExists(CustomResourcesDirectory);
-                                    await _fileHelper.SaveFile(file, filePath, FileMode.Create);
+
+                                    var isDemoMode = await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false);
+                                    if (!isDemoMode)
+                                    {
+                                        await _fileHelper.SaveFile(file, filePath, FileMode.Create);
+                                    }
+                                    else
+                                    {
+                                        System.IO.File.Copy(Path.Combine(AssetsDirectory, $"DemoImage.png"), filePath, true);
+                                    }
 
                                     var item = await _database.AddCustomResource(new CustomResourceModel()
                                     {

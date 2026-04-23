@@ -104,10 +104,20 @@ function multiFactorAuthValidation(secret) {
                     success: function (data) {
                         if (data.success) {
                             displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Successfully'));
+                        } else if (data.message !== undefined) {
+                            displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Failed'), [data.message]);
                         } else {
                             displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Failed'), [localization.translate('2FA_Invalid_Code')]);
                         }
                         $('.change-2fa').attr('data-mfa-set', data.success);
+                    },
+                    error: function(data) {
+                        if (data.message !== undefined) {
+                            displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Failed'), [data.message]);
+                        } else {
+                            displayMessage(localization.translate('2FA_Setup'), localization.translate('2FA_Set_Failed'), [localization.translate('2FA_Invalid_Code')]);
+                        }
+                        $('.change-2fa').attr('data-mfa-set', false);
                     }
                 });
             }

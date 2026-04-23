@@ -23,6 +23,18 @@ function bindRegistrationForm() {
             return;
         }
 
+        var firstname = $('#frmRegisterAccount input.input-firstname').val();
+        if (firstname === undefined || firstname.length < 1 || firstname.length > 50) {
+            displayMessage(localization.translate('Registration'), localization.translate('Registration_Invalid_Firstname'));
+            return;
+        }
+
+        var lastname = $('#frmRegisterAccount input.input-lastname').val();
+        if (lastname === undefined || lastname.length < 1 || lastname.length > 50) {
+            displayMessage(localization.translate('Registration'), localization.translate('Registration_Invalid_Lastname'));
+            return;
+        }
+
         var email = $('#frmRegisterAccount input.input-email').val();
         if (email === undefined || email.length === 0 || email.length > 100 || email.indexOf('@') === -1 || email.indexOf('.') === -1) {
             displayMessage(localization.translate('Registration'), localization.translate('Registration_Invalid_Email'));
@@ -46,7 +58,7 @@ function bindRegistrationForm() {
         $.ajax({
             url: '/Account/Register',
             method: 'POST',
-            data: { __RequestVerificationToken: token, Username: username, EmailAddress: email, Password: password, ConfirmPassword: cpassword }
+            data: { __RequestVerificationToken: token, Username: username, Firstname: firstname, Lastname: lastname, EmailAddress: email, Password: password, ConfirmPassword: cpassword }
         })
             .done(data => {
                 hideLoader();

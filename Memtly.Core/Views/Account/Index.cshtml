@@ -8,7 +8,7 @@
 
     if (userPermissions.Users.HasFlag(UserPermissions.Login))
     {
-        if (userPermissions.Features.HasFlag(FeaturePermissions.UpgradeToUnlock))
+        if (userPermissions.Features.HasFlag(FeaturePermissions.UpgradeToUnlock) && MemtlyCore.Version == MemtlyVersion.Enterprise)
         {
             <section class="py-3 border banner-message">
                 <div class="row px-5">
