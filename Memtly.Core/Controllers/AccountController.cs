@@ -221,8 +221,8 @@ namespace Memtly.Core.Controllers
                         var user = await _database.AddUser(new UserModel()
                         {
                             Username = model.Username.Trim().ToLower(),
-                            Firstname = model.Firstname,
-                            Lastname = model.Lastname,
+                            Firstname = model.Firstname?.Trim(),
+                            Lastname = model.Lastname?.Trim(),
                             Email = model.EmailAddress.Trim().ToLower(),
                             Password = _encryption.Encrypt(model.Password, model.Username.ToLower()),
                             State = requireEmailValidation ? AccountState.PendingActivation : AccountState.Active,
@@ -1417,6 +1417,9 @@ namespace Memtly.Core.Controllers
                         var check = await _database.GetUserByUsername(model.Username);
                         if (check == null)
                         {
+                            model.Firstname = model.Firstname?.Trim();
+                            model.Lastname = model.Lastname?.Trim();
+                            model.Email = model.Email?.Trim();
                             model.Password = _encryption.Encrypt(model.Password, model.Username.ToLower());
                             model.CPassword = string.Empty;
 
@@ -1456,9 +1459,9 @@ namespace Memtly.Core.Controllers
                         var user = await _database.GetUser(model.Id);
                         if (user != null && User.Identity.CanEdit(UserPermissions.Update, user.Id))
                         {
-                            user.Firstname = model.Firstname;
-                            user.Lastname = model.Lastname;
-                            user.Email = model.Email;
+                            user.Firstname = model.Firstname?.Trim();
+                            user.Lastname = model.Lastname?.Trim();
+                            user.Email = model.Email?.Trim();
 
                             if (User.Identity.IsPrivilegedUser() && User.Identity.GetUserPermissions().Users.HasFlag(UserPermissions.Change_Permissions_Level))
                             { 
