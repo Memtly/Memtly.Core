@@ -28,8 +28,8 @@
         {
             if (user != null)
             {
-                <tr data-user-id="@user.Id" data-user-name="@user.Username" data-user-email="@user.Email" data-user-level="@((int)user.Level)" data-modify-level="@userPermissions.Users.HasFlag(UserPermissions.Change_Permissions_Level).ToString().ToLower()">
-                    <td class="user-name text-capitalize">@user.Username</td>
+                <tr data-user-id="@user.Id" data-user-username="@user.Username" data-user-firstname="@user.Firstname" data-user-lastname="@user.Lastname" data-user-email="@user.Email" data-user-level="@((int)user.Level)" data-modify-level="@userPermissions.Users.HasFlag(UserPermissions.Change_Permissions_Level).ToString().ToLower()">
+                    <td class="text-capitalize">@user.Username</td>
                     <td>
                         <!-- ( Edit User ) -->
                         @if (userPermissions.Users.HasFlag(UserPermissions.Update))

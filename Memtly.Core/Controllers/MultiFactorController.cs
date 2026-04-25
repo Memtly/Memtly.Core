@@ -37,18 +37,13 @@ namespace Memtly.Core.Controllers
         [RequiresRole(UserPermission = UserPermissions.Login)]
         public async Task<IActionResult> GenerateToken()
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated && await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false) == false)
-            {
-                var title = await _settings.GetOrDefault(MemtlyConfiguration.Basic.Title, "Memtly");
-                var tfa = new TwoFactorAuth(title);
+            var title = await _settings.GetOrDefault(MemtlyConfiguration.Basic.Title, "Memtly");
+            var tfa = new TwoFactorAuth(title);
 
-                var secret = tfa.CreateSecret(160);
-                var qrCode = tfa.GetQrCodeImageAsDataUri(title, secret);
+            var secret = tfa.CreateSecret(160);
+            var qrCode = tfa.GetQrCodeImageAsDataUri(title, secret);
             
-                return Json(new { secret = secret, qr_code = qrCode });
-            }
-
-            return Json(new { secret = string.Empty, qr_code = string.Empty });
+            return Json(new { secret = secret, qr_code = qrCode });
         }
 
         [HttpPost]
@@ -57,10 +52,15 @@ namespace Memtly.Core.Controllers
         {
             if (!string.IsNullOrWhiteSpace(secret) && !string.IsNullOrWhiteSpace(code))
             {
-                if (User?.Identity != null && User.Identity.IsAuthenticated && await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false) == false)
+                if (User?.Identity != null && User.Identity.IsAuthenticated)
                 {
                     try
                     {
+                        if (await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false))
+                        {
+                            return Json(new { success = false, message = _localizer["Feature_Unavailable_Demo_Mode"].Value });
+                        }
+
                         var tfa = new TwoFactorAuth(await _settings.GetOrDefault(MemtlyConfiguration.Basic.Title, "Memtly"));
 
                         var valid = tfa.VerifyCode(secret, code);
