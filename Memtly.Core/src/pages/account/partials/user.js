@@ -45,9 +45,19 @@ function bindAddUserButton() {
         displayPopup({
             Title: localization.translate('User_Create'),
             Fields: [{
-                Id: 'user-name',
-                Name: localization.translate('User_Name'),
-                Hint: localization.translate('User_Name_Hint')
+                Id: 'user-username',
+                Name: localization.translate('User_Username'),
+                Hint: localization.translate('User_Username_Hint')
+            },
+            {
+                Id: 'user-firstname',
+                Name: localization.translate('User_Firstname'),
+                Hint: localization.translate('User_Firstname_Hint')
+            },
+            {
+                Id: 'user-lastname',
+                Name: localization.translate('User_Lastname'),
+                Hint: localization.translate('User_Lastname_Hint')
             },
             {
                 Id: 'user-email',
@@ -74,22 +84,22 @@ function bindAddUserButton() {
                 Type: 'select',
                 SelectOptions: [
                     {
-                        key: '0',
+                        key: '1',
                         selected: true,
                         value: 'Basic'
                     },
                     {
-                        key: '2',
+                        key: '3',
                         selected: false,
                         value: 'Reviewer'
                     },
                     {
-                        key: '3',
+                        key: '4',
                         selected: false,
                         value: 'Moderator'
                     },
                     {
-                        key: '4',
+                        key: '5',
                         selected: false,
                         value: 'Admin'
                     }
@@ -102,22 +112,22 @@ function bindAddUserButton() {
                     Type: 'select',
                     SelectOptions: [
                         {
-                            key: '0',
+                            key: '1',
                             selected: true,
                             value: 'None'
                         },
                         {
-                            key: '1',
+                            key: '2',
                             selected: false,
                             value: 'Basic'
                         },
                         {
-                            key: '2',
+                            key: '3',
                             selected: false,
                             value: 'Advanced'
                         },
                         {
-                            key: '3',
+                            key: '4',
                             selected: false,
                             value: 'Premium'
                         }
@@ -130,15 +140,22 @@ function bindAddUserButton() {
                 Callback: function () {
                     displayLoader(localization.translate('Loading'));
 
-                    let username = $('#popup-modal-field-user-name').val();
-                    if (username == undefined || username.length == 0) {
-                        displayMessage(localization.translate('User_Create'), localization.translate('User_Missing_Name'));
+                    const usernameRegex = /^[a-zA-Z0-9\-\s-_~]+$/;
+                    let username = $('#popup-modal-field-user-username').val();
+                    if (username == undefined || username.length == 0 || !usernameRegex.test(username)) {
+                        displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Username'));
                         return;
                     }
 
-                    const usernameRegex = /^[a-zA-Z0-9\-\s-_~]+$/;
-                    if (!usernameRegex.test(username)) {
-                        displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Name'));
+                    let firstname = $('#popup-modal-field-user-firstname').val();
+                    if (firstname == undefined || firstname.length < 1 || firstname.length > 50) {
+                        displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Firstname'));
+                        return;
+                    }
+
+                    let lastname = $('#popup-modal-field-user-lastname').val();
+                    if (lastname == undefined || lastname.length < 1 || lastname.length > 50) {
+                        displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Lastname'));
                         return;
                     }
 
@@ -176,7 +193,7 @@ function bindAddUserButton() {
                     $.ajax({
                         url: '/Account/AddUser',
                         method: 'POST',
-                        data: { Username: username, Email: email, Password: password, CPassword: cpassword, Level: level, Tier: tier }
+                        data: { Username: username, Firstname: firstname, Lastname: lastname, Email: email, Password: password, CPassword: cpassword, Level: level, Tier: tier }
                     })
                         .done(data => {
                             if (data.success === true) {
@@ -219,11 +236,21 @@ function bindEditUserButton() {
                 Value: row.data('user-id'),
                 Type: 'hidden'
             }, {
-                Id: 'user-name',
-                Name: localization.translate('User_Name'),
-                Value: row.data('user-name'),
-                Hint: localization.translate('User_Name_Hint'),
+                Id: 'user-username',
+                Name: localization.translate('User_Username'),
+                Value: row.data('user-username'),
+                Hint: localization.translate('User_Username_Hint'),
                 Disabled: true
+            }, {
+                Id: 'user-firstname',
+                Name: localization.translate('User_Firstname'),
+                Value: row.data('user-firstname'),
+                Hint: localization.translate('User_Firstname_Hint')
+            }, {
+                Id: 'user-lastname',
+                Name: localization.translate('User_Lastname'),
+                Value: row.data('user-lastname'),
+                Hint: localization.translate('User_Lastname_Hint')
             }, {
                 Id: 'user-email',
                 Name: localization.translate('User_Email'),
@@ -236,23 +263,23 @@ function bindEditUserButton() {
                 Type: 'select',
                 SelectOptions: canModifyAccessLevel ? [
                     {
-                        key: '0',
-                        selected: row.data('user-level') == '0',
+                        key: '1',
+                        selected: row.data('user-level') == '1',
                         value: 'Basic'
-                    },
-                    {
-                        key: '2',
-                        selected: row.data('user-level') == '2',
-                        value: 'Reviewer'
                     },
                     {
                         key: '3',
                         selected: row.data('user-level') == '3',
-                        value: 'Moderator'
+                        value: 'Reviewer'
                     },
                     {
                         key: '4',
                         selected: row.data('user-level') == '4',
+                        value: 'Moderator'
+                    },
+                    {
+                        key: '5',
+                        selected: row.data('user-level') == '5',
                         value: 'Admin'
                     }
                 ] : []
@@ -296,6 +323,18 @@ function bindEditUserButton() {
                         return;
                     }
 
+                    let firstname = $('#popup-modal-field-user-firstname').val();
+                    if (firstname != undefined && (firstname.length < 1 || firstname.length > 50)) {
+                        displayMessage(localization.translate('User_Edit'), localization.translate('User_Invalid_Firstname'));
+                        return;
+                    }
+
+                    let lastname = $('#popup-modal-field-user-lastname').val();
+                    if (lastname != undefined && (lastname.length < 1 || lastname.length > 50)) {
+                        displayMessage(localization.translate('User_Edit'), localization.translate('User_Invalid_Lastname'));
+                        return;
+                    }
+
                     let email = $('#popup-modal-field-user-email').val();
                     const emailRegex = /^((?!\.)[\w\-_.]*[^.])(@[\w\-_]+)(\.\w+(\.\w+)?[^.\W])$/;
                     if (email != undefined && email.length > 0 && !emailRegex.test(email)) {
@@ -318,7 +357,7 @@ function bindEditUserButton() {
                     $.ajax({
                         url: '/Account/EditUser',
                         method: 'PUT',
-                        data: { Id: id, Email: email, Level: level, Tier: tier }
+                        data: { Id: id, Firstname: firstname, Lastname: lastname, Email: email, Level: level, Tier: tier }
                     })
                         .done(data => {
                             if (data.success === true) {
@@ -489,7 +528,7 @@ function bindActivateUserButton() {
         let row = $(this).closest('tr');
         displayPopup({
             Title: localization.translate('Activate_User'),
-            Message: `${localization.translate('Activate_User_Message')} '${row.data('user-name')}'`,
+            Message: `${localization.translate('Activate_User_Message')} '${row.data('user-username')}'`,
             Fields: [{
                 Id: 'user-id',
                 Value: row.data('user-id'),
@@ -544,7 +583,7 @@ function bindFreezeUserButton() {
         let row = $(this).closest('tr');
         displayPopup({
             Title: localization.translate('Freeze_User'),
-            Message: `${localization.translate('Freeze_User_Message')} '${row.data('user-name')}'`,
+            Message: `${localization.translate('Freeze_User_Message')} '${row.data('user-username')}'`,
             Fields: [{
                 Id: 'user-id',
                 Value: row.data('user-id'),
@@ -599,7 +638,7 @@ function bindUnfreezeUserButton() {
         let row = $(this).closest('tr');
         displayPopup({
             Title: localization.translate('Unfreeze_User'),
-            Message: `${localization.translate('Unfreeze_User_Message')} '${row.data('user-name')}'`,
+            Message: `${localization.translate('Unfreeze_User_Message')} '${row.data('user-username')}'`,
             Fields: [{
                 Id: 'user-id',
                 Value: row.data('user-id'),
@@ -652,7 +691,6 @@ function bindDeleteUserButton() {
         }
 
         let row = $(this).closest('tr');
-        let name = row.data('user-name');
         displayPopup({
             Title: localization.translate('User_Delete'),
             Message: localization.translate('Delete_Are_You_Sure'),
