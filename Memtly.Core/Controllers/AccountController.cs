@@ -128,6 +128,15 @@ namespace Memtly.Core.Controllers
                             {
                                 await _audit.LogAction(user?.Id, _localizer["Audit_UserLoggedIn"].Value, AuditSeverity.Debug);
 
+                                var name = $"{user!.Firstname} {user!.Lastname}".Trim();
+                                if (string.IsNullOrWhiteSpace(name))
+                                {
+                                    name = user!.Username;
+                                }
+
+                                HttpContext.Session.SetString(SessionKey.Viewer.Identity, name);
+                                HttpContext.Session.SetString(SessionKey.Viewer.EmailAddress, user?.Email ?? string.Empty);
+
                                 return Json(new LoginResponse(await this.SetUserClaims(this.HttpContext, user)));
                             }
                         }
@@ -515,6 +524,16 @@ namespace Memtly.Core.Controllers
                             else
                             {
                                 await _audit.LogAction(user?.Id, _localizer["Audit_UserLoggedIn"].Value, AuditSeverity.Debug);
+
+                                var name = $"{user!.Firstname} {user!.Lastname}".Trim();
+                                if (string.IsNullOrWhiteSpace(name))
+                                {
+                                    name = user!.Username;
+                                }
+
+                                HttpContext.Session.SetString(SessionKey.Viewer.Identity, name);
+                                HttpContext.Session.SetString(SessionKey.Viewer.EmailAddress, user?.Email ?? string.Empty);
+
                                 return Json(new { success = await this.SetUserClaims(this.HttpContext, user) });
                             }
                         }
@@ -1407,7 +1426,7 @@ namespace Memtly.Core.Controllers
                         }
                         else
                         {
-                            return Json(new { success = false, message = _localizer["User_Name_Already_Exists"].Value });
+                            return Json(new { success = false, message = _localizer["User_Username_Already_Exists"].Value });
                         }
                     }
                     catch (Exception ex)
@@ -1437,6 +1456,8 @@ namespace Memtly.Core.Controllers
                         var user = await _database.GetUser(model.Id);
                         if (user != null && User.Identity.CanEdit(UserPermissions.Update, user.Id))
                         {
+                            user.Firstname = model.Firstname;
+                            user.Lastname = model.Lastname;
                             user.Email = model.Email;
 
                             if (User.Identity.IsPrivilegedUser() && User.Identity.GetUserPermissions().Users.HasFlag(UserPermissions.Change_Permissions_Level))
