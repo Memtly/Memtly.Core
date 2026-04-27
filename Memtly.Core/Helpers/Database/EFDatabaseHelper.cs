@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using Azure;
 using Microsoft.EntityFrameworkCore;
 using Memtly.Core.Constants;
 using Memtly.Core.EntityFramework;
@@ -30,12 +29,40 @@ namespace Memtly.Core.Helpers.Database
                 .CountAsync();
         }
 
-        public async Task<IDictionary<string, string>> GetGalleryNames(bool showUsernames = false)
+        public async Task<IDictionary<string, string>> GetGalleryNames(bool showGalleryNames = true, bool showGalleryIdentifiers = true, bool showUsernames = true)
         {
             return await _db.Galleries
+                .Include(g => g.User)
                 .ToDictionaryAsync(
                     g => g.Identifier,
-                    g => showUsernames ? $"{g.Name} ({g.User!.Username})" : g.Name
+                    g =>
+                    {
+                        var galleryNameParts = new List<string>();
+
+                        if (showGalleryNames == false && showGalleryIdentifiers == false && showUsernames == false)
+                        {
+                            showGalleryNames = true;
+                            showGalleryIdentifiers = true;
+                            showUsernames = false;
+                        }
+
+                        if (showGalleryNames)
+                        {
+                            galleryNameParts.Add(g.Name);
+                        }
+
+                        if (showGalleryIdentifiers)
+                        {
+                            galleryNameParts.Add(g.Identifier);
+                        }
+
+                        if (showUsernames)
+                        {
+                            galleryNameParts.Add(g.User?.Username ?? "Unknown");
+                        }
+
+                        return string.Join(" - ", galleryNameParts);
+                    }
                 );
         }
 

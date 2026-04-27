@@ -7,7 +7,7 @@ namespace Memtly.Core.Helpers.Database
     {
         #region Gallery
         Task<int> GetGalleryCount(int? userId = null);
-        Task<IDictionary<string, string>> GetGalleryNames(bool showUsernames = false);
+        Task<IDictionary<string, string>> GetGalleryNames(bool showGalleryNames = true, bool showGalleryIdentifiers = true, bool showUsernames = true);
         Task<List<GalleryModel>> GetGalleries(int? userId = null, string term = "", int page = 1, int limit = int.MaxValue);
         Task<int?> GetGalleryId(string identifier);
         Task<int?> GetGalleryIdByName(string name);

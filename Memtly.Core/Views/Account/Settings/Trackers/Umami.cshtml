@@ -5,17 +5,109 @@
 {
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label class="setting-label">@_localizer["Settings_Trackers_UmamiEndpoint_Label"].Value</label>
-            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Trackers.Umami.Endpoint" placeholder="https://umami.your-domain.com/" value="@Model.GetValue(MemtlyConfiguration.Trackers.Umami.Endpoint.ToUpper(), string.Empty)" type="text" />
-            <div class="setting-hint form-text">@_localizer["Settings_Trackers_UmamiEndpoint_Help"].Value</div>
+            <label class="setting-label">@_localizer["Settings_Trackers_Umami_Endpoint_Label"].Value</label>
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Trackers.Umami.Endpoint" placeholder="https://umami.your-domain.com" value="@Model.GetValue(MemtlyConfiguration.Trackers.Umami.Endpoint.ToUpper(), string.Empty)" type="text" />
+            <div class="setting-hint form-text">@_localizer["Settings_Trackers_Umami_Endpoint_Help"].Value</div>
         </div>
     </div>
 
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
-            <label class="setting-label">@_localizer["Settings_Trackers_UmamiWebsiteId_Label"].Value</label>
+            <label class="setting-label">@_localizer["Settings_Trackers_Umami_ScriptName_Label"].Value</label>
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Trackers.Umami.ScriptName" placeholder="script.js" value="@Model.GetValue(MemtlyConfiguration.Trackers.Umami.ScriptName.ToUpper(), "script.js")" type="text" />
+            <div class="setting-hint form-text">@_localizer["Settings_Trackers_Umami_ScriptName_Help"].Value</div>
+        </div>
+    </div>
+
+    <div class="row mb-4 mb-lg-4 setting-container">
+        <div class="col-12">
+            <label class="setting-label">@_localizer["Settings_Trackers_Umami_WebsiteId_Label"].Value</label>
             <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Trackers.Umami.WebsiteId" placeholder="00000000-0000-0000-0000-000000000000" value="@Model.GetValue(MemtlyConfiguration.Trackers.Umami.WebsiteId.ToUpper(), string.Empty)" type="text" />
-            <div class="setting-hint form-text">@_localizer["Settings_Trackers_UmamiWebsiteId_Help"].Value</div>
+            <div class="setting-hint form-text">@_localizer["Settings_Trackers_Umami_WebsiteId_Help"].Value</div>
+        </div>
+    </div>
+
+    <div class="row mb-4 mb-lg-4 setting-container">
+        <div class="col-12">
+            <label class="setting-label">@_localizer["Settings_Trackers_Umami_PerformanceTracking_Label"].Value</label>
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Trackers.Umami.PerformanceTracking.Enabled">
+                @foreach (var option in ViewOptions.YesNo)
+                {
+                    if (Model.GetValue(MemtlyConfiguration.Trackers.Umami.PerformanceTracking.Enabled.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        <option value="@option.Value" selected="selected">@option.Key</option>
+                    }
+                    else
+                    {
+                        <option value="@option.Value">@option.Key</option>
+                    }
+                }
+            </select>
+            <div class="setting-hint form-text">@_localizer["Settings_Trackers_Umami_PerformanceTracking_Help"].Value</div>
+        </div>
+    </div>
+
+    <div class="row mb-4 mb-lg-4 setting-container">
+        <div class="col-12">
+            <label class="setting-label">@_localizer["Settings_Trackers_Umami_Replay_Label"].Value</label>
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Trackers.Umami.Replay.Enabled">
+                @foreach (var option in ViewOptions.YesNo)
+                {
+                    if (Model.GetValue(MemtlyConfiguration.Trackers.Umami.Replay.Enabled.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        <option value="@option.Value" selected="selected">@option.Key</option>
+                    }
+                    else
+                    {
+                        <option value="@option.Value">@option.Key</option>
+                    }
+                }
+            </select>
+            <div class="setting-hint form-text">@_localizer["Settings_Trackers_Umami_Replay_Help"].Value</div>
+        </div>
+    </div>
+
+    <div class="row mb-4 mb-lg-4 setting-container">
+        <div class="col-12">
+            <label class="setting-label">@_localizer["Settings_Trackers_Umami_Replay_SampleRate_Label"].Value</label>
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Trackers.Umami.Replay.SampleRate" placeholder="15" value="@Model.GetValue(MemtlyConfiguration.Trackers.Umami.Replay.SampleRate.ToUpper(), "15")" type="number" min="5" max="100" step="5" />
+            <div class="setting-hint form-text">@_localizer["Settings_Trackers_Umami_Replay_SampleRate_Help"].Value</div>
+        </div>
+    </div>
+
+    <div class="row mb-4 mb-lg-4 setting-container">
+        <div class="col-12">
+            <label class="setting-label">@_localizer["Settings_Trackers_Umami_Replay_MaskLevel_Label"].Value</label>
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Trackers.Umami.Replay.MaskLevel">
+                @foreach (var option in ViewOptions.UmamiMaskLevel)
+                {
+                    if (Model.GetValue(MemtlyConfiguration.Trackers.Umami.Replay.MaskLevel.ToUpper(), ((int)UmamiMaskLevel.None).ToString()).Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        <option value="@option.Value" selected="selected">@option.Key</option>
+                    }
+                    else
+                    {
+                        <option value="@option.Value">@option.Key</option>
+                    }
+                }
+            </select>
+            <div class="setting-hint form-text">@_localizer["Settings_Trackers_Umami_Replay_MaskLevel_Help"].Value</div>
+        </div>
+    </div>
+
+    <div class="row mb-4 mb-lg-4 setting-container">
+        <div class="col-12">
+            <label class="setting-label">@_localizer["Settings_Trackers_Umami_Replay_MaxDuration_Label"].Value</label>
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Trackers.Umami.Replay.MaxDuration" placeholder="60" value="@Model.GetValue(MemtlyConfiguration.Trackers.Umami.Replay.MaxDuration.ToUpper(), "60")" type="number" min="1" max="120" step="1" />
+            <div class="setting-hint form-text">@_localizer["Settings_Trackers_Umami_Replay_MaxDuration_Help"].Value</div>
+        </div>
+    </div>
+
+    <div class="row mb-4 mb-lg-4 setting-container">
+        <div class="col-12">
+            <label class="setting-label">@_localizer["Settings_Trackers_Umami_Replay_BlockSelector_Label"].Value</label>
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Trackers.Umami.Replay.BlockSelector" placeholder="" value="@Model.GetValue(MemtlyConfiguration.Trackers.Umami.Replay.BlockSelector.ToUpper(), string.Empty)" type="text" />
+            <div class="setting-hint form-text">@_localizer["Settings_Trackers_Umami_Replay_BlockSelector_Help"].Value</div>
         </div>
     </div>
 }

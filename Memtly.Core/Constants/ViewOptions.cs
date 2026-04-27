@@ -64,5 +64,12 @@
             { "Portrait", "4" },
             { "Square", "5" }
         };
+
+        public static IDictionary<string, string> UmamiMaskLevel = new Dictionary<string, string>()
+        {
+            { "None", "0" },
+            { "Moderate", "1" },
+            { "Strict", "2" }
+        };
     }
 }

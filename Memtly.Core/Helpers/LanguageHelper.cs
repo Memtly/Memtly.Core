@@ -19,11 +19,11 @@ namespace Memtly.Core.Helpers
 
             try
             {
-                var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
-                var resourceFiles = Directory.GetFiles(Path.Combine(basePath, "Resources"), "*.resx");
+                var basePath = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location) ?? string.Empty;
+                var resourceFiles = Directory.GetFiles(basePath, "Memtly.Localization.resources.dll", SearchOption.AllDirectories);
                 var detectedCultures = resourceFiles
-                    .Select(x => Path.GetFileNameWithoutExtension(x))
-                    .Where(x => x.Contains(".") && x.Contains("-"))
+                    .Select(x => Path.GetFileNameWithoutExtension(Path.GetDirectoryName(x)))
+                    .Where(x => x.Contains("-"))
                     .Select(x => x.Split('.').LastOrDefault());
 
                 foreach (var detectedCulture in detectedCultures)

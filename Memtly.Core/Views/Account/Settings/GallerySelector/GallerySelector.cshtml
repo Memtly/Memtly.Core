@@ -45,11 +45,51 @@
 
     <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
         <div class="col-12">
+            <label class="setting-label">@_localizer["Settings_GallerySelector_ShowGalleryNames_Label"].Value</label>
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.GallerySelector.ShowGalleryNames">
+                @foreach (var option in ViewOptions.YesNo)
+                {
+                    if (Model.GetValue(MemtlyConfiguration.GallerySelector.ShowGalleryNames.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        <option value="@option.Value" selected="selected">@option.Key</option>
+                    }
+                    else
+                    {
+                        <option value="@option.Value">@option.Key</option>
+                    }
+                }
+            </select>
+            <div class="setting-hint form-text">@_localizer["Settings_GallerySelector_ShowGalleryNames_Help"].Value</div>
+        </div>
+    </div>
+
+    <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
+        <div class="col-12">
+            <label class="setting-label">@_localizer["Settings_GallerySelector_ShowGalleryIdentifiers_Label"].Value</label>
+            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.GallerySelector.ShowGalleryIdentifiers">
+                @foreach (var option in ViewOptions.YesNo)
+                {
+                    if (Model.GetValue(MemtlyConfiguration.GallerySelector.ShowGalleryIdentifiers.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        <option value="@option.Value" selected="selected">@option.Key</option>
+                    }
+                    else
+                    {
+                        <option value="@option.Value">@option.Key</option>
+                    }
+                }
+            </select>
+            <div class="setting-hint form-text">@_localizer["Settings_GallerySelector_ShowGalleryIdentifiers_Help"].Value</div>
+        </div>
+    </div>
+
+    <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
+        <div class="col-12">
             <label class="setting-label">@_localizer["Settings_GallerySelector_ShowUsernames_Label"].Value</label>
             <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.GallerySelector.ShowUsernames">
                 @foreach (var option in ViewOptions.YesNo)
                 {
-                    if (Model.GetValue(MemtlyConfiguration.GallerySelector.ShowUsernames.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                    if (Model.GetValue(MemtlyConfiguration.GallerySelector.ShowUsernames.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         <option value="@option.Value" selected="selected">@option.Key</option>
                     }

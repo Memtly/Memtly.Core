@@ -85,6 +85,8 @@
             public const string BaseKey = "Memtly:Gallery_Selector:";
             public const string Dropdown = "Memtly:Gallery_Selector:Dropdown";
             public const string HideDefaultOption = "Memtly:Gallery_Selector:Hide_Default_Option";
+            public const string ShowGalleryIdentifiers = "Memtly:Gallery_Selector:Show_Gallery_Identifiers";
+            public const string ShowGalleryNames = "Memtly:Gallery_Selector:Show_Gallery_Names";
             public const string ShowUsernames = "Memtly:Gallery_Selector:Show_Usernames";
         }
 
@@ -222,7 +224,24 @@
             {
                 public const string BaseKey = "Memtly:Trackers:Umami:";
                 public const string Endpoint = "Memtly:Trackers:Umami:Endpoint";
+                public const string ScriptName = "Memtly:Trackers:Umami:ScriptName";
                 public const string WebsiteId = "Memtly:Trackers:Umami:WebsiteId";
+
+                public class PerformanceTracking
+                {
+                    public const string BaseKey = "Memtly:Trackers:Umami:PerformanceTracking:";
+                    public const string Enabled = "Memtly:Trackers:Umami:PerformanceTracking:Enabled";
+                }
+
+                public class Replay
+                {
+                    public const string BaseKey = "Memtly:Trackers:Umami:Replay:";
+                    public const string Enabled = "Memtly:Trackers:Umami:Replay:Enabled";
+                    public const string SampleRate = "Memtly:Trackers:Umami:Replay:Sample_Rate";
+                    public const string MaskLevel = "Memtly:Trackers:Umami:Replay:Mask_Level";
+                    public const string MaxDuration = "Memtly:Trackers:Umami:Replay:Max_Duration";
+                    public const string BlockSelector = "Memtly:Trackers:Umami:Replay:Block_Selector";
+                }
             }
         }
 
