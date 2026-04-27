@@ -55,11 +55,21 @@ namespace Memtly.Core.Controllers
                 }
 
                 var isDropdownMode = await _settings.GetOrDefault(MemtlyConfiguration.GallerySelector.Dropdown, false);
-                var showUsernames = await _settings.GetOrDefault(MemtlyConfiguration.GallerySelector.ShowUsernames, false);
-                var galleryNames = isDropdownMode ? (await _database.GetGalleryNames(showUsernames)).Where(x => !x.Value.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase)) : new Dictionary<string, string>();
+                var showGalleryNames = await _settings.GetOrDefault(MemtlyConfiguration.GallerySelector.ShowGalleryNames, true);
+                var showGalleryIdentifiers = await _settings.GetOrDefault(MemtlyConfiguration.GallerySelector.ShowGalleryIdentifiers, true);
+                var showUsernames = await _settings.GetOrDefault(MemtlyConfiguration.GallerySelector.ShowUsernames, true);
+
+                var galleryNames = isDropdownMode ? (await _database.GetGalleryNames(showGalleryNames, showGalleryIdentifiers, showUsernames)).Where(x => !x.Value.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase)) : new Dictionary<string, string>();
                 if (await _settings.GetOrDefault(MemtlyConfiguration.GallerySelector.HideDefaultOption, false))
                 {
-                    galleryNames = galleryNames.Where(x => !x.Key.Equals("default", StringComparison.OrdinalIgnoreCase));
+                    galleryNames = galleryNames.Where(x => 
+                        !x.Key.Equals(SystemGalleries.DefaultGallery, StringComparison.OrdinalIgnoreCase)
+                        && !x.Key.Equals($"{SystemGalleries.DefaultGallery} - {SystemGalleries.DefaultGallery}", StringComparison.OrdinalIgnoreCase)
+                        && !x.Key.Equals($"{SystemGalleries.DefaultGallery} - {UserAccounts.SystemUser}", StringComparison.OrdinalIgnoreCase)
+                        && !x.Key.Equals($"{SystemGalleries.DefaultGallery} - {UserAccounts.AdminUser}", StringComparison.OrdinalIgnoreCase)
+                        && !x.Key.Equals($"{SystemGalleries.DefaultGallery} - {SystemGalleries.DefaultGallery} - {UserAccounts.SystemUser}", StringComparison.OrdinalIgnoreCase)
+                        && !x.Key.Equals($"{SystemGalleries.DefaultGallery} - {SystemGalleries.DefaultGallery} - {UserAccounts.AdminUser}", StringComparison.OrdinalIgnoreCase)
+                    );
                 }
 
                 model.GalleryNames = galleryNames.OrderBy(gallery => gallery.Key.Equals("default", StringComparison.OrdinalIgnoreCase) ? 0 : 1).ThenBy(gallery => gallery.Value.ToLower()).ToDictionary();
