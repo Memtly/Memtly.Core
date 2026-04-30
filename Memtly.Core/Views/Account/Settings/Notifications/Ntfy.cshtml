@@ -1,7 +1,19 @@
 ﻿@model IDictionary<string, string>?
 @using Memtly.Core.Constants
 
-@if (Model != null && Model.Any())
+@{
+    var isDemoMode = await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false);
+}
+
+@if (isDemoMode)
+{
+    <div class="row mb-4 mb-lg-4 setting-container">
+        <div class="col-12">
+            <span>@(_localizer["Feature_Unavailable_Demo_Mode"].Value)</span>
+        </div>
+    </div>
+}
+else if (Model != null && Model.Any())
 {
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">

@@ -16,7 +16,8 @@ namespace Memtly.Core.Configurations
                 options.ResourcesPath = "Resources";
             });
 
-            var settings = services.BuildServiceProvider().GetRequiredService<ISettingsHelper>();
+            var bsp = services.BuildServiceProvider();
+            var settings = bsp.GetRequiredService<ISettingsHelper>();
             services.Configure<RequestLocalizationOptions>(options => {
                 var supportedCultures = new LanguageHelper().DetectSupportedCultures();
 

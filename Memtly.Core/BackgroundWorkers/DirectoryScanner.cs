@@ -10,19 +10,36 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Memtly.Core.BackgroundWorkers
 {
-    public sealed class DirectoryScanner(IServiceScopeFactory scopeFactory, ISettingsHelper settingsHelper, IFileHelper fileHelper, IImageHelper imageHelper, IAuditHelper auditHelper, ILogger<DirectoryScanner> logger) : BackgroundService
+    public sealed class DirectoryScanner : BackgroundService
     {
+        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly ISettingsHelper _settingsHelper;
+        private readonly IFileHelper _fileHelper;
+        private readonly IImageHelper _imageHelper;
+        private readonly IAuditHelper _auditHelper;
+        private readonly ILogger<DirectoryScanner> _logger;
+
+        public DirectoryScanner(IServiceScopeFactory scopeFactory, ISettingsHelper settingsHelper, IFileHelper fileHelper, IImageHelper imageHelper, IAuditHelper auditHelper, ILogger<DirectoryScanner> logger)
+        {
+            _scopeFactory = scopeFactory;
+            _settingsHelper = settingsHelper;
+            _fileHelper = fileHelper;
+            _imageHelper = imageHelper;
+            _auditHelper = auditHelper;
+            _logger = logger;
+        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var enabled = await settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.DirectoryScanner.Enabled, true);
+            var enabled = await _settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.DirectoryScanner.Enabled, true);
             if (enabled)
             {
-                var cron = await settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.DirectoryScanner.Schedule, "*/30 * * * *");
+                var cron = await _settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.DirectoryScanner.Schedule, "*/30 * * * *");
                 var nextExecutionTime = DateTime.Now.AddMinutes(5);
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    var currentCron = await settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.DirectoryScanner.Schedule, "*/30 * * * *");
+                    var currentCron = await _settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.DirectoryScanner.Schedule, "*/30 * * * *");
 
                     var now = DateTime.Now;
                     if (now >= nextExecutionTime)
@@ -59,15 +76,15 @@ namespace Memtly.Core.BackgroundWorkers
             {
                 var rootDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!;
                 var thumbnailsDirectory = Path.Combine(rootDirectory, Directories.Public.Thumbnails);
-                fileHelper.CreateDirectoryIfNotExists(thumbnailsDirectory);
+                _fileHelper.CreateDirectoryIfNotExists(thumbnailsDirectory);
 
                 var uploadsDirectory = Path.Combine(rootDirectory, Directories.Public.Uploads);
-                if (fileHelper.DirectoryExists(uploadsDirectory))
+                if (_fileHelper.DirectoryExists(uploadsDirectory))
                 {
-                    var galleryDirs = fileHelper.GetDirectories(uploadsDirectory, "*", SearchOption.TopDirectoryOnly)?.Where(x => !Path.GetFileName(x).StartsWith("."));
+                    var galleryDirs = _fileHelper.GetDirectories(uploadsDirectory, "*", SearchOption.TopDirectoryOnly)?.Where(x => !Path.GetFileName(x).StartsWith("."));
                     if (galleryDirs != null)
                     {
-                        using (var scope = scopeFactory.CreateScope())
+                        using (var scope = _scopeFactory.CreateScope())
                         {
                             var db = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
 
@@ -82,7 +99,7 @@ namespace Memtly.Core.BackgroundWorkers
                                     var identifier = galleryName;
 
                                     var galleryId = await db.GetGalleryId(identifier);
-                                    if (galleryId == null && await db.GetGalleryCount() < await settingsHelper.GetOrDefault(MemtlyConfiguration.Basic.MaxGalleryCount, 1000000))
+                                    if (galleryId == null && await db.GetGalleryCount() < await _settingsHelper.GetOrDefault(MemtlyConfiguration.Basic.MaxGalleryCount, 1000000))
                                     {
                                         identifier = GalleryHelper.IsValidGalleryIdentifier(galleryName) ? galleryName : GalleryHelper.GenerateGalleryIdentifier();
                                         galleryId = (await db.AddGallery(new GalleryModel()
@@ -92,7 +109,7 @@ namespace Memtly.Core.BackgroundWorkers
                                             SecretKey = PasswordHelper.GenerateGallerySecretKey(),
                                             Owner = systemUser!.Id
                                         }))?.Id;
-                                        await auditHelper.LogAction($"Directory scanner added new gallery '{identifier}'", AuditSeverity.Verbose);
+                                        await _auditHelper.LogAction($"Directory scanner added new gallery '{identifier}'", AuditSeverity.Verbose);
                                     }
 
                                     if (galleryId != null)
@@ -103,15 +120,15 @@ namespace Memtly.Core.BackgroundWorkers
                                             var galleryPath = Path.Combine(uploadsDirectory, galleryItem.Identifier);
                                             if (!galleryDir.Equals(galleryPath))
                                             {
-                                                fileHelper.MoveDirectoryIfExists(galleryDir, galleryPath);
+                                                _fileHelper.MoveDirectoryIfExists(galleryDir, galleryPath);
                                             }
 
-                                            var allowedFileTypes = settingsHelper.GetOrDefault(MemtlyConfiguration.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", galleryItem?.Id).Result.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                                            var allowedFileTypes = _settingsHelper.GetOrDefault(MemtlyConfiguration.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", galleryItem?.Id).Result.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
                                             var galleryItems = await db.GetGalleryItems(null, galleryItem!.Id);
 
                                             if (Path.Exists(galleryPath))
                                             {
-                                                var approvedFiles = fileHelper.GetFiles(galleryPath, "*.*", SearchOption.TopDirectoryOnly).Where(x => allowedFileTypes.Any(y => string.Equals(Path.GetExtension(x).Trim('.'), y.Trim('.'), StringComparison.OrdinalIgnoreCase)));
+                                                var approvedFiles = _fileHelper.GetFiles(galleryPath, "*.*", SearchOption.TopDirectoryOnly).Where(x => allowedFileTypes.Any(y => string.Equals(Path.GetExtension(x).Trim('.'), y.Trim('.'), StringComparison.OrdinalIgnoreCase)));
                                                 if (approvedFiles != null)
                                                 {
                                                     foreach (var file in approvedFiles)
@@ -126,22 +143,22 @@ namespace Memtly.Core.BackgroundWorkers
                                                                 {
                                                                     GalleryId = galleryItem.Id,
                                                                     Title = filename,
-                                                                    Checksum = await fileHelper.GetChecksum(file),
-                                                                    MediaType = imageHelper.GetMediaType(file),
+                                                                    Checksum = await _fileHelper.GetChecksum(file),
+                                                                    MediaType = _imageHelper.GetMediaType(file),
                                                                     State = GalleryItemState.Approved,
-                                                                    UploadedDate = await fileHelper.GetCreationDatetime(file),
-                                                                    FileSize = fileHelper.FileSize(file)
+                                                                    UploadedDate = await _fileHelper.GetCreationDatetime(file),
+                                                                    FileSize = _fileHelper.FileSize(file)
                                                                 });
-                                                                await auditHelper.LogAction($"Directory scanner added new approved item '{filename}' to gallery '{identifier}'", AuditSeverity.Verbose);
+                                                                await _auditHelper.LogAction($"Directory scanner added new approved item '{filename}' to gallery '{identifier}'", AuditSeverity.Verbose);
                                                             }
 
                                                             var thumbnailDir = Path.Combine(thumbnailsDirectory, galleryItem.Identifier);
                                                             var thumbnailPath = Path.Combine(thumbnailDir, $"{Path.GetFileNameWithoutExtension(file)}.webp");
-                                                            if (!fileHelper.FileExists(thumbnailPath))
+                                                            if (!_fileHelper.FileExists(thumbnailPath))
                                                             {
-                                                                fileHelper.CreateDirectoryIfNotExists(thumbnailDir);
-                                                                await imageHelper.GenerateThumbnail(file, thumbnailPath, settingsHelper.GetOrDefault(MemtlyConfiguration.Basic.ThumbnailSize, 720).Result);
-                                                                fileHelper.DeleteFileIfExists(Path.Combine(thumbnailsDirectory, $"{Path.GetFileNameWithoutExtension(file)}.webp"));
+                                                                _fileHelper.CreateDirectoryIfNotExists(thumbnailDir);
+                                                                await _imageHelper.GenerateThumbnail(file, thumbnailPath, _settingsHelper.GetOrDefault(MemtlyConfiguration.Basic.ThumbnailSize, 720).Result);
+                                                                _fileHelper.DeleteFileIfExists(Path.Combine(thumbnailsDirectory, $"{Path.GetFileNameWithoutExtension(file)}.webp"));
                                                             }
                                                             else
                                                             {
@@ -164,19 +181,19 @@ namespace Memtly.Core.BackgroundWorkers
 
                                                                 if (g.MediaType == MediaType.Unknown)
                                                                 {
-                                                                    g.MediaType = imageHelper.GetMediaType(file);
+                                                                    g.MediaType = _imageHelper.GetMediaType(file);
                                                                     updated = true;
                                                                 }
 
                                                                 if (g.Orientation == ImageOrientation.Unknown)
                                                                 {
-                                                                    g.Orientation = await imageHelper.GetOrientation(thumbnailPath);
+                                                                    g.Orientation = await _imageHelper.GetOrientation(thumbnailPath);
                                                                     updated = true;
                                                                 }
 
                                                                 if (g.FileSize == 0)
                                                                 {
-                                                                    g.FileSize = fileHelper.FileSize(file);
+                                                                    g.FileSize = _fileHelper.FileSize(file);
                                                                     updated = true;
                                                                 }
 
@@ -188,14 +205,14 @@ namespace Memtly.Core.BackgroundWorkers
                                                         }
                                                         catch (Exception ex)
                                                         {
-                                                            logger.LogError(ex, $"An error occurred while scanning file '{file}'");
+                                                            _logger.LogError(ex, $"An error occurred while scanning file '{file}'");
                                                         }
                                                     }
                                                 }
 
                                                 if (Path.Exists(Path.Combine(galleryPath, "Pending")))
                                                 {
-                                                    var pendingFiles = fileHelper.GetFiles(Path.Combine(galleryPath, "Pending"), "*.*", SearchOption.TopDirectoryOnly).Where(x => allowedFileTypes.Any(y => string.Equals(Path.GetExtension(x).Trim('.'), y.Trim('.'), StringComparison.OrdinalIgnoreCase)));
+                                                    var pendingFiles = _fileHelper.GetFiles(Path.Combine(galleryPath, "Pending"), "*.*", SearchOption.TopDirectoryOnly).Where(x => allowedFileTypes.Any(y => string.Equals(Path.GetExtension(x).Trim('.'), y.Trim('.'), StringComparison.OrdinalIgnoreCase)));
                                                     if (pendingFiles != null)
                                                     {
                                                         foreach (var file in pendingFiles)
@@ -209,18 +226,18 @@ namespace Memtly.Core.BackgroundWorkers
                                                                     {
                                                                         GalleryId = galleryItem.Id,
                                                                         Title = filename,
-                                                                        Checksum = await fileHelper.GetChecksum(file),
-                                                                        MediaType = imageHelper.GetMediaType(file),
+                                                                        Checksum = await _fileHelper.GetChecksum(file),
+                                                                        MediaType = _imageHelper.GetMediaType(file),
                                                                         State = GalleryItemState.Pending,
-                                                                        UploadedDate = await fileHelper.GetCreationDatetime(file),
+                                                                        UploadedDate = await _fileHelper.GetCreationDatetime(file),
                                                                         FileSize = new FileInfo(file).Length
                                                                     });
-                                                                    await auditHelper.LogAction($"Directory scanner added new pending item '{filename}' to gallery '{identifier}'", AuditSeverity.Verbose);
+                                                                    await _auditHelper.LogAction($"Directory scanner added new pending item '{filename}' to gallery '{identifier}'", AuditSeverity.Verbose);
                                                                 }
                                                             }
                                                             catch (Exception ex)
                                                             {
-                                                                logger.LogError(ex, $"An error occurred while scanning file '{file}'");
+                                                                _logger.LogError(ex, $"An error occurred while scanning file '{file}'");
                                                             }
                                                         }
                                                     }
@@ -231,7 +248,7 @@ namespace Memtly.Core.BackgroundWorkers
                                 }
                                 catch (Exception ex)
                                 {
-                                    logger.LogError(ex, $"An error occurred while scanning directory '{galleryDir}'");
+                                    _logger.LogError(ex, $"An error occurred while scanning directory '{galleryDir}'");
                                 }
                             }
                         }
@@ -240,7 +257,7 @@ namespace Memtly.Core.BackgroundWorkers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"DirectoryScanner - ScanGalleryImages - Failed to scan files - {ex?.Message}");
+                _logger.LogError(ex, $"DirectoryScanner - ScanGalleryImages - Failed to scan files - {ex?.Message}");
             }
         }
 
@@ -248,7 +265,7 @@ namespace Memtly.Core.BackgroundWorkers
         {
             try
             {
-                using (var scope = scopeFactory.CreateScope())
+                using (var scope = _scopeFactory.CreateScope())
                 {
                     var db = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
 
@@ -257,9 +274,9 @@ namespace Memtly.Core.BackgroundWorkers
                     var existing = await db.GetCustomResources();
 
                     var customResourcesDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!, Directories.Public.CustomResources);
-                    fileHelper.CreateDirectoryIfNotExists(customResourcesDirectory);
+                    _fileHelper.CreateDirectoryIfNotExists(customResourcesDirectory);
 
-                    foreach (var resource in fileHelper.GetFiles(customResourcesDirectory))
+                    foreach (var resource in _fileHelper.GetFiles(customResourcesDirectory))
                     {
                         try
                         {
@@ -273,7 +290,7 @@ namespace Memtly.Core.BackgroundWorkers
                                     Owner = systemUser!.Id,
                                     OwnerName = "DirectoryScanner"
                                 });
-                                await auditHelper.LogAction($"Directory scanner added new custom resource '{filename}'", AuditSeverity.Verbose);
+                                await _auditHelper.LogAction($"Directory scanner added new custom resource '{filename}'", AuditSeverity.Verbose);
                             }
                         }
                         catch { }
@@ -282,7 +299,7 @@ namespace Memtly.Core.BackgroundWorkers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"DirectoryScanner - ScanCustomResources - Failed to scan files - {ex?.Message}");
+                _logger.LogError(ex, $"DirectoryScanner - ScanCustomResources - Failed to scan files - {ex?.Message}");
             }
         }
     }

@@ -8,9 +8,10 @@ namespace Memtly.Core.Configurations
     {
         public static void AddFfmpegConfiguration(this IServiceCollection services)
         {
-            var config = services.BuildServiceProvider().GetRequiredService<IConfigHelper>();
-            var localizer = services.BuildServiceProvider().GetRequiredService<IStringLocalizer<Localization.Translations>>();
-            var loggerFactory = services.BuildServiceProvider().GetRequiredService<ILoggerFactory>();
+            var bsp = services.BuildServiceProvider();
+            var config = bsp.GetRequiredService<IConfigHelper>();
+            var localizer = bsp.GetRequiredService<IStringLocalizer<Localization.Translations>>();
+            var loggerFactory = bsp.GetRequiredService<ILoggerFactory>();
 
             var ffmpegPath = config.GetOrDefault(FFMPEG.InstallPath, "/ffmpeg");
 

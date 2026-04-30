@@ -6,19 +6,33 @@ using NCrontab;
 
 namespace Memtly.Core.BackgroundWorkers
 {
-    public sealed class CleanupService(IServiceScopeFactory scopeFactory, ISettingsHelper settingsHelper, IFileHelper fileHelper, ILogger<CleanupService> logger) : BackgroundService
+    public sealed class CleanupService : BackgroundService
     {
+        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly ISettingsHelper _settingsHelper;
+        private readonly IFileHelper _fileHelper;
+        private readonly ILogger<CleanupService> _logger;
+
+        public CleanupService(IServiceScopeFactory scopeFactory, ISettingsHelper settingsHelper, IFileHelper fileHelper, ILogger<CleanupService> logger)
+        {
+            _scopeFactory = scopeFactory;
+            _settingsHelper = settingsHelper;
+            _fileHelper = fileHelper;
+            _logger = logger;
+        }
+
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var enabled = await settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.Cleanup.Enabled, true);
+            var enabled = await _settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.Cleanup.Enabled, true);
             if (enabled)
             {
-                var cron = await settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.Cleanup.Schedule, "0 4 * * *");
+                var cron = await _settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.Cleanup.Schedule, "0 4 * * *");
                 var nextExecutionTime = DateTime.Now.AddMinutes(1);
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    var currentCron = await settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.Cleanup.Schedule, "0 4 * * *");
+                    var currentCron = await _settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.Cleanup.Schedule, "0 4 * * *");
 
                     var now = DateTime.Now;
                     if (now >= nextExecutionTime)
@@ -62,11 +76,11 @@ namespace Memtly.Core.BackgroundWorkers
                         {
                             try
                             {
-                                fileHelper.DeleteDirectoryIfExists(path);
+                                _fileHelper.DeleteDirectoryIfExists(path);
                             }
                             catch (Exception ex)
                             {
-                                logger.LogError(ex, $"An error occurred while running cleanup of '{path}'");
+                                _logger.LogError(ex, $"An error occurred while running cleanup of '{path}'");
                             }
                         }
                     }
@@ -74,7 +88,7 @@ namespace Memtly.Core.BackgroundWorkers
             }
             catch (Exception ex) 
             {
-                logger.LogError(ex, $"CleanupService - Failed to clean up files - {ex?.Message}");
+                _logger.LogError(ex, $"CleanupService - Failed to clean up files - {ex?.Message}");
             }
         }
 
@@ -84,7 +98,7 @@ namespace Memtly.Core.BackgroundWorkers
             {
                 await Task.Run(async () =>
                 {
-                    using (var scope = scopeFactory.CreateScope())
+                    using (var scope = _scopeFactory.CreateScope())
                     {
                         var db = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
 
@@ -108,7 +122,7 @@ namespace Memtly.Core.BackgroundWorkers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"CleanupService - Failed to link stale gallery item likes - {ex?.Message}");
+                _logger.LogError(ex, $"CleanupService - Failed to link stale gallery item likes - {ex?.Message}");
             }
         }
 
@@ -116,10 +130,10 @@ namespace Memtly.Core.BackgroundWorkers
         {
             try
             {
-                var days = await settingsHelper.GetOrDefault(MemtlyConfiguration.Audit.Retention, 30);
+                var days = await _settingsHelper.GetOrDefault(MemtlyConfiguration.Audit.Retention, 30);
                 if (days > 0)
                 {
-                    using (var scope = scopeFactory.CreateScope())
+                    using (var scope = _scopeFactory.CreateScope())
                     {
                         var db = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
 
@@ -129,7 +143,7 @@ namespace Memtly.Core.BackgroundWorkers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"CleanupService - Failed to flush old audit logs - {ex?.Message}");
+                _logger.LogError(ex, $"CleanupService - Failed to flush old audit logs - {ex?.Message}");
             }
         }
     }

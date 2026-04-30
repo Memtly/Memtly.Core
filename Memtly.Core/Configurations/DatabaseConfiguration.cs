@@ -9,7 +9,6 @@ using Memtly.Core.Helpers.Database;
 using Memtly.Core.Models.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
-using static Memtly.Core.Constants.MemtlyConfiguration.Reports;
 
 namespace Memtly.Core.Configurations
 {
@@ -17,11 +16,26 @@ namespace Memtly.Core.Configurations
     {
         public static void AddDatabaseConfiguration(this IServiceCollection services)
         {
-            var config = services.BuildServiceProvider().GetRequiredService<IConfigHelper>();
+            var bsp = services.BuildServiceProvider();
+            var config = bsp.GetRequiredService<IConfigHelper>();
             
             var provider = config.GetOrDefault(MemtlyConfiguration.Database.Type, "sqlite");
             var connString = config.GetOrDefault(MemtlyConfiguration.Database.ConnectionString, "Data Source=./config/memtly.db");
             var assemblyName = typeof(CoreDbContext).Assembly.GetName().Name;
+
+            if (provider.Equals("sqlite", StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    var fileHelper = bsp.GetRequiredService<IFileHelper>();
+                    var databasePathMatch = Regex.Match(connString, "Data Source=(.+?)(;|$)", RegexOptions.Multiline);
+                    if (databasePathMatch?.Groups != null && databasePathMatch.Groups.Count == 3)
+                    {
+                        fileHelper.CreateDirectoryIfNotExists(Path.GetDirectoryName(databasePathMatch.Groups[1].Value)!);
+                    }
+                }
+                catch { }
+            }
 
             services.AddDbContext<CoreDbContext>(options =>
             {
@@ -29,17 +43,6 @@ namespace Memtly.Core.Configurations
                 switch (provider.ToLower())
                 {
                     case "sqlite":
-                        try
-                        {
-                            var fileHelper = services.BuildServiceProvider().GetRequiredService<IFileHelper>();
-                            var databasePathMatch = Regex.Match(connString, "Data Source=(.+?)(;|$)", RegexOptions.Multiline);
-                            if (databasePathMatch?.Groups != null && databasePathMatch.Groups.Count == 3)
-                            {
-                                fileHelper.CreateDirectoryIfNotExists(Path.GetDirectoryName(databasePathMatch.Groups[1].Value)!);
-                            }
-                        }
-                        catch { }
-
                         options.UseSqlite(connString, x =>
                         {
                             x.MigrationsAssembly(assemblyName);
@@ -77,16 +80,17 @@ namespace Memtly.Core.Configurations
 
             services.AddScoped<IDatabaseHelper, EFDatabaseHelper>();
 
-            var ctx = services.BuildServiceProvider().GetRequiredService<CoreDbContext>();
+            bsp = services.BuildServiceProvider();
+            var ctx = bsp.GetRequiredService<CoreDbContext>();
 
             var dbProvider = ctx.Database.ProviderName;
 
             ctx.Database.Migrate();
 
-            var encryption = services.BuildServiceProvider().GetRequiredService<IEncryptionHelper>();
-            var logger = services.BuildServiceProvider().GetRequiredService<ILogger<EFDatabaseHelper>>();
+            var encryption = bsp.GetRequiredService<IEncryptionHelper>();
+            var logger = bsp.GetRequiredService<ILogger<EFDatabaseHelper>>();
 
-            using (var scope = services.BuildServiceProvider().CreateScope())
+            using (var scope = bsp.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
 

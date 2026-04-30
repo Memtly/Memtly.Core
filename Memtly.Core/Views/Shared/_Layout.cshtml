@@ -230,8 +230,7 @@
         <script src="~/_content/Memtly.Core/dist/main.js" asp-append-version="true"></script>
 
         @await RenderSectionAsync("Scripts", required: false)
-        @if (!isDemoMode)
-        {
+        @{
             var umamiEndpoint = (await _settings.GetOrDefault(MemtlyConfiguration.Trackers.Umami.Endpoint, string.Empty)).Trim('/');
             if (!string.IsNullOrWhiteSpace(umamiEndpoint))
             {
