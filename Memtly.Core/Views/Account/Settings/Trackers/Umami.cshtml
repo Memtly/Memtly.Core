@@ -1,7 +1,19 @@
 ﻿@model IDictionary<string, string>?
 @using Memtly.Core.Constants
 
-@if (Model != null && Model.Any())
+@{
+    var isDemoMode = await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false);
+}
+
+@if (isDemoMode)
+{
+    <div class="row mb-4 mb-lg-4 setting-container">
+        <div class="col-12">
+            <span>@(_localizer["Feature_Unavailable_Demo_Mode"].Value)</span>
+        </div>
+    </div>
+}
+else if (Model != null && Model.Any())
 {
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
@@ -98,7 +110,7 @@
     <div class="row mb-4 mb-lg-4 setting-container">
         <div class="col-12">
             <label class="setting-label">@_localizer["Settings_Trackers_Umami_Replay_MaxDuration_Label"].Value</label>
-            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Trackers.Umami.Replay.MaxDuration" placeholder="60" value="@Model.GetValue(MemtlyConfiguration.Trackers.Umami.Replay.MaxDuration.ToUpper(), "60")" type="number" min="1" max="120" step="1" />
+            <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Trackers.Umami.Replay.MaxDuration" placeholder="5" value="@Model.GetValue(MemtlyConfiguration.Trackers.Umami.Replay.MaxDuration.ToUpper(), "60")" type="number" min="5" max="20" step="5" />
             <div class="setting-hint form-text">@_localizer["Settings_Trackers_Umami_Replay_MaxDuration_Help"].Value</div>
         </div>
     </div>

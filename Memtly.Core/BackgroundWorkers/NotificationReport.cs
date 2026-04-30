@@ -8,24 +8,41 @@ using Memtly.Core.Helpers.Notifications;
 
 namespace Memtly.Core.BackgroundWorkers
 {
-    public sealed class NotificationReport(IServiceScopeFactory scopeFactory, ISettingsHelper settingsHelper, ISmtpClientWrapper smtpHelper, ILoggerFactory loggerFactory, IStringLocalizer<Localization.Translations> localizer) : BackgroundService
+    public sealed class NotificationReport : BackgroundService
     {
+        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly ISettingsHelper _settingsHelper;
+        private readonly ISmtpClientWrapper _smtpHelper;
+        private readonly IStringLocalizer<Localization.Translations> _localizer;
+        private readonly ILogger<NotificationReport> _notificationLogger;
+        private readonly ILogger<EmailHelper> _emailLogger;
+
+        public NotificationReport(IServiceScopeFactory scopeFactory, ISettingsHelper settingsHelper, ISmtpClientWrapper smtpHelper, ILoggerFactory loggerFactory, IStringLocalizer<Localization.Translations> localizer)
+        {
+            _scopeFactory = scopeFactory;
+            _settingsHelper = settingsHelper;
+            _smtpHelper = smtpHelper;
+            _localizer = localizer;
+            _notificationLogger = loggerFactory.CreateLogger<NotificationReport>();
+            _emailLogger = loggerFactory.CreateLogger<EmailHelper>();
+        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var enabled = await settingsHelper.GetOrDefault(MemtlyConfiguration.Reports.Email.Enabled, true);
+            var enabled = await _settingsHelper.GetOrDefault(MemtlyConfiguration.Reports.Email.Enabled, true);
             if (enabled)
             {
-                var cron = await settingsHelper.GetOrDefault(MemtlyConfiguration.Reports.Email.Schedule, "0 0 * * *");
+                var cron = await _settingsHelper.GetOrDefault(MemtlyConfiguration.Reports.Email.Schedule, "0 0 * * *");
                 var nextExecutionTime = DateTime.Now.AddMinutes(1);
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    var currentCron = await settingsHelper.GetOrDefault(MemtlyConfiguration.Reports.Email.Schedule, "0 0 * * *");
+                    var currentCron = await _settingsHelper.GetOrDefault(MemtlyConfiguration.Reports.Email.Schedule, "0 0 * * *");
 
                     var now = DateTime.Now;
                     if (now >= nextExecutionTime)
                     {
-                        if (await settingsHelper.GetOrDefault(MemtlyConfiguration.Reports.Email.Enabled, true) && await settingsHelper.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Enabled, false))
+                        if (await _settingsHelper.GetOrDefault(MemtlyConfiguration.Reports.Email.Enabled, true) && await _settingsHelper.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Enabled, false))
                         {
                             await SendReport();
                         }
@@ -54,7 +71,7 @@ namespace Memtly.Core.BackgroundWorkers
             {
                 await Task.Run(async () =>
                 {
-                    using (var scope = scopeFactory.CreateScope())
+                    using (var scope = _scopeFactory.CreateScope())
                     {
                         var db = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
 
@@ -75,15 +92,15 @@ namespace Memtly.Core.BackgroundWorkers
                                     }
                                     catch (Exception ex)
                                     {
-                                        loggerFactory.CreateLogger<NotificationReport>().LogError(ex, $"Failed to build gallery report for '{gallery.Name}' - {ex?.Message}");
+                                        _notificationLogger.LogError(ex, $"Failed to build gallery report for '{gallery.Name}' - {ex?.Message}");
                                     }
                                 }
                             }
 
-                            var sent = await new EmailHelper(settingsHelper, smtpHelper, loggerFactory.CreateLogger<EmailHelper>(), localizer).Send("Pending Items Report", builder.ToString());
+                            var sent = await new EmailHelper(_settingsHelper, _smtpHelper, _emailLogger, _localizer).Send("Pending Items Report", builder.ToString());
                             if (!sent)
                             {
-                                loggerFactory.CreateLogger<NotificationReport>().LogWarning($"Failed to send notification report");
+                                _notificationLogger.LogWarning($"Failed to send notification report");
                             }
                         }
                     }
@@ -91,7 +108,7 @@ namespace Memtly.Core.BackgroundWorkers
             }
             catch (Exception ex)
             {
-                loggerFactory.CreateLogger<NotificationReport>().LogError(ex, $"NotificationReport - Failed to send report - {ex?.Message}");
+                _notificationLogger.LogError(ex, $"NotificationReport - Failed to send report - {ex?.Message}");
             }
         }
     }
