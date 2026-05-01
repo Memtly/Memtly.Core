@@ -1,0 +1,26 @@
+@using Memtly.Core.Constants
+
+@{
+    var umamiEndpoint = (await _settings.GetOrDefault(MemtlyConfiguration.Trackers.Umami.Endpoint, string.Empty)).Trim('/');
+    if (!string.IsNullOrWhiteSpace(umamiEndpoint))
+    {
+        var umamiWebsiteId = await _settings.GetOrDefault(MemtlyConfiguration.Trackers.Umami.WebsiteId, string.Empty);
+        if (!string.IsNullOrWhiteSpace(umamiWebsiteId))
+        {
+            var umamiScriptName = (await _settings.GetOrDefault(MemtlyConfiguration.Trackers.Umami.ScriptName, "script.js")).Trim('/');
+            var umamiPerformanceEnabled = (await _settings.GetOrDefault(MemtlyConfiguration.Trackers.Umami.PerformanceTracking.Enabled, false)).ToString().ToLower();
+
+            <script defer data-website-id="@umamiWebsiteId" data-performance="@umamiPerformanceEnabled" src="@umamiEndpoint/@umamiScriptName"></script>
+
+            if (await _settings.GetOrDefault(MemtlyConfiguration.Trackers.Umami.Replay.Enabled, false))
+            {
+                var umamiReplaySampleRate = (await _settings.GetOrDefault(MemtlyConfiguration.Trackers.Umami.Replay.SampleRate, 15.0) / 100.0);
+                var umamiReplayMaskLevel = (await _settings.GetOrDefault(MemtlyConfiguration.Trackers.Umami.Replay.MaskLevel, UmamiMaskLevel.None)).ToString().ToLower();
+                var umamiReplayMaxDuration = (await _settings.GetOrDefault(MemtlyConfiguration.Trackers.Umami.Replay.MaxDuration, 60)) * 1000 * 60;
+                var umamiReplayBlockSelector = await _settings.GetOrDefault(MemtlyConfiguration.Trackers.Umami.Replay.BlockSelector, string.Empty);
+
+                <script defer src="@umamiEndpoint/recorder.js" data-website-id="@umamiWebsiteId" data-sample-rate="@umamiReplaySampleRate" data-mask-level="@umamiReplayMaskLevel" data-max-duration="@umamiReplayMaxDuration" data-block-selector="@umamiReplayBlockSelector"></script>
+            }
+        }
+    }
+}
