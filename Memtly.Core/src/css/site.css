@@ -230,6 +230,7 @@ tr td {
 }
 
     .header-actions .action {
+        min-width: 55px;
         display: inline-block;
         text-align: center;
     }

@@ -26,9 +26,17 @@
             <div class="col-12">
                 <h1 class="display-6">@_localizer["Custom_Resources"].Value
                     <span class="header-actions">
-                        @if (userPermissions.CustomResources.HasFlag(CustomResourcePermissions.Delete))
+                        @if (Model.CustomResources.Count > 0 && userPermissions.CustomResources.HasFlag(CustomResourcePermissions.Delete))
                         {
-                            <span class="btn-bulk-delete-resources action link-danger pointer d-none" alt="@_localizer["Delete"].Value" title="@_localizer["Delete"].Value">
+                            <span class="btn-multi-select-all action link-primary-2 pointer">
+                                <i class="fas fa-square-check" alt="@_localizer["Select_All"].Value"></i>
+                                <span>@_localizer["Select_All"].Value</span>
+                            </span>
+                            <span class="btn-multi-deselect-all action d-none pointer">
+                                <i class="fas fa-square-xmark" alt="@_localizer["Deselect_All"].Value"></i>
+                                <span>@_localizer["Deselect_All"].Value</span>
+                            </span>
+                            <span class="btn-bulk-delete-resources action btn-faded pointer" alt="@_localizer["Delete"].Value" title="@_localizer["Delete"].Value">
                                 <i class="fas fa-trash"></i>
                                 <span>@_localizer["Delete"].Value</span>
                             </span>

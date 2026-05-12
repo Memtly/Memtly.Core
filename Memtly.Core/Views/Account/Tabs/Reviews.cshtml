@@ -28,8 +28,16 @@
                     @if (Model?.PendingRequests != null && Model.PendingRequests.Any() && userPermissions.Review.HasFlag(ReviewPermissions.Approve) && userPermissions.Review.HasFlag(ReviewPermissions.Reject))
                     {
                         <span class="header-actions">
-                            <span class="action link-primary-2 pointer">
-                                <i class="btnBulkReview fas fa-thumbs-up" alt="@_localizer["Review"].Value"></i>
+                            <span class="btn-multi-select-all action link-primary-2 pointer">
+                                <i class="fas fa-square-check" alt="@_localizer["Select_All"].Value"></i>
+                                <span>@_localizer["Select_All"].Value</span>
+                            </span>
+                            <span class="btn-multi-deselect-all action d-none pointer">
+                                <i class="fas fa-square-xmark" alt="@_localizer["Deselect_All"].Value"></i>
+                                <span>@_localizer["Deselect_All"].Value</span>
+                            </span>
+                            <span class="btnBulkReview action link-primary-2 pointer">
+                                <i class="fas fa-thumbs-up" alt="@_localizer["Review"].Value"></i>
                                 <span>@_localizer["Review"].Value</span>
                             </span>
                         </span>
