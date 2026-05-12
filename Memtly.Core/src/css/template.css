@@ -2882,6 +2882,12 @@ textarea.form-control-lg {
   opacity: var(--bs-btn-disabled-opacity);
 }
 
+.btn-faded {
+  color: rgb(var(--disabled-bg)) !important;
+  pointer-events: none !important;
+  opacity: var(--bs-btn-disabled-opacity) !important;
+}
+
 .btn-primary {
   --bs-btn-color: #fff;
   --bs-btn-bg: #0d6efd;

@@ -111,7 +111,7 @@ function bindBulkReviewButton() {
                         $.ajax({
                             url: '/Account/BulkReview',
                             method: 'POST',
-                            data: { action: 1, ids: ids }
+                            data: { action: 2, ids: ids }
                         })
                             .done(data => {
                                 if (data.success === true) {
@@ -136,7 +136,7 @@ function bindBulkReviewButton() {
                         $.ajax({
                             url: '/Account/BulkReview',
                             method: 'POST',
-                            data: { action: 2, ids: ids }
+                            data: { action: 3, ids: ids }
                         })
                             .done(data => {
                                 if (data.success === true) {

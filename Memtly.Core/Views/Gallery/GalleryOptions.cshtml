@@ -129,6 +129,22 @@
                     </button>
                 </div>
             }
+
+            @if (User?.Identity != null && User.Identity.IsAuthenticated && userPermissions.Gallery.HasFlag(GalleryPermissions.Download))
+            {
+                <div class="btn-group w-100 mt-2 mb-2">
+                    <span class="header-actions w-100 text-center">
+                        <span class="btn-multi-select-all action link-primary-2 pointer mx-2">
+                            <i class="fas fa-square-check" alt="@_localizer["Select All"].Value"></i>
+                            <span>@_localizer["Select All"].Value</span>
+                        </span>
+                        <span class="btn-multi-deselect-all action d-none pointer mx-2">
+                            <i class="fas fa-square-xmark" alt="@_localizer["Deselect All"].Value"></i>
+                            <span>@_localizer["Deselect All"].Value</span>
+                        </span>
+                    </span>
+                </div>
+            }
         </div>
     </div>
 }

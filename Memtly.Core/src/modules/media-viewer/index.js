@@ -38,6 +38,7 @@ class MediaViewer {
             });
         }, 200);
 
+        this.setMultiSelectBtnStates();
         this.bindEventHandlers();
     }
 
@@ -46,6 +47,8 @@ class MediaViewer {
         this.bindClosePopup();
         this.bindRightClick();
         this.bindMultiSelectButton();
+        this.bindMultiSelectAllButton();
+        this.bindMultiDeselectAllButton();
         this.bindScroll();
         this.bindArrowKeys();
         this.bindLikeButton();
@@ -80,15 +83,26 @@ class MediaViewer {
     }
 
     bindMultiSelectButton() {
-        $(document).off('click', '.btn-multi-select').on('click', '.btn-multi-select', function (e) {
+        $(document).off('click', '.btn-multi-select').on('click', '.btn-multi-select', (e) => {
             preventDefaults(e);
-            $(this).toggleClass('fa-square').toggleClass('fa-square-check');
+            $(e.currentTarget).toggleClass('fa-square').toggleClass('fa-square-check');
+            this.setMultiSelectBtnStates();
+        });
+    }
 
-            if ($('.btn-multi-select.fa-square-check').length > 0) {
-                $('.btn-bulk-delete-resources').removeClass('d-none');
-            } else {
-                $('.btn-bulk-delete-resources').addClass('d-none');
-            }
+    bindMultiSelectAllButton() {
+        $(document).off('click', '.btn-multi-select-all').on('click', '.btn-multi-select-all', (e) => {
+            preventDefaults(e);
+            $('.btn-multi-select').removeClass('fa-square').addClass('fa-square-check');
+            this.setMultiSelectBtnStates();
+        });
+    }
+
+    bindMultiDeselectAllButton() {
+        $(document).off('click', '.btn-multi-deselect-all').on('click', '.btn-multi-deselect-all', (e) => {
+            preventDefaults(e);
+            $('.btn-multi-select').removeClass('fa-square-check').addClass('fa-square');
+            this.setMultiSelectBtnStates();
         });
     }
 
@@ -352,6 +366,19 @@ class MediaViewer {
         let slide = $(`a[data-media-viewer-index='${index}']`);
 
         this.openMediaViewer(slide);
+    }
+
+    setMultiSelectBtnStates() {
+        const selectedCount = $('.btn-multi-select.fa-square-check').length;
+        if (selectedCount === 0) {
+            $('.btn-multi-select-all').removeClass('d-none').addClass('link-primary-2');
+            $('.btn-multi-deselect-all').removeClass('link-primary-2').addClass('d-none');
+            $('.btn-bulk-delete-resources').removeClass('link-danger').addClass('btn-faded');
+        } else {
+            $('.btn-multi-select-all').removeClass('link-primary-2').addClass('d-none');
+            $('.btn-multi-deselect-all').removeClass('d-none').addClass('link-primary-2');
+            $('.btn-bulk-delete-resources').removeClass('btn-faded').addClass('link-danger');
+        }
     }
 }
 
