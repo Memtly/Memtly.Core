@@ -1,25 +1,50 @@
 ﻿@model Memtly.Core.Views.Gallery.LoginModel
 
+<style>
+    #main-wrapper {
+        background-image: url('/_content/Memtly.Core/images/gallery_login_bg_sm.webp') !important;
+        background-size: 100% auto !important;
+        background-repeat: no-repeat !important;
+    }
+
+    #main-wrapper #main-content .container .card {
+        background: rgba(var(--navbar-bg), 0.98) !important;
+    }
+
+    @@media (min-width: 576px) {
+        #main-wrapper #main-content .container-xxl, #main-wrapper #main-content .container-xl, #main-wrapper #main-content .container-lg, #main-wrapper #main-content .container-md, #main-wrapper #main-content .container-sm, #main-wrapper #main-content .container {
+            max-width: 540px !important;
+        }
+    }
+
+    @@media (min-width: 768px) {
+        #main-wrapper #main-content .container-xxl, #main-wrapper #main-content .container-xl, #main-wrapper #main-content .container-lg, #main-wrapper #main-content .container-md, #main-wrapper #main-content .container-sm, #main-wrapper #main-content .container {
+            max-width: 600px !important;
+        }
+    }
+
+    @@media (min-width: 992px) {
+        #main-wrapper {
+            background-image: url('/_content/Memtly.Core/images/gallery_login_bg.webp') !important;
+        }
+    }
+</style>
+
 <div id="main-content">
     <div class="container px-3 px-lg-1 pb-4">
         <div class="card">
             <div class="card-header">
-                <h1 class="display-6">@_localizer["Gallery_Selector_Title"].Value</h1>
+                <h1 class="display-6">@_localizer["Gallery_Login"].Value</h1>
             </div>
-            <div class="card-body m-1 m-lg-5">
+            <div class="card-body m-1 m-lg-4">
                 <form id="frmSelectGallery">
                     @Html.AntiForgeryToken()
 
-                    <div class="input-group">
-                        <input type="text" id="gallery-id" class="form-control" aria-describedby="gallery-id-help" placeholder="@_localizer["Gallery_Identifier_Placeholder"].Value" aria-label="@_localizer["Gallery_Name"].Value" value="@Model.Identifier" disabled="disabled" />
-                    </div>
-                    <div id="gallery-id-help" class="form-text mb-4 mb-lg-5">
-                        @_localizer["Gallery_Identifier_Help"].Value
-                    </div>
+                    <input type="hidden" id="gallery-id" class="form-control" value="@Model.Identifier" />
 
                     <input type="text" id="gallery-key" class="form-control" aria-describedby="gallery-key-help" placeholder="@_localizer["Gallery_Key_Placeholder"].Value" aria-label="@_localizer["Gallery_Key"].Value" />
                     <div id="gallery-key-help" class="form-text mb-4 mb-lg-5">
-                        @_localizer["Gallery_Key_Help"].Value
+                        @_localizer["Gallery_Login_Help"].Value
                     </div>
 
                     <div class="d-grid gap-2">

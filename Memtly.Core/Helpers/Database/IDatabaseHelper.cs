@@ -71,6 +71,7 @@ namespace Memtly.Core.Helpers.Database
 
         #region Settings
         Task<IEnumerable<SettingModel>?> GetAllSettings(int? galleryId = null);
+        Task<IEnumerable<SettingModel>?> GetSettingsStartingWith(string key, int? galleryId = null);
         Task<SettingModel?> GetSetting(string id, int? gallery = null);
         Task<SettingModel?> GetGallerySpecificSetting(string id, int galleryId);
         Task<SettingModel?> AddSetting(SettingModel model, int? galleryId = null);

@@ -2881,11 +2881,10 @@ textarea.form-control-lg {
   border-color: var(--bs-btn-disabled-border-color);
   opacity: var(--bs-btn-disabled-opacity);
 }
-
 .btn-faded {
-  color: rgb(var(--disabled-bg)) !important;
-  pointer-events: none !important;
-  opacity: var(--bs-btn-disabled-opacity) !important;
+    color: rgb(var(--disabled-bg)) !important;
+    pointer-events: none !important;
+    opacity: var(--bs-btn-disabled-opacity) !important;
 }
 
 .btn-primary {
@@ -4532,6 +4531,11 @@ textarea.form-control-lg {
 .accordion-header {
   margin-bottom: 0;
 }
+
+    .accordion-header .accordion-button .experimental {
+        font-size: 10px;
+        margin-left: 10px;
+    }
 
 .accordion-item {
     color: var(--bs-accordion-color);
@@ -11147,4 +11151,64 @@ footer {
 .checklist .checklist-default {
     color: #777777;
     background-color: #f2f2f2;
+}
+
+.rowcol-1 {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+}
+
+.rowcol-2 {
+    flex: 0 0 auto !important;
+    width: 50% !important;
+}
+
+.rowcol-3 {
+    flex: 0 0 auto !important;
+    width: 33.33333333% !important;
+}
+
+.rowcol-4 {
+    flex: 0 0 auto !important;
+    width: 25% !important;
+}
+
+.rowcol-5 {
+    flex: 0 0 auto !important;
+    width: 20% !important;
+}
+
+.rowcol-6 {
+    flex: 0 0 auto !important;
+    width: 16.66666666% !important;
+}
+
+.rowcol-7 {
+    flex: 0 0 auto !important;
+    width: 14.28571428% !important;
+}
+
+.rowcol-8 {
+    flex: 0 0 auto !important;
+    width: 12.5% !important;
+}
+
+.rowcol-9 {
+    flex: 0 0 auto !important;
+    width: 11.11111111% !important;
+}
+
+.rowcol-10 {
+    flex: 0 0 auto !important;
+    width: 10% !important;
+}
+
+.rowcol-11 {
+    flex: 0 0 auto !important;
+    width: 9.09090909% !important;
+}
+
+.rowcol-12 {
+    flex: 0 0 auto !important;
+    width: 8.33333333% !important;
 }

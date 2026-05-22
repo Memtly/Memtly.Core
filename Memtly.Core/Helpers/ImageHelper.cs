@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.StaticFiles;
+﻿using Memtly.Core.Enums;
+using MetadataExtractor;
+using MetadataExtractor.Formats.Exif;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Localization;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
-using Memtly.Core.Enums;
 using Xabe.FFmpeg;
 using Xabe.FFmpeg.Downloader;
 
@@ -14,6 +16,7 @@ namespace Memtly.Core.Helpers
         Task<ImageOrientation> GetOrientation(string path);
         ImageOrientation GetOrientation(Image img);
         MediaType GetMediaType(string filePath);
+        DateTime? GetExifCreationDateTaken(string path);
         Task<bool> DownloadFFMPEG(string path);
     }
 
@@ -164,6 +167,32 @@ namespace Memtly.Core.Helpers
             }
 
             return ImageOrientation.Unknown;
+        }
+
+        public DateTime? GetExifCreationDateTaken(string path)
+        {
+            try
+            {
+                var directories = ImageMetadataReader.ReadMetadata(path);
+
+                var subIfd = directories.OfType<ExifSubIfdDirectory>().FirstOrDefault();
+                if (subIfd?.TryGetDateTime(ExifDirectoryBase.TagDateTimeOriginal, out var dateOriginal) == true)
+                { 
+                    return dateOriginal;
+                }
+
+                var ifd0 = directories.OfType<ExifIfd0Directory>().FirstOrDefault();
+                if (ifd0?.TryGetDateTime(ExifDirectoryBase.TagDateTime, out var dateTime) == true)
+                { 
+                    return dateTime;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, $"Failed to get image EXIF creation datetime - '{path}'");
+            }
+
+            return null;
         }
 
         public async Task<bool> DownloadFFMPEG(string path)

@@ -336,7 +336,7 @@ namespace Memtly.Core.Helpers.Database
             }
 
             return await query
-                .OrderByDescending(gi => gi.CreatedAt)
+//                .OrderByDescending(gi => gi.CreatedAt)
                 .Skip((page - 1) * limit)
                 .Take(limit)
                 .Select(gi => new GalleryItemModel()
@@ -1015,7 +1015,7 @@ namespace Memtly.Core.Helpers.Database
                 })
                 .ToListAsync();
 
-            if (galleryId != null)
+            if (galleryId == null)
             { 
                 return globalSettings;
             }
@@ -1031,6 +1031,46 @@ namespace Memtly.Core.Helpers.Database
 
             if (!galleryOverrides.Any())
             { 
+                return globalSettings;
+            }
+
+            var overrideIds = new HashSet<string>(galleryOverrides.Select(o => o.Id), StringComparer.OrdinalIgnoreCase);
+
+            return globalSettings
+                .Where(s => !overrideIds.Contains(s.Id))
+                .Concat(galleryOverrides)
+                .ToList();
+        }
+
+        public async Task<IEnumerable<SettingModel>?> GetSettingsStartingWith(string key, int? galleryId = null)
+        {
+            key = key.ToUpper();
+
+            var globalSettings = await _db.Settings
+                .Where(s => s.Key.StartsWith(key))
+                .Select(s => new SettingModel()
+                {
+                    Id = s.Key,
+                    Value = s.Value
+                })
+                .ToListAsync();
+
+            if (galleryId != null)
+            {
+                return globalSettings;
+            }
+
+            var galleryOverrides = await _db.GallerySettings
+                .Where(gs => gs.GalleryId == galleryId && gs.Setting!.Key.StartsWith(key) && !string.IsNullOrWhiteSpace(gs.Value))
+                .Select(gs => new SettingModel()
+                {
+                    Id = gs.Setting!.Key,
+                    Value = gs.Value
+                })
+                .ToListAsync();
+
+            if (!galleryOverrides.Any())
+            {
                 return globalSettings;
             }
 

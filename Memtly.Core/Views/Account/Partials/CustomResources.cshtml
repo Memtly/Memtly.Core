@@ -24,7 +24,7 @@
             var resource = Model.CustomResources[i];
 
             <div class="custom-resource col-12 col-lg-4 mb-1 mb-lg-4" data-custom-resource-username="@resource.OwnerName">
-                <div class="card">
+                <div class="card media-viewer-card">
                     <a href="/custom_resources/@resource.FileName" class="media-viewer-item" data-media-viewer-id="@resource.Id" data-media-viewer-index="@i" data-media-viewer-collection="custom_resources" data-media-viewer-type="custom_resource">
                         <img src="/custom_resources/@resource?.FileName" class="review-tile" loading="lazy" />
                         @if (userPermissions.CustomResources.HasFlag(CustomResourcePermissions.Relink))

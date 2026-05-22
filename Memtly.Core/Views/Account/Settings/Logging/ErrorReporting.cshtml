@@ -1,0 +1,45 @@
+﻿@model IDictionary<string, string>?
+@using Memtly.Core.Constants
+
+@{
+    var isDemoMode = await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false);
+}
+
+@if (isDemoMode)
+{
+    <div class="setting-section">
+        <h5 class="mb-3">@_localizer["ErrorReporting"].Value</h5>
+
+        <div class="row mb-4 mb-lg-4 setting-container">
+            <div class="col-12">
+                <span>@(_localizer["Feature_Unavailable_Demo_Mode"].Value)</span>
+            </div>
+        </div>
+    </div>
+}
+else if (Model != null && Model.Any())
+{
+    <div class="setting-section">
+        <h5 class="mb-3">@_localizer["ErrorReporting"].Value</h5>
+
+        <div class="row mb-4 mb-lg-4 setting-container">
+            <div class="col-12">
+                <label class="setting-label">@_localizer["Settings_Logging_Graylog_Enabled_Label"].Value</label>
+                <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Logging.Graylog.Enabled">
+                    @foreach (var option in ViewOptions.YesNo)
+                    {
+                        if (Model.GetValue(MemtlyConfiguration.Logging.Graylog.Enabled.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                        {
+                            <option value="@option.Value" selected="selected">@option.Key</option>
+                        }
+                        else
+                        {
+                            <option value="@option.Value">@option.Key</option>
+                        }
+                    }
+                </select>
+                <div class="setting-hint form-text">@_localizer["Settings_Logging_Graylog_Enabled_Help"].Value</div>
+            </div>
+        </div>
+    </div>
+}

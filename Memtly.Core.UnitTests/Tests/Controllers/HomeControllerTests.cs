@@ -35,9 +35,9 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase(DeviceType.Desktop, false, "", false)]
         [TestCase(DeviceType.Mobile, true, "", true)]
         [TestCase(DeviceType.Mobile, false, "", false)]
-        [TestCase(DeviceType.Desktop, true, "123456", false)]
+        [TestCase(DeviceType.Desktop, true, "123456", true)]
         [TestCase(DeviceType.Desktop, false, "Abc123!", false)]
-        [TestCase(DeviceType.Mobile, true, "abc123!", false)]
+        [TestCase(DeviceType.Mobile, true, "abc123!", true)]
         [TestCase(DeviceType.Mobile, false, "adsbsds", false)]
         public async Task HomeController_Index(DeviceType deviceType, bool singleGalleryMode, string secretKey, bool isRedirect)
         {
@@ -66,7 +66,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
                 Assert.That(actual.Permanent, Is.EqualTo(false));
                 Assert.That(actual.ControllerName, Is.EqualTo("Gallery"));
                 Assert.That(actual.ActionName, Is.EqualTo("Index"));
-                Assert.That(actual.RouteValues, singleGalleryMode ? Is.EqualTo(new RouteValueDictionary { { "identifier", "default" } }) : Is.Null);
+                Assert.That(actual.RouteValues, singleGalleryMode ? Is.EqualTo(new RouteValueDictionary { { "identifier", SystemGalleries.DefaultGallery } }) : Is.Null);
                 Assert.That(actual.Fragment, Is.Null);
             }
         }

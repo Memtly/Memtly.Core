@@ -47,11 +47,7 @@ namespace Memtly.Core.Controllers
 
                 if (await _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, false))
                 {
-                    var gallery = await _database.GetGallery(1);
-                    if (string.IsNullOrWhiteSpace(gallery?.SecretKey))
-                    {
-                        return RedirectToAction("Index", "Gallery", new { identifier = "default" });
-                    }
+                    return RedirectToAction("Index", "Gallery", new { identifier = SystemGalleries.DefaultGallery });
                 }
 
                 var isDropdownMode = await _settings.GetOrDefault(MemtlyConfiguration.GallerySelector.Dropdown, false);

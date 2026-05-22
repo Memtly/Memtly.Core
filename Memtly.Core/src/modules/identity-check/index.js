@@ -27,8 +27,9 @@ export function displayIdentityCheck(required, callbackFn) {
         Class: 'btn-primary-2',
         Callback: function () {
             let name = $('#popup-modal-field-identity-name').val().trim();
-            let emailAddress = $('#popup-modal-field-identity-email').length > 0 ? $('#popup-modal-field-identity-email').val().trim() : '';
             if (name !== undefined && name.length > 0) {
+                let emailAddress = $('#popup-modal-field-identity-email').length > 0 ? $('#popup-modal-field-identity-email').val().trim() : '';
+
                 $.ajax({
                     url: '/Home/SetIdentity',
                     method: 'POST',

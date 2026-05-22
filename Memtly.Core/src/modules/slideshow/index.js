@@ -58,9 +58,11 @@
     }
 
     loadNewImages() {
+        const params = new URLSearchParams(window.location.search);
+
         $.ajax({
             type: 'GET',
-            url: `${window.location.pathname}${window.location.search}&partial=true`,
+            url: `${window.location.pathname}${window.location.search}&mode=${params.get('mode')}&group=${params.get('group')}&order=${params.get('order')}&filter=${params.get('filter')}&culture=${params.get('culture')}&partial=true`,
             success: (data) => {
                 clearInterval(this.slidetimer);
                 clearTimeout(this.transitionTimer);

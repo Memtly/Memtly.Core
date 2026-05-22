@@ -52,7 +52,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        
+        <meta name="robots" content="noai, noimageai">
+
         <link rel="stylesheet" href="~/_content/Memtly.Core/dist/main.css" asp-append-version="true" />
         @if (theme.Equals(Themes.AutoDetect.ToString().ToLower(), StringComparison.OrdinalIgnoreCase))
         {
@@ -66,6 +67,11 @@
                 <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/green.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" asp-append-version="true" />
                 <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/darkgreen.css" media="(prefers-color-scheme: dark)" asp-append-version="true" />
             }
+        }
+        else if (theme.Equals(Themes.Custom.ToString().ToLower(), StringComparison.OrdinalIgnoreCase))
+        {
+            <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/blue.css" asp-append-version="true" />
+            <partial name="~/Views/Shared/_CustomThemeOverrides.cshtml" />
         }
         else
         {
@@ -104,7 +110,7 @@
             <div class="container">
                 <p class="m-0 text-white">
                     <span class="float-none">
-                        <a class="text-link" href="@_config.GetConfigValue(MemtlyStaticConfiguration.Links.GitHub)" title="Copyright Memtly" target="_blank"><i class="fa-brands fa-github"></i> v@(_settings.GetReleaseVersion(3)) &copy; Memtly @DateTime.UtcNow.Year</a>
+                        <a class="text-link" href="@_config.GetConfigValue(MemtlyStaticConfiguration.Links.GitHub)" title="Copyright Memtly" target="_blank"><i class="fa-brands fa-github"></i> v@(_settings.GetReleaseVersion(4)) &copy; Memtly @DateTime.UtcNow.Year</a>
                     </span>
                     <span class="float-end">
                         <a class="text-link" href="@_config.GetConfigValue(MemtlyStaticConfiguration.Links.GitHubSponsors)" title="GitHub Sponsors" target="_blank"><img class="fa-brands fa-sponsor-badge" src="/_content/Memtly.Core/images/github.png" /></a>

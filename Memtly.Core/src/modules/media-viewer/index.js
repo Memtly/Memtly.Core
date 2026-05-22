@@ -7,6 +7,7 @@ class MediaViewer {
         this.resizePopupTimeout = null;
         this.touchStartPosX = null;
         this.touchStartPosY = null;
+        this.lastSelected = null;
     }
 
     init() {
@@ -46,9 +47,7 @@ class MediaViewer {
         this.bindOpenPopup();
         this.bindClosePopup();
         this.bindRightClick();
-        this.bindMultiSelectButton();
-        this.bindMultiSelectAllButton();
-        this.bindMultiDeselectAllButton();
+        this.bindMultiSelectButtons();
         this.bindScroll();
         this.bindArrowKeys();
         this.bindLikeButton();
@@ -60,9 +59,16 @@ class MediaViewer {
             e.preventDefault();
             e.stopPropagation();
 
-            const element = $(e.currentTarget);
+            const elem = $(e.currentTarget);
+            const checkbox = elem.find('.btn-multi-select');
 
-            this.openMediaViewer(element);
+            if (e.ctrlKey) {
+                this.toggleMultiSelectOption(checkbox);
+            } else if (e.shiftKey) {
+                this.shiftMultiSelectOption(checkbox);
+            } else {
+                this.openMediaViewer(elem);
+            }
         });
     }
 
@@ -82,27 +88,33 @@ class MediaViewer {
         });
     }
 
-    bindMultiSelectButton() {
+    bindMultiSelectButtons() {
         $(document).off('click', '.btn-multi-select').on('click', '.btn-multi-select', (e) => {
             preventDefaults(e);
-            $(e.currentTarget).toggleClass('fa-square').toggleClass('fa-square-check');
-            this.setMultiSelectBtnStates();
+            this.toggleMultiSelectOption($(e.currentTarget));
         });
-    }
 
-    bindMultiSelectAllButton() {
         $(document).off('click', '.btn-multi-select-all').on('click', '.btn-multi-select-all', (e) => {
             preventDefaults(e);
-            $('.btn-multi-select').removeClass('fa-square').addClass('fa-square-check');
-            this.setMultiSelectBtnStates();
+            $('.btn-multi-select').each((_, elem) => {
+                this.setMultiSelectOption($(elem), true);
+            });
         });
-    }
 
-    bindMultiDeselectAllButton() {
         $(document).off('click', '.btn-multi-deselect-all').on('click', '.btn-multi-deselect-all', (e) => {
             preventDefaults(e);
-            $('.btn-multi-select').removeClass('fa-square-check').addClass('fa-square');
-            this.setMultiSelectBtnStates();
+            $('.btn-multi-select').each((_, elem) => {
+                this.setMultiSelectOption($(elem), false);
+            });
+        });
+
+        $(document).off('click', '.media-viewer-card').on('click', '.media-viewer-card', (e) => {
+            const checkbox = $(e.currentTarget).find('.btn-multi-select');
+            if (e.ctrlKey) {
+                this.toggleMultiSelectOption(checkbox);
+            } else if (e.shiftKey) {
+                this.shiftMultiSelectOption(checkbox);
+            }
         });
     }
 
@@ -366,6 +378,41 @@ class MediaViewer {
         let slide = $(`a[data-media-viewer-index='${index}']`);
 
         this.openMediaViewer(slide);
+    }
+
+    toggleMultiSelectOption(elem) {
+        this.setMultiSelectOption(elem, elem.hasClass('fa-square'));
+    }
+
+    shiftMultiSelectOption(elem) {
+        if (this.lastSelected) {
+            const cards = $('.media-viewer-card');
+
+            const currentSelectedId = parseInt(elem.closest('.media-viewer-card').find('.media-viewer-item').attr('data-media-viewer-index'));
+            const lastSelectedId = parseInt(this.lastSelected.find('.media-viewer-item').attr('data-media-viewer-index'));
+            
+            const startItemId = Math.min(currentSelectedId, lastSelectedId);
+            const endItemId = Math.max(currentSelectedId, lastSelectedId);
+
+            cards.each((_, card) => {
+                const currentItemId = parseInt($(card).find('.media-viewer-item').attr('data-media-viewer-index'));
+                if (currentItemId >= startItemId && currentItemId <= endItemId) {
+                    this.setMultiSelectOption($(card).find('.btn-multi-select'), true);
+                }
+            });
+        }
+    }
+
+    setMultiSelectOption(elem, selected) {
+        if (selected) {
+            this.lastSelected = elem.closest('.media-viewer-card');
+            elem.removeClass('fa-square').addClass('fa-square-check');
+        } else {
+            this.lastSelected = null;
+            elem.removeClass('fa-square-check').addClass('fa-square');
+        }
+
+        this.setMultiSelectBtnStates();
     }
 
     setMultiSelectBtnStates() {
