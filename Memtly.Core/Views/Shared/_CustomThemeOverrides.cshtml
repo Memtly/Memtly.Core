@@ -1,0 +1,68 @@
+@using Memtly.Core.Constants
+@using Memtly.Core.Extensions
+@inject Memtly.Core.Helpers.Database.IDatabaseHelper _database
+
+@{
+    var settings = (await _database.GetSettingsStartingWith(MemtlyConfiguration.Themes.ColourOverrides.BaseKey))?.ToDictionary(x => x.Id.ToUpper(), x => x.Value ?? string.Empty);
+    if (settings != null)
+    {
+        <style>
+            :root {
+                /* Navbar */
+                --navbar-title-text: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Navbar.Text.ToUpper(), "#282828")?.ToRgbColor();
+                --navbar-bg: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Navbar.Background.ToUpper(), "#FFFFFF")?.ToRgbColor();
+                --nav-bg: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Navbar.Background.ToUpper(), "#FFFFFF")?.ToRgbColor();
+                --navbar-options-text: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Background.ToUpper(), "#2563eb")?.ToRgbColor();
+                --nav-text: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Background.ToUpper(), "#2563eb")?.ToRgbColor();
+                --nav-border: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Background.ToUpper(), "#2563eb")?.ToRgbColor();
+                --navbar-options-text-hover: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Hover.ToUpper(), "#1d4ed8")?.ToRgbColor();
+                --nav-hover-text: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Hover.ToUpper(), "#1d4ed8")?.ToRgbColor();
+                --nav-hover-border: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Hover.ToUpper(), "#1d4ed8")?.ToRgbColor();
+                --nav-hover-bg: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary3.Background.ToUpper(), "#60a5fa")?.ToRgbColor();
+                /* Tables */
+                --table-header-text: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Background.ToUpper(), "#2563eb")?.ToRgbColor();
+                --table-header-bg: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Background.ToUpper(), "#2563eb")?.ToRgbColor();
+                --table-border: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Background.ToUpper(), "#2563eb")?.ToRgbColor();
+                /* Colour Scheme (Primary 1) */
+                --primary-text-1: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Text.ToUpper(), "#FFFFFF")?.ToRgbColor();
+                --primary-bg-1: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Background.ToUpper(), "#2563eb")?.ToRgbColor();
+                --primary-border-1: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Background.ToUpper(), "#2563eb")?.ToRgbColor();
+                --primary-hover-text-1: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Text.ToUpper(), "#FFFFFF")?.ToRgbColor();
+                --primary-hover-bg-1: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Hover.ToUpper(), "#1d4ed8")?.ToRgbColor();
+                --primary-hover-border-1: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Hover.ToUpper(), "#1d4ed8")?.ToRgbColor();
+                /* Colour Scheme (Primary 2) */
+                --primary-text-2: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary2.Text.ToUpper(), "#FFFFFF")?.ToRgbColor();
+                --primary-bg-2: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary2.Background.ToUpper(), "#3b82f6")?.ToRgbColor();
+                --primary-border-2: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary2.Background.ToUpper(), "#3b82f6")?.ToRgbColor();
+                --primary-hover-text-2: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary2.Text.ToUpper(), "#FFFFFF")?.ToRgbColor();
+                --primary-hover-bg-2: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary2.Hover.ToUpper(), "#2563eb")?.ToRgbColor();
+                --primary-hover-border-2: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary2.Hover.ToUpper(), "#2563eb")?.ToRgbColor();
+                /* Colour Scheme (Primary 3) */
+                --primary-text-3: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary3.Text.ToUpper(), "#FFFFFF")?.ToRgbColor();
+                --primary-bg-3: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary3.Background.ToUpper(), "#60a5fa")?.ToRgbColor();
+                --primary-border-3: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary3.Background.ToUpper(), "#60a5fa")?.ToRgbColor();
+                --primary-hover-text-3: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary3.Text.ToUpper(), "#FFFFFF")?.ToRgbColor();
+                --primary-hover-bg-3: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary3.Hover.ToUpper(), "#3b82f6")?.ToRgbColor();
+                --primary-hover-border-3: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary3.Hover.ToUpper(), "#3b82f6")?.ToRgbColor();
+                /* Colour Scheme (Secondary 1) */
+                --secondary-text-1: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary1.Text.ToUpper(), "#FFFFFF")?.ToRgbColor();
+                --secondary-bg-1: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary1.Background.ToUpper(), "#6366f1")?.ToRgbColor();
+                --secondary-border-1: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary1.Background.ToUpper(), "#6366f1")?.ToRgbColor();
+                --secondary-hover-text-1: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary1.Text.ToUpper(), "#FFFFFF")?.ToRgbColor();
+                --secondary-hover-bg-1: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary1.Hover.ToUpper(), "#4f46e5")?.ToRgbColor();
+                --secondary-hover-border-1: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary1.Hover.ToUpper(), "#4f46e5")?.ToRgbColor();
+                /* Colour Scheme (Secondary 2) */
+                --secondary-text-2: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary2.Text.ToUpper(), "#FFFFFF")?.ToRgbColor();
+                --secondary-bg-2: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary2.Background.ToUpper(), "#818cf8")?.ToRgbColor();
+                --secondary-border-2: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary2.Background.ToUpper(), "#818cf8")?.ToRgbColor();
+                --secondary-hover-text-2: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary2.Text.ToUpper(), "#FFFFFF")?.ToRgbColor();
+                --secondary-hover-bg-2: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary2.Hover.ToUpper(), "#6366f1")?.ToRgbColor();
+                --secondary-hover-border-2: @settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary2.Hover.ToUpper(), "#6366f1")?.ToRgbColor();
+            }
+
+            html, body {
+                background-color: rgb(@settings.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Navbar.Background.ToUpper(), "#FFFFFF")?.ToRgbColor()) !important;
+            }
+        </style>
+    }
+}

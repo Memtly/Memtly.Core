@@ -1,10 +1,12 @@
 ﻿import { displayMessage } from '@modules/message-box';
 import { displayLoader } from '@modules/loader';
+import initColorPickers from '@modules/color-picker';
 
 let settingsSearchTimeout = null;
 
 function init() {
     bindEventHandlers();
+    initColorPickers();
 }
 
 function bindEventHandlers() {
@@ -172,7 +174,8 @@ export function searchSettings() {
     settingsSearchTimeout = setTimeout(() => {
         let term = $('input#settings-search-term').val();
 
-        $('#settings-accordion .accordion-item, #settings-accordion .accordion-item .setting-container').removeClass('d-none');
+        $('#settings-accordion .accordion-item, #settings-accordion .accordion-item .setting-section, #settings-accordion .accordion-item .setting-section .setting-container').removeClass('d-none');
+        $('#settings-accordion .accordion-item .setting-section').removeClass('no-border');
 
         if (term !== undefined && term.length > 0) {
             $('.setting-container').each(function () {
@@ -192,11 +195,28 @@ export function searchSettings() {
         }
 
         $('#settings-accordion .accordion-item').each(function () {
-            const count = $(this).find('.setting-container:not(.d-none)').length;
-            if (count === 0) {
-                $(this).addClass('d-none');
+            const settingAccordion = $(this);
+
+            let settingSections = settingAccordion.find('.setting-section:not(.d-none)');
+            if (settingSections !== undefined && settingSections.length > 0) {
+                settingSections.each(function () {
+                    const settingSection = $(this);
+
+                    let settingContainers = settingSection.find('.setting-container:not(.d-none)');
+                    if (settingContainers !== undefined && settingContainers.length === 0) {
+                        settingSection.addClass('d-none');
+                    }
+                });
+
+                settingSections = settingAccordion.find('.setting-section:not(.d-none)');
+                if (settingSections !== undefined && settingSections.length === 0) {
+                    settingAccordion.addClass('d-none');
+                }
+
+                settingSections.last().addClass('no-border');
             }
         });
+
     }, 500);
 }
 

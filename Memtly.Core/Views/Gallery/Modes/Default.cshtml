@@ -5,8 +5,13 @@
 
 @{
     var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
-    var columnCount = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Columns, 4, Model?.Gallery?.Id);
     var identityEnabled = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.Enabled, true);
+
+    var columnCount = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Columns, 4, Model?.Gallery?.Id);
+    if (columnCount < 1 || columnCount > 12)
+    {
+        columnCount = 4;
+    }
 
     try
     {
@@ -23,14 +28,7 @@
                     {
                         columnCount = 2;
                     }
-                    else
-                    {
-                        while (12 % columnCount != 0)
-                        {
-                            columnCount--;
-                        }
-                    }
-                    break;    
+                    break;
                 }
         }
     }
@@ -42,7 +40,7 @@
         switch (Model?.GroupBy ?? GalleryGroup.Date)
         {
             case GalleryGroup.Date:
-                imageGroups = Model?.Images?.GroupBy(x => (x.UploadDate != null ? x.UploadDate.Value.ToString("dddd, d MMMM yyyy") : "Unknown"));
+                imageGroups = Model?.Images?.GroupBy(x => (x.UploadDate != null ? x.UploadDate.Value.ToLocalTime().ToString("dddd, d MMMM yyyy") : "Unknown"));
                 switch (Model?.OrderBy ?? GalleryOrder.Descending)
                 {
                     case GalleryOrder.Ascending:
@@ -127,7 +125,7 @@
         var imageGroupImages = Model?.OrderBy == GalleryOrder.Random ? imageGroup.OrderBy(x => Guid.NewGuid()).ToList() : imageGroup.ToList();
         for (var columnIndex = 0; columnIndex < columnCount; columnIndex++)
         {
-            <div class="@($"col-{12 / columnCount} mb-4 mb-lg-0 mx-0 px-1")">
+            <div class="@($"rowcol-{columnCount} mb-4 mb-lg-0 mx-0 px-1")">
                 @if (imageGroupImages != null)
                 {
                     var index = columnIndex;
@@ -135,7 +133,7 @@
                     {
                         var image = imageGroupImages.ElementAt(index);
 
-                        <div class="image-tile mb-2">
+                        <div class="image-tile media-viewer-card mb-2">
                             <a href="@image.ImagePath" class="media-viewer-item" data-media-viewer-id="@image.Id" data-media-viewer-index="@index" data-media-viewer-collection="@image.GalleryName" data-media-viewer-type="gallery_item">
                                 <img src="@image?.ThumbnailPath" class="w-100 shadow-1-strong" loading="lazy" />
                                 @if (image?.MediaType == MediaType.Video)

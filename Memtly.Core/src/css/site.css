@@ -30,6 +30,10 @@ body {
     cursor: pointer;
 }
 
+.no-border {
+    border: none !important;
+}
+
 .text-link, .text-link:hover, .text-link:active {
     text-decoration: none;
 }
@@ -321,3 +325,17 @@ tr td {
     .nav-horizontal-scroller::-webkit-scrollbar {
         display: none;
     }
+
+.setting-section {
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(var(--primary-bg-1), 0.5);
+}
+
+    .setting-section:not(.d-none):last-child {
+        margin-bottom: 0px;
+        border-bottom: none;
+    }
+
+input[type=color] {
+    max-width: 40px;
+}

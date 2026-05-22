@@ -447,14 +447,16 @@ namespace Memtly.Core.Controllers
 
                                             var savePath = Path.Combine(gallerySavePath, $"{Path.GetFileNameWithoutExtension(filePath)}.webp");
                                             await _imageHelper.GenerateThumbnail(filePath, savePath, await _settings.GetOrDefault(MemtlyConfiguration.Basic.ThumbnailSize, 720));
-                                            
+
+                                            var fileCreated = _imageHelper.GetExifCreationDateTaken(filePath) ?? await _fileHelper.GetCreationDatetime(filePath);
+
                                             var item = await _database.AddGalleryItem(new GalleryItemModel()
                                             {
                                                 GalleryId = gallery.Id,
                                                 Title = fileName,
                                                 UploadedBy = uploadedBy,
                                                 UploaderEmailAddress = uploaderEmail,
-                                                UploadedDate = await _fileHelper.GetCreationDatetime(filePath),
+                                                UploadedDate = fileCreated,
                                                 Checksum = checksum,
                                                 MediaType = _imageHelper.GetMediaType(filePath),
                                                 Orientation = await _imageHelper.GetOrientation(savePath),
@@ -590,7 +592,7 @@ namespace Memtly.Core.Controllers
                                                 switch (type)
                                                 {
                                                     case GalleryGroup.Date:
-                                                        filtered = galleryItems?.GroupBy(x => x.UploadedDate.ToString("dddd, d MMMM yyyy"));
+                                                        filtered = galleryItems?.GroupBy(x => x.UploadedDate.ToLocalTime().ToString("dddd, d MMMM yyyy"));
                                                         break;
                                                     case GalleryGroup.MediaType:
                                                         filtered = galleryItems?.GroupBy(x => x.MediaType.ToString());

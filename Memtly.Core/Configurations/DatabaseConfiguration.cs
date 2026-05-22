@@ -193,11 +193,11 @@ namespace Memtly.Core.Configurations
                     Value = isDemoMode.ToString()
                 });
 
-                await database.SetSetting(new SettingModel()
-                {
-                    Id = MemtlyConfiguration.Themes.Default.ToUpper(),
-                    Value = config.GetOrDefault(MemtlyConfiguration.Themes.Default, Themes.AutoDetect.ToString())
-                });
+                //await database.SetSetting(new SettingModel()
+                //{
+                //    Id = MemtlyConfiguration.Themes.Default.ToUpper(),
+                //    Value = config.GetOrDefault(MemtlyConfiguration.Themes.Default, Themes.AutoDetect.ToString())
+                //});
 
                 if (config.GetOrDefault(MemtlyConfiguration.Security.MultiFactor.ResetToDefault, false))
                 {
@@ -215,7 +215,7 @@ namespace Memtly.Core.Configurations
                 var settings = await database.GetAllSettings();
                 if (settings == null || !settings.Any(setting => setting.Id.StartsWith(MemtlyConfiguration.Basic.BaseKey, StringComparison.OrdinalIgnoreCase)))
                 {
-                    var systemKeys = GetAllKeys().Where(x => !x.StartsWith(MemtlyConfiguration.Gallery.BaseKey, StringComparison.OrdinalIgnoreCase));
+                    var systemKeys = GetAllKeys();
                     foreach (var key in systemKeys)
                     {
                         try
@@ -295,24 +295,7 @@ namespace Memtly.Core.Configurations
 
             try
             {
-                keys.AddRange(GetKeys<MemtlyConfiguration.Account>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Alerts>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Audit>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.BackgroundServices>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Basic>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Database>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Gallery>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.GallerySelector>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.IdentityCheck>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Languages>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Notifications>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Policies>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Reports>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Security>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Slideshow>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Sponsors>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Themes>());
-                keys.AddRange(GetKeys<MemtlyConfiguration.Trackers>());
+                keys.AddRange(GetKeys<MemtlyConfiguration>());
             }
             catch { }
 

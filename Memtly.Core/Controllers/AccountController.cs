@@ -558,6 +558,7 @@ namespace Memtly.Core.Controllers
         public async Task<IActionResult> Logout()
         {
             await _audit.LogAction(User?.Identity?.GetUserId(), _localizer["Audit_LoggedOut"].Value, AuditSeverity.Verbose);
+            this.HttpContext.Session.Clear();
             await this.HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Account");
         }
@@ -1685,6 +1686,46 @@ namespace Memtly.Core.Controllers
         public async Task<IActionResult> UpdateGallerySettings(List<UpdateSettingsModel> model, int galleryId)
         {
             return await UpdateSettings(model, galleryId, SettingsPermissions.Gallery_Update);
+        }
+
+        [HttpDelete]
+        [RequiresRole(SettingsPermission = SettingsPermissions.Gallery_Update)]
+        public async Task<IActionResult> ResetGallerySettings(int galleryId)
+        {
+            if (galleryId > 0 && User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                try
+                {
+                    var success = true;
+
+                    GalleryModel? gallery = null;
+                    if (galleryId != null)
+                    {
+                        gallery = await _database.GetGallery((int)galleryId);
+                    }
+
+                    if (User.Identity.CanEdit(SettingsPermissions.Gallery_Update, gallery?.Owner))
+                    {
+                        try
+                        {
+                            await _database.DeleteAllSettings(gallery?.Id);
+                            await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_SettingsUpdated"].Value} '{(!string.IsNullOrWhiteSpace(gallery?.Name) ? gallery.Name : "Gallery Defaults")}' - Settings Reset", AuditSeverity.Information);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, $"{_localizer["Failed_Update_Setting"].Value} - {ex?.Message}");
+                        }
+                    }
+
+                    return Json(new { success = success });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"{_localizer["Failed_Update_Setting"].Value} - {ex?.Message}");
+                }
+            }
+
+            return Json(new { success = false });
         }
 
         [HttpPost]

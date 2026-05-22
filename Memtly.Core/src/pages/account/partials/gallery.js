@@ -1,5 +1,5 @@
 ﻿import { displayMessage } from '@modules/message-box';
-import { displayPopup } from '@modules/popups';
+import { displayPopup, hidePopup } from '@modules/popups';
 import { displayLoader, hideLoader } from '@modules/loader';
 import { getTimestamp } from '@utilities/datetime';
 import { downloadBlob } from '@utilities/blobs';
@@ -47,6 +47,12 @@ export function bindGallerySettingsButton() {
             url: `/Account/Settings/${galleryId}`,
             success: function (data) {
                 if (data !== undefined) {
+                    data += `<div class="row"> \
+                        <div class="col col-12"> \
+                            <button class="btn btn-danger btn-wipe-gallery-settings w-100" data-gallery-id="${galleryId}">${localization.translate('Reset') }</button> \
+                        </div> \
+                    </div><hr/>`;
+
                     displayPopup({
                         Title: localization.translate('Gallery_Settings'),
                         CustomHtml: data,
@@ -94,6 +100,34 @@ export function bindGallerySettingsButton() {
                 }
             }
         });
+    });
+
+    $(document).off('click', '.btn-wipe-gallery-settings').on('click', '.btn-wipe-gallery-settings', function (e) {
+        preventDefaults(e);
+
+        let galleryId = $(this).data('gallery-id');
+
+        hidePopup();
+        displayLoader(localization.translate('Loading'));
+        $.ajax({
+            url: '/Account/ResetGallerySettings',
+            method: 'DELETE',
+            data: { galleryId: galleryId }
+        })
+            .done(data => {
+                if (data.success === true) {
+                    displayMessage(localization.translate('Update_Settings'), localization.translate('Update_Settings_Success'), null, function () {
+                        window.location.reload();
+                    });
+                } else if (data.message) {
+                    displayMessage(localization.translate('Update_Settings'), localization.translate('Update_Settings_Failed'), [data.message]);
+                } else {
+                    displayMessage(localization.translate('Update_Settings'), localization.translate('Update_Settings_Failed'));
+                }
+            })
+            .fail((xhr, error) => {
+                displayMessage(localization.translate('Update_Settings'), localization.translate('Update_Settings_Failed'), [error]);
+            });
     });
 }
 

@@ -40,7 +40,7 @@
                         <p>@((Model.Account?.SubscriptionState ?? SubscriptionState.Unknown).ToString())</p>
 
                         <h6>Paid Until</h6>
-                        <p>@(Model.Account?.SubscriptionState == SubscriptionState.Active ? Model.Account.PaidUntil!.Value.ToString("dd/MM/yyyy hh:mm tt") : "--/--/-- --:-- --")</p>
+                        <p>@(Model.Account?.SubscriptionState == SubscriptionState.Active ? Model.Account.PaidUntil!.Value.ToLocalTime().ToString("dd/MM/yyyy hh:mm tt") : "--/--/-- --:-- --")</p>
                     </div>
                 </div>
             </div>

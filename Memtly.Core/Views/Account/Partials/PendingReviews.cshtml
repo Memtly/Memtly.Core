@@ -31,7 +31,7 @@
                     if (review != null)
                     {
                         <div class="pending-approval col-12 col-lg-4 mb-4 mb-lg-0 mb-1 mb-lg-4">
-                            <div class="card">
+                            <div class="card media-viewer-card">
                                 <a href="@review.ImagePath" class="media-viewer-item" data-media-viewer-id="@review.Id" data-media-viewer-index="@index" data-media-viewer-collection="pending_reviews" data-media-viewer-type="pending_review">
                                     <img src="@review.ThumbnailPath" class="review-tile" loading="lazy" />
                                     @if (review?.MediaType == MediaType.Video)

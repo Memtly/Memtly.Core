@@ -31,6 +31,7 @@ namespace Memtly.Core.Extensions
 
             services.AddDependencyInjectionConfiguration();
             services.AddDatabaseConfiguration();
+            services.AddLoggingConfiguration();
             services.AddWebClientConfiguration();
             services.AddNotificationConfiguration();
             services.AddLocalizationConfiguration();
@@ -108,7 +109,7 @@ namespace Memtly.Core.Extensions
             var logger = app.ApplicationServices.GetRequiredService<ILogger<MemtlyCore>>();
 
             logger.LogInformation($"Release Version - '{settings.GetReleaseVersion(4)}'");
-
+            
             app.UseExceptionHandler();
 
             if (!env.IsDevelopment())

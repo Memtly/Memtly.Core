@@ -3,48 +3,52 @@
 
 @if (Model != null && Model.Any())
 {
-    <div class="row mb-4 mb-lg-4 setting-container">
-        <div class="col-12">
-            <label class="setting-label">@_localizer["Enabled"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Themes.Enabled">
-                @foreach (var option in ViewOptions.YesNo)
-                {
-                    if (Model.GetValue(MemtlyConfiguration.Themes.Enabled.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+    <div class="setting-section">
+        <h5 class="mb-3">@_localizer["Themes"].Value</h5>
+
+        <div class="row mb-4 mb-lg-4 setting-container">
+            <div class="col-12">
+                <label class="setting-label">@_localizer["Enabled"].Value</label>
+                <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Themes.Enabled">
+                    @foreach (var option in ViewOptions.YesNo)
                     {
-                        <option value="@option.Value" selected="selected">@option.Key</option>
+                        if (Model.GetValue(MemtlyConfiguration.Themes.Enabled.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                        {
+                            <option value="@option.Value" selected="selected">@option.Key</option>
+                        }
+                        else
+                        {
+                            <option value="@option.Value">@option.Key</option>
+                        }
                     }
-                    else
-                    {
-                        <option value="@option.Value">@option.Key</option>
-                    }
-                }
-            </select>
-            <div class="setting-hint form-text">@_localizer["Settings_Themes_Enabled_Help"].Value</div>
+                </select>
+                <div class="setting-hint form-text">@_localizer["Settings_Themes_Enabled_Help"].Value</div>
+            </div>
         </div>
-    </div>
 
-    <div class="row mb-4 mb-lg-4 setting-container">
-        <div class="col-12">
-            <label class="setting-label">@_localizer["Settings_Themes_Default_Label"].Value</label>
-            <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Themes.Default">
-                @foreach (Themes t in Enum.GetValues(typeof(Themes)))
-                {
-                    if (MemtlyCore.Version == MemtlyVersion.Community && (t == Themes.Green || t == Themes.DarkGreen))
+        <div class="row mb-4 mb-lg-4 setting-container">
+            <div class="col-12">
+                <label class="setting-label">@_localizer["Settings_Themes_Default_Label"].Value</label>
+                <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Themes.Default">
+                    @foreach (Themes t in Enum.GetValues(typeof(Themes)))
                     {
-                        continue;
-                    }
+                        if (MemtlyCore.Version == MemtlyVersion.Community && (t == Themes.Green || t == Themes.DarkGreen))
+                        {
+                            continue;
+                        }
 
-                    if (Model.GetValue(MemtlyConfiguration.Themes.Default.ToUpper(), Themes.AutoDetect.ToString()).Equals(t.ToString(), StringComparison.OrdinalIgnoreCase))
-                    {
-                        <option value="@t.ToString()" selected="selected">@t.ToString()</option>
+                        if (Model.GetValue(MemtlyConfiguration.Themes.Default.ToUpper(), Themes.AutoDetect.ToString()).Equals(t.ToString(), StringComparison.OrdinalIgnoreCase))
+                        {
+                            <option value="@t.ToString()" selected="selected">@t.ToString()</option>
+                        }
+                        else
+                        {
+                            <option value="@t.ToString()">@t.ToString()</option>
+                        }
                     }
-                    else
-                    {
-                        <option value="@t.ToString()">@t.ToString()</option>
-                    }
-                }
-            </select>
-            <div class="setting-hint form-text">@_localizer["Settings_Themes_Default_Help"].Value</div>
+                </select>
+                <div class="setting-hint form-text">@_localizer["Settings_Themes_Default_Help"].Value</div>
+            </div>
         </div>
     </div>
 }

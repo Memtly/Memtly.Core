@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <SixLaborsLicenseFile>sixlabors.lic</SixLaborsLicenseFile>
   </PropertyGroup>
 
   <Target Name="CleanDist" BeforeTargets="NpmInstall">
@@ -46,6 +47,9 @@
     <Content Include="Assets\DemoImage.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="sixlabors.lic">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
     <Content Include="src\css\main.css" />
     <Content Include="src\css\site.css" />
     <Content Include="src\css\template.css" />
@@ -58,6 +62,7 @@
     <Content Include="src\lib\jquery-validation\dist\jquery.validate.js" />
     <Content Include="src\lib\jquery-validation\dist\jquery.validate.min.js" />
     <Content Include="src\lib\jquery-validation\LICENSE.md" />
+    <Content Include="src\modules\color-picker\index.js" />
     <Content Include="src\modules\cookies\index.js" />
     <Content Include="src\modules\qr-codes\index.js" />
     <Content Include="src\modules\gallery-selector\index.js" />
@@ -114,7 +119,8 @@
   <ItemGroup>
     <PackageReference Include="dbup-mysql" Version="6.1.0" />
     <PackageReference Include="dbup-sqlite" Version="6.0.4" />
-    <PackageReference Include="Memtly.Localization" Version="1.0.2.1" />
+    <PackageReference Include="Memtly.Localization" Version="1.0.3.5" />
+    <PackageReference Include="MetadataExtractor" Version="2.9.3" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.14" />
@@ -129,12 +135,15 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.14" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.14" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
-    <PackageReference Include="MySql.Data" Version="9.6.0" />
+    <PackageReference Include="MySql.Data" Version="9.7.0" />
     <PackageReference Include="NCrontab" Version="3.4.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
     <PackageReference Include="Razor.Templating.Core" Version="2.1.0" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+    <PackageReference Include="Serilog.Sinks.Graylog" Version="3.1.1" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="4.0.0" />
     <PackageReference Include="TwoFactorAuth.Net" Version="1.4.0" />
     <PackageReference Include="Xabe.FFmpeg" Version="6.0.2" />
     <PackageReference Include="Xabe.FFmpeg.Downloader" Version="6.0.2" />

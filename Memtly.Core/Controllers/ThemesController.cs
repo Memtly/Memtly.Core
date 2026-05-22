@@ -1,11 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Memtly.Core.Constants;
 using Memtly.Core.Enums;
 using Memtly.Core.Helpers;
 using Memtly.Core.Models;
-using System.Reflection;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Memtly.Core.Controllers
 {
@@ -37,9 +36,15 @@ namespace Memtly.Core.Controllers
                     selectedTheme = await _settings.GetOrDefault(MemtlyConfiguration.Themes.Default, Themes.AutoDetect.ToString());
                 }
 
+                var customThemeEnabled = await _settings.GetOrDefault(MemtlyConfiguration.Themes.ColourOverrides.Enabled, false);
                 foreach (Themes item in Enum.GetValues(typeof(Themes)))
                 {
                     if (MemtlyCore.Version == MemtlyVersion.Community && (item == Themes.Green || item == Themes.DarkGreen))
+                    {
+                        continue;
+                    }
+
+                    if (item == Themes.Custom && !customThemeEnabled)
                     {
                         continue;
                     }
