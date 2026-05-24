@@ -4,8 +4,10 @@ import { displayLoader, hideLoader } from '@modules/loader';
 import { getTimestamp } from '@utilities/datetime';
 import { downloadBlob } from '@utilities/blobs';
 import { getQueryParam } from '@utilities/urls';
+import { default as initSettings } from '@pages/account/partials/settings';
 
 function init() {
+    initSettings();
     bindEventHandlers();
 }
 

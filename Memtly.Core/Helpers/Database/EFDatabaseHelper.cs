@@ -1125,14 +1125,14 @@ namespace Memtly.Core.Helpers.Database
 
         public async Task<SettingModel?> AddSetting(SettingModel model, int? galleryId = null)
         {
-            var settingId = galleryId != null ? (await _db.Settings.FirstOrDefaultAsync(s => s.Key.ToLower().Equals(model.Id.ToLower())))?.Id : null;
+            var settingId = (await _db.Settings.FirstOrDefaultAsync(s => s.Key.ToLower().Equals(model.Id.ToLower())))?.Id;
 
             if (settingId == null)
             {
                 var settingEntry = await _db.Settings.AddAsync(new Setting()
                 {
                     Key = model.Id,
-                    Value = model.Value ?? string.Empty,
+                    Value = galleryId == null ? model.Value ?? string.Empty : string.Empty,
                     CreatedAt = DateTimeOffset.UtcNow
                 });
                 await _db.SaveChangesAsync();
@@ -1140,7 +1140,7 @@ namespace Memtly.Core.Helpers.Database
                 settingId = settingEntry.Entity.Id;
             }
 
-            if (galleryId != null)
+            if (settingId != null && galleryId != null)
             {
                 await _db.GallerySettings.AddAsync(new GallerySetting()
                 {
