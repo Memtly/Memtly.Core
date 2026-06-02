@@ -12,12 +12,16 @@ namespace Memtly.Core.BackgroundWorkers
 {
     public sealed class DirectoryScanner : BackgroundService
     {
+        public static DateTime? NextExecutionTime = null;
+
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly ISettingsHelper _settingsHelper;
         private readonly IFileHelper _fileHelper;
         private readonly IImageHelper _imageHelper;
         private readonly IAuditHelper _auditHelper;
         private readonly ILogger<DirectoryScanner> _logger;
+
+        private bool _running = false;
 
         public DirectoryScanner(IServiceScopeFactory scopeFactory, ISettingsHelper settingsHelper, IFileHelper fileHelper, IImageHelper imageHelper, IAuditHelper auditHelper, ILogger<DirectoryScanner> logger)
         {
@@ -35,25 +39,30 @@ namespace Memtly.Core.BackgroundWorkers
             if (enabled)
             {
                 var cron = await _settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.DirectoryScanner.Schedule, "*/30 * * * *");
-                var nextExecutionTime = DateTime.Now.AddMinutes(5);
+                NextExecutionTime = DateTime.Now.AddMinutes(5);
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     var currentCron = await _settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.DirectoryScanner.Schedule, "*/30 * * * *");
 
                     var now = DateTime.Now;
-                    if (now >= nextExecutionTime)
+                    if (now >= NextExecutionTime)
                     {
-                        await ScanForFiles();
+                        if (!_running)
+                        {
+                            _running = true;
+                            await ScanForFiles();
+                            _running = false;
+                        }
 
                         var schedule = CrontabSchedule.Parse(cron, new CrontabSchedule.ParseOptions() { IncludingSeconds = cron.Split(new[] { ' ' }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Length == 6 });
-                        nextExecutionTime = schedule.GetNextOccurrence(now);
+                        NextExecutionTime = schedule.GetNextOccurrence(now);
                     }
                     else
                     {
                         if (!currentCron.Equals(cron))
                         {
-                            nextExecutionTime = DateTime.Now;
+                            NextExecutionTime = DateTime.Now;
                         }
 
                         await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);

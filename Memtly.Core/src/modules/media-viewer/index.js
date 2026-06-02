@@ -46,9 +46,13 @@ class MediaViewer {
     bindEventHandlers() {
         this.bindOpenPopup();
         this.bindClosePopup();
-        this.bindRightClick();
         this.bindMultiSelectButtons();
-        this.bindScroll();
+        this.bindRightClick();
+        this.bindPopupEventHandlers();
+    }
+
+    bindPopupEventHandlers() {
+        this.bindSwipe();
         this.bindArrowKeys();
         this.bindLikeButton();
         this.bindDownloadButton();
@@ -118,50 +122,55 @@ class MediaViewer {
         });
     }
 
-    bindScroll() {
-        $(document).off('click touchstart touchend', '.media-viewer .media-viewer-content').on('click touchstart touchend', '.media-viewer .media-viewer-content', (e) => {
+    bindSwipe() {
+        $(document).off('click touchstart touchend mousedown mouseup', '.media-viewer .media-viewer-content').on('click touchstart touchend mousedown mouseup', '.media-viewer .media-viewer-content', (e) => {
             e.preventDefault();
             e.stopPropagation();
 
-            const element = $(e.currentTarget);
+            try {
+                const element = $(e.currentTarget);
 
-            if (e.originalEvent.type === 'click') {
-                let position = e.pageX - element.offset().left;
-                if (position <= (element.width() / 2)) {
-                    this.moveSlide(-1);
-                } else {
-                    this.moveSlide(1);
-                }
-            } else if (e.originalEvent.type === 'touchstart') {
-                touchStartPosX = e.touches[0].screenX;
-                touchStartPosY = e.touches[0].screenY;
-            } else if (e.originalEvent.type === 'touchend') {
-                let touchEndPosX = e.changedTouches[0].screenX;
-                let touchEndPosY = e.changedTouches[0].screenY;
-
-                let touchDiffX = Math.abs(touchStartPosX - touchEndPosX);
-                let touchDiffY = Math.abs(touchStartPosY - touchEndPosY);
-
-                if (touchDiffX > 100) {
-                    if (touchEndPosX < touchStartPosX) {
-                        this.moveSlide(1);
-                    } else if (touchEndPosX > touchStartPosX) {
-                        this.moveSlide(-1);
-                    }
-                } else if (touchDiffY > 100) {
-                    if (touchEndPosY < touchStartPosY) {
-                        this.moveSlide(1);
-                    } else if (touchEndPosY > touchStartPosY) {
-                        this.moveSlide(-1);
-                    }
-                } else {
-                    let position = e.changedTouches[0].pageX - element.offset().left;
+                if (e.originalEvent.type === 'click') {
+                    const position = e.pageX - element.offset().left;
                     if (position <= (element.width() / 2)) {
                         this.moveSlide(-1);
                     } else {
                         this.moveSlide(1);
                     }
+                } else if (e.originalEvent.type === 'touchstart' || e.originalEvent.type === 'mousedown') {
+                    this.touchStartPosX = e.touches ? e.touches[0].screenX : e.screenX;
+                    this.touchStartPosY = e.touches ? e.touches[0].screenY : e.screenY;
+                } else if (e.originalEvent.type === 'touchend' || e.originalEvent.type === 'mouseup') {
+                    const touchEndPosX = e.changedTouches ? e.changedTouches[0].screenX : e.screenX;
+                    const touchEndPosY = e.changedTouches ? e.changedTouches[0].screenY : e.screenY;
+                   
+                    const touchDiffX = Math.abs(this.touchStartPosX - touchEndPosX);
+                    const touchDiffY = Math.abs(this.touchStartPosY - touchEndPosY);
+                   
+                    if (touchDiffX > 100) {
+                        if (touchEndPosX < this.touchStartPosX) {
+                            this.moveSlide(1);
+                        } else if (touchEndPosX > this.touchStartPosX) {
+                            this.moveSlide(-1);
+                        }
+                    } else if (touchDiffY > 100) {
+                        if (touchEndPosY < this.touchStartPosY) {
+                            this.moveSlide(1);
+                        } else if (touchEndPosY > this.touchStartPosY) {
+                            this.moveSlide(-1);
+                        }
+                    } else {
+                        const pageX = e.changedTouches ? e.changedTouches[0].pageX : e.pageX;
+                        const position = pageX - element.offset().left;
+                        if (position <= (element.width() / 2)) {
+                            this.moveSlide(-1);
+                        } else {
+                            this.moveSlide(1);
+                        }
+                    }
                 }
+            } catch (ex) {
+                console.log(ex);
             }
         });
     }
@@ -273,6 +282,7 @@ class MediaViewer {
 
     initMediaViewImage(type, source) {
         this.resizeMediaViewer(1, $('#media-viewer-popup'), type, source);
+        this.bindPopupEventHandlers();
     }
 
     resizeMediaViewer(iteration, popup, type, source) {

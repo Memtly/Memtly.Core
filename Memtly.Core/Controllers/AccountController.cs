@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Web;
 using Memtly.Core.Attributes;
+using Memtly.Core.BackgroundWorkers;
 using Memtly.Core.Constants;
 using Memtly.Core.Enums;
 using Memtly.Core.Extensions;
@@ -20,6 +21,7 @@ using Memtly.Core.Views.Account.Tabs;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using TwoFactorAuthNet;
@@ -1729,6 +1731,7 @@ namespace Memtly.Core.Controllers
         }
 
         [HttpPost]
+        [RequestTimeout("timeout_1h")]
         [RequiresRole(DataPermission = DataPermissions.Export)]
         public async Task<IActionResult> ExportBackup(ExportOptions options)
         {
@@ -1776,6 +1779,13 @@ namespace Memtly.Core.Controllers
                                 listing.Add(new ZipListing(CustomResourcesDirectory, Directory.GetFiles(CustomResourcesDirectory, "*", SearchOption.AllDirectories), null, "CustomResources.bak"));
                             }
 
+                            if (listing == null || listing.Count == 0)
+                            {
+                                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                                _logger.LogError($"{_localizer["Failed_Export"].Value} - ${_localizer["No_Export_Content"].Value}");
+                                return Json(new { success = false, message = _localizer["No_Export_Content"].Value });
+                            }
+
                             var response = await ZipFileResponse($"Memtly-{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}.zip", listing);
 
                             _fileHelper.DeleteFileIfExists(dbExport);
@@ -1788,7 +1798,9 @@ namespace Memtly.Core.Controllers
                 }
                 catch (Exception ex)
                 {
+                    Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     _logger.LogError(ex, $"{_localizer["Failed_Export"].Value} - {ex?.Message}");
+                    return Json(new { success = false, message = ex?.Message ?? _localizer["Unexpected_Error_Occurred"].Value });
                 }
                 finally
                 {
@@ -1796,7 +1808,8 @@ namespace Memtly.Core.Controllers
                 }
             }
 
-            return Json(new { success = false });
+            Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            return Json(new { success = false, message = _localizer["Unexpected_Error_Occurred"].Value });
         }
 
         [HttpPost]
@@ -2120,6 +2133,53 @@ namespace Memtly.Core.Controllers
             }
 
             return Json(new { active = false });
+        }
+
+        [HttpPost]
+        [RequiresRole(BackgroundWorkerPermissions = BackgroundWorkerPermissions.RequestInstantRun)]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public async Task<IActionResult> RequestBackgroundWorker(BackgroundWorkerType type)
+        {
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                try
+                {
+                    var user = await _database.GetUser(User.Identity.GetUserId());
+
+                    if (type == BackgroundWorkerType.DirectoryScanner && user != null && User.Identity.CanEdit(BackgroundWorkerPermissions.RequestDirectoryScanner, user.Id))
+                    {
+                        Response.StatusCode = (int)HttpStatusCode.OK;
+
+                        DirectoryScanner.NextExecutionTime = DateTime.Now;
+
+                        return Json(new { success = true });
+                    }
+                    else if (type == BackgroundWorkerType.Cleanup && user != null && User.Identity.CanEdit(BackgroundWorkerPermissions.RequestCleanup, user.Id))
+                    {
+                        Response.StatusCode = (int)HttpStatusCode.OK;
+
+                        CleanupService.NextExecutionTime = DateTime.Now;
+
+                        return Json(new { success = true });
+                    }
+                    else if (type == BackgroundWorkerType.NotificationReport && user != null && User.Identity.CanEdit(BackgroundWorkerPermissions.RequestNotificationReport, user.Id))
+                    {
+                        Response.StatusCode = (int)HttpStatusCode.OK;
+
+                        NotificationReport.NextExecutionTime = DateTime.Now;
+
+                        return Json(new { success = true });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"{_localizer["Request_Background_Worker_Failed"].Value} - {ex?.Message}");
+                }
+            }
+
+            return Json(new { success = false });
         }
 
         private async Task<IActionResult> UpdateSettings(List<UpdateSettingsModel> model, int? galleryId, SettingsPermissions accessPermissions)

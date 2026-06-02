@@ -160,26 +160,56 @@ function bindDownloadGalleryButton() {
         let name = row.data('gallery-name');
         let secretKey = row.data('gallery-key');
 
+        let nativeXhr;
+
         $.ajax({
             url: '/Gallery/DownloadGallery',
             method: 'POST',
             data: { Id: id, SecretKey: secretKey, FileFilter: [] },
+            xhr: function () {
+                nativeXhr = new XMLHttpRequest();
+                return nativeXhr;
+            },
             xhrFields: {
                 responseType: 'blob'
             },
         })
-            .done((data, status, xhr) => {
+            .done((data) => {
+                hideLoader();
+                downloadBlob(`${name}_${getTimestamp()}.zip`, 'application/zip', data, nativeXhr);
+            })
+            .fail(async function (jqXHR) {
                 hideLoader();
 
                 try {
-                    downloadBlob(`${name}_${getTimestamp()}.zip`, 'application/zip', data, xhr);
-                } catch (ex) {
-                    displayMessage(localization.translate('Download'), localization.translate('Download_Failed'), [ex]);
+                    if (nativeXhr.response instanceof Blob) {
+                        const text = await nativeXhr.response.text();
+                        const json = JSON.parse(text);
+
+                        if (json.message !== undefined) {
+                            displayMessage(
+                                localization.translate('Download'),
+                                localization.translate('Download_Failed'),
+                                [json.message]
+                            );
+                        } else {
+                            displayMessage(
+                                localization.translate('Download'),
+                                localization.translate('Download_Failed')
+                            );
+                        }
+                    } else {
+                        displayMessage(
+                            localization.translate('Download'),
+                            localization.translate('Download_Failed')
+                        );
+                    }
+                } catch {
+                    displayMessage(
+                        localization.translate('Download'),
+                        localization.translate('Download_Failed')
+                    );
                 }
-            })
-            .fail((xhr, error) => {
-                hideLoader();
-                displayMessage(localization.translate('Download'), localization.translate('Download_Failed'), [error]);
             });
     });
 }
@@ -197,61 +227,7 @@ function bindAddGalleryButton() {
             method: 'GET'
         })
             .done(secretKey => {
-                displayPopup({
-                    Title: localization.translate('Gallery_Create'),
-                    Fields: [{
-                        Id: 'gallery-name',
-                        Name: localization.translate('Gallery_Name'),
-                        Hint: localization.translate('Gallery_Name_Hint')
-                    }, {
-                        Id: 'gallery-key',
-                        Name: localization.translate('Gallery_Secret_Key'),
-                        Hint: localization.translate('Gallery_Secret_Key_Hint'),
-                        Value: secretKey
-                    }],
-                    Buttons: [{
-                        Text: localization.translate('Create'),
-                        Class: 'btn-primary-2',
-                        Callback: function () {
-                            displayLoader(localization.translate('Loading'));
-
-                            let name = $('#popup-modal-field-gallery-name').val();
-                            if (name == undefined || name.length == 0) {
-                                displayMessage(localization.translate('Gallery_Create'), localization.translate('Gallery_Missing_Name'));
-                                return;
-                            }
-
-                            const regex = /^[a-zA-Z0-9\-\s-_~]+$/;
-                            if (!regex.test(name)) {
-                                displayMessage(localization.translate('Gallery_Create'), localization.translate('Gallery_Invalid_Name'));
-                                return;
-                            }
-
-                            let key = $('#popup-modal-field-gallery-key').val();
-
-                            $.ajax({
-                                url: '/Account/AddGallery',
-                                method: 'POST',
-                                data: { Id: 0, Name: name, SecretKey: key }
-                            })
-                                .done(data => {
-                                    if (data.success === true) {
-                                        updateGalleryList();
-                                        displayMessage(localization.translate('Gallery_Create'), localization.translate('Gallery_Create_Success'));
-                                    } else if (data.message) {
-                                        displayMessage(localization.translate('Gallery_Create'), localization.translate('Gallery_Create_Failed'), [data.message]);
-                                    } else {
-                                        displayMessage(localization.translate('Gallery_Create'), localization.translate('Gallery_Create_Failed'));
-                                    }
-                                })
-                                .fail((xhr, error) => {
-                                    displayMessage(localization.translate('Gallery_Create'), localization.translate('Gallery_Create_Failed'), [error]);
-                                });
-                        }
-                    }, {
-                        Text: localization.translate('Close')
-                    }]
-                });
+                displayAddGalleryPopup('', secretKey);
             });
     });
 }
@@ -264,72 +240,13 @@ function bindEditGalleryButton() {
             return;
         }
 
-        let row = $(this).closest('tr');
-        displayPopup({
-            Title: localization.translate('Gallery_Edit'),
-            Fields: [{
-                Id: 'gallery-id',
-                Value: row.data('gallery-id'),
-                Type: 'hidden'
-            }, {
-                Id: 'gallery-identifier',
-                Name: localization.translate('Gallery_Identifier'),
-                Value: row.data('gallery-identifier'),
-                Disabled: true
-            }, {
-                Id: 'gallery-name',
-                Name: localization.translate('Gallery_Name'),
-                Value: row.data('gallery-name'),
-                Hint: localization.translate('Gallery_Name_Hint')
-            }, {
-                Id: 'gallery-key',
-                Name: localization.translate('Gallery_Secret_Key'),
-                Value: row.data('gallery-key'),
-                Hint: localization.translate('Gallery_Secret_Key_Hint')
-            }],
-            Buttons: [{
-                Text: localization.translate('Update'),
-                Class: 'btn-primary-2',
-                Callback: function () {
-                    displayLoader(localization.translate('Loading'));
+        const row = $(this).closest('tr');
+        const id = row.data('gallery-id');
+        const identifier = row.data('gallery-identifier');
+        const name = row.data('gallery-name');
+        const secretKey = row.data('gallery-key');
 
-                    let id = $('#popup-modal-field-gallery-id').val();
-                    if (id == undefined || id.length == 0) {
-                        displayMessage(localization.translate('Gallery_Edit'), localization.translate('Gallery_Missing_Id'));
-                        return;
-                    }
-
-                    let name = $('#popup-modal-field-gallery-name').val();
-                    if (name == undefined || name.length == 0) {
-                        displayMessage(localization.translate('Gallery_Edit'), localization.translate('Gallery_Missing_Name'));
-                        return;
-                    }
-
-                    let key = $('#popup-modal-field-gallery-key').val();
-
-                    $.ajax({
-                        url: '/Account/EditGallery',
-                        method: 'PUT',
-                        data: { Id: id, Name: name, SecretKey: key }
-                    })
-                        .done(data => {
-                            if (data.success === true) {
-                                updateGalleryList();
-                                displayMessage(localization.translate('Gallery_Edit'), localization.translate('Gallery_Edit_Success'));
-                            } else if (data.message) {
-                                displayMessage(localization.translate('Gallery_Edit'), localization.translate('Gallery_Edit_Failed'), [data.message]);
-                            } else {
-                                displayMessage(localization.translate('Gallery_Edit'), localization.translate('Gallery_Edit_Failed'));
-                            }
-                        })
-                        .fail((xhr, error) => {
-                            displayMessage(localization.translate('Gallery_Edit'), localization.translate('Gallery_Edit_Failed'), [error]);
-                        });
-                }
-            }, {
-                Text: localization.translate('Close')
-            }]
-        });
+        displayEditGalleryPopup(id, identifier, name, secretKey);
     });
 }
 
@@ -342,59 +259,10 @@ function bindRelinkGalleryButton() {
         }
 
         let row = $(this).closest('tr');
-        displayPopup({
-            Title: localization.translate('Gallery_Relink'),
-            Fields: [{
-                Id: 'gallery-id',
-                Value: row.data('gallery-id'),
-                Type: 'hidden'
-            }, {
-                Id: 'gallery-username',
-                Name: localization.translate('Username'),
-                Value: row.data('gallery-username'),
-                Hint: localization.translate('Relink_Username_Hint')
-            }],
-            Buttons: [{
-                Text: localization.translate('Update'),
-                Class: 'btn-primary-2',
-                Callback: function () {
-                    displayLoader(localization.translate('Loading'));
+        const id = row.data('gallery-id');
+        const username = row.data('gallery-username');
 
-                    let id = $('#popup-modal-field-gallery-id').val();
-                    if (id == undefined || id.length == 0) {
-                        displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Missing_Id'));
-                        return;
-                    }
-
-                    let username = $('#popup-modal-field-gallery-username').val();
-                    if (username == undefined || username.length == 0) {
-                        displayMessage(localization.translate('Gallery_Relink'), localization.translate('Missing_Username'));
-                        return;
-                    }
-
-                    $.ajax({
-                        url: '/Account/RelinkGallery',
-                        method: 'PUT',
-                        data: { Id: id, OwnerName: username }
-                    })
-                        .done(data => {
-                            if (data.success === true) {
-                                updateGalleryList();
-                                displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Relink_Success'));
-                            } else if (data.message) {
-                                displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Relink_Failed'), [data.message]);
-                            } else {
-                                displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Relink_Failed'));
-                            }
-                        })
-                        .fail((xhr, error) => {
-                            displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Relink_Failed'), [error]);
-                        });
-                }
-            }, {
-                Text: localization.translate('Close')
-            }]
-        });
+        displayRelinkGalleryPopup(id, username);
     });
 }
 
@@ -564,6 +432,220 @@ export function updateGalleryList() {
             $('#galleries-list').html(data);
             bindEventHandlers();
         }
+    });
+}
+
+function displayAddGalleryPopup(name, secretKey) {
+    displayPopup({
+        Title: localization.translate('Gallery_Create'),
+        Fields: [{
+            Id: 'gallery-name',
+            Name: localization.translate('Gallery_Name'),
+            Hint: localization.translate('Gallery_Name_Hint'),
+            Value: name
+        }, {
+            Id: 'gallery-key',
+            Name: localization.translate('Gallery_Secret_Key'),
+            Hint: localization.translate('Gallery_Secret_Key_Hint'),
+            Value: secretKey
+        }],
+        Buttons: [{
+            Text: localization.translate('Create'),
+            Class: 'btn-primary-2',
+            Callback: function () {
+                displayLoader(localization.translate('Loading'));
+
+                name = $('#popup-modal-field-gallery-name').val();
+                secretKey = $('#popup-modal-field-gallery-key').val();
+
+                if (name == undefined || name.length == 0) {
+                    displayMessage(localization.translate('Gallery_Create'), localization.translate('Gallery_Missing_Name'), null, () => {
+                        displayAddGalleryPopup(name, secretKey);
+                    });
+                    return;
+                }
+
+                const regex = /^[a-zA-Z0-9\-\s-_~]+$/;
+                if (!regex.test(name)) {
+                    displayMessage(localization.translate('Gallery_Create'), localization.translate('Gallery_Invalid_Name'), null, () => {
+                        displayAddGalleryPopup(name, secretKey);
+                    });
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Account/AddGallery',
+                    method: 'POST',
+                    data: { Id: 0, Name: name, SecretKey: secretKey }
+                })
+                    .done(data => {
+                        if (data.success === true) {
+                            updateGalleryList();
+                            displayMessage(localization.translate('Gallery_Create'), localization.translate('Gallery_Create_Success'));
+                        } else if (data.message) {
+                            displayMessage(localization.translate('Gallery_Create'), localization.translate('Gallery_Create_Failed'), [data.message], () => {
+                                displayAddGalleryPopup(name, secretKey);
+                            });
+                        } else {
+                            displayMessage(localization.translate('Gallery_Create'), localization.translate('Gallery_Create_Failed'), null, () => {
+                                displayAddGalleryPopup(name, secretKey);
+                            });
+                        }
+                    })
+                    .fail((xhr, error) => {
+                        displayMessage(localization.translate('Gallery_Create'), localization.translate('Gallery_Create_Failed'), [error], () => {
+                            displayAddGalleryPopup(name, secretKey);
+                        });
+                    });
+            }
+        }, {
+            Text: localization.translate('Close')
+        }]
+    });
+}
+
+function displayEditGalleryPopup(id, identifier, name, secretKey) {
+    displayPopup({
+        Title: localization.translate('Gallery_Edit'),
+        Fields: [{
+            Id: 'gallery-id',
+            Value: id,
+            Type: 'hidden'
+        }, {
+            Id: 'gallery-identifier',
+            Name: localization.translate('Gallery_Identifier'),
+            Value: identifier,
+            Disabled: true
+        }, {
+            Id: 'gallery-name',
+            Name: localization.translate('Gallery_Name'),
+            Value: name,
+            Hint: localization.translate('Gallery_Name_Hint')
+        }, {
+            Id: 'gallery-key',
+            Name: localization.translate('Gallery_Secret_Key'),
+            Value: secretKey,
+            Hint: localization.translate('Gallery_Secret_Key_Hint')
+        }],
+        Buttons: [{
+            Text: localization.translate('Update'),
+            Class: 'btn-primary-2',
+            Callback: function () {
+                displayLoader(localization.translate('Loading'));
+
+                id = $('#popup-modal-field-gallery-id').val();
+                name = $('#popup-modal-field-gallery-name').val();
+                secretKey = $('#popup-modal-field-gallery-key').val();
+
+                if (id == undefined || id.length == 0) {
+                    displayMessage(localization.translate('Gallery_Edit'), localization.translate('Gallery_Missing_Id'), null, () => {
+                        displayEditGalleryPopup(id, identifier, name, secretKey);
+                    });
+                    return;
+                }
+
+                if (name == undefined || name.length == 0) {
+                    displayMessage(localization.translate('Gallery_Edit'), localization.translate('Gallery_Missing_Name'), null, () => {
+                        displayEditGalleryPopup(id, identifier, name, secretKey);
+                    });
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Account/EditGallery',
+                    method: 'PUT',
+                    data: { Id: id, Name: name, SecretKey: secretKey }
+                })
+                    .done(data => {
+                        if (data.success === true) {
+                            updateGalleryList();
+                            displayMessage(localization.translate('Gallery_Edit'), localization.translate('Gallery_Edit_Success'));
+                        } else if (data.message) {
+                            displayMessage(localization.translate('Gallery_Edit'), localization.translate('Gallery_Edit_Failed'), [data.message], () => {
+                                displayEditGalleryPopup(id, identifier, name, secretKey);
+                            });
+                        } else {
+                            displayMessage(localization.translate('Gallery_Edit'), localization.translate('Gallery_Edit_Failed'), null, () => {
+                                displayEditGalleryPopup(id, identifier, name, secretKey);
+                            });
+                        }
+                    })
+                    .fail((xhr, error) => {
+                        displayMessage(localization.translate('Gallery_Edit'), localization.translate('Gallery_Edit_Failed'), [error], () => {
+                            displayEditGalleryPopup(id, identifier, name, secretKey);
+                        });
+                    });
+            }
+        }, {
+            Text: localization.translate('Close')
+        }]
+    });
+}
+
+function displayRelinkGalleryPopup(id, username) {
+    displayPopup({
+        Title: localization.translate('Gallery_Relink'),
+        Fields: [{
+            Id: 'gallery-id',
+            Value: id,
+            Type: 'hidden'
+        }, {
+            Id: 'gallery-username',
+            Name: localization.translate('Username'),
+            Value: username,
+            Hint: localization.translate('Relink_Username_Hint')
+        }],
+        Buttons: [{
+            Text: localization.translate('Update'),
+            Class: 'btn-primary-2',
+            Callback: function () {
+                displayLoader(localization.translate('Loading'));
+
+                id = $('#popup-modal-field-gallery-id').val();
+                username = $('#popup-modal-field-gallery-username').val();
+
+                if (id == undefined || id.length == 0) {
+                    displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Missing_Id'), null, () => {
+                        displayRelinkGalleryPopup(id, username);
+                    });
+                    return;
+                }
+
+                if (username == undefined || username.length == 0) {
+                    displayMessage(localization.translate('Gallery_Relink'), localization.translate('Missing_Username'), null, () => {
+                        displayRelinkGalleryPopup(id, username);
+                    });
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Account/RelinkGallery',
+                    method: 'PUT',
+                    data: { Id: id, OwnerName: username }
+                })
+                    .done(data => {
+                        if (data.success === true) {
+                            updateGalleryList();
+                            displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Relink_Success'));
+                        } else if (data.message) {
+                            displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Relink_Failed'), [data.message], () => {
+                                displayRelinkGalleryPopup(id, username);
+                            });
+                        } else {
+                            displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Relink_Failed'), null, () => {
+                                displayRelinkGalleryPopup(id, username);
+                            });
+                        }
+                    })
+                    .fail((xhr, error) => {
+                        displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Relink_Failed'), [error], () => {
+                            displayRelinkGalleryPopup(id, username);
+                        });
+                    });
+            }
+        }, {
+            Text: localization.translate('Close')
+        }]
     });
 }
 

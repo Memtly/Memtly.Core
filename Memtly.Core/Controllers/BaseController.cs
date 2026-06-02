@@ -1,6 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
 using System.IO.Compression;
 using Memtly.Core.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Memtly.Core.Controllers
 {
@@ -18,65 +19,95 @@ namespace Memtly.Core.Controllers
 
         protected async Task<IActionResult> ZipFileResponse(string filename, IEnumerable<ZipListing> contentsList)
         {
-            if (!string.IsNullOrWhiteSpace(filename) && contentsList != null && contentsList.Count() > 0)
+            try
             {
-                HttpContext.Response.Headers.Append("Content-Type", "application/zip");
-                HttpContext.Response.Headers.Append("Content-Disposition", $"attachment; filename=\"{filename}\"");
-
-                var bodyStream = Response.BodyWriter.AsStream(true);
-
-                using (var zipArchive = new ZipArchive(bodyStream, ZipArchiveMode.Create, true))
+                if (!string.IsNullOrWhiteSpace(filename) && contentsList != null && contentsList.Count() > 0)
                 {
-                    foreach (var contents in contentsList.Where(x => !string.IsNullOrWhiteSpace(x.SourcePath)))
-                    {
-                        var files = contents?.Files?.Where(x => x.StartsWith(contents.SourcePath, StringComparison.OrdinalIgnoreCase));
-                        if (files != null && files.Any())
-                        {
-                            if (!string.IsNullOrWhiteSpace(contents?.FileName))
-                            {
-                                using (var ms = new MemoryStream())
-                                {
-                                    using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true))
-                                    {
-                                        foreach (var file in files)
-                                        {
-                                            var path = Path.GetRelativePath(contents.SourcePath, file);
-                                            var archiveEntry = archive.CreateEntry(path);
+                    HttpContext.Response.Headers.Append("Content-Type", "application/zip");
+                    HttpContext.Response.Headers.Append("Content-Disposition", $"attachment; filename=\"{filename}\"");
 
-                                            using (var es = archiveEntry.Open())
-                                            using (var fs = System.IO.File.OpenRead(file))
+                    var bodyStream = Response.BodyWriter.AsStream(true);
+
+                    using (var zipArchive = new ZipArchive(bodyStream, ZipArchiveMode.Create, true))
+                    {
+                        foreach (var contents in contentsList.Where(x => !string.IsNullOrWhiteSpace(x.SourcePath)))
+                        {
+                            var files = contents?.Files?.Where(x => x.StartsWith(contents.SourcePath, StringComparison.OrdinalIgnoreCase));
+                            if (files != null && files.Any())
+                            {
+                                if (!string.IsNullOrWhiteSpace(contents?.FileName))
+                                {
+                                    var tempZipPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.zip");
+
+                                    try
+                                    {
+                                        await using (var tempFileStream = new FileStream(tempZipPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 81920, FileOptions.Asynchronous))
+                                        {
+                                            using (var archive = new ZipArchive(tempFileStream, ZipArchiveMode.Create, true))
                                             {
-                                                await fs.CopyToAsync(es);
+                                                foreach (var file in files)
+                                                {
+                                                    var path = Path.GetRelativePath(contents.SourcePath, file);
+                                                    var archiveEntry = archive.CreateEntry(path);
+
+                                                    await using (var es = archiveEntry.Open())
+                                                    await using (var fs = System.IO.File.OpenRead(file))
+                                                    {
+                                                        await fs.CopyToAsync(es);
+                                                    }
+                                                }
                                             }
                                         }
 
+                                        var relativePath = contents.FileName.TrimStart('/');
+                                        var zipEntry = zipArchive.CreateEntry(!string.IsNullOrWhiteSpace(contents.Directory) ? Path.Combine(contents.Directory, relativePath) : relativePath);
+
+                                        await using (var entryStream = zipEntry.Open())
+                                        await using (var tempReadStream = new FileStream(tempZipPath, FileMode.Open, FileAccess.Read, FileShare.Read, 81920, FileOptions.Asynchronous | FileOptions.SequentialScan))
+                                        {
+                                            await tempReadStream.CopyToAsync(entryStream);
+                                        }
                                     }
-
-                                    var relativePath = $"{contents.FileName.TrimStart('/')}";
-                                    var zipEntry = zipArchive.CreateEntry(!string.IsNullOrWhiteSpace(contents.Directory) ? Path.Combine(contents.Directory, relativePath) : relativePath);
-
-                                    using (var entryStream = zipEntry.Open())
+                                    finally
                                     {
-                                        ms.Seek(0, SeekOrigin.Begin);
-                                        await ms.CopyToAsync(entryStream);
+                                        try
+                                        {
+                                            if (System.IO.File.Exists(tempZipPath))
+                                            {
+                                                System.IO.File.Delete(tempZipPath);
+                                            }
+                                        }
+                                        catch { }
                                     }
                                 }
-                            }
-                            else
-                            {
-                                foreach (var file in files)
+                                else
                                 {
-                                    var relativePath = Path.GetRelativePath(contents.SourcePath, file);
-                                    var zipEntry = zipArchive.CreateEntry(!string.IsNullOrWhiteSpace(contents.Directory) ? Path.Combine(contents.Directory, relativePath) : relativePath);
-
-                                    using (var fs = System.IO.File.OpenRead(file))
-                                    using (var entryStream = zipEntry.Open())
+                                    foreach (var file in files)
                                     {
-                                        await fs.CopyToAsync(entryStream);
+                                        var relativePath = Path.GetRelativePath(contents.SourcePath, file);
+                                        var zipEntry = zipArchive.CreateEntry(!string.IsNullOrWhiteSpace(contents.Directory) ? Path.Combine(contents.Directory, relativePath) : relativePath);
+
+                                        using (var fs = System.IO.File.OpenRead(file))
+                                        using (var entryStream = zipEntry.Open())
+                                        {
+                                            await fs.CopyToAsync(entryStream);
+                                        }
                                     }
                                 }
                             }
                         }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = HttpContext.RequestServices.GetService<ILogger<BaseController>>();
+                if (logger != null)
+                { 
+                    var localizer = HttpContext.RequestServices.GetService<IStringLocalizer<Localization.Translations>>();
+                    if (localizer != null)
+                    { 
+                        logger.LogWarning(ex, $"{localizer["Unexpected_Error_Occurred"].Value} - {ex?.Message}");
                     }
                 }
             }

@@ -128,6 +128,8 @@ function bindExportButton() {
                 Callback: function () {
                     displayLoader(localization.translate('Generating_Download'));
 
+                    let nativeXhr;
+
                     $.ajax({
                         url: '/Account/ExportBackup',
                         method: 'POST',
@@ -137,21 +139,50 @@ function bindExportButton() {
                             Thumbnails: $('#popup-modal-field-thumbnails').is(':checked'),
                             CustomResources: $('#popup-modal-field-custom-resources').is(':checked')
                         },
+                        xhr: function () {
+                            nativeXhr = new XMLHttpRequest();
+                            return nativeXhr;
+                        },
                         xhrFields: {
                             responseType: 'blob'
                         }
                     })
-                        .done((data, status, xhr) => {
+                        .done((data) => {
+                            hideLoader();
+                            downloadBlob(`Memtly_${getTimestamp()}.zip`, 'application/zip', data, nativeXhr);
+                        })
+                        .fail(async function (jqXHR) {
                             hideLoader();
 
                             try {
-                                downloadBlob(`Memtly_${getTimestamp()}.zip`, 'application/zip', data, xhr);
-                            } catch (ex) {
-                                displayMessage(localization.translate('Export_Data'), localization.translate('Export_Data_Failed'), [ex]);
+                                if (nativeXhr.response instanceof Blob) {
+                                    const text = await nativeXhr.response.text();
+                                    const json = JSON.parse(text);
+
+                                    if (json.message !== undefined) {
+                                        displayMessage(
+                                            localization.translate('Export_Data'),
+                                            localization.translate('Export_Data_Failed'),
+                                            [json.message]
+                                        );
+                                    } else {
+                                        displayMessage(
+                                            localization.translate('Export_Data'),
+                                            localization.translate('Export_Data_Failed')
+                                        );
+                                    }
+                                } else {
+                                    displayMessage(
+                                        localization.translate('Export_Data'),
+                                        localization.translate('Export_Data_Failed')
+                                    );
+                                }
+                            } catch {
+                                displayMessage(
+                                    localization.translate('Export_Data'),
+                                    localization.translate('Export_Data_Failed')
+                                );
                             }
-                        })
-                        .fail((xhr, error) => {
-                            displayMessage(localization.translate('Export_Data'), localization.translate('Export_Data_Failed'), [error]);
                         });
                 }
             }, {

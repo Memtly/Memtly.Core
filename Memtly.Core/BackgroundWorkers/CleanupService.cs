@@ -8,10 +8,14 @@ namespace Memtly.Core.BackgroundWorkers
 {
     public sealed class CleanupService : BackgroundService
     {
+        public static DateTime? NextExecutionTime = null;
+
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly ISettingsHelper _settingsHelper;
         private readonly IFileHelper _fileHelper;
         private readonly ILogger<CleanupService> _logger;
+
+        private bool _running = false;
 
         public CleanupService(IServiceScopeFactory scopeFactory, ISettingsHelper settingsHelper, IFileHelper fileHelper, ILogger<CleanupService> logger)
         {
@@ -28,27 +32,32 @@ namespace Memtly.Core.BackgroundWorkers
             if (enabled)
             {
                 var cron = await _settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.Cleanup.Schedule, "0 4 * * *");
-                var nextExecutionTime = DateTime.Now.AddMinutes(1);
+                NextExecutionTime = DateTime.Now.AddMinutes(1);
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     var currentCron = await _settingsHelper.GetOrDefault(MemtlyConfiguration.BackgroundServices.Cleanup.Schedule, "0 4 * * *");
 
                     var now = DateTime.Now;
-                    if (now >= nextExecutionTime)
+                    if (now >= NextExecutionTime)
                     {
-                        await LinkStaleGalleryItemLikes();
-                        await Cleanup();
-                        await FlushOldAuditLogs();
+                        if (!_running)
+                        {
+                            _running = true;
+                            await LinkStaleGalleryItemLikes();
+                            await Cleanup();
+                            await FlushOldAuditLogs();
+                            _running = false;
+                        }
 
                         var schedule = CrontabSchedule.Parse(cron, new CrontabSchedule.ParseOptions() { IncludingSeconds = cron.Split(new[] { ' ' }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Length == 6 });
-                        nextExecutionTime = schedule.GetNextOccurrence(now);
+                        NextExecutionTime = schedule.GetNextOccurrence(now);
                     }
                     else
                     {
                         if (!currentCron.Equals(cron))
                         {
-                            nextExecutionTime = DateTime.Now;
+                            NextExecutionTime = DateTime.Now;
                         }
 
                         await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
