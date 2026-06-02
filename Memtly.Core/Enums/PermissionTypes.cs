@@ -86,6 +86,16 @@
     }
 
     [Flags]
+    public enum BackgroundWorkerPermissions : long
+    {
+        None = 0,
+        RequestInstantRun = 1,
+        RequestDirectoryScanner = 2,
+        RequestCleanup = 4,
+        RequestNotificationReport = 8
+    }
+
+    [Flags]
     public enum FeaturePermissions : long
     {
         None = 0,

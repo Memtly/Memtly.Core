@@ -5,27 +5,7 @@
 @if (Model != null && Model.Any())
 {
     <div class="setting-section">
-        <h5 class="mb-3">@_localizer["Colour_Overrides"].Value</h5>
-
-        <div class="row mb-4 mb-lg-4 setting-container">
-            <div class="col-12">
-                <label class="setting-label">@_localizer["Enabled"].Value</label>
-                <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Enabled">
-                    @foreach (var option in ViewOptions.YesNo)
-                    {
-                        if (Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Enabled.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
-                        {
-                            <option value="@option.Value" selected="selected">@option.Key</option>
-                        }
-                        else
-                        {
-                            <option value="@option.Value">@option.Key</option>
-                        }
-                    }
-                </select>
-                <div class="setting-hint form-text">@_localizer["Settings_Themes_ColourOverrides_Enabled_Help"].Value</div>
-            </div>
-        </div>
+        <h5 class="mb-3">@_localizer["Custom_Theme"].Value</h5>
 
         <div class="row mb-4 mb-lg-4 setting-container">
             <div class="col-12">

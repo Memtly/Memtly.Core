@@ -14,6 +14,7 @@ namespace Memtly.Core.Models
             Settings = SettingsPermissions.None;
             Audit = AuditPermissions.None;
             Data = DataPermissions.None;
+            BackgroundWorkerPermissions = BackgroundWorkerPermissions.None;
             Features = FeaturePermissions.None;
         }
 
@@ -25,6 +26,7 @@ namespace Memtly.Core.Models
         public SettingsPermissions Settings { get; set; }
         public AuditPermissions Audit { get; set; }
         public DataPermissions Data { get; set; }
+        public BackgroundWorkerPermissions BackgroundWorkerPermissions { get; set; }
         public FeaturePermissions Features { get; set; }
     }
 
@@ -187,6 +189,10 @@ namespace Memtly.Core.Models
                 | DataPermissions.Import
                 | DataPermissions.Export
                 | DataPermissions.Wipe;
+            BackgroundWorkerPermissions =
+                BackgroundWorkerPermissions.RequestInstantRun
+                | BackgroundWorkerPermissions.RequestDirectoryScanner
+                | BackgroundWorkerPermissions.RequestCleanup;
         }
     }
 }

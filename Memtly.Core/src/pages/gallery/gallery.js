@@ -83,32 +83,56 @@ function bindDownloadGroup() {
         const items = $('div#main-gallery .btn-multi-select.fa-square-check');
         let ids = items.map(function () { return $(this).data('id'); }).get();
 
+        let nativeXhr;
+
         $.ajax({
             url: '/Gallery/DownloadGallery',
             method: 'POST',
             data: { Id: id, SecretKey: secretKey, Group: group, FileFilter: ids },
+            xhr: function () {
+                nativeXhr = new XMLHttpRequest();
+                return nativeXhr;
+            },
             xhrFields: {
                 responseType: 'blob'
             },
         })
-            .done((data, status, xhr) => {
+            .done((data) => {
                 hideLoader();
+                downloadBlob(`${name}_${getTimestamp()}.zip`, 'application/zip', data, nativeXhr);
+            })
+            .fail(async function (jqXHR) {
+                hideLoader();
+
                 try {
-                    downloadBlob(`${name}_${getTimestamp()}.zip`, 'application/zip', data, xhr);
-                } catch (error) {
+                    if (nativeXhr.response instanceof Blob) {
+                        const text = await nativeXhr.response.text();
+                        const json = JSON.parse(text);
+
+                        if (json.message !== undefined) {
+                            displayMessage(
+                                localization.translate('Download'),
+                                localization.translate('Download_Failed'),
+                                [json.message]
+                            );
+                        } else {
+                            displayMessage(
+                                localization.translate('Download'),
+                                localization.translate('Download_Failed')
+                            );
+                        }
+                    } else {
+                        displayMessage(
+                            localization.translate('Download'),
+                            localization.translate('Download_Failed')
+                        );
+                    }
+                } catch {
                     displayMessage(
                         localization.translate('Download'),
                         localization.translate('Download_Failed')
                     );
                 }
-            })
-            .fail((xhr, error) => {
-                hideLoader();
-                displayMessage(
-                    localization.translate('Download'),
-                    localization.translate('Download_Failed'),
-                    [error]
-                );
             });
     });
 }
@@ -130,32 +154,56 @@ function bindDownloadGallery() {
         const items = $('div#main-gallery .btn-multi-select.fa-square-check');
         let ids = items.map(function () { return $(this).data('id'); }).get();
 
+        let nativeXhr;
+
         $.ajax({
             url: '/Gallery/DownloadGallery',
             method: 'POST',
             data: { Id: id, SecretKey: secretKey, FileFilter: ids },
+            xhr: function () {
+                nativeXhr = new XMLHttpRequest();
+                return nativeXhr;
+            },
             xhrFields: {
                 responseType: 'blob'
             },
         })
-            .done((data, status, xhr) => {
+            .done((data) => {
                 hideLoader();
+                downloadBlob(`${name}_${getTimestamp()}.zip`, 'application/zip', data, nativeXhr);
+            })
+            .fail(async function (jqXHR) {
+                hideLoader();
+
                 try {
-                    downloadBlob(`${name}_${getTimestamp()}.zip`, 'application/zip', data, xhr);
-                } catch (error) {
+                    if (nativeXhr.response instanceof Blob) {
+                        const text = await nativeXhr.response.text();
+                        const json = JSON.parse(text);
+
+                        if (json.message !== undefined) {
+                            displayMessage(
+                                localization.translate('Download'),
+                                localization.translate('Download_Failed'),
+                                [json.message]
+                            );
+                        } else {
+                            displayMessage(
+                                localization.translate('Download'),
+                                localization.translate('Download_Failed')
+                            );
+                        }
+                    } else {
+                        displayMessage(
+                            localization.translate('Download'),
+                            localization.translate('Download_Failed')
+                        );
+                    }
+                } catch {
                     displayMessage(
                         localization.translate('Download'),
                         localization.translate('Download_Failed')
                     );
                 }
-            })
-            .fail((xhr, error) => {
-                hideLoader();
-                displayMessage(
-                    localization.translate('Download'),
-                    localization.translate('Download_Failed'),
-                    [error]
-                );
             });
     });
 }

@@ -229,6 +229,10 @@ namespace Memtly.Core.Extensions
                         {
                             hasPermissions = permissions.Data.HasFlag(type);
                         }
+                        else if (type.GetType() == typeof(BackgroundWorkerPermissions))
+                        {
+                            hasPermissions = permissions.BackgroundWorkerPermissions.HasFlag(type);
+                        }
 
                         return hasPermissions && (ownerId != null && identity.GetUserId() == ownerId);
                     }

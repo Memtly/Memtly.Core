@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Memtly.Core.Constants;
 using Memtly.Core.Enums;
 using Memtly.Core.Extensions;
 using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Database;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Memtly.Core.Controllers
 {
@@ -91,7 +91,7 @@ namespace Memtly.Core.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SetIdentity(string name, string? emailAddress)
+        public async Task<IActionResult> SetIdentity(string name, string? email)
         {
             try
             {
@@ -101,14 +101,14 @@ namespace Memtly.Core.Controllers
                 {
                     return Json(new { success = false, reason = 1 });
                 }
-                else if (emailRequired && (string.IsNullOrWhiteSpace(emailAddress) || EmailValidationHelper.IsValid(emailAddress) == false || HtmlSanitizer.MayContainXss(emailAddress)))
+                else if (emailRequired && (string.IsNullOrWhiteSpace(email) || EmailValidationHelper.IsValid(email) == false || HtmlSanitizer.MayContainXss(email)))
                 {
                     return Json(new { success = false, reason = 2 });
                 }
                 else
                 {
                     HttpContext.Session.SetString(SessionKey.Viewer.Identity, name);
-                    HttpContext.Session.SetString(SessionKey.Viewer.EmailAddress, emailAddress ?? string.Empty);
+                    HttpContext.Session.SetString(SessionKey.Viewer.EmailAddress, email ?? string.Empty);
 
                     return Json(new { success = true });
                 }

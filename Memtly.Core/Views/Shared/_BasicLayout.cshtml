@@ -16,22 +16,30 @@
     }
 
     string theme = await _settings.GetOrDefault(MemtlyConfiguration.Themes.Default, Themes.AutoDetect.ToString().ToLower());
+
     try
     {
-        var selectedTheme = Context?.Request?.Cookies["Theme"]?.Trim();
-        if (!string.IsNullOrWhiteSpace(selectedTheme))
+        if (theme.Equals(Themes.Custom.ToString(), StringComparison.OrdinalIgnoreCase))
         {
-            foreach (Themes t in Enum.GetValues(typeof(Themes)))
+            theme = Themes.Custom.ToString().ToLower();
+        }
+        else
+        {
+            var selectedTheme = Context?.Request?.Cookies["Theme"]?.Trim();
+            if (!string.IsNullOrWhiteSpace(selectedTheme))
             {
-                if (MemtlyCore.Version == MemtlyVersion.Community && (t == Themes.Green || t == Themes.DarkGreen))
+                foreach (Themes t in Enum.GetValues(typeof(Themes)))
                 {
-                    continue;
-                }
+                    if (MemtlyCore.Version == MemtlyVersion.Community && (t == Themes.Green || t == Themes.DarkGreen || t == Themes.Custom))
+                    {
+                        continue;
+                    }
 
-                if (selectedTheme.Equals(t.ToString(), StringComparison.OrdinalIgnoreCase))
-                {
-                    theme = t.ToString().ToLower();
-                    break;
+                    if (selectedTheme.Equals(t.ToString(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        theme = t.ToString().ToLower();
+                        break;
+                    }
                 }
             }
         }

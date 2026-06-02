@@ -15,6 +15,7 @@ function bindEventHandlers() {
     bindTestNotificationButtons();
     bindAdvancedSettingsButtons();
     bindSettingsSearchBox();
+    bindBackgroundWorkerButtons();
 }
 
 function bindUpdateSettingActions() {
@@ -40,7 +41,12 @@ function bindSaveSettingsButton() {
             })
                 .done(data => {
                     if (data.success === true) {
-                        displayMessage(localization.translate('Update_Settings'), localization.translate('Update_Settings_Success'));
+                        displayMessage(localization.translate('Update_Settings'), localization.translate('Update_Settings_Success'), null, () => {
+                            const hasThemeChanges = settingsList.some(item => item.key?.toLowerCase()?.startsWith("memtly:themes:"));
+                            if (hasThemeChanges) {
+                                window.location.reload();
+                            }
+                        });
                     } else if (data.message) {
                         displayMessage(localization.translate('Update_Settings'), localization.translate('Update_Settings_Failed'), [data.message]);
                     } else {
@@ -154,6 +160,80 @@ function bindAdvancedSettingsButtons() {
 function bindSettingsSearchBox() {
     $(document).off('keyup', 'input#settings-search-term').on('keyup', 'input#settings-search-term', function (e) {
         searchSettings();
+    });
+}
+
+function bindBackgroundWorkerButtons() {
+    $(document).off('click', '.btnRequestDirectoryScan').on('click', '.btnRequestDirectoryScan', function (e) {
+        displayLoader(localization.translate('Loading'));
+        $.ajax({
+            url: '/Account/RequestBackgroundWorker',
+            method: 'POST',
+            data: {
+                type: 'DirectoryScanner'
+            }
+        })
+            .done(data => {
+                if (data.success === true) {
+                    displayMessage(localization.translate('Settings_BackgroundServices'), localization.translate('Request_Background_Worker_Success'));
+                    $('.btnRequestDirectoryScan').addClass('disabled');
+                } else if (data.message) {
+                    displayMessage(localization.translate('Settings_BackgroundServices'), localization.translate('Request_Background_Worker_Failed'), [data.message]);
+                } else {
+                    displayMessage(localization.translate('Settings_BackgroundServices'), localization.translate('Request_Background_Worker_Failed'));
+                }
+            })
+            .fail((xhr, error) => {
+                displayMessage(localization.translate('Settings_BackgroundServices'), localization.translate('Request_Background_Worker_Failed'), [error]);
+            });
+    });
+
+    $(document).off('click', '.btnRequestEmailReport').on('click', '.btnRequestEmailReport', function (e) {
+        displayLoader(localization.translate('Loading'));
+        $.ajax({
+            url: '/Account/RequestBackgroundWorker',
+            method: 'POST',
+            data: {
+                type: 'NotificationReport'
+            }
+        })
+            .done(data => {
+                if (data.success === true) {
+                    displayMessage(localization.translate('Settings_BackgroundServices'), localization.translate('Request_Background_Worker_Success'));
+                    $('.btnRequestEmailReport').addClass('disabled');
+                } else if (data.message) {
+                    displayMessage(localization.translate('Settings_BackgroundServices'), localization.translate('Request_Background_Worker_Failed'), [data.message]);
+                } else {
+                    displayMessage(localization.translate('Settings_BackgroundServices'), localization.translate('Request_Background_Worker_Failed'));
+                }
+            })
+            .fail((xhr, error) => {
+                displayMessage(localization.translate('Settings_BackgroundServices'), localization.translate('Request_Background_Worker_Failed'), [error]);
+            });
+    });
+
+    $(document).off('click', '.btnRequestCleanup').on('click', '.btnRequestCleanup', function (e) {
+        displayLoader(localization.translate('Loading'));
+        $.ajax({
+            url: '/Account/RequestBackgroundWorker',
+            method: 'POST',
+            data: {
+                type: 'Cleanup'
+            }
+        })
+            .done(data => {
+                if (data.success === true) {
+                    displayMessage(localization.translate('Settings_BackgroundServices'), localization.translate('Request_Background_Worker_Success'));
+                    $('.btnRequestCleanup').addClass('disabled');
+                } else if (data.message) {
+                    displayMessage(localization.translate('Settings_BackgroundServices'), localization.translate('Request_Background_Worker_Failed'), [data.message]);
+                } else {
+                    displayMessage(localization.translate('Settings_BackgroundServices'), localization.translate('Request_Background_Worker_Failed'));
+                }
+            })
+            .fail((xhr, error) => {
+                displayMessage(localization.translate('Settings_BackgroundServices'), localization.translate('Request_Background_Worker_Failed'), [error]);
+            });
     });
 }
 

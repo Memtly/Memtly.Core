@@ -36,15 +36,9 @@ namespace Memtly.Core.Controllers
                     selectedTheme = await _settings.GetOrDefault(MemtlyConfiguration.Themes.Default, Themes.AutoDetect.ToString());
                 }
 
-                var customThemeEnabled = await _settings.GetOrDefault(MemtlyConfiguration.Themes.ColourOverrides.Enabled, false);
                 foreach (Themes item in Enum.GetValues(typeof(Themes)))
                 {
-                    if (MemtlyCore.Version == MemtlyVersion.Community && (item == Themes.Green || item == Themes.DarkGreen))
-                    {
-                        continue;
-                    }
-
-                    if (item == Themes.Custom && !customThemeEnabled)
+                    if (MemtlyCore.Version == MemtlyVersion.Community && (item == Themes.Green || item == Themes.DarkGreen || item == Themes.Custom))
                     {
                         continue;
                     }

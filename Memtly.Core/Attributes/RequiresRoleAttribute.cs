@@ -17,6 +17,7 @@ namespace Memtly.Core.Attributes
         public SettingsPermissions SettingsPermission { get; set; } = SettingsPermissions.None;
         public AuditPermissions AuditPermission { get; set; } = AuditPermissions.None;
         public DataPermissions DataPermission { get; set; } = DataPermissions.None;
+        public BackgroundWorkerPermissions BackgroundWorkerPermissions { get; set; } = BackgroundWorkerPermissions.None;
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
@@ -37,6 +38,7 @@ namespace Memtly.Core.Attributes
                     || (pemissions.Settings != SettingsPermissions.None && !pemissions.Settings.HasFlag(this.SettingsPermission))
                     || (pemissions.Audit != AuditPermissions.None && !pemissions.Audit.HasFlag(this.AuditPermission))
                     || (pemissions.Data != DataPermissions.None && !pemissions.Data.HasFlag(this.DataPermission))
+                    || (pemissions.BackgroundWorkerPermissions != BackgroundWorkerPermissions.None && !pemissions.Data.HasFlag(this.BackgroundWorkerPermissions))
                 )
                 {
                     filterContext.Result = new RedirectToActionResult("Index", "Error", new { Reason = ErrorCode.Unauthorized }, false);

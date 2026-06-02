@@ -42,179 +42,7 @@ function bindAddUserButton() {
             return;
         }
 
-        displayPopup({
-            Title: localization.translate('User_Create'),
-            Fields: [{
-                Id: 'user-username',
-                Name: localization.translate('User_Username'),
-                Hint: localization.translate('User_Username_Hint')
-            },
-            {
-                Id: 'user-firstname',
-                Name: localization.translate('User_Firstname'),
-                Hint: localization.translate('User_Firstname_Hint')
-            },
-            {
-                Id: 'user-lastname',
-                Name: localization.translate('User_Lastname'),
-                Hint: localization.translate('User_Lastname_Hint')
-            },
-            {
-                Id: 'user-email',
-                Name: localization.translate('User_Email'),
-                Hint: localization.translate('User_Email_Hint')
-            },
-            {
-                Id: 'user-password',
-                Name: localization.translate('User_Password'),
-                Hint: localization.translate('User_Password_Hint'),
-                Type: "password"
-            },
-            {
-                Id: 'user-cpassword',
-                Name: localization.translate('User_Confirm_Password'),
-                Hint: localization.translate('User_Confirm_Password_Hint'),
-                Type: "password",
-                Class: 'confirm-password'
-            },
-            {
-                Id: 'user-level',
-                Name: localization.translate('User_Level'),
-                Hint: localization.translate('User_Level_Hint'),
-                Type: 'select',
-                SelectOptions: [
-                    {
-                        key: '1',
-                        selected: true,
-                        value: 'Basic'
-                    },
-                    {
-                        key: '3',
-                        selected: false,
-                        value: 'Reviewer'
-                    },
-                    {
-                        key: '4',
-                        selected: false,
-                        value: 'Moderator'
-                    },
-                    {
-                        key: '5',
-                        selected: false,
-                        value: 'Admin'
-                    }
-                ]
-                },
-                {
-                    Id: 'user-tier',
-                    Name: localization.translate('User_Tier'),
-                    Hint: localization.translate('User_Tier_Hint'),
-                    Type: 'select',
-                    SelectOptions: [
-                        {
-                            key: '1',
-                            selected: true,
-                            value: 'None'
-                        },
-                        {
-                            key: '2',
-                            selected: false,
-                            value: 'Basic'
-                        },
-                        {
-                            key: '3',
-                            selected: false,
-                            value: 'Advanced'
-                        },
-                        {
-                            key: '4',
-                            selected: false,
-                            value: 'Premium'
-                        }
-                    ]
-                }],
-            FooterHtml: `${generatePasswordValidationContainer('input#popup-modal-field-user-password')}`,
-            Buttons: [{
-                Text: localization.translate('Add'),
-                Class: 'btn-primary-2',
-                Callback: function () {
-                    displayLoader(localization.translate('Loading'));
-
-                    const usernameRegex = /^[a-zA-Z0-9\-\s-_~]+$/;
-                    let username = $('#popup-modal-field-user-username').val();
-                    if (username == undefined || username.length == 0 || !usernameRegex.test(username)) {
-                        displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Username'));
-                        return;
-                    }
-
-                    let firstname = $('#popup-modal-field-user-firstname').val();
-                    if (firstname == undefined || firstname.length < 1 || firstname.length > 50) {
-                        displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Firstname'));
-                        return;
-                    }
-
-                    let lastname = $('#popup-modal-field-user-lastname').val();
-                    if (lastname == undefined || lastname.length < 1 || lastname.length > 50) {
-                        displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Lastname'));
-                        return;
-                    }
-
-                    let email = $('#popup-modal-field-user-email').val();
-                    const emailRegex = /^((?!\.)[\w\-_.]*[^.])(@[\w\-_]+)(\.\w+(\.\w+)?[^.\W])$/;
-                    if (email != undefined && email.length > 0 && !emailRegex.test(email)) {
-                        displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Email'));
-                        return;
-                    }
-
-                    let password = $('#popup-modal-field-user-password').val();
-                    if (password == undefined || password.length < 8) {
-                        displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Password'));
-                        return;
-                    }
-
-                    let cpassword = $('#popup-modal-field-user-cpassword').val();
-                    if (password !== cpassword) {
-                        displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_CPassword'));
-                        return;
-                    }
-
-                    let level = $('#popup-modal-field-user-level').val();
-                    if (level == undefined || level.length == 0) {
-                        displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Level'));
-                        return;
-                    }
-
-                    let tier = $('#popup-modal-field-user-tier').val();
-                    if (tier == undefined || tier.length == 0) {
-                        displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Tier'));
-                        return;
-                    }
-
-                    $.ajax({
-                        url: '/Account/AddUser',
-                        method: 'POST',
-                        data: { Username: username, Firstname: firstname, Lastname: lastname, Email: email, Password: password, CPassword: cpassword, Level: level, Tier: tier }
-                    })
-                        .done(data => {
-                            if (data.success === true) {
-                                updateUsersList();
-                                displayMessage(localization.translate('User_Create'), localization.translate('User_Create_Success'));
-                            } else if (data.message) {
-                                displayMessage(localization.translate('User_Create'), localization.translate('User_Create_Failed'), [data.message]);
-                            } else {
-                                displayMessage(localization.translate('User_Create'), localization.translate('User_Create_Failed'));
-                            }
-                        })
-                        .fail((xhr, error) => {
-                            displayMessage(localization.translate('User_Create'), localization.translate('User_Create_Failed'), [error]);
-                        });
-                }
-            }, {
-                Text: localization.translate('Close')
-            }]
-        }, () => {
-            initPasswordValidation();
-        });
+        displayAddUserPopup();
     });
 }
 
@@ -226,157 +54,17 @@ function bindEditUserButton() {
             return;
         }
 
-        let row = $(this).closest('tr');
-        let canModifyAccessLevel = row.data('modify-level');
+        const row = $(this).closest('tr');
+        const id = row.data('user-id');
+        const username = row.data('user-username');
+        const firstname = row.data('user-firstname');
+        const lastname = row.data('user-lastname');
+        const email = row.data('user-email');
+        const level = row.data('user-level');
+        const tier = row.data('user-tier');
+        const canModifyAccessLevel = row.data('modify-level');
 
-        displayPopup({
-            Title: localization.translate('User_Edit'),
-            Fields: [{
-                Id: 'user-id',
-                Value: row.data('user-id'),
-                Type: 'hidden'
-            }, {
-                Id: 'user-username',
-                Name: localization.translate('User_Username'),
-                Value: row.data('user-username'),
-                Hint: localization.translate('User_Username_Hint'),
-                Disabled: true
-            }, {
-                Id: 'user-firstname',
-                Name: localization.translate('User_Firstname'),
-                Value: row.data('user-firstname'),
-                Hint: localization.translate('User_Firstname_Hint')
-            }, {
-                Id: 'user-lastname',
-                Name: localization.translate('User_Lastname'),
-                Value: row.data('user-lastname'),
-                Hint: localization.translate('User_Lastname_Hint')
-            }, {
-                Id: 'user-email',
-                Name: localization.translate('User_Email'),
-                Value: row.data('user-email'),
-                Hint: localization.translate('User_Email_Hint')
-            }, {
-                Id: 'user-level',
-                Name: localization.translate('User_Level'),
-                Hint: localization.translate('User_Level_Hint'),
-                Type: 'select',
-                SelectOptions: canModifyAccessLevel ? [
-                    {
-                        key: '1',
-                        selected: row.data('user-level') == '1',
-                        value: 'Basic'
-                    },
-                    {
-                        key: '3',
-                        selected: row.data('user-level') == '3',
-                        value: 'Reviewer'
-                    },
-                    {
-                        key: '4',
-                        selected: row.data('user-level') == '4',
-                        value: 'Moderator'
-                    },
-                    {
-                        key: '5',
-                        selected: row.data('user-level') == '5',
-                        value: 'Admin'
-                    }
-                ] : []
-            }, {
-                Id: 'user-tier',
-                Name: localization.translate('User_Tier'),
-                Hint: localization.translate('User_Tier_Hint'),
-                Type: 'select',
-                SelectOptions: canModifyAccessLevel ? [
-                    {
-                        key: '0',
-                        selected: row.data('user-tier') == '0',
-                        value: 'None'
-                    },
-                    {
-                        key: '1',
-                        selected: row.data('user-tier') == '1',
-                        value: 'Basic'
-                    },
-                    {
-                        key: '2',
-                        selected: row.data('user-tier') == '2',
-                        value: 'Advanced'
-                    },
-                    {
-                        key: '3',
-                        selected: row.data('user-tier') == '3',
-                        value: 'Premium'
-                    }
-                ] : []
-            }],
-            Buttons: [{
-                Text: localization.translate('Update'),
-                Class: 'btn-primary-2',
-                Callback: function () {
-                    displayLoader(localization.translate('Loading'));
-
-                    let id = $('#popup-modal-field-user-id').val();
-                    if (id == undefined || id.length == 0) {
-                        displayMessage(localization.translate('User_Edit'), localization.translate('User_Missing_Id'));
-                        return;
-                    }
-
-                    let firstname = $('#popup-modal-field-user-firstname').val();
-                    if (firstname != undefined && (firstname.length < 1 || firstname.length > 50)) {
-                        displayMessage(localization.translate('User_Edit'), localization.translate('User_Invalid_Firstname'));
-                        return;
-                    }
-
-                    let lastname = $('#popup-modal-field-user-lastname').val();
-                    if (lastname != undefined && (lastname.length < 1 || lastname.length > 50)) {
-                        displayMessage(localization.translate('User_Edit'), localization.translate('User_Invalid_Lastname'));
-                        return;
-                    }
-
-                    let email = $('#popup-modal-field-user-email').val();
-                    const emailRegex = /^((?!\.)[\w\-_.]*[^.])(@[\w\-_]+)(\.\w+(\.\w+)?[^.\W])$/;
-                    if (email != undefined && email.length > 0 && !emailRegex.test(email)) {
-                        displayMessage(localization.translate('User_Edit'), localization.translate('User_Invalid_Email'));
-                        return;
-                    }
-
-                    let level = $('#popup-modal-field-user-level').val();
-                    if (canModifyAccessLevel && (level == undefined || level.length == 0)) {
-                        displayMessage(localization.translate('User_Edit'), localization.translate('User_Invalid_Level'));
-                        return;
-                    }
-
-                    let tier = $('#popup-modal-field-user-tier').val();
-                    if (canModifyAccessLevel && (tier == undefined || tier.length == 0)) {
-                        displayMessage(localization.translate('User_Edit'), localization.translate('User_Invalid_Tier'));
-                        return;
-                    }
-
-                    $.ajax({
-                        url: '/Account/EditUser',
-                        method: 'PUT',
-                        data: { Id: id, Firstname: firstname, Lastname: lastname, Email: email, Level: level, Tier: tier }
-                    })
-                        .done(data => {
-                            if (data.success === true) {
-                                updateUsersList();
-                                displayMessage(localization.translate('User_Edit'), localization.translate('User_Edit_Success'));
-                            } else if (data.message) {
-                                displayMessage(localization.translate('User_Edit'), localization.translate('User_Edit_Failed'), [data.message]);
-                            } else {
-                                displayMessage(localization.translate('User_Edit'), localization.translate('User_Edit_Failed'));
-                            }
-                        })
-                        .fail((xhr, error) => {
-                            displayMessage(localization.translate('User_Edit'), localization.translate('User_Edit_Failed'), [error]);
-                        });
-                }
-            }, {
-                Text: localization.translate('Close')
-            }]
-        });
+        displayEditUserPopup(id, username, firstname, lastname, email, level, tier, canModifyAccessLevel);
     });
 }
 
@@ -734,6 +422,381 @@ function bindDeleteUserButton() {
                 Text: localization.translate('Close')
             }]
         });
+    });
+}
+
+function displayAddUserPopup(username, firstname, lastname, email, password, cpassword, level, tier) {
+    displayPopup({
+        Title: localization.translate('User_Create'),
+        Fields: [{
+            Id: 'user-username',
+            Name: localization.translate('User_Username'),
+            Hint: localization.translate('User_Username_Hint'),
+            Value: username
+        },
+        {
+            Id: 'user-firstname',
+            Name: localization.translate('User_Firstname'),
+            Hint: localization.translate('User_Firstname_Hint'),
+            Value: firstname
+        },
+        {
+            Id: 'user-lastname',
+            Name: localization.translate('User_Lastname'),
+            Hint: localization.translate('User_Lastname_Hint'),
+            Value: lastname
+        },
+        {
+            Id: 'user-email',
+            Name: localization.translate('User_Email'),
+            Hint: localization.translate('User_Email_Hint'),
+            Value: email
+        },
+        {
+            Id: 'user-password',
+            Name: localization.translate('User_Password'),
+            Hint: localization.translate('User_Password_Hint'),
+            Value: password,
+            Type: "password"
+        },
+        {
+            Id: 'user-cpassword',
+            Name: localization.translate('User_Confirm_Password'),
+            Hint: localization.translate('User_Confirm_Password_Hint'),
+            Value: cpassword,
+            Type: "password",
+            Class: 'confirm-password'
+        },
+        {
+            Id: 'user-level',
+            Name: localization.translate('User_Level'),
+            Hint: localization.translate('User_Level_Hint'),
+            Type: 'select',
+            SelectOptions: [
+                {
+                    key: '1',
+                    selected: level === undefined || level === '' || level === '1',
+                    value: 'Basic'
+                },
+                {
+                    key: '3',
+                    selected: level === '3',
+                    value: 'Reviewer'
+                },
+                {
+                    key: '4',
+                    selected: level === '4',
+                    value: 'Moderator'
+                },
+                {
+                    key: '5',
+                    selected: level === '5',
+                    value: 'Admin'
+                }
+            ]
+        },
+        {
+            Id: 'user-tier',
+            Name: localization.translate('User_Tier'),
+            Hint: localization.translate('User_Tier_Hint'),
+            Type: 'select',
+            SelectOptions: [
+                {
+                    key: '1',
+                    selected: tier === undefined || tier === '' || tier === '1',
+                    value: 'None'
+                },
+                {
+                    key: '2',
+                    selected: tier === '2',
+                    value: 'Basic'
+                },
+                {
+                    key: '3',
+                    selected: tier === '3',
+                    value: 'Advanced'
+                },
+                {
+                    key: '4',
+                    selected: tier === '4',
+                    value: 'Premium'
+                }
+            ]
+        }],
+        FooterHtml: `${generatePasswordValidationContainer('input#popup-modal-field-user-password')}`,
+        Buttons: [{
+            Text: localization.translate('Add'),
+            Class: 'btn-primary-2',
+            Callback: function () {
+                displayLoader(localization.translate('Loading'));
+
+                username = $('#popup-modal-field-user-username').val();
+                firstname = $('#popup-modal-field-user-firstname').val();
+                lastname = $('#popup-modal-field-user-lastname').val();
+                email = $('#popup-modal-field-user-email').val();
+                password = $('#popup-modal-field-user-password').val();
+                cpassword = $('#popup-modal-field-user-cpassword').val();
+                level = $('#popup-modal-field-user-level').val();
+                tier = $('#popup-modal-field-user-tier').val();
+
+                const usernameRegex = /^[a-zA-Z0-9\-\s-_~]+$/;
+                if (username == undefined || username.length == 0 || !usernameRegex.test(username)) {
+                    displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Username'), null, () => {
+                        displayAddUserPopup(username, firstname, lastname, email, password, cpassword, level, tier);
+                    });
+                    return;
+                }
+
+                if (firstname == undefined || firstname.length < 1 || firstname.length > 50) {
+                    displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Firstname'), null, () => {
+                        displayAddUserPopup(username, firstname, lastname, email, password, cpassword, level, tier);
+                    });
+                    return;
+                }
+
+                if (lastname == undefined || lastname.length < 1 || lastname.length > 50) {
+                    displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Lastname'), null, () => {
+                        displayAddUserPopup(username, firstname, lastname, email, password, cpassword, level, tier);
+                    });
+                    return;
+                }
+
+                const emailRegex = /^((?!\.)[\w\-_.]*[^.])(@[\w\-_]+)(\.\w+(\.\w+)?[^.\W])$/;
+                if (email != undefined && email.length > 0 && !emailRegex.test(email)) {
+                    displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Email'), null, () => {
+                        displayAddUserPopup(username, firstname, lastname, email, password, cpassword, level, tier);
+                    });
+                    return;
+                }
+
+                if (password == undefined || password.length < 8) {
+                    displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Password'), null, () => {
+                        displayAddUserPopup(username, firstname, lastname, email, password, cpassword, level, tier);
+                    });
+                    return;
+                }
+
+                if (password !== cpassword) {
+                    displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_CPassword'), null, () => {
+                        displayAddUserPopup(username, firstname, lastname, email, password, cpassword, level, tier);
+                    });
+                    return;
+                }
+
+                if (level == undefined || level.length == 0) {
+                    displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Level'), null, () => {
+                        displayAddUserPopup(username, firstname, lastname, email, password, cpassword, level, tier);
+                    });
+                    return;
+                }
+
+                if (tier == undefined || tier.length == 0) {
+                    displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Tier'), null, () => {
+                        displayAddUserPopup(username, firstname, lastname, email, password, cpassword, level, tier);
+                    });
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Account/AddUser',
+                    method: 'POST',
+                    data: { Username: username, Firstname: firstname, Lastname: lastname, Email: email, Password: password, CPassword: cpassword, Level: level, Tier: tier }
+                })
+                    .done(data => {
+                        if (data.success === true) {
+                            updateUsersList();
+                            displayMessage(localization.translate('User_Create'), localization.translate('User_Create_Success'));
+                        } else if (data.message) {
+                            displayMessage(localization.translate('User_Create'), localization.translate('User_Create_Failed'), [data.message], () => {
+                                displayAddUserPopup(username, firstname, lastname, email, password, cpassword, level, tier);
+                            });
+                        } else {
+                            displayMessage(localization.translate('User_Create'), localization.translate('User_Create_Failed'), null, () => {
+                                displayAddUserPopup(username, firstname, lastname, email, password, cpassword, level, tier);
+                            });
+                        }
+                    })
+                    .fail((xhr, error) => {
+                        displayMessage(localization.translate('User_Create'), localization.translate('User_Create_Failed'), [error], () => {
+                            displayAddUserPopup(username, firstname, lastname, email, password, cpassword, level, tier);
+                        });
+                    });
+            }
+        }, {
+            Text: localization.translate('Close')
+        }]
+    }, () => {
+        initPasswordValidation();
+    });
+}
+
+function displayEditUserPopup(id, username, firstname, lastname, email, level, tier, canModifyAccessLevel) {
+    displayPopup({
+        Title: localization.translate('User_Edit'),
+        Fields: [{
+            Id: 'user-id',
+            Value: id,
+            Type: 'hidden'
+        }, {
+            Id: 'user-username',
+            Name: localization.translate('User_Username'),
+            Value: username,
+            Hint: localization.translate('User_Username_Hint'),
+            Disabled: true
+        }, {
+            Id: 'user-firstname',
+            Name: localization.translate('User_Firstname'),
+            Value: firstname,
+            Hint: localization.translate('User_Firstname_Hint')
+        }, {
+            Id: 'user-lastname',
+            Name: localization.translate('User_Lastname'),
+            Value: lastname,
+            Hint: localization.translate('User_Lastname_Hint')
+        }, {
+            Id: 'user-email',
+            Name: localization.translate('User_Email'),
+            Value: email,
+            Hint: localization.translate('User_Email_Hint')
+        }, {
+            Id: 'user-level',
+            Name: localization.translate('User_Level'),
+            Hint: localization.translate('User_Level_Hint'),
+            Type: 'select',
+            SelectOptions: canModifyAccessLevel ? [
+                {
+                    key: '1',
+                    selected: level === undefined || level === '' || level == '1',
+                    value: 'Basic'
+                },
+                {
+                    key: '3',
+                    selected: level === '3',
+                    value: 'Reviewer'
+                },
+                {
+                    key: '4',
+                    selected: level === '4',
+                    value: 'Moderator'
+                },
+                {
+                    key: '5',
+                    selected: level === '5',
+                    value: 'Admin'
+                }
+            ] : []
+        }, {
+            Id: 'user-tier',
+            Name: localization.translate('User_Tier'),
+            Hint: localization.translate('User_Tier_Hint'),
+            Type: 'select',
+            SelectOptions: canModifyAccessLevel ? [
+                {
+                    key: '0',
+                    selected: tier === undefined || tier === '' || tier == '0',
+                    value: 'None'
+                },
+                {
+                    key: '1',
+                    selected: tier === '1',
+                    value: 'Basic'
+                },
+                {
+                    key: '2',
+                    selected: tier === '2',
+                    value: 'Advanced'
+                },
+                {
+                    key: '3',
+                    selected: tier === '3',
+                    value: 'Premium'
+                }
+            ] : []
+        }],
+        Buttons: [{
+            Text: localization.translate('Update'),
+            Class: 'btn-primary-2',
+            Callback: function () {
+                displayLoader(localization.translate('Loading'));
+
+                username = $('#popup-modal-field-user-username').val();
+                firstname = $('#popup-modal-field-user-firstname').val();
+                lastname = $('#popup-modal-field-user-lastname').val();
+                email = $('#popup-modal-field-user-email').val();
+                level = $('#popup-modal-field-user-level').val();
+                tier = $('#popup-modal-field-user-tier').val();
+
+                if (id == undefined || id.length == 0) {
+                    displayMessage(localization.translate('User_Edit'), localization.translate('User_Missing_Id'), null, () => {
+                        displayEditUserPopup(id, username, firstname, lastname, email, level, tier, canModifyAccessLevel);
+                    });
+                    return;
+                }
+
+                if (firstname != undefined && (firstname.length < 1 || firstname.length > 50)) {
+                    displayMessage(localization.translate('User_Edit'), localization.translate('User_Invalid_Firstname'), null, () => {
+                        displayEditUserPopup(id, username, firstname, lastname, email, level, tier, canModifyAccessLevel);
+                    });
+                    return;
+                }
+
+                if (lastname != undefined && (lastname.length < 1 || lastname.length > 50)) {
+                    displayMessage(localization.translate('User_Edit'), localization.translate('User_Invalid_Lastname'), null, () => {
+                        displayEditUserPopup(id, username, firstname, lastname, email, level, tier, canModifyAccessLevel);
+                    });
+                    return;
+                }
+
+                const emailRegex = /^((?!\.)[\w\-_.]*[^.])(@[\w\-_]+)(\.\w+(\.\w+)?[^.\W])$/;
+                if (email != undefined && email.length > 0 && !emailRegex.test(email)) {
+                    displayMessage(localization.translate('User_Edit'), localization.translate('User_Invalid_Email'), null, () => {
+                        displayEditUserPopup(id, username, firstname, lastname, email, level, tier, canModifyAccessLevel);
+                    });
+                    return;
+                }
+
+                if (canModifyAccessLevel && (level == undefined || level.length == 0)) {
+                    displayMessage(localization.translate('User_Edit'), localization.translate('User_Invalid_Level'), null, () => {
+                        displayEditUserPopup(id, username, firstname, lastname, email, level, tier, canModifyAccessLevel);
+                    });
+                    return;
+                }
+
+                if (canModifyAccessLevel && (tier == undefined || tier.length == 0)) {
+                    displayMessage(localization.translate('User_Edit'), localization.translate('User_Invalid_Tier'), null, () => {
+                        displayEditUserPopup(id, username, firstname, lastname, email, level, tier, canModifyAccessLevel);
+                    });
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Account/EditUser',
+                    method: 'PUT',
+                    data: { Id: id, Firstname: firstname, Lastname: lastname, Email: email, Level: level, Tier: tier }
+                })
+                    .done(data => {
+                        if (data.success === true) {
+                            updateUsersList();
+                            displayMessage(localization.translate('User_Edit'), localization.translate('User_Edit_Success'));
+                        } else if (data.message) {
+                            displayMessage(localization.translate('User_Edit'), localization.translate('User_Edit_Failed'), [data.message], () => {
+                                displayEditUserPopup(id, username, firstname, lastname, email, level, tier, canModifyAccessLevel);
+                            });
+                        } else {
+                            displayMessage(localization.translate('User_Edit'), localization.translate('User_Edit_Failed'), null, () => {
+                                displayEditUserPopup(id, username, firstname, lastname, email, level, tier, canModifyAccessLevel);
+                            });
+                        }
+                    })
+                    .fail((xhr, error) => {
+                        displayMessage(localization.translate('User_Edit'), localization.translate('User_Edit_Failed'), [error], () => {
+                            displayEditUserPopup(id, username, firstname, lastname, email, level, tier, canModifyAccessLevel);
+                        });
+                    });
+            }
+        }, {
+            Text: localization.translate('Close')
+        }]
     });
 }
 
