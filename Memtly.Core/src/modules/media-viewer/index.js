@@ -124,7 +124,7 @@ class MediaViewer {
 
     bindSwipe() {
         $(document).off('click touchstart touchend mousedown mouseup', '.media-viewer .media-viewer-content').on('click touchstart touchend mousedown mouseup', '.media-viewer .media-viewer-content', (e) => {
-            e.preventDefault();
+            //e.preventDefault();
             e.stopPropagation();
 
             try {
