@@ -561,7 +561,7 @@ namespace Memtly.Core.Controllers
                 {
                     secretKey = secretKey ?? string.Empty;
 
-                    if (!secretKey.Equals(gallery.SecretKey))
+                    if (!string.IsNullOrWhiteSpace(gallery.SecretKey) && !secretKey.Equals(gallery.SecretKey))
                     {
                         Response.StatusCode = (int)HttpStatusCode.BadRequest;
                         _logger.LogWarning($"{_localizer["Failed_Download_Gallery"].Value} - Gallery Id: {id}, Group: '{group}', File Filter: '{string.Join(',', fileFilter ?? [])}' - Invalid secret key provided: '{secretKey}'");
