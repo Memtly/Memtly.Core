@@ -102,6 +102,10 @@
     <Content Include="src\pages\gallery\index.js" />
     <Content Include="src\pages\gallery\login.js" />
     <Content Include="src\pages\homepage\index.js" />
+    <Content Include="src\css\dark.css" />
+    <Content Include="src\css\light.css" />
+    <Content Include="src\themes\darkred.css" />
+    <Content Include="src\themes\red.css" />
     <Content Include="src\themes\darkblue.css" />
     <Content Include="src\themes\darkpink.css" />
     <Content Include="src\themes\green.css" />
@@ -119,7 +123,7 @@
   <ItemGroup>
     <PackageReference Include="dbup-mysql" Version="6.1.0" />
     <PackageReference Include="dbup-sqlite" Version="6.0.4" />
-    <PackageReference Include="Memtly.Localization" Version="1.0.3.10" />
+    <PackageReference Include="Memtly.Localization" Version="1.0.3.13" />
     <PackageReference Include="MetadataExtractor" Version="2.9.3" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.14" />

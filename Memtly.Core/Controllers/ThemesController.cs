@@ -1,3 +1,4 @@
+using Memtly.Core.Comparators;
 using Memtly.Core.Constants;
 using Memtly.Core.Enums;
 using Memtly.Core.Helpers;
@@ -36,18 +37,21 @@ namespace Memtly.Core.Controllers
                     selectedTheme = await _settings.GetOrDefault(MemtlyConfiguration.Themes.Default, Themes.AutoDetect.ToString());
                 }
 
-                foreach (Themes item in Enum.GetValues(typeof(Themes)))
+                var themes = Enum.GetValues<Themes>().ToList();
+                themes.Sort(new ThemesComparer());
+
+                foreach (Themes theme in themes)
                 {
-                    if (MemtlyCore.Version == MemtlyVersion.Community && (item == Themes.Green || item == Themes.DarkGreen || item == Themes.Custom))
+                    if (MemtlyCore.Version == MemtlyVersion.Community && theme == Themes.Custom)
                     {
                         continue;
                     }
 
                     options.Themes.Add(new SupportedThemes()
                         {
-                            Name = _localizer[item.ToString()].Value,
-                            Value = item.ToString(),
-                            Selected = selectedTheme.Equals(item.ToString(), StringComparison.OrdinalIgnoreCase)
+                            Name = _localizer[theme.ToString()].Value,
+                            Value = theme.ToString(),
+                            Selected = selectedTheme.Equals(theme.ToString(), StringComparison.OrdinalIgnoreCase)
                         });
                 }
             }
@@ -64,11 +68,6 @@ namespace Memtly.Core.Controllers
                 var selectedTheme = await _settings.GetOrDefault(MemtlyConfiguration.Themes.Default, Themes.AutoDetect.ToString());
                 foreach (Themes item in Enum.GetValues(typeof(Themes)))
                 {
-                    if (MemtlyCore.Version == MemtlyVersion.Community && (item == Themes.Green || item == Themes.DarkGreen))
-                    {
-                        continue;
-                    }
-
                     if (item.ToString().Equals(theme, StringComparison.OrdinalIgnoreCase))
                     {
                         selectedTheme = item.ToString();

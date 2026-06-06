@@ -185,6 +185,7 @@ namespace Memtly.Core.Configurations
                     await database.DeleteAllSettings();
                 }
 
+                await MigrateSettings(database, logger);
                 await ImportSettings(config, database, logger);
 
                 await database.SetSetting(new SettingModel()
@@ -205,6 +206,170 @@ namespace Memtly.Core.Configurations
                 }
             }).ConfigureAwait(false).GetAwaiter().GetResult();
         }
+
+        #region Migrations
+        private static async Task MigrateSettings(IDatabaseHelper database, ILogger logger)
+        {
+            await MigrateThemeSettings(database, logger);
+        }
+
+        private static async Task MigrateThemeSettings(IDatabaseHelper database, ILogger logger)
+        {
+            try
+            {
+                var colourOverrides = await database.GetSettingsStartingWith(MemtlyConfiguration.Themes.ColourOverrides.BaseKey);
+                if (colourOverrides != null)
+                {
+                    SettingModel? setting = null;
+                    string oldKey, newKey;
+
+                    oldKey = $"{MemtlyConfiguration.Themes.ColourOverrides.BaseKey.TrimEnd(':')}:Navbar:Text";
+                    newKey = MemtlyConfiguration.Themes.ColourOverrides.NavbarText;
+                    setting = colourOverrides.FirstOrDefault(x => x.Id!.Equals(newKey, StringComparison.OrdinalIgnoreCase));
+                    if (string.IsNullOrWhiteSpace(setting?.Value))
+                    {
+                        setting = colourOverrides.FirstOrDefault(x => x.Id!.Equals(oldKey, StringComparison.OrdinalIgnoreCase));
+                        if (setting != null && !string.IsNullOrWhiteSpace(setting.Value))
+                        {
+                            await database.SetSetting(new SettingModel()
+                            {
+                                Id = newKey,
+                                Value = setting.Value
+                            });
+                            await database.DeleteSetting(new SettingModel()
+                            {
+                                Id = oldKey
+                            });
+                        }
+                    }
+
+                    oldKey = $"{MemtlyConfiguration.Themes.ColourOverrides.BaseKey.TrimEnd(':')}:Navbar:Background";
+                    newKey = MemtlyConfiguration.Themes.ColourOverrides.NavbarBackground;
+                    setting = colourOverrides.FirstOrDefault(x => x.Id!.Equals(newKey, StringComparison.OrdinalIgnoreCase));
+                    if (string.IsNullOrWhiteSpace(setting?.Value))
+                    {
+                        setting = colourOverrides.FirstOrDefault(x => x.Id!.Equals(oldKey, StringComparison.OrdinalIgnoreCase));
+                        if (setting != null && !string.IsNullOrWhiteSpace(setting.Value))
+                        {
+                            await database.SetSetting(new SettingModel()
+                            {
+                                Id = newKey,
+                                Value = setting.Value
+                            });
+                            await database.DeleteSetting(new SettingModel()
+                            {
+                                Id = oldKey
+                            });
+                        }
+                    }
+
+                    oldKey = $"{MemtlyConfiguration.Themes.ColourOverrides.BaseKey.TrimEnd(':')}:Primary1:Background";
+                    newKey = MemtlyConfiguration.Themes.ColourOverrides.Primary1;
+                    setting = colourOverrides.FirstOrDefault(x => x.Id!.Equals(newKey, StringComparison.OrdinalIgnoreCase));
+                    if (string.IsNullOrWhiteSpace(setting?.Value))
+                    {
+                        setting = colourOverrides.FirstOrDefault(x => x.Id!.Equals(oldKey, StringComparison.OrdinalIgnoreCase));
+                        if (setting != null && !string.IsNullOrWhiteSpace(setting.Value))
+                        {
+                            await database.SetSetting(new SettingModel()
+                            {
+                                Id = newKey,
+                                Value = setting.Value
+                            });
+                            await database.DeleteSetting(new SettingModel()
+                            {
+                                Id = oldKey
+                            });
+                        }
+                    }
+
+                    oldKey = $"{MemtlyConfiguration.Themes.ColourOverrides.BaseKey.TrimEnd(':')}:Primary2:Background";
+                    newKey = MemtlyConfiguration.Themes.ColourOverrides.Primary2;
+                    setting = colourOverrides.FirstOrDefault(x => x.Id!.Equals(newKey, StringComparison.OrdinalIgnoreCase));
+                    if (string.IsNullOrWhiteSpace(setting?.Value))
+                    {
+                        setting = colourOverrides.FirstOrDefault(x => x.Id!.Equals(oldKey, StringComparison.OrdinalIgnoreCase));
+                        if (setting != null && !string.IsNullOrWhiteSpace(setting.Value))
+                        {
+                            await database.SetSetting(new SettingModel()
+                            {
+                                Id = newKey,
+                                Value = setting.Value
+                            });
+                            await database.DeleteSetting(new SettingModel()
+                            {
+                                Id = oldKey
+                            });
+                        }
+                    }
+
+                    oldKey = $"{MemtlyConfiguration.Themes.ColourOverrides.BaseKey.TrimEnd(':')}:Primary3:Background";
+                    newKey = MemtlyConfiguration.Themes.ColourOverrides.Primary3;
+                    setting = colourOverrides.FirstOrDefault(x => x.Id!.Equals(newKey, StringComparison.OrdinalIgnoreCase));
+                    if (string.IsNullOrWhiteSpace(setting?.Value))
+                    {
+                        setting = colourOverrides.FirstOrDefault(x => x.Id!.Equals(oldKey, StringComparison.OrdinalIgnoreCase));
+                        if (setting != null && !string.IsNullOrWhiteSpace(setting.Value))
+                        {
+                            await database.SetSetting(new SettingModel()
+                            {
+                                Id = newKey,
+                                Value = setting.Value
+                            });
+                            await database.DeleteSetting(new SettingModel()
+                            {
+                                Id = oldKey
+                            });
+                        }
+                    }
+
+                    oldKey = $"{MemtlyConfiguration.Themes.ColourOverrides.BaseKey.TrimEnd(':')}:Secondary1:Background";
+                    newKey = MemtlyConfiguration.Themes.ColourOverrides.Secondary1;
+                    setting = colourOverrides.FirstOrDefault(x => x.Id!.Equals(newKey, StringComparison.OrdinalIgnoreCase));
+                    if (string.IsNullOrWhiteSpace(setting?.Value))
+                    {
+                        setting = colourOverrides.FirstOrDefault(x => x.Id!.Equals(oldKey, StringComparison.OrdinalIgnoreCase));
+                        if (setting != null && !string.IsNullOrWhiteSpace(setting.Value))
+                        {
+                            await database.SetSetting(new SettingModel()
+                            {
+                                Id = newKey,
+                                Value = setting.Value
+                            });
+                            await database.DeleteSetting(new SettingModel()
+                            {
+                                Id = oldKey
+                            });
+                        }
+                    }
+
+                    oldKey = $"{MemtlyConfiguration.Themes.ColourOverrides.BaseKey.TrimEnd(':')}:Secondary2:Background";
+                    newKey = MemtlyConfiguration.Themes.ColourOverrides.Secondary2;
+                    setting = colourOverrides.FirstOrDefault(x => x.Id!.Equals(newKey, StringComparison.OrdinalIgnoreCase));
+                    if (string.IsNullOrWhiteSpace(setting?.Value))
+                    {
+                        setting = colourOverrides.FirstOrDefault(x => x.Id!.Equals(oldKey, StringComparison.OrdinalIgnoreCase));
+                        if (setting != null && !string.IsNullOrWhiteSpace(setting.Value))
+                        {
+                            await database.SetSetting(new SettingModel()
+                            {
+                                Id = newKey,
+                                Value = setting.Value
+                            });
+                            await database.DeleteSetting(new SettingModel()
+                            {
+                                Id = oldKey
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Failed to migrate '${MemtlyConfiguration.Themes.ColourOverrides.BaseKey}' settings at startup - {ex?.Message}", ex);
+            }
+        }
+        #endregion
 
         private static async Task ImportSettings(IConfigHelper config, IDatabaseHelper database, ILogger logger)
         {

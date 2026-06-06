@@ -1,0 +1,11 @@
+﻿@import '@styles/dark.css';
+
+:root {
+    /* Colour Scheme (Primary) */
+    --primary-1: 166, 24, 45;
+    --primary-2: 195, 30, 54;
+    --primary-3: 224, 36, 64;
+    /* Colour Scheme (Secondary) */
+    --secondary-1: 255, 128, 147;
+    --secondary-2: 255, 181, 189;
+}

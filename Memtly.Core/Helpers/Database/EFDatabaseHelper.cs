@@ -553,6 +553,12 @@ namespace Memtly.Core.Helpers.Database
                 .CountAsync(u => u.Level != UserLevel.System && u.Username.ToLower().Equals(username.ToLower()) && u.Password.Equals(password))) > 0;
         }
 
+        public async Task<int> GetAdminCount(AccountState? state = null)
+        {
+            return await _db.Users
+                .CountAsync(u => u.Level == UserLevel.Admin && (state == null || u.State == state));
+        }
+
         public async Task<int> GetUserCount()
         {
             return await _db.Users

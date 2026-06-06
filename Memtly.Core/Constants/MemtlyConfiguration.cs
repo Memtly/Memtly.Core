@@ -270,54 +270,16 @@
             {
                 public const string BaseKey = "Memtly:Themes:ColourOverrides:";
                 public const string Enabled = "Memtly:Themes:ColourOverrides:Enabled";
-
-                public class Navbar
-                {
-                    public const string BaseKey = "Memtly:Themes:ColourOverrides:Navbar:";
-                    public const string Text = "Memtly:Themes:ColourOverrides:Navbar:Text";
-                    public const string Background = "Memtly:Themes:ColourOverrides:Navbar:Background";
-                    public const string Hover = "Memtly:Themes:ColourOverrides:Navbar:Hover";
-                }
-
-                public class Primary1
-                {
-                    public const string BaseKey = "Memtly:Themes:ColourOverrides:Primary1:";
-                    public const string Text = "Memtly:Themes:ColourOverrides:Primary1:Text";
-                    public const string Background = "Memtly:Themes:ColourOverrides:Primary1:Background";
-                    public const string Hover = "Memtly:Themes:ColourOverrides:Primary1:Hover";
-                }
-
-                public class Primary2
-                {
-                    public const string BaseKey = "Memtly:Themes:ColourOverrides:Primary2:";
-                    public const string Text = "Memtly:Themes:ColourOverrides:Primary2:Text";
-                    public const string Background = "Memtly:Themes:ColourOverrides:Primary2:Background";
-                    public const string Hover = "Memtly:Themes:ColourOverrides:Primary2:Hover";
-                }
-
-                public class Primary3
-                {
-                    public const string BaseKey = "Memtly:Themes:ColourOverrides:Primary3:";
-                    public const string Text = "Memtly:Themes:ColourOverrides:Primary3:Text";
-                    public const string Background = "Memtly:Themes:ColourOverrides:Primary3:Background";
-                    public const string Hover = "Memtly:Themes:ColourOverrides:Primary3:Hover";
-                }
-
-                public class Secondary1
-                {
-                    public const string BaseKey = "Memtly:Themes:ColourOverrides:Secondary1:";
-                    public const string Text = "Memtly:Themes:ColourOverrides:Secondary1:Text";
-                    public const string Background = "Memtly:Themes:ColourOverrides:Secondary1:Background";
-                    public const string Hover = "Memtly:Themes:ColourOverrides:Secondary1:Hover";
-                }
-
-                public class Secondary2
-                {
-                    public const string BaseKey = "Memtly:Themes:ColourOverrides:Secondary2:";
-                    public const string Text = "Memtly:Themes:ColourOverrides:Secondary2:Text";
-                    public const string Background = "Memtly:Themes:ColourOverrides:Secondary2:Background";
-                    public const string Hover = "Memtly:Themes:ColourOverrides:Secondary2:Hover";
-                }
+                public const string NavbarText = "Memtly:Themes:ColourOverrides:NavbarText";
+                public const string NavbarBackground = "Memtly:Themes:ColourOverrides:NavbarBackground";
+                public const string Background = "Memtly:Themes:ColourOverrides:Background";
+                public const string Primary1 = "Memtly:Themes:ColourOverrides:Primary1";
+                public const string Primary2 = "Memtly:Themes:ColourOverrides:Primary2";
+                public const string Primary3 = "Memtly:Themes:ColourOverrides:Primary3";
+                public const string Secondary1 = "Memtly:Themes:ColourOverrides:Secondary1";
+                public const string Secondary2 = "Memtly:Themes:ColourOverrides:Secondary2";
+                public const string Danger = "Memtly:Themes:ColourOverrides:Danger";
+                public const string Disabled = "Memtly:Themes:ColourOverrides:Disabled";
             }
         }
 

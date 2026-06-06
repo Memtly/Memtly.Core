@@ -30,7 +30,7 @@
             {
                 foreach (Themes t in Enum.GetValues(typeof(Themes)))
                 {
-                    if (MemtlyCore.Version == MemtlyVersion.Community && (t == Themes.Green || t == Themes.DarkGreen || t == Themes.Custom))
+                    if (MemtlyCore.Version == MemtlyVersion.Community && t == Themes.Custom)
                     {
                         continue;
                     }
@@ -67,7 +67,7 @@
         {
             if (MemtlyCore.Version == MemtlyVersion.Community)
             {
-                <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/blue.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" asp-append-version="true" />
+                <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/blue.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" asp-append-version="true" />    
                 <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/darkblue.css" media="(prefers-color-scheme: dark)" asp-append-version="true" />
             }
             else

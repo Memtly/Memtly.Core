@@ -8,6 +8,7 @@ using System.Web;
 using Memtly.Core.Attributes;
 using Memtly.Core.BackgroundWorkers;
 using Memtly.Core.Constants;
+using Memtly.Core.EntityFramework.Models;
 using Memtly.Core.Enums;
 using Memtly.Core.Extensions;
 using Memtly.Core.Helpers;
@@ -1343,6 +1344,11 @@ namespace Memtly.Core.Controllers
                     var gallery = await _database.GetGallery(id);
                     if (gallery != null && User.Identity.CanEdit(GalleryPermissions.Delete, gallery.Owner))
                     {
+                        if (gallery.Identifier.Equals(SystemGalleries.DefaultGallery, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return Json(new { success = false, message = _localizer["Cannot_Delete_Default_Gallery"].Value });
+                        }
+
                         var galleryDir = Path.Combine(UploadsDirectory, gallery.Identifier);
                         _fileHelper.DeleteDirectoryIfExists(galleryDir);
 
@@ -1467,7 +1473,20 @@ namespace Memtly.Core.Controllers
                             user.Email = model.Email?.Trim();
 
                             if (User.Identity.IsPrivilegedUser() && User.Identity.GetUserPermissions().Users.HasFlag(UserPermissions.Change_Permissions_Level))
-                            { 
+                            {
+                                if (user.Id == User.Identity.GetUserId() && (user.Level != model.Level || user.Tier != model.Tier))
+                                {
+                                    return Json(new { success = false, message = _localizer["Cannot_Change_Current_User_Level_Tier"].Value });
+                                }
+                                else if (user.Level == UserLevel.Admin && model.Level != UserLevel.Admin)
+                                {
+                                    var activeAdminCount = await _database.GetAdminCount(AccountState.Active);
+                                    if (activeAdminCount <= 1)
+                                    {
+                                        return Json(new { success = false, message = _localizer["Cannot_Change_Only_Admin"].Value });
+                                    }
+                                }
+
                                 user.Level = model.Level;
                                 user.Tier = model.Tier;
                             }
@@ -1544,6 +1563,19 @@ namespace Memtly.Core.Controllers
                     var user = await _database.GetUser(id);
                     if (user != null && User.Identity.CanEdit(UserPermissions.Freeze, user.Id))
                     {
+                        if (user.Id == User.Identity.GetUserId())
+                        {
+                            return Json(new { success = false, message = _localizer["Cannot_Deactivate_Current_User"].Value });
+                        }
+                        else if (user.Level == UserLevel.Admin)
+                        {
+                            var activeAdminCount = await _database.GetAdminCount(AccountState.Active);
+                            if (activeAdminCount <= 1)
+                            {
+                                return Json(new { success = false, message = _localizer["Cannot_Deactivate_Only_Admin"].Value });
+                            }
+                        }
+
                         user.State = AccountState.Frozen;
 
                         await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_FrozeUser"].Value} '{user?.Username}'", AuditSeverity.Information);
@@ -1640,6 +1672,23 @@ namespace Memtly.Core.Controllers
                     var user = await _database.GetUser(id);
                     if (user != null && User.Identity.CanEdit(UserPermissions.Delete, user.Id))
                     {
+                        if (user.Id == User.Identity.GetUserId())
+                        {
+                            return Json(new { success = false, message = _localizer["Cannot_Deactivate_Current_User"].Value });
+                        }
+                        else if (user.Username.Equals(UserAccounts.AdminUser, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return Json(new { success = false, message = _localizer["Cannot_Delete_Default_Admin"].Value });
+                        }
+                        else if (user.Level == UserLevel.Admin)
+                        {
+                            var activeAdminCount = await _database.GetAdminCount(AccountState.Active);
+                            if (activeAdminCount <= 1)
+                            {
+                                return Json(new { success = false, message = _localizer["Cannot_Deactivate_Only_Admin"].Value });
+                            }
+                        }
+
                         var galleries = await _database.GetGalleries(user.Id);
                         foreach (var gallery in galleries)
                         {

@@ -11,8 +11,8 @@
             <div class="col-12">
                 <label class="setting-label">@_localizer["Navbar_Title_Color_Label"].Value</label>
                 <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#282828" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Navbar.Text" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Navbar.Text.ToUpper(), "#282828")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Navbar.Text.ToUpper(), "#282828")" title="@_localizer["Choose_Your_Color"].Value" />
+                    <input type="text" class="setting-field form-control form-control-text" placeholder="#282828" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.NavbarText" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.NavbarText.ToUpper(), "#282828")" />
+                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.NavbarText.ToUpper(), "#282828")" title="@_localizer["Choose_Your_Color"].Value" />
                 </div>
                 <div class="setting-hint form-text">@_localizer["Navbar_Title_Color_Help"].Value</div>
             </div>
@@ -22,8 +22,8 @@
             <div class="col-12">
                 <label class="setting-label">@_localizer["Navbar_Background_Color_Label"].Value</label>
                 <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#FFFFFF" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Navbar.Background" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Navbar.Background.ToUpper(), "#FFFFFF")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Navbar.Background.ToUpper(), "#FFFFFF")" title="@_localizer["Choose_Your_Color"].Value" />
+                    <input type="text" class="setting-field form-control form-control-text" placeholder="#FFFFFF" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.NavbarBackground" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.NavbarBackground.ToUpper(), "#FFFFFF")" />
+                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.NavbarBackground.ToUpper(), "#FFFFFF")" title="@_localizer["Choose_Your_Color"].Value" />
                 </div>
                 <div class="setting-hint form-text">@_localizer["Navbar_Background_Color_Help"].Value</div>
             </div>
@@ -31,167 +31,90 @@
 
         <div class="row mb-4 mb-lg-4 setting-container">
             <div class="col-12">
-                <label class="setting-label">@_localizer["Primary_Text_One_Color_Label"].Value</label>
+                <label class="setting-label">@_localizer["Background_Color_Label"].Value</label>
                 <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#FFFFFF" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Primary1.Text" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Text.ToUpper(), "#FFFFFF")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Text.ToUpper(), "#FFFFFF")" title="@_localizer["Choose_Your_Color"].Value" />
+                    <input type="text" class="setting-field form-control form-control-text" placeholder="#FFFFFF" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Background" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Background.ToUpper(), "#FFFFFF")" />
+                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Background.ToUpper(), "#FFFFFF")" title="@_localizer["Choose_Your_Color"].Value" />
                 </div>
-                <div class="setting-hint form-text">@_localizer["Primary_Text_One_Color_Help"].Value</div>
+                <div class="setting-hint form-text">@_localizer["Background_Color_Help"].Value</div>
             </div>
         </div>
 
         <div class="row mb-4 mb-lg-4 setting-container">
             <div class="col-12">
-                <label class="setting-label">@_localizer["Primary_Background_One_Color_Label"].Value</label>
+                <label class="setting-label">@_localizer["Primary_One_Color_Label"].Value</label>
                 <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#2563eb" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Primary1.Background" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Background.ToUpper(), "#2563eb")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Background.ToUpper(), "#2563eb")" title="@_localizer["Choose_Your_Color"].Value" />
+                    <input type="text" class="setting-field form-control form-control-text" placeholder="#1D4ED8" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Primary1" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.ToUpper(), "#1D4ED8")" />
+                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.ToUpper(), "#1D4ED8")" title="@_localizer["Choose_Your_Color"].Value" />
                 </div>
-                <div class="setting-hint form-text">@_localizer["Primary_Background_One_Color_Help"].Value</div>
+                <div class="setting-hint form-text">@_localizer["Primary_One_Color_Help"].Value</div>
             </div>
         </div>
 
         <div class="row mb-4 mb-lg-4 setting-container">
             <div class="col-12">
-                <label class="setting-label">@_localizer["Primary_Background_One_Color_Label"].Value (@_localizer["Hover"].Value)</label>
+                <label class="setting-label">@_localizer["Primary_Two_Color_Label"].Value</label>
                 <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#1d4ed8" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Primary1.Hover" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Hover.ToUpper(), "#1d4ed8")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary1.Hover.ToUpper(), "#1d4ed8")" title="@_localizer["Choose_Your_Color"].Value" />
+                    <input type="text" class="setting-field form-control form-control-text" placeholder="#2563EB" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Primary2" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary2.ToUpper(), "#2563EB")" />
+                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary2.ToUpper(), "#2563EB")" title="@_localizer["Choose_Your_Color"].Value" />
                 </div>
-                <div class="setting-hint form-text">@_localizer["Primary_Background_One_Color_Help"].Value</div>
+                <div class="setting-hint form-text">@_localizer["Primary_Two_Color_Help"].Value</div>
             </div>
         </div>
 
         <div class="row mb-4 mb-lg-4 setting-container">
             <div class="col-12">
-                <label class="setting-label">@_localizer["Primary_Text_Two_Color_Label"].Value</label>
+                <label class="setting-label">@_localizer["Primary_Three_Color_Label"].Value</label>
                 <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#FFFFFF" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Primary2.Text" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary2.Text.ToUpper(), "#FFFFFF")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary2.Text.ToUpper(), "#FFFFFF")" title="@_localizer["Choose_Your_Color"].Value" />
+                    <input type="text" class="setting-field form-control form-control-text" placeholder="#3B82F6" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Primary3" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary3.ToUpper(), "#3B82F6")" />
+                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary3.ToUpper(), "#3B82F6")" title="@_localizer["Choose_Your_Color"].Value" />
                 </div>
-                <div class="setting-hint form-text">@_localizer["Primary_Text_Two_Color_Help"].Value</div>
+                <div class="setting-hint form-text">@_localizer["Primary_Three_Color_Help"].Value</div>
             </div>
         </div>
 
         <div class="row mb-4 mb-lg-4 setting-container">
             <div class="col-12">
-                <label class="setting-label">@_localizer["Primary_Background_Two_Color_Label"].Value</label>
+                <label class="setting-label">@_localizer["Secondary_One_Color_Label"].Value</label>
                 <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#3b82f6" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Primary2.Background" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary2.Background.ToUpper(), "#3b82f6")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary2.Background.ToUpper(), "#3b82f6")" title="@_localizer["Choose_Your_Color"].Value" />
+                    <input type="text" class="setting-field form-control form-control-text" placeholder="#6366F1" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Secondary1" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary1.ToUpper(), "#6366F1")" />
+                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary1.ToUpper(), "#6366F1")" title="@_localizer["Choose_Your_Color"].Value" />
                 </div>
-                <div class="setting-hint form-text">@_localizer["Primary_Background_Two_Color_Help"].Value</div>
+                <div class="setting-hint form-text">@_localizer["Secondary_One_Color_Help"].Value</div>
             </div>
         </div>
 
         <div class="row mb-4 mb-lg-4 setting-container">
             <div class="col-12">
-                <label class="setting-label">@_localizer["Primary_Background_Two_Color_Label"].Value (@_localizer["Hover"].Value)</label>
+                <label class="setting-label">@_localizer["Secondary_Two_Color_Label"].Value</label>
                 <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#2563eb" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Primary2.Hover" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary2.Hover.ToUpper(), "#2563eb")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary2.Hover.ToUpper(), "#2563eb")" title="@_localizer["Choose_Your_Color"].Value" />
+                    <input type="text" class="setting-field form-control form-control-text" placeholder="#818CF8" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Secondary2" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary2.ToUpper(), "#818CF8")" />
+                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary2.ToUpper(), "#818CF8")" title="@_localizer["Choose_Your_Color"].Value" />
                 </div>
-                <div class="setting-hint form-text">@_localizer["Primary_Background_Two_Color_Help"].Value</div>
+                <div class="setting-hint form-text">@_localizer["Secondary_Two_Color_Help"].Value</div>
+            </div>
+        </div>
+
+        @* <div class="row mb-4 mb-lg-4 setting-container">
+            <div class="col-12">
+                <label class="setting-label">@_localizer["Danger_Color_Label"].Value</label>
+                <div class="input-group form-color-picker-group">
+                    <input type="text" class="setting-field form-control form-control-text" placeholder="#EF4444" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Danger" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Danger.ToUpper(), "#EF4444")" />
+                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Danger.ToUpper(), "#EF4444")" title="@_localizer["Choose_Your_Color"].Value" />
+                </div>
+                <div class="setting-hint form-text">@_localizer["Danger_Color_Help"].Value</div>
             </div>
         </div>
 
         <div class="row mb-4 mb-lg-4 setting-container">
             <div class="col-12">
-                <label class="setting-label">@_localizer["Primary_Text_Three_Color_Label"].Value</label>
+                <label class="setting-label">@_localizer["Disabled_Color_Label"].Value</label>
                 <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#FFFFFF" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Primary3.Text" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary3.Text.ToUpper(), "#FFFFFF")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary3.Text.ToUpper(), "#FFFFFF")" title="@_localizer["Choose_Your_Color"].Value" />
+                    <input type="text" class="setting-field form-control form-control-text" placeholder="#969696" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Disabled" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Disabled.ToUpper(), "#969696")" />
+                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Disabled.ToUpper(), "#969696")" title="@_localizer["Choose_Your_Color"].Value" />
                 </div>
-                <div class="setting-hint form-text">@_localizer["Primary_Text_Three_Color_Help"].Value</div>
+                <div class="setting-hint form-text">@_localizer["Disabled_Color_Help"].Value</div>
             </div>
-        </div>
-
-        <div class="row mb-4 mb-lg-4 setting-container">
-            <div class="col-12">
-                <label class="setting-label">@_localizer["Primary_Background_Three_Color_Label"].Value</label>
-                <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#60a5fa" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Primary3.Background" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary3.Background.ToUpper(), "#60a5fa")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary3.Background.ToUpper(), "#60a5fa")" title="@_localizer["Choose_Your_Color"].Value" />
-                </div>
-                <div class="setting-hint form-text">@_localizer["Primary_Background_Three_Color_Help"].Value</div>
-            </div>
-        </div>
-
-        <div class="row mb-4 mb-lg-4 setting-container">
-            <div class="col-12">
-                <label class="setting-label">@_localizer["Primary_Background_Three_Color_Label"].Value (@_localizer["Hover"].Value)</label>
-                <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#3b82f6" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Primary3.Hover" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary3.Hover.ToUpper(), "#3b82f6")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Primary3.Hover.ToUpper(), "#3b82f6")" title="@_localizer["Choose_Your_Color"].Value" />
-                </div>
-                <div class="setting-hint form-text">@_localizer["Primary_Background_Three_Color_Help"].Value</div>
-            </div>
-        </div>
-
-        <div class="row mb-4 mb-lg-4 setting-container">
-            <div class="col-12">
-                <label class="setting-label">@_localizer["Secondary_Text_One_Color_Label"].Value</label>
-                <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#FFFFFF" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Secondary1.Text" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary1.Text.ToUpper(), "#FFFFFF")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary1.Text.ToUpper(), "#FFFFFF")" title="@_localizer["Choose_Your_Color"].Value" />
-                </div>
-                <div class="setting-hint form-text">@_localizer["Secondary_Text_One_Color_Help"].Value</div>
-            </div>
-        </div>
-
-        <div class="row mb-4 mb-lg-4 setting-container">
-            <div class="col-12">
-                <label class="setting-label">@_localizer["Secondary_Background_One_Color_Label"].Value</label>
-                <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#6366f1" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Secondary1.Background" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary1.Background.ToUpper(), "#6366f1")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary1.Background.ToUpper(), "#6366f1")" title="@_localizer["Choose_Your_Color"].Value" />
-                </div>
-                <div class="setting-hint form-text">@_localizer["Secondary_Background_One_Color_Help"].Value</div>
-            </div>
-        </div>
-
-        <div class="row mb-4 mb-lg-4 setting-container">
-            <div class="col-12">
-                <label class="setting-label">@_localizer["Secondary_Background_One_Color_Label"].Value (@_localizer["Hover"].Value)</label>
-                <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#4f46e5" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Secondary1.Hover" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary1.Hover.ToUpper(), "#4f46e5")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary1.Hover.ToUpper(), "#4f46e5")" title="@_localizer["Choose_Your_Color"].Value" />
-                </div>
-                <div class="setting-hint form-text">@_localizer["Secondary_Background_One_Color_Help"].Value</div>
-            </div>
-        </div>
-
-        <div class="row mb-4 mb-lg-4 setting-container">
-            <div class="col-12">
-                <label class="setting-label">@_localizer["Secondary_Text_Two_Color_Label"].Value</label>
-                <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#FFFFFF" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Secondary2.Text" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary2.Text.ToUpper(), "#FFFFFF")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary2.Text.ToUpper(), "#FFFFFF")" title="@_localizer["Choose_Your_Color"].Value" />
-                </div>
-                <div class="setting-hint form-text">@_localizer["Secondary_Text_Two_Color_Help"].Value</div>
-            </div>
-        </div>
-
-        <div class="row mb-4 mb-lg-4 setting-container">
-            <div class="col-12">
-                <label class="setting-label">@_localizer["Secondary_Background_Two_Color_Label"].Value</label>
-                <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#818cf8" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Secondary2.Background" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary2.Background.ToUpper(), "#818cf8")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary2.Background.ToUpper(), "#818cf8")" title="@_localizer["Choose_Your_Color"].Value" />
-                </div>
-                <div class="setting-hint form-text">@_localizer["Secondary_Background_Two_Color_Help"].Value</div>
-            </div>
-        </div>
-
-        <div class="row mb-4 mb-lg-4 setting-container">
-            <div class="col-12">
-                <label class="setting-label">@_localizer["Secondary_Background_Two_Color_Label"].Value (@_localizer["Hover"].Value)</label>
-                <div class="input-group form-color-picker-group">
-                    <input type="text" class="setting-field form-control form-control-text" placeholder="#6366f1" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Secondary2.Hover" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary2.Hover.ToUpper(), "#6366f1")" />
-                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Secondary2.Hover.ToUpper(), "#6366f1")" title="@_localizer["Choose_Your_Color"].Value" />
-                </div>
-                <div class="setting-hint form-text">@_localizer["Secondary_Background_Two_Color_Help"].Value</div>
-            </div>
-        </div>
+        </div> *@
     </div>
 }

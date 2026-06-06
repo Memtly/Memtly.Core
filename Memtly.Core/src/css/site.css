@@ -328,7 +328,7 @@ tr td {
 
 .setting-section {
     margin-bottom: 15px;
-    border-bottom: 1px solid rgba(var(--primary-bg-1), 0.5);
+    border-bottom: 1px solid rgba(var(--primary-1), 0.5);
 }
 
     .setting-section:not(.d-none):last-child {
