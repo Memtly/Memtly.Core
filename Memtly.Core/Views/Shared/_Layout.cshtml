@@ -39,7 +39,7 @@
             {
                 foreach (Themes t in Enum.GetValues(typeof(Themes)))
                 {
-                    if (MemtlyCore.Version == MemtlyVersion.Community && (t == Themes.Green || t == Themes.DarkGreen || t == Themes.Custom))
+                    if (MemtlyCore.Version == MemtlyVersion.Community && t == Themes.Custom)
                     {
                         continue;
                     }
@@ -86,7 +86,7 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="noai, noimageai">
-        
+
         <link rel="stylesheet" href="~/_content/Memtly.Core/dist/main.css" asp-append-version="true" />
         @if (theme.Equals(Themes.AutoDetect.ToString().ToLower(), StringComparison.OrdinalIgnoreCase))
         {

@@ -1,4 +1,5 @@
 ﻿@model IDictionary<string, string>?
+@using Memtly.Core.Comparators
 @using Memtly.Core.Constants
 
 @if (Model != null && Model.Any())
@@ -30,20 +31,20 @@
             <div class="col-12">
                 <label class="setting-label">@_localizer["Settings_Themes_Default_Label"].Value</label>
                 <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Themes.Default">
-                    @foreach (Themes t in Enum.GetValues(typeof(Themes)))
-                    {
-                        if (MemtlyCore.Version == MemtlyVersion.Community && (t == Themes.Green || t == Themes.DarkGreen))
+                    @{
+                        var themes = Enum.GetValues<Themes>().ToList();
+                        themes.Sort(new ThemesComparer());
+                        
+                        foreach (Themes t in themes)
                         {
-                            continue;
-                        }
-
-                        if (Model.GetValue(MemtlyConfiguration.Themes.Default.ToUpper(), Themes.AutoDetect.ToString()).Equals(t.ToString(), StringComparison.OrdinalIgnoreCase))
-                        {
-                            <option value="@t.ToString()" selected="selected">@t.ToString()</option>
-                        }
-                        else
-                        {
-                            <option value="@t.ToString()">@t.ToString()</option>
+                            if (Model.GetValue(MemtlyConfiguration.Themes.Default.ToUpper(), Themes.AutoDetect.ToString()).Equals(t.ToString(), StringComparison.OrdinalIgnoreCase))
+                            {
+                                <option value="@t.ToString()" selected="selected">@_localizer[t.ToString()].Value</option>
+                            }
+                            else
+                            {
+                                <option value="@t.ToString()">@_localizer[t.ToString()].Value</option>
+                            }
                         }
                     }
                 </select>

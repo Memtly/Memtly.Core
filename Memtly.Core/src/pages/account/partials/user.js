@@ -475,22 +475,22 @@ function displayAddUserPopup(username, firstname, lastname, email, password, cpa
             SelectOptions: [
                 {
                     key: '1',
-                    selected: level === undefined || level === '' || level === '1',
+                    selected: level === undefined || level === '' || isNaN(level) || parseInt(level) == 1,
                     value: 'Basic'
                 },
                 {
                     key: '3',
-                    selected: level === '3',
+                    selected: parseInt(level) === 3,
                     value: 'Reviewer'
                 },
                 {
                     key: '4',
-                    selected: level === '4',
+                    selected: parseInt(level) === 4,
                     value: 'Moderator'
                 },
                 {
                     key: '5',
-                    selected: level === '5',
+                    selected: parseInt(level) === 5,
                     value: 'Admin'
                 }
             ]
@@ -503,22 +503,22 @@ function displayAddUserPopup(username, firstname, lastname, email, password, cpa
             SelectOptions: [
                 {
                     key: '1',
-                    selected: tier === undefined || tier === '' || tier === '1',
+                    selected: tier === undefined || tier === '' || isNaN(tier) || parseInt(tier) === 1,
                     value: 'None'
                 },
                 {
                     key: '2',
-                    selected: tier === '2',
+                    selected: parseInt(tier) === 2,
                     value: 'Basic'
                 },
                 {
                     key: '3',
-                    selected: tier === '3',
+                    selected: parseInt(tier) === 3,
                     value: 'Advanced'
                 },
                 {
                     key: '4',
-                    selected: tier === '4',
+                    selected: parseInt(tier) === 4,
                     value: 'Premium'
                 }
             ]
@@ -666,22 +666,22 @@ function displayEditUserPopup(id, username, firstname, lastname, email, level, t
             SelectOptions: canModifyAccessLevel ? [
                 {
                     key: '1',
-                    selected: level === undefined || level === '' || level == '1',
+                    selected: level === undefined || level === '' || isNaN(level) || parseInt(level) == 1,
                     value: 'Basic'
                 },
                 {
                     key: '3',
-                    selected: level === '3',
+                    selected: parseInt(level) === 3,
                     value: 'Reviewer'
                 },
                 {
                     key: '4',
-                    selected: level === '4',
+                    selected: parseInt(level) === 4,
                     value: 'Moderator'
                 },
                 {
                     key: '5',
-                    selected: level === '5',
+                    selected: parseInt(level) === 5,
                     value: 'Admin'
                 }
             ] : []
@@ -692,23 +692,23 @@ function displayEditUserPopup(id, username, firstname, lastname, email, level, t
             Type: 'select',
             SelectOptions: canModifyAccessLevel ? [
                 {
-                    key: '0',
-                    selected: tier === undefined || tier === '' || tier == '0',
+                    key: '1',
+                    selected: tier === undefined || tier === '' || isNaN(tier) || parseInt(tier) === 1,
                     value: 'None'
                 },
                 {
-                    key: '1',
-                    selected: tier === '1',
+                    key: '2',
+                    selected: parseInt(tier) === 2,
                     value: 'Basic'
                 },
                 {
-                    key: '2',
-                    selected: tier === '2',
+                    key: '3',
+                    selected: parseInt(tier) === 3,
                     value: 'Advanced'
                 },
                 {
-                    key: '3',
-                    selected: tier === '3',
+                    key: '4',
+                    selected: parseInt(tier) === 4,
                     value: 'Premium'
                 }
             ] : []

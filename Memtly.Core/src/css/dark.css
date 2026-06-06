@@ -1,0 +1,545 @@
+﻿:root {
+    /* Generic */
+    --white: 255, 255, 255;
+    --black: 0, 0, 0;
+    /* Footer */
+    --footer-bg: 0, 0, 0;
+    /* Text */
+    --text-default: 255, 255, 255;
+    --text-contrast: 255, 255, 255;
+    /* Navbar */
+    --navbar-bg: 31, 41, 55;
+    --navbar-text: 255, 255, 255;
+    /* Background */
+    --body-bg: 53, 62, 75;
+    /* Colour Scheme (Danger) */
+    --danger-1: 239, 68, 68;
+    /* Colour Scheme (Disabled) */
+    --disabled-1: 150, 150, 150;
+}
+
+/* Wrapper */
+
+html, body, #main-wrapper {
+    background: rgba(var(--body-bg), 1.0) !important;
+}
+
+.card {
+    color: rgba(var(--black), 1.0) !important;
+    background: rgba(var(--body-bg), 0.5) !important;
+}
+
+.modal .modal-content {
+    background: rgba(var(--body-bg), 0.95) !important;
+}
+
+    .modal .modal-content .modal-header {
+        border-bottom-color: rgba(var(--primary-1), 0.3) !important;
+    }
+
+/* Navbar */
+
+.navbar {
+    --bs-navbar-border-color: rgba(var(--navbar-bg), 1.0) !important;
+    color: rgba(var(--navbar-text), 1.0) !important;
+    background-color: rgba(var(--navbar-bg), 1.0) !important;
+    box-shadow: 0 1px 3px 0 rgba(var(--primary-2), 0.1) !important;
+}
+
+    .navbar .navbar-title {
+        color: rgba(var(--navbar-text), 1.0) !important;
+    }
+
+    .navbar .navbar-options i, .navbar .navbar-options svg {
+        color: rgba(var(--primary-3), 1.0) !important;
+    }
+
+        .navbar .navbar-options i:hover, .navbar .navbar-options svg:hover {
+            color: rgba(var(--primary-3), 0.8) !important;
+        }
+
+/* Tabs */
+
+.nav-tabs, .nav-border-bottom {
+    --bs-nav-tabs-border-color: rgba(var(--primary-3), 1.0) !important;
+    border-color: rgba(var(--primary-3), 1.0) !important;
+}
+
+    .nav-tabs .nav-item .nav-link {
+        color: rgba(var(--primary-2), 1.0) !important;
+        background-color: rgba(var(--navbar-bg), 1.0) !important;
+        border-color: rgba(var(--primary-3), 1.0) !important;
+    }
+
+        .nav-tabs .nav-item .nav-link.active, .nav-tabs .nav-item .nav-link.active:hover {
+            color: rgba(var(--primary-2), 1.0) !important;
+            background-color: rgba(var(--primary-3), 0.3) !important;
+            border-color: rgba(var(--primary-3), 1.0) !important;
+        }
+
+        .nav-tabs .nav-item .nav-link:hover {
+            color: rgba(var(--primary-2), 1.0) !important;
+            background-color: rgba(var(--primary-3), 0.1) !important;
+            border-color: rgba(var(--primary-3), 1.0) !important;
+        }
+
+/* Footer */
+
+footer {
+    color: rgba(var(--text-default), 1.0) !important;
+    background-color: rgba(var(--footer-bg), 0.9) !important;
+}
+
+    footer a, footer a:active, footer a:visited, footer a:hover {
+        color: rgba(var(--text-default), 1.0) !important;
+    }
+
+/* Headers */
+
+.card .card-header {
+    background-color: rgba(var(--primary-1), 0.03) !important;
+}
+
+.display-1, .display-2, .display-3, .display-4, .display-5, .display-6, .display-7 {
+    color: rgba(var(--primary-1), 0.8) !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: rgba(var(--primary-1), 0.8) !important;
+}
+
+.modal .modal-header {
+    background-color: rgba(var(--primary-1), 0.01) !important;
+}
+
+    .modal .modal-header .modal-title {
+        color: rgba(var(--primary-1), 0.8) !important;
+    }
+
+.modal-body {
+    color: rgba(var(--text-contrast), 1.0) !important;
+}
+
+    .modal .modal-body h5 {
+        color: rgba(var(--primary-1), 0.8) !important;
+    }
+
+    .modal .modal-body p {
+        color: rgba(var(--text-contrast), 1.0);
+    }
+
+/* Text */
+
+.text-primary-1 {
+    color: rgba(var(--primary-1), 0.8) !important;
+}
+
+.text-primary-2 {
+    color: rgba(var(--primary-2), 0.8) !important;
+}
+
+.text-primary-3 {
+    color: rgba(var(--primary-3), 0.8) !important;
+}
+
+.text-secondary-1 {
+    color: rgba(var(--secondary-1), 0.8) !important;
+}
+
+.text-secondary-2 {
+    color: rgba(var(--secondary-2), 0.8) !important;
+}
+
+.text-danger {
+    color: rgba(var(--danger-1), 0.8) !important;
+}
+
+.text-disabled {
+    color: rgba(var(--disabled-1), 0.5) !important;
+}
+
+.text-contrast {
+    color: rgba(var(--text-contrast), 1.0) !important;
+}
+
+/* Borders */
+.border-primary-1 {
+    border-color: rgba(var(--primary-1), 0.8) !important;
+}
+
+.border-primary-2 {
+    border-color: rgba(var(--primary-2), 0.8) !important;
+}
+
+.border-primary-3 {
+    border-color: rgba(var(--primary-3), 0.8) !important;
+}
+
+.border-secondary-1 {
+    border-color: rgba(var(--secondary-1), 0.8) !important;
+}
+
+.border-secondary-2 {
+    border-color: rgba(var(--secondary-2), 0.8) !important;
+}
+
+.border-danger {
+    border-color: rgba(var(--danger-1), 0.8) !important;
+}
+
+.border-disabled {
+    border-color: rgba(var(--disabled-1), 0.5) !important;
+}
+
+/* Links */
+
+a, a:active, a:visited {
+    color: rgba(var(--primary-1), 0.8) !important;
+}
+
+    a:hover {
+        color: rgba(var(--primary-1), 1.0) !important;
+    }
+
+.link-primary-1 {
+    color: rgba(var(--primary-1), 0.8) !important;
+}
+
+    .link-primary-1:hover, .link-primary-1:active {
+        color: rgba(var(--primary-1), 1.0) !important;
+    }
+
+.link-primary-2 {
+    color: rgba(var(--primary-2), 0.8) !important;
+}
+
+    .link-primary-2:hover, .link-primary-2:active {
+        color: rgba(var(--primary-2), 1.0) !important;
+    }
+
+.link-primary-3 {
+    color: rgba(var(--primary-3), 0.8) !important;
+}
+
+    .link-primary-3:hover, .link-primary-3:active {
+        color: rgba(var(--primary-3), 1.0) !important;
+    }
+
+.link-secondary-1 {
+    color: rgba(var(--secondary-1), 0.8) !important;
+}
+
+    .link-secondary-1:hover, .link-secondary-1:active {
+        color: rgba(var(--secondary-1), 1.0) !important;
+    }
+
+.link-secondary-2 {
+    color: rgba(var(--secondary-2), 0.8) !important;
+}
+
+    .link-secondary-2:hover, .link-secondary-2:active {
+        color: rgba(var(--secondary-2), 1.0) !important;
+    }
+
+.link-danger, .link-danger * {
+    color: rgba(var(--danger-1), 0.8) !important;
+}
+
+    .link-danger:hover, .link-danger:hover *, .link-danger:active, .link-danger:hover * {
+        color: rgba(var(--danger-1), 1.0) !important;
+    }
+
+.link-disabled {
+    color: rgba(var(--disabled-1), 0.5) !important;
+}
+
+    .link-disabled:hover, .link-disabled:active {
+        color: rgba(var(--disabled-1), 1.0) !important;
+    }
+
+/* Buttons */
+
+.btn-primary-1 {
+    --bs-btn-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-bg: rgba(var(--primary-1), 0.8) !important;
+    --bs-btn-border-color: rgba(var(--primary-1), 0.8) !important;
+    --bs-btn-hover-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-hover-bg: rgba(var(--primary-1), 1.0) !important;
+    --bs-btn-hover-border-color: rgba(var(--primary-1), 1.0) !important;
+    --bs-btn-active-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-active-bg: rgba(var(--primary-1), 1.0) !important;
+    --bs-btn-active-border-color: rgba(var(--primary-1), 1.0) !important;
+    --bs-btn-disabled-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-disabled-bg: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-disabled-border-color: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-focus-shadow-rgb: rgba(var(--primary-1), 0.8) !important;
+}
+
+.btn-primary-2 {
+    --bs-btn-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-bg: rgba(var(--primary-2), 0.8) !important;
+    --bs-btn-border-color: rgba(var(--primary-2), 0.8) !important;
+    --bs-btn-hover-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-hover-bg: rgba(var(--primary-2), 1.0) !important;
+    --bs-btn-hover-border-color: rgba(var(--primary-2), 1.0) !important;
+    --bs-btn-active-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-active-bg: rgba(var(--primary-2), 1.0) !important;
+    --bs-btn-active-border-color: rgba(var(--primary-2), 1.0) !important;
+    --bs-btn-disabled-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-disabled-bg: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-disabled-border-color: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-focus-shadow-rgb: rgba(var(--primary-2), 0.8) !important;
+}
+
+.btn-primary-3 {
+    --bs-btn-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-bg: rgba(var(--primary-3), 0.8) !important;
+    --bs-btn-border-color: rgba(var(--primary-3), 0.8) !important;
+    --bs-btn-hover-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-hover-bg: rgba(var(--primary-3), 1.0) !important;
+    --bs-btn-hover-border-color: rgba(var(--primary-3), 1.0) !important;
+    --bs-btn-active-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-active-bg: rgba(var(--primary-3), 1.0) !important;
+    --bs-btn-active-border-color: rgba(var(--primary-3), 1.0) !important;
+    --bs-btn-disabled-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-disabled-bg: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-disabled-border-color: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-focus-shadow-rgb: rgba(var(--primary-3), 0.8) !important;
+}
+
+.btn-secondary-1 {
+    --bs-btn-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-bg: rgba(var(--secondary-1), 0.8) !important;
+    --bs-btn-border-color: rgba(var(--secondary-1), 0.8) !important;
+    --bs-btn-hover-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-hover-bg: rgba(var(--secondary-1), 1.0) !important;
+    --bs-btn-hover-border-color: rgba(var(--secondary-1), 1.0) !important;
+    --bs-btn-active-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-active-bg: rgba(var(--secondary-1), 1.0) !important;
+    --bs-btn-active-border-color: rgba(var(--secondary-1), 1.0) !important;
+    --bs-btn-disabled-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-disabled-bg: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-disabled-border-color: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-focus-shadow-rgb: rgba(var(--secondary-1), 0.8) !important;
+}
+
+.btn-danger {
+    --bs-btn-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-bg: rgba(var(--danger-1), 0.8) !important;
+    --bs-btn-border-color: rgba(var(--danger-1), 0.8) !important;
+    --bs-btn-hover-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-hover-bg: rgba(var(--danger-1), 1.0) !important;
+    --bs-btn-hover-border-color: rgba(var(--danger-1), 1.0) !important;
+    --bs-btn-active-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-active-bg: rgba(var(--danger-1), 1.0) !important;
+    --bs-btn-active-border-color: rgba(var(--danger-1), 1.0) !important;
+    --bs-btn-disabled-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-disabled-bg: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-disabled-border-color: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-focus-shadow-rgb: rgba(var(--danger-1), 0.8) !important;
+}
+
+.btn-cancel {
+    --bs-btn-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-bg: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-border-color: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-hover-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-hover-bg: rgba(var(--disabled-1), 1.0) !important;
+    --bs-btn-hover-border-color: rgba(var(--disabled-1), 1.0) !important;
+    --bs-btn-active-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-active-bg: rgba(var(--disabled-1), 1.0) !important;
+    --bs-btn-active-border-color: rgba(var(--disabled-1), 1.0) !important;
+    --bs-btn-disabled-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-disabled-bg: rgba(var(--disabled-1), 1.0) !important;
+    --bs-btn-disabled-border-color: rgba(var(--disabled-1), 1.0) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-focus-shadow-rgb: rgba(var(--disabled-1), 1.0) !important;
+}
+
+.btn-disabled, .btn-disabled:active, .btn-disabled:hover {
+    --bs-btn-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-bg: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-border-color: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-hover-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-hover-bg: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-hover-border-color: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-active-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-active-bg: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-active-border-color: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-disabled-color: rgba(var(--text-default), 1.0) !important;
+    --bs-btn-disabled-bg: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-disabled-border-color: rgba(var(--disabled-1), 0.5) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-focus-shadow-rgb: rgba(var(--disabled-1), 0.5) !important;
+}
+
+/* Tables */
+
+table {
+    --bs-table-border-color: rgba(var(--primary-2), 1.0) !important;
+    outline-color: rgba(var(--primary-2), 1.0) !important;
+}
+
+    table th {
+        color: rgba(var(--primary-2), 1.0) !important;
+        background-color: rgba(var(--primary-2), 0.1) !important;
+    }
+
+    table td {
+        color: rgba(var(--text-contrast), 1.0) !important;
+        background-color: rgba(var(--primary-2), 0.02) !important;
+    }
+
+/* Accordions */
+
+.accordion {
+    --bs-accordion-color: rgba(var(--primary-2), 1.0) !important;
+    --bs-accordion-border-color: rgba(var(--primary-2), 1.0) !important
+}
+
+    .accordion .accordion-item {
+        background: rgba(var(--navbar-bg), 0.02) !important;
+    }
+
+        .accordion .accordion-item .accordion-button {
+            color: rgba(var(--primary-2), 1.0) !important;
+            background-color: rgba(var(--primary-2), 0.1) !important;
+        }
+
+        .accordion .accordion-item:hover .accordion-button {
+            color: rgba(var(--primary-2), 1.0) !important;
+            background-color: rgba(var(--primary-2), 0.3) !important;
+        }
+
+        .accordion .accordion-item .accordion-button:not(.collapsed) {
+            color: rgba(var(--primary-2), 1.0) !important;
+            background-color: rgba(var(--primary-2), 0.2) !important;
+        }
+
+/* Forms */
+
+.form-text {
+    color: rgba(var(--text-contrast), 1.0) !important;
+}
+
+/* Inputs */
+select option {
+    color: rgba(var(--text-contrast), 1.0) !important;
+    background-color: rgba(var(--body-bg), 0.9) !important;
+}
+
+    select option:hover, select option:checked, select option:focus, select option:active {
+        color: rgba(var(--white), 1.0) !important;
+        background-color: rgba(var(--primary-3), 0.8) !important;
+    }
+
+input, select {
+    color: rgba(var(--text-contrast), 1.0) !important;
+    background-color: rgba(var(--primary-1), 0.1) !important;
+    border-color: rgba(var(--primary-1), 0.1) !important;
+}
+
+    input::placeholder {
+        color: rgba(var(--text-contrast), 0.5) !important;
+    }
+
+    input:focus, select:focus {
+        outline: 3px solid rgba(var(--primary-1), 0.5) !important;
+    }
+
+    input[type="file"]::file-selector-button {
+        color: rgba(var(--white), 1.0);
+        background-color: rgba(var(--primary-2), 0.8);
+        border: none;
+        cursor: pointer;
+    }
+
+        input[type="file"]::file-selector-button:hover, input[type="file"]::-webkit-file-upload-button:hover, input[type="file"]::-ms-browse:hover {
+            color: rgba(var(--text-contrast), 1.0);
+            background-color: rgba(var(--primary-2), 1.0);
+        }
+
+label {
+    color: rgba(var(--primary-1), 0.8) !important;
+}
+
+/* Misc */
+
+.media-viewer-options .media-viewer-download {
+    color: rgba(var(--text-default), 1.0) !important;
+    background-color: rgba(var(--disabled-1), 0.5) !important;
+}
+
+    .media-viewer-options .media-viewer-download:hover {
+        color: rgba(var(--text-default), 1.0) !important;
+        background-color: rgba(var(--secondary-1), 0.8) !important;
+    }
+
+.media-viewer-options .media-viewer-close {
+    color: rgba(var(--text-default), 1.0) !important;
+    background-color: rgba(var(--disabled-1), 0.5) !important;
+}
+
+    .media-viewer-options .media-viewer-close:hover {
+        color: rgba(var(--text-default), 1.0) !important;
+        background-color: rgba(var(--danger-1), 0.8) !important;
+    }
+
+.file-uploader-form, .upload_drop {
+    outline-color: rgba(var(--primary-3), 0.8) !important;
+}
+
+.upload_drop {
+    color: rgba(var(--primary-3), 1.0) !important;
+}
+
+    .upload_drop .upload_svg {
+        outline-color: rgba(var(--primary-3), 1.0) !important;
+        fill: rgba(var(--primary-3), 1.0) !important;
+    }
+
+    .upload_drop h2 {
+        color: rgba(var(--primary-3), 1.0) !important;
+    }
+
+    .upload_drop p {
+        color: rgba(var(--primary-3), 1.0) !important;
+    }
+
+    .upload_drop.highlight {
+        color: rgba(var(--primary-3), 0.8) !important;
+        outline: 2px dashed rgba(var(--primary-3), 0.8) !important;
+    }
+
+        .upload_drop.highlight .upload_svg {
+            outline-color: rgba(var(--primary-3), 0.8) !important;
+            fill: rgba(var(--primary-3), 0.8) !important;
+        }
+
+        .upload_drop.highlight h2 {
+            color: rgba(var(--primary-3), 0.8) !important;
+        }
+
+        .upload_drop.highlight p {
+            color: rgba(var(--primary-3), 0.8) !important;
+        }
+
+.quote {
+    color: rgba(var(--primary-1), 0.8) !important;
+    background-color: rgba(var(--primary-1), 0.05) !important;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: rgba(var(--primary-1), 0.5) !important;
+    border-color: rgba(var(--primary-1), 0.75) !important;
+}
+
+.pagination .page-item:hover .page-link {
+    background-color: rgba(var(--primary-1), 0.2) !important;
+    border-color: rgba(var(--primary-1), 0.75) !important;
+}

@@ -9,6 +9,8 @@
         DarkBlue = 5,
         Pink = 6,
         DarkPink = 7,
-        Custom = 8
+        Custom = 8,
+        Red = 9,
+        DarkRed = 10
     }
 }

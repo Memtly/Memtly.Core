@@ -44,7 +44,7 @@ function bindEventHandlers() {
                             Placeholder: localization.translate('Light'),
                             Type: 'select',
                             SelectOptions: data.themes.map(theme => ({
-                                key: theme.name,
+                                key: theme.value,
                                 value: theme.name,
                                 selected: theme.selected
                             }))

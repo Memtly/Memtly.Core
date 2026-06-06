@@ -49,6 +49,7 @@ namespace Memtly.Core.Helpers.Database
 
         #region Users
         Task<bool> ValidateCredentials(string username, string password);
+        Task<int> GetAdminCount(AccountState? state = null);
         Task<int> GetUserCount();
         Task<List<UserModel>?> GetUsers(string term = "", int page = 1, int limit = int.MaxValue);
         Task<UserModel?> GetUser(int id);
