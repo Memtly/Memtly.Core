@@ -282,10 +282,18 @@ namespace Memtly.Core.Helpers.Database
 
         public async Task DeleteGallery(GalleryModel model)
         {
+            if (model.Type == GalleryType.Collection)
+            {
+                await _db.GalleryCollections
+                    .Where(c => c.CollectionId == model.Id)
+                    .ExecuteDeleteAsync();
+            }
+
             await _db.Galleries
                 .Where(g => g.Id == model.Id)
                 .ExecuteDeleteAsync();
         }
+        
         public async Task DeleteAllGalleries()
         {
             await _db.Galleries
