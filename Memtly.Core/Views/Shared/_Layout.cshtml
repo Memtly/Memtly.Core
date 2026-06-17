@@ -1,5 +1,4 @@
 @using Memtly.Core.Constants
-@using Memtly.Core.Helpers
 @inject Memtly.Core.Helpers.IConfigHelper _config
 @inject Memtly.Core.Helpers.ILanguageHelper _language
 @inject Memtly.Core.Helpers.Database.IDatabaseHelper _database
@@ -10,6 +9,7 @@
     var galleryId = (_database?.GetGalleryId(galleryIdentifier)?.Result) ?? 1;
 
     var title = await _settings.GetOrDefault(MemtlyConfiguration.Basic.Title, "Memtly", galleryId);
+    var siteUrl = $"{Context!.Request.Scheme}://{Context!.Request.Host}";
     var isDemoMode = await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false);
 
     var logo = "/images/logo.png";
@@ -80,12 +80,26 @@
     <head>
         <title>@title</title>
         <link rel="icon" type="image/png" href="@logo" />
+        <link rel="canonical" href="@siteUrl">
 
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
+        <meta name="description" content="Memtly is a very basic site with only one goal. It provides you and your guests a way to share memories of and leading up to an event." />
+        <meta name="author" content="Memtly" />
         <meta name="robots" content="noai, noimageai">
+
+        <meta property="og:site_name" content="@title">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="@siteUrl">
+
+        <script type="application/ld+json">
+            {
+                "@@context": "https://schema.org",
+                "@@type": "WebSite",
+                "name": "@title",
+                "url": "@siteUrl"
+            }
+        </script>
 
         <link rel="stylesheet" href="~/_content/Memtly.Core/dist/main.css" asp-append-version="true" />
         @if (theme.Equals(Themes.AutoDetect.ToString().ToLower(), StringComparison.OrdinalIgnoreCase))

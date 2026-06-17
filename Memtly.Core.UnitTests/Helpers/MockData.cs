@@ -38,8 +38,9 @@ namespace Memtly.Core.UnitTests.Helpers
 			return new GalleryItemModel()
 			{
 				Id = rand.Next(),
-				GalleryId = galleryId != null ? (int)galleryId : rand.Next(),
-				Title = $"{Guid.NewGuid()}.{MockFileExtension()}",
+                GalleryId = galleryId != null ? (int)galleryId : rand.Next(),
+                GalleryName = Guid.NewGuid().ToString(),
+                Title = $"{Guid.NewGuid()}.{MockFileExtension()}",
 				UploadedBy = rand.Next(2) % 2 == 0 ? Guid.NewGuid().ToString() : null,
 				MediaType = (MediaType)rand.Next(3),
 				State = state == GalleryItemState.All ? (GalleryItemState)rand.Next(2) : state,

@@ -5,6 +5,7 @@
         None,
         Date,
         MediaType,
-        Uploader
+        Uploader,
+        Gallery
     }
 }

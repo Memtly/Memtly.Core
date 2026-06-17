@@ -26,36 +26,37 @@ namespace Memtly.Core.Helpers
             var characterSet = BuildCharacterSet(lower, upper, numbers, symbols);
 
             if (characterSet != null && characterSet.Length > 0)
-            { 
-                var passwordBuilder = new StringBuilder();
-                for (var i = 0; i < length; i++)
+            {
+                var positions = Enumerable.Range(0, length).OrderBy(_ => rand.Next()).ToList();
+                var password = new char[length];
+                var pos = 0;
+
+                if (lower)
                 {
-                    passwordBuilder.Append(PickRandomCharacter(rand, characterSet));
+                    password[positions[pos++]] = PickRandomCharacter(rand, BuildCharacterSet(lower: true, upper: false, numbers: false, symbols: false));
                 }
 
-                var password = passwordBuilder.ToString();
-
-                if (lower && !HasLowerCaseLetter(password))
+                if (upper)
                 {
-                    password = ReplaceRandomCharacter(rand, password, PickRandomCharacter(rand, BuildCharacterSet(lower: true, upper: false, numbers: false, symbols: false)));
+                    password[positions[pos++]] = PickRandomCharacter(rand, BuildCharacterSet(lower: false, upper: true, numbers: false, symbols: false));
                 }
 
-                if (upper && !HasUpperCaseLetter(password))
+                if (numbers)
                 {
-                    password = ReplaceRandomCharacter(rand, password, PickRandomCharacter(rand, BuildCharacterSet(lower: false, upper: true, numbers: false, symbols: false)));
+                    password[positions[pos++]] = PickRandomCharacter(rand, BuildCharacterSet(lower: false, upper: false, numbers: true, symbols: false));
                 }
 
-                if (numbers && !HasNumber(password))
+                if (symbols)
                 {
-                    password = ReplaceRandomCharacter(rand, password, PickRandomCharacter(rand, BuildCharacterSet(lower: false, upper: false, numbers: true, symbols: false)));
+                    password[positions[pos++]] = PickRandomCharacter(rand, BuildCharacterSet(lower: false, upper: false, numbers: false, symbols: true));
                 }
 
-                if (symbols && !HasSymbol(password))
+                for (var i = pos; i < length; i++)
                 {
-                    password = ReplaceRandomCharacter(rand, password, PickRandomCharacter(rand, BuildCharacterSet(lower: false, upper: false, numbers: false, symbols: true)));
+                    password[positions[i]] = PickRandomCharacter(rand, characterSet);
                 }
 
-                return password.ToString();
+                return new string(password);
             }
 
             return string.Empty;

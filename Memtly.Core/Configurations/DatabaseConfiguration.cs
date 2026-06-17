@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using Memtly.Core.Constants;
 using Memtly.Core.EntityFramework;
@@ -8,7 +9,6 @@ using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Database;
 using Memtly.Core.Models.Database;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Memtly.Core.Configurations
 {
@@ -21,8 +21,7 @@ namespace Memtly.Core.Configurations
             
             var provider = config.GetOrDefault(MemtlyConfiguration.Database.Type, "sqlite");
             var connString = config.GetOrDefault(MemtlyConfiguration.Database.ConnectionString, "Data Source=./config/memtly.db");
-            var assemblyName = typeof(CoreDbContext).Assembly.GetName().Name;
-
+            
             if (provider.Equals("sqlite", StringComparison.OrdinalIgnoreCase))
             {
                 try
@@ -45,7 +44,7 @@ namespace Memtly.Core.Configurations
                     case "sqlite":
                         options.UseSqlite(connString, x =>
                         {
-                            x.MigrationsAssembly(assemblyName);
+                            x.MigrationsAssembly("Memtly.Core.Migrations.Sqlite");
                             x.MigrationsHistoryTable($"__EFMigrationsHistory_{provider}");
                         });
                         break;
@@ -53,42 +52,69 @@ namespace Memtly.Core.Configurations
                     case "mariadb":
                         options.UseMySql(connString, ServerVersion.AutoDetect(connString), x =>
                         {
-                            x.MigrationsAssembly(assemblyName);
+                            x.MigrationsAssembly("Memtly.Core.Migrations.MySql");
                             x.MigrationsHistoryTable($"__EFMigrationsHistory_{provider}");
                         });
                         break;
                     case "mssql":
                         options.UseSqlServer(connString, x =>
                         {
-                            x.MigrationsAssembly(assemblyName);
+                            x.MigrationsAssembly("Memtly.Core.Migrations.SqlServer");
                             x.MigrationsHistoryTable($"__EFMigrationsHistory_{provider}");
                         });
                         break;
                     case "postgres":
                         options.UseNpgsql(connString, x =>
                         {
-                            x.MigrationsAssembly(assemblyName);
+                            x.MigrationsAssembly("Memtly.Core.Migrations.Postgres");
                             x.MigrationsHistoryTable($"__EFMigrationsHistory_{provider}");
                         });
                         break;
                     default:
                         throw new InvalidOperationException($"Unsupported database provider: '{provider}'. Supported: sqlite, mysql, mariadb, mssql, postgres");
                 }
-
-                options.ReplaceService<IMigrationsAssembly, CoreDbContextMigrationFilter>();
             });
 
             services.AddScoped<IDatabaseHelper, EFDatabaseHelper>();
 
             bsp = services.BuildServiceProvider();
             var ctx = bsp.GetRequiredService<CoreDbContext>();
+            var logger = bsp.GetRequiredService<ILogger<EFDatabaseHelper>>();
 
             var dbProvider = ctx.Database.ProviderName;
 
-            ctx.Database.Migrate();
+            var appliedMigrations = ctx.Database.GetAppliedMigrations();
+            if (appliedMigrations != null && appliedMigrations.Any())
+            {
+                var builder = new StringBuilder();
+                builder.AppendLine($"Applied database migrations: ");
+
+                for (var i = 0; i < appliedMigrations.Count(); i++)
+                {
+                    builder.AppendLine($"{i + 1}) {appliedMigrations.ElementAt(i)}");
+                }
+
+                logger.LogDebug(builder.ToString());
+            }
+
+            var pendingMigrations = ctx.Database.GetPendingMigrations();
+            if (pendingMigrations != null && pendingMigrations.Any())
+            {
+                var builder = new StringBuilder();
+                builder.AppendLine($"Pending database migrations: ");
+
+                for (var i = 0; i < pendingMigrations.Count(); i++)
+                {
+                    builder.AppendLine($"{i + 1}) {pendingMigrations.ElementAt(i)}");
+                }
+
+                logger.LogDebug(builder.ToString());
+
+                logger.LogDebug($"Performing database migration");
+                ctx.Database.Migrate();
+            }
 
             var encryption = bsp.GetRequiredService<IEncryptionHelper>();
-            var logger = bsp.GetRequiredService<ILogger<EFDatabaseHelper>>();
 
             using (var scope = bsp.CreateScope())
             {
@@ -174,7 +200,8 @@ namespace Memtly.Core.Configurations
                             Identifier = SystemGalleries.DefaultGallery.ToLower(),
                             Name = SystemGalleries.DefaultGallery,
                             SecretKey = secretKey,
-                            Owner = adminAccount.Id
+                            Owner = adminAccount.Id,
+                            Type = GalleryType.Basic
                         });
                     }
                 }

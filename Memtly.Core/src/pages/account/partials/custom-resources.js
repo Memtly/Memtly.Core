@@ -58,7 +58,6 @@ function bindUploadCustomResourceInput() {
                             displayMessage(localization.translate('Upload'), localization.translate('Upload_Success', { count: 1 }));
 
                             updateCustomResources();
-                            //updateSettings();
 
                             $('input#custom-resource-upload').val('');
                         } else if (response.errors !== undefined && response.errors.length > 0) {
@@ -132,7 +131,7 @@ function bindRelinkCustomResourceButton() {
 
                     let id = $('#popup-modal-field-custom-resource-id').val();
                     if (id == undefined || id.length == 0) {
-                        displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Custom_Resource_Missing_Id'));
+                        displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Missing_Id'));
                         return;
                     }
 
@@ -210,7 +209,6 @@ function bindDeleteCustomResourceButton() {
                                 displayMessage(localization.translate('Delete_Item'), localization.translate('Delete_Item_Success'));
 
                                 updateCustomResources();
-                                //updateSettings();
 
                                 element.remove();
                             } else if (data.message) {
@@ -271,7 +269,6 @@ function bindBulkDeleteCustomResourceButton() {
                                 displayMessage(localization.translate('Bulk_Delete_Items'), localization.translate('Bulk_Delete_Items_Success'));
 
                                 updateCustomResources();
-                                //updateSettings();
 
                                 $('div#custom-resources .btn-multi-select.fa-square-check').remove();
                                 $('.btn-bulk-delete-resources').addClass('d-none');

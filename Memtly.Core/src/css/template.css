@@ -11212,3 +11212,49 @@ footer {
     flex: 0 0 auto !important;
     width: 8.33333333% !important;
 }
+
+.gallery-checklist-container {
+    color: rgba(var(--text-contrast), 1.0);
+    background-color: rgba(var(--primary-1), 0.1);
+    min-height: 200px;
+    max-height: 200px;
+    border-radius: var(--bs-border-radius);
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--primary-1), 0.4) rgba(var(--primary-1), 0.06);
+}
+
+    .gallery-checklist-container::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .gallery-checklist-container::-webkit-scrollbar-track {
+        background: rgba(var(--primary-1), 0.06);
+        border-radius: 10px;
+    }
+
+    .gallery-checklist-container::-webkit-scrollbar-thumb {
+        background: rgba(var(--primary-1), 0.4);
+        border-radius: 10px;
+        border: 2px solid rgba(var(--primary-1), 0.06);
+    }
+
+        .gallery-checklist-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(var(--primary-1), 0.08);
+        }
+
+    .gallery-checklist-container .gallery-checklist-item {
+        padding: 2px 10px;
+        border-bottom: 1px solid rgba(var(--primary-1), 0.03);
+        cursor: pointer;
+    }
+
+        .gallery-checklist-container .gallery-checklist-item:last-child {
+            border-bottom: 0px !important;
+        }
+
+        .gallery-checklist-container .gallery-checklist-item.selected {
+            background-color: rgba(var(--primary-1), 0.2);
+            border-bottom: 1px solid rgba(var(--primary-1), 0.03);
+        }

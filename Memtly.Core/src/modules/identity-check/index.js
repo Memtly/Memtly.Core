@@ -59,10 +59,11 @@ export function displayIdentityCheckPopup(name, email, nameRequired, emailRequir
                             if (callbackFn !== undefined && callbackFn !== null) {
                                 callbackFn();
                             } else {
-                                window.location.reload();
+                                $('.change-identity').attr('data-identity-name', name ?? '');
+                                $('.change-identity').attr('data-identity-email', email ?? '');
                             }
                         } else if (data.reason == 1) {
-                            displayMessage(localization.translate('Identity_Check_Invalid_Name'), localization.translate('Identity_Check_Invalid_Name_Msg'), null, () => {
+                            displayMessage(localization.translate('Invalid_Name'), localization.translate('Invalid_Name_Msg'), null, () => {
                                 displayIdentityCheckPopup(name, email, nameRequired, emailRequired, callbackFn);
                             });
                         } else if (data.reason == 2) {
@@ -81,7 +82,7 @@ export function displayIdentityCheckPopup(name, email, nameRequired, emailRequir
                         });
                     });
             } else {
-                displayMessage(localization.translate('Identity_Check_Invalid_Name'), localization.translate('Identity_Check_Invalid_Name_Msg'), null, () => {
+                displayMessage(localization.translate('Invalid_Name'), localization.translate('Invalid_Name_Msg'), null, () => {
                     displayIdentityCheckPopup(name, email, nameRequired, emailRequired, callbackFn);
                 });
             }
@@ -103,9 +104,10 @@ export function displayIdentityCheckPopup(name, email, nameRequired, emailRequir
                                 displayIdentityCheckPopup(name, email, nameRequired, emailRequired, callbackFn);
                             });
                         } else if (data.success) {
-                            window.location.reload();
+                            $('.change-identity').attr('data-identity-name', name ?? '');
+                            $('.change-identity').attr('data-identity-email', email ?? '');
                         } else if (data.reason == 1) {
-                            displayMessage(localization.translate('Identity_Check_Invalid_Name'), localization.translate('Identity_Check_Invalid_Name_Msg'), null, () => {
+                            displayMessage(localization.translate('Invalid_Name'), localization.translate('Invalid_Name_Msg'), null, () => {
                                 displayIdentityCheckPopup(name, email, nameRequired, emailRequired, callbackFn);
                             });
                         } else if (data.reason == 2) {
@@ -193,9 +195,10 @@ function displayIdentityCheckChangePopup(name, email, emailRequired) {
                                     displayIdentityCheckChangePopup(name, email, emailRequired);
                                 });
                             } else if (data.success) {
-                                window.location.reload();
+                                $('.change-identity').attr('data-identity-name', name ?? '');
+                                $('.change-identity').attr('data-identity-email', email ?? '');
                             } else if (data.reason == 1) {
-                                displayMessage(localization.translate('Identity_Check_Invalid_Name'), localization.translate('Identity_Check_Invalid_Name_Msg'), null, () => {
+                                displayMessage(localization.translate('Invalid_Name'), localization.translate('Invalid_Name_Msg'), null, () => {
                                     displayIdentityCheckChangePopup(name, email, emailRequired);
                                 });
                             } else if (data.reason == 2) {
@@ -214,7 +217,7 @@ function displayIdentityCheckChangePopup(name, email, emailRequired) {
                             });
                         });
                 } else {
-                    displayMessage(localization.translate('Identity_Check_Invalid_Name'), localization.translate('Identity_Check_Invalid_Name_Msg'), null, () => {
+                    displayMessage(localization.translate('Invalid_Name'), localization.translate('Invalid_Name_Msg'), null, () => {
                         displayIdentityCheckChangePopup(name, email, emailRequired);
                     });
                 }

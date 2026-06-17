@@ -15,8 +15,7 @@ namespace Memtly.Core.EntityFramework
                 .Build();
 
             var provider = config[MemtlyConfiguration.Database.Type]!;
-            var assemblyName = typeof(CoreDbContext).Assembly.GetName().Name;
-
+            
             var options = new DbContextOptionsBuilder<CoreDbContext>();
             switch (provider.ToLower())
             {
@@ -29,7 +28,7 @@ namespace Memtly.Core.EntityFramework
 
                     options.UseSqlite($"Data Source={sqliteFile}", x =>
                     {
-                        x.MigrationsAssembly(assemblyName);
+                        x.MigrationsAssembly("Memtly.Core.Migrations.Sqlite");
                         x.MigrationsHistoryTable($"__EFMigrationsHistory_{provider}");
                     });
                     break;
@@ -37,21 +36,21 @@ namespace Memtly.Core.EntityFramework
                 case "mariadb":
                     options.UseMySql($"Server=localhost;Database=_design_temp_{provider.ToLower()};", MySqlServerVersion.LatestSupportedServerVersion, x =>
                     {
-                        x.MigrationsAssembly(assemblyName);
+                        x.MigrationsAssembly("Memtly.Core.Migrations.MySql");
                         x.MigrationsHistoryTable($"__EFMigrationsHistory_{provider}");
                     });
                     break;
                 case "mssql":
                     options.UseSqlServer($"Server=(localdb)\\mssqllocaldb;Database=_design_temp_{provider.ToLower()};", x =>
                         {
-                            x.MigrationsAssembly(assemblyName);
+                            x.MigrationsAssembly("Memtly.Core.Migrations.SqlServer");
                             x.MigrationsHistoryTable($"__EFMigrationsHistory_{provider}");
                         });
                     break;
                 case "postgres":
                     options.UseNpgsql($"Host=localhost;Database=_design_temp_{provider.ToLower()};", x =>
                         {
-                            x.MigrationsAssembly(assemblyName);
+                            x.MigrationsAssembly("Memtly.Core.Migrations.Postgres");
                             x.MigrationsHistoryTable($"__EFMigrationsHistory_{provider}");
                         });
                     break;

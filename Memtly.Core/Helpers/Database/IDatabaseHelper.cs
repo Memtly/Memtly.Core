@@ -1,4 +1,5 @@
 ﻿using Memtly.Core.Enums;
+using Memtly.Core.Models;
 using Memtly.Core.Models.Database;
 
 namespace Memtly.Core.Helpers.Database
@@ -6,12 +7,12 @@ namespace Memtly.Core.Helpers.Database
     public interface IDatabaseHelper
     {
         #region Gallery
-        Task<int> GetGalleryCount(int? userId = null);
-        Task<IDictionary<string, string>> GetGalleryNames(bool showGalleryNames = true, bool showGalleryIdentifiers = true, bool showUsernames = true);
-        Task<List<GalleryModel>> GetGalleries(int? userId = null, string term = "", int page = 1, int limit = int.MaxValue);
+        Task<int> GetGalleryCount(int? userId = null, GalleryType type = GalleryType.All);
+        Task<IDictionary<string, string>> GetGalleryNames(bool showGalleryNames = true, bool showGalleryIdentifiers = true, bool showUsernames = true, GalleryType type = GalleryType.All);
+        Task<List<GalleryModel>> GetGalleries(int? userId = null, string term = "", int page = 1, int limit = int.MaxValue, GalleryType type = GalleryType.All);
         Task<int?> GetGalleryId(string identifier);
         Task<int?> GetGalleryIdByName(string name);
-        Task<string?> GetGalleryIdentifier(int id);
+        Task<GalleryIdentifierModel?> GetGalleryIdentifier(int id);
         Task<string?> GetGalleryName(int id);
         Task<GalleryModel?> GetAllGallery();
         Task<GalleryModel?> GetGallery(int id);
@@ -25,9 +26,11 @@ namespace Memtly.Core.Helpers.Database
         #endregion
 
         #region Gallery Items
+        Task<IDictionary<string, int>> GetCollectionItemCount(int? collectionId, GalleryItemState state = GalleryItemState.All, MediaType type = MediaType.All, ImageOrientation orientation = ImageOrientation.All);
         Task<IDictionary<string, int>> GetGalleryItemCount(int? galleryId, GalleryItemState state = GalleryItemState.All, MediaType type = MediaType.All, ImageOrientation orientation = ImageOrientation.All);
         Task<GalleryItemModel?> GetGalleryItem(int id);
         Task<GalleryItemModel?> GetGalleryItemByChecksum(int galleryId, string checksum);
+        Task<List<GalleryItemModel>> GetCollectionItems(int? userId = null, int? collectionId = null, GalleryItemState state = GalleryItemState.All, MediaType type = MediaType.All, ImageOrientation orientation = ImageOrientation.All, GalleryGroup group = GalleryGroup.None, GalleryOrder order = GalleryOrder.Descending, int page = 1, int limit = int.MaxValue);
         Task<List<GalleryItemModel>> GetGalleryItems(int? userId = null, int? galleryId = null, GalleryItemState state = GalleryItemState.All, MediaType type = MediaType.All, ImageOrientation orientation = ImageOrientation.All, GalleryGroup group = GalleryGroup.None, GalleryOrder order = GalleryOrder.Descending, int page = 1, int limit = int.MaxValue);
         Task<GalleryItemModel?> AddGalleryItem(GalleryItemModel model);
         Task<GalleryItemModel?> EditGalleryItem(GalleryItemModel model);
@@ -47,11 +50,21 @@ namespace Memtly.Core.Helpers.Database
         Task DeleteAllGalleryItemLikes();
         #endregion
 
+        #region Gallery Collections
+        Task<GalleryCollectionModel?> GetCollection(int id);
+        Task<List<GalleryCollectionModel>> GetCollections(int? userId = null, int? collectionId = null);
+        Task<List<GalleryCollectionModel>> GetCollectionsByGalleryId(int galleryId);
+        Task<GalleryCollectionModel?> AddCollection(GalleryCollectionModel model);
+        Task<GalleryCollectionModel?> EditCollection(GalleryCollectionModel model);
+        Task DeleteCollection(GalleryCollectionModel model);
+        Task DeleteAllCollections();
+        #endregion
+
         #region Users
         Task<bool> ValidateCredentials(string username, string password);
         Task<int> GetAdminCount(AccountState? state = null);
-        Task<int> GetUserCount();
-        Task<List<UserModel>?> GetUsers(string term = "", int page = 1, int limit = int.MaxValue);
+        Task<int> GetUserCount(UserLevel level = UserLevel.All);
+        Task<List<UserModel>?> GetUsers(string term = "", int page = 1, int limit = int.MaxValue, UserLevel level = UserLevel.All);
         Task<UserModel?> GetUser(int id);
         Task<UserModel?> GetUserByUsername(string name);
         Task<UserModel?> GetUserByEmail(string email);
