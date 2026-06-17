@@ -32,7 +32,7 @@ function bindGallerySelector() {
                 }
             });
         } else {
-            displayMessage(localization.translate('Gallery'), localization.translate('Gallery_Invalid_Name'));
+            displayMessage(localization.translate('Gallery'), localization.translate('Invalid_Name'));
         }
     });
 }

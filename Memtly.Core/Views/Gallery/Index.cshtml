@@ -42,7 +42,7 @@
     ViewBag.QRCodeLink = _url.GenerateFullUrl(Context.Request, Context.Request.Path, qrAppend, qrExclude);
 }
 
-@if (Model?.UploadActivated != null && Model.UploadActivated && Model.ViewMode != ViewMode.Presentation && Model.ViewMode != ViewMode.Slideshow)
+@if (Model?.Gallery != null && Model!.Gallery!.Type != GalleryType.Collection && Model?.UploadActivated != null && Model.UploadActivated && Model.ViewMode != ViewMode.Presentation && Model.ViewMode != ViewMode.Slideshow)
 {
     var allowedFileTypes = (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", Model?.Gallery?.Id))?.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)?.Select(x => $".{x.Trim('.')}")?.OrderBy(x => x)?.ToList() ?? new List<string>();
     var identityRequired = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.RequireIdentityForUpload, false);

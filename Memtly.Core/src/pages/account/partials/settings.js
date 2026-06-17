@@ -300,15 +300,4 @@ export function searchSettings() {
     }, 500);
 }
 
-export function updateSettings() {
-    $.ajax({
-        type: 'GET',
-        url: `/Account/SettingsPartial`,
-        success: function (data) {
-            $('#settings-list').html(data);
-            bindEventHandlers();
-        }
-    });
-}
-
 export default init;

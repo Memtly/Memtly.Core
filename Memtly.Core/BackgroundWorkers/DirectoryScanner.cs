@@ -116,7 +116,8 @@ namespace Memtly.Core.BackgroundWorkers
                                             Identifier = identifier,
                                             Name = galleryName,
                                             SecretKey = PasswordHelper.GenerateGallerySecretKey(),
-                                            Owner = systemUser!.Id
+                                            Owner = systemUser!.Id,
+                                            Type = GalleryType.Basic
                                         }))?.Id;
                                         await _auditHelper.LogAction($"Directory scanner added new gallery '{identifier}'", AuditSeverity.Verbose);
                                     }
@@ -152,6 +153,7 @@ namespace Memtly.Core.BackgroundWorkers
                                                                 g = await db.AddGalleryItem(new GalleryItemModel()
                                                                 {
                                                                     GalleryId = galleryItem.Id,
+                                                                    GalleryName = galleryItem.Name,
                                                                     Title = filename,
                                                                     Checksum = await _fileHelper.GetChecksum(file),
                                                                     MediaType = _imageHelper.GetMediaType(file),
@@ -237,6 +239,7 @@ namespace Memtly.Core.BackgroundWorkers
                                                                     await db.AddGalleryItem(new GalleryItemModel()
                                                                     {
                                                                         GalleryId = galleryItem.Id,
+                                                                        GalleryName = galleryItem.Name,
                                                                         Title = filename,
                                                                         Checksum = await _fileHelper.GetChecksum(file),
                                                                         MediaType = _imageHelper.GetMediaType(file),

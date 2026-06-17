@@ -31,6 +31,17 @@
 
         <div class="row mb-4 mb-lg-4 setting-container">
             <div class="col-12">
+                <label class="setting-label">@_localizer["Text_Color_Label"].Value</label>
+                <div class="input-group form-color-picker-group">
+                    <input type="text" class="setting-field form-control form-control-text" placeholder="#FFFFFF" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Text" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Text.ToUpper(), "#FFFFFF")" />
+                    <input type="color" class="form-control form-control-color" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Text.ToUpper(), "#FFFFFF")" title="@_localizer["Choose_Your_Color"].Value" />
+                </div>
+                <div class="setting-hint form-text">@_localizer["Text_Color_Help"].Value</div>
+            </div>
+        </div>
+
+        <div class="row mb-4 mb-lg-4 setting-container">
+            <div class="col-12">
                 <label class="setting-label">@_localizer["Background_Color_Label"].Value</label>
                 <div class="input-group form-color-picker-group">
                     <input type="text" class="setting-field form-control form-control-text" placeholder="#FFFFFF" data-setting-name="@MemtlyConfiguration.Themes.ColourOverrides.Background" value="@Model.GetValue(MemtlyConfiguration.Themes.ColourOverrides.Background.ToUpper(), "#FFFFFF")" />

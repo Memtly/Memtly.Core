@@ -676,7 +676,7 @@ namespace Memtly.Core.Controllers
 
         [HttpGet]
         [RequiresRole(GalleryPermission = GalleryPermissions.View)]
-        public async Task<IActionResult> GalleriesList(string term = "", int page = 1, int limit = 50)
+        public async Task<IActionResult> GalleriesList(GalleryType type = GalleryType.All, string term = "", int page = 1, int limit = 50)
         {
             if (User?.Identity == null || !User.Identity.IsAuthenticated)
             {
@@ -692,8 +692,8 @@ namespace Memtly.Core.Controllers
                 {
                     if (User?.Identity?.IsPrivilegedUser() ?? false)
                     {
-                        result.Galleries = (await _database.GetGalleries(null, term, page, limit))?.Where(x => !x.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))?.ToList() ?? new List<GalleryModel>();
-                        if (result.Galleries != null && (string.IsNullOrEmpty(term) || SystemGalleries.AllGallery.Contains(term, StringComparison.OrdinalIgnoreCase)))
+                        result.Galleries = (await _database.GetGalleries(null, term, page, limit, type))?.Where(x => !x.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))?.ToList() ?? new List<GalleryModel>();
+                        if (result.Galleries != null && (type == GalleryType.Collection || type == GalleryType.Collection) && (string.IsNullOrEmpty(term) || SystemGalleries.AllGallery.Contains(term, StringComparison.OrdinalIgnoreCase)))
                         {
                             var all = await _database.GetAllGallery();
                             if (all != null)
@@ -701,12 +701,12 @@ namespace Memtly.Core.Controllers
                                 result.Galleries.Add(all);
                             }
                         }
-                        result.TotalItems = await _database.GetGalleryCount(null);
+                        result.TotalItems = await _database.GetGalleryCount(null, type);
                     }
                     else
                     {
-                        result.Galleries = await _database.GetGalleries(user.Id, term, page, limit);
-                        result.TotalItems = await _database.GetGalleryCount(user.Id);
+                        result.Galleries = await _database.GetGalleries(user.Id, term, page, limit, type);
+                        result.TotalItems = await _database.GetGalleryCount(user.Id, type);
                     }
                 }
             }
@@ -756,7 +756,7 @@ namespace Memtly.Core.Controllers
 
         [HttpGet]
         [RequiresRole(UserPermission = UserPermissions.View)]
-        public async Task<IActionResult> UsersList(string term = "", int page = 1, int limit = 50)
+        public async Task<IActionResult> UsersList(string term = "", int page = 1, int limit = 50, UserLevel level = UserLevel.All)
         {
             if (User?.Identity == null || !User.Identity.IsAuthenticated)
             {
@@ -772,8 +772,8 @@ namespace Memtly.Core.Controllers
                 {
                     if (User?.Identity?.IsPrivilegedUser() ?? false)
                     {
-                        result.Users = await _database.GetUsers(term, page, limit);
-                        result.TotalItems = await _database.GetUserCount();
+                        result.Users = await _database.GetUsers(term, page, limit, level);
+                        result.TotalItems = await _database.GetUserCount(level);
                     }
                     else 
                     {
@@ -857,17 +857,20 @@ namespace Memtly.Core.Controllers
             return PartialView("~/Views/Account/Partials/SettingsList.cshtml", model);
         }
 
-        [HttpGet]
+        [HttpPost]
         [RequiresRole(SettingsPermission = SettingsPermissions.Gallery_Update)]
-        [Route("Account/Settings/{galleryId}")]
-        public async Task<IActionResult> GallerySettingsPartial(int galleryId)
+        [Route("Account/Settings")]
+        public async Task<IActionResult> GallerySettingsPartial(int galleryId, GalleryType type = GalleryType.Basic)
         {
             if (User?.Identity == null || !User.Identity.IsAuthenticated)
             {
                 return Redirect("/");
             }
 
-            var model = new Views.Account.Settings.Gallery.GalleryOverridesModel();
+            var model = new Views.Account.Settings.Gallery.GalleryOverridesModel()
+            {
+                Type = type
+            };
 
             try
             {
@@ -1030,7 +1033,7 @@ namespace Memtly.Core.Controllers
                     {
                         if (ProtectedValues.IsProtectedGalleryName(model.Name))
                         {
-                            return Json(new { success = false, message = _localizer["Protected_Gallery_Name"].Value });
+                            return Json(new { success = false, message = _localizer["Protected_Name"].Value });
                         }
 
                         var userId = User.Identity.GetUserId();
@@ -1042,6 +1045,7 @@ namespace Memtly.Core.Controllers
                             if (userGalleries.Count() < User.Identity.GetGalleryLimit() && await _database.GetGalleryCount() < await _settings.GetOrDefault(MemtlyConfiguration.Basic.MaxGalleryCount, 1000000))
                             {
                                 model.Owner = userId;
+                                model.Type = GalleryType.Basic;
 
                                 var gallery = await _database.AddGallery(model);
                                 if (gallery != null)
@@ -1057,12 +1061,12 @@ namespace Memtly.Core.Controllers
                             }
                             else
                             {
-                                return Json(new { success = false, message = _localizer["Gallery_Limit_Reached"].Value });
+                                return Json(new { success = false, message = _localizer["Limit_Reached"].Value });
                             }
                         }
                         else
                         { 
-                            return Json(new { success = false, message = _localizer["Gallery_Name_Already_Exists"].Value });
+                            return Json(new { success = false, message = _localizer["Name_Already_Exists"].Value });
                         }
                     }
                     catch (Exception ex)
@@ -1091,17 +1095,18 @@ namespace Memtly.Core.Controllers
                     {
                         if (ProtectedValues.IsProtectedGalleryName(model.Name))
                         {
-                            return Json(new { success = false, message = _localizer["Protected_Gallery_Name"].Value });
+                            return Json(new { success = false, message = _localizer["Protected_Name"].Value });
                         }
 
                         var check = await _database.GetGallery(model.Id);
                         if (check == null || model.Id == check.Id)
                         {
                             var gallery = await _database.GetGallery(model.Id);
-                            if (gallery != null && User.Identity.CanEdit(GalleryPermissions.Update, gallery.Owner))
+                            if (gallery != null && gallery.Type == GalleryType.Basic && User.Identity.CanEdit(GalleryPermissions.Update, gallery.Owner))
                             {
                                 gallery.Name = model.Name;
                                 gallery.SecretKey = model.SecretKey;
+                                gallery.Type = GalleryType.Basic;
 
                                 gallery = await _database.EditGallery(gallery);
                                 if (gallery != null)
@@ -1122,12 +1127,174 @@ namespace Memtly.Core.Controllers
                         }
                         else
                         {
-                            return Json(new { success = false, message = _localizer["Gallery_Name_Already_Exists"].Value });
+                            return Json(new { success = false, message = _localizer["Name_Already_Exists"].Value });
                         }
                     }
                     catch (Exception ex)
                     {
                         _logger.LogError(ex, $"{_localizer["Failed_Edit_Gallery"].Value} - {ex?.Message}");
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = _localizer["Name_Cannot_Be_Blank"].Value });
+                }
+            }
+
+            return Json(new { success = false });
+        }
+
+        [HttpPost]
+        [RequiresRole(CollectionPermission = CollectionPermissions.Create)]
+        public async Task<IActionResult> AddCollection(GalleryModel model)
+        {
+            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                if (!string.IsNullOrWhiteSpace(model?.Name))
+                {
+                    try
+                    {
+                        if (ProtectedValues.IsProtectedGalleryName(model.Name))
+                        {
+                            return Json(new { success = false, message = _localizer["Protected_Name"].Value });
+                        }
+
+                        var userId = User.Identity.GetUserId();
+                        var userGalleries = await _database.GetGalleries(userId);
+                        
+                        var collectionItems = userGalleries.Where(g => g.Type == GalleryType.Basic && model?.CollectionItems != null && model.CollectionItems.Any(id => g.Id == id)).ToList();
+                        if (collectionItems == null || collectionItems.Count < 2)
+                        {
+                            return Json(new { success = false, message = _localizer["Collection_Not_Enough_Galleries"].Value });
+                        }
+
+                        var alreadyExists = userGalleries.Any(x => x.Name.Equals(model.Name, StringComparison.OrdinalIgnoreCase)) || ((await _database.GetGalleryId(model.Identifier)) != null);
+                        if (!alreadyExists)
+                        {
+                            if (userGalleries.Count() < User.Identity.GetGalleryLimit() && await _database.GetGalleryCount() < await _settings.GetOrDefault(MemtlyConfiguration.Basic.MaxGalleryCount, 1000000))
+                            {
+                                model.Owner = userId;
+                                model.Type = GalleryType.Collection;
+
+                                var collection = await _database.AddGallery(model);
+                                if (collection != null)
+                                {
+                                    foreach (var collectionItem in collectionItems)
+                                    {
+                                        await _database.AddCollection(new GalleryCollectionModel()
+                                        {
+                                            CollectionId = collection.Id,
+                                            GalleryId = collectionItem.Id
+                                        });
+                                    }
+
+                                    await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_CreatedCollection"].Value} '{model?.Name}'", AuditSeverity.Debug);
+
+                                    return Json(new { success = string.Equals(model?.Name, collection?.Name, StringComparison.OrdinalIgnoreCase) });
+                                }
+                                else
+                                {
+                                    return Json(new { success = false, message = _localizer["Failed_Add_Collection"].Value });
+                                }
+                            }
+                            else
+                            {
+                                return Json(new { success = false, message = _localizer["Limit_Reached"].Value });
+                            }
+                        }
+                        else
+                        {
+                            return Json(new { success = false, message = _localizer["Name_Already_Exists"].Value });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"{_localizer["Failed_Add_Collection"].Value} - {ex?.Message}");
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = _localizer["Name_Cannot_Be_Blank"].Value });
+                }
+            }
+
+            return Json(new { success = false });
+        }
+
+        [HttpPut]
+        [RequiresRole(CollectionPermission = CollectionPermissions.Update)]
+        public async Task<IActionResult> EditCollection(GalleryModel model)
+        {
+            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                if (!string.IsNullOrWhiteSpace(model?.Name))
+                {
+                    try
+                    {
+                        if (ProtectedValues.IsProtectedGalleryName(model.Name))
+                        {
+                            return Json(new { success = false, message = _localizer["Protected_Name"].Value });
+                        }
+
+                        var check = await _database.GetGallery(model.Id);
+                        if (check == null || model.Id == check.Id)
+                        {
+                            var collection = await _database.GetGallery(model.Id);
+                            if (collection != null && collection.Type == GalleryType.Collection && User.Identity.CanEdit(CollectionPermissions.Update, collection.Owner))
+                            {
+                                var userId = User.Identity.GetUserId();
+                                var userGalleries = await _database.GetGalleries(userId);
+
+                                var collectionItems = userGalleries.Where(g => g.Type == GalleryType.Basic && model?.CollectionItems != null && model.CollectionItems.Any(id => g.Id == id)).ToList();
+                                if (collectionItems == null || collectionItems.Count < 2)
+                                {
+                                    return Json(new { success = false, message = _localizer["Collection_Not_Enough_Galleries"].Value });
+                                }
+
+                                collection.Name = model.Name;
+                                collection.SecretKey = model.SecretKey;
+                                collection.Type = GalleryType.Collection;
+
+                                collection = await _database.EditGallery(collection);
+                                if (collection != null)
+                                {
+                                    var currentCollectionItems = await _database.GetCollections(userId, collection.Id);
+                                    foreach (var collectionItem in currentCollectionItems.Where(c => !collectionItems.Any(ci => ci.Id == c.GalleryId)))
+                                    {
+                                        await _database.DeleteCollection(collectionItem);
+                                    }
+
+                                    foreach (var collectionItem in collectionItems.Where(c => !currentCollectionItems.Any(ci => ci.GalleryId == c.Id)))
+                                    {
+                                        await _database.AddCollection(new GalleryCollectionModel()
+                                        {
+                                            CollectionId = collection.Id,
+                                            GalleryId = collectionItem.Id
+                                        });
+                                    }
+
+                                    await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_UpdatedCollection"].Value} '{model?.Name}'", AuditSeverity.Debug);
+
+                                    return Json(new { success = string.Equals(model?.Name, collection?.Name, StringComparison.OrdinalIgnoreCase) });
+                                }
+                                else
+                                {
+                                    return Json(new { success = false, message = _localizer["Failed_Edit_Collection"].Value });
+                                }
+                            }
+                            else
+                            {
+                                return Json(new { success = false, message = _localizer["Failed_Edit_Collection"].Value });
+                            }
+                        }
+                        else
+                        {
+                            return Json(new { success = false, message = _localizer["Name_Already_Exists"].Value });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"{_localizer["Failed_Edit_Collection"].Value} - {ex?.Message}");
                     }
                 }
                 else
@@ -1155,6 +1322,12 @@ namespace Memtly.Core.Controllers
                             var user = await _database.GetUserByUsername(model.OwnerName);
                             if (user != null)
                             {
+                                var collections = await _database.GetCollectionsByGalleryId(gallery.Id);
+                                if (collections != null && collections.Any())
+                                {
+                                    return Json(new { success = false, message = _localizer["Cannot_Relink_Collection_Member"].Value });
+                                }
+
                                 var originalOwner = gallery.OwnerName;
 
                                 gallery.Owner = user.Id;
@@ -1205,7 +1378,7 @@ namespace Memtly.Core.Controllers
                 try
                 {
                     var gallery = await _database.GetGallery(id);
-                    if (gallery != null && User.Identity.CanEdit(GalleryPermissions.Wipe, gallery.Owner))
+                    if (gallery != null && gallery.Type == GalleryType.Basic && User.Identity.CanEdit(GalleryPermissions.Wipe, gallery.Owner))
                     {
                         var galleryDir = Path.Combine(UploadsDirectory, gallery.Identifier);
                         if (_fileHelper.DirectoryExists(galleryDir))
@@ -1342,11 +1515,17 @@ namespace Memtly.Core.Controllers
                 try
                 {
                     var gallery = await _database.GetGallery(id);
-                    if (gallery != null && User.Identity.CanEdit(GalleryPermissions.Delete, gallery.Owner))
+                    if (gallery != null && gallery.Type == GalleryType.Basic && User.Identity.CanEdit(GalleryPermissions.Delete, gallery.Owner))
                     {
                         if (gallery.Identifier.Equals(SystemGalleries.DefaultGallery, StringComparison.OrdinalIgnoreCase))
                         {
                             return Json(new { success = false, message = _localizer["Cannot_Delete_Default_Gallery"].Value });
+                        }
+
+                        var collections = await _database.GetCollectionsByGalleryId(gallery.Id);
+                        if (collections != null && collections.Any())
+                        {
+                            return Json(new { success = false, message = _localizer["Cannot_Delete_Collection_Member"].Value });
                         }
 
                         var galleryDir = Path.Combine(UploadsDirectory, gallery.Identifier);
@@ -1354,7 +1533,7 @@ namespace Memtly.Core.Controllers
 
                         if (await _settings.GetOrDefault(MemtlyConfiguration.Alerts.DestructiveAction, true))
                         {
-                            await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"The destructive action 'Delete' was performed on gallery '{gallery.Name}'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
+                            await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"{_localizer["Destructive_Action_Gallery"].Value} '{gallery.Name}'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                         }
 
                         await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_DeletedGallery"].Value} '{gallery?.Name} ({gallery?.OwnerName})'", AuditSeverity.Warning);
@@ -1370,6 +1549,41 @@ namespace Memtly.Core.Controllers
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, $"{_localizer["Failed_Delete_Gallery"].Value} - {ex?.Message}");
+                }
+            }
+
+            return Json(new { success = false });
+        }
+
+        [HttpDelete]
+        [RequiresRole(CollectionPermission = CollectionPermissions.Delete)]
+        public async Task<IActionResult> DeleteCollection(int id)
+        {
+            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                try
+                {
+                    var collection = await _database.GetGallery(id);
+                    if (collection != null && collection.Type == GalleryType.Collection && User.Identity.CanEdit(CollectionPermissions.Delete, collection.Owner))
+                    {
+                        if (await _settings.GetOrDefault(MemtlyConfiguration.Alerts.DestructiveAction, true))
+                        {
+                            await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"{_localizer["Destructive_Action_Collection"].Value} '{collection.Name}'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
+                        }
+
+                        await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_DeletedCollection"].Value} '{collection?.Name} ({collection?.OwnerName})'", AuditSeverity.Warning);
+                        await _database.DeleteGallery(collection);
+
+                        return Json(new { success = true });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = _localizer["Failed_Delete_Collection"].Value });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"{_localizer["Failed_Delete_Collection"].Value} - {ex?.Message}");
                 }
             }
 
@@ -1689,6 +1903,12 @@ namespace Memtly.Core.Controllers
                             }
                         }
 
+                        var collections = await _database.GetCollections(user.Id);
+                        foreach (var collection in collections)
+                        {
+                            await DeleteCollection(collection.Id);
+                        }
+
                         var galleries = await _database.GetGalleries(user.Id);
                         foreach (var gallery in galleries)
                         {
@@ -1733,6 +1953,13 @@ namespace Memtly.Core.Controllers
         }
 
         [HttpPut]
+        [RequiresRole(SettingsPermission = SettingsPermissions.Collection_Update)]
+        public async Task<IActionResult> UpdateCollectionSettings(List<UpdateSettingsModel> model, int collectionId)
+        {
+            return await UpdateSettings(model, collectionId, SettingsPermissions.Collection_Update);
+        }
+
+        [HttpPut]
         [RequiresRole(SettingsPermission = SettingsPermissions.Gallery_Update)]
         public async Task<IActionResult> UpdateGallerySettings(List<UpdateSettingsModel> model, int galleryId)
         {
@@ -1743,40 +1970,14 @@ namespace Memtly.Core.Controllers
         [RequiresRole(SettingsPermission = SettingsPermissions.Gallery_Update)]
         public async Task<IActionResult> ResetGallerySettings(int galleryId)
         {
-            if (galleryId > 0 && User?.Identity != null && User.Identity.IsAuthenticated)
-            {
-                try
-                {
-                    var success = true;
+            return await ResetSettings(galleryId, SettingsPermissions.Gallery_Update);
+        }
 
-                    GalleryModel? gallery = null;
-                    if (galleryId != null)
-                    {
-                        gallery = await _database.GetGallery((int)galleryId);
-                    }
-
-                    if (User.Identity.CanEdit(SettingsPermissions.Gallery_Update, gallery?.Owner))
-                    {
-                        try
-                        {
-                            await _database.DeleteAllSettings(gallery?.Id);
-                            await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_SettingsUpdated"].Value} '{(!string.IsNullOrWhiteSpace(gallery?.Name) ? gallery.Name : "Gallery Defaults")}' - Settings Reset", AuditSeverity.Information);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, $"{_localizer["Failed_Update_Setting"].Value} - {ex?.Message}");
-                        }
-                    }
-
-                    return Json(new { success = success });
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, $"{_localizer["Failed_Update_Setting"].Value} - {ex?.Message}");
-                }
-            }
-
-            return Json(new { success = false });
+        [HttpDelete]
+        [RequiresRole(SettingsPermission = SettingsPermissions.Collection_Update)]
+        public async Task<IActionResult> ResetCollectionSettings(int galleryId)
+        {
+            return await ResetSettings(galleryId, SettingsPermissions.Collection_Update);
         }
 
         [HttpPost]
@@ -2231,6 +2432,33 @@ namespace Memtly.Core.Controllers
             return Json(new { success = false });
         }
 
+        [HttpPost]
+        [RequiresRole(CollectionPermission = CollectionPermissions.View)]
+        public async Task<IActionResult> GetCollectionItems(int? collectionId = null)
+        {
+            var items = new List<CollectionSelectItem>();
+
+            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var userId = User.Identity.GetUserId();
+
+                var galleries = await _database.GetGalleries(userId, type: GalleryType.Basic);
+                if (galleries != null && galleries.Any())
+                {
+                    var collections = collectionId != null ? await _database.GetCollections(userId, collectionId) : new List<GalleryCollectionModel>();
+                    if (collections != null)
+                    { 
+                        items = galleries
+                            .OrderBy(g => g.Name.ToUpper())
+                            .Select(g => new CollectionSelectItem(g.Id, g.Name, collections.Any(c => c.GalleryId == g.Id)))
+                            .ToList();
+                    }
+                }
+            }
+
+            return Json(new { items });
+        }
+
         private async Task<IActionResult> UpdateSettings(List<UpdateSettingsModel> model, int? galleryId, SettingsPermissions accessPermissions)
         {
             if (User?.Identity != null && User.Identity.IsAuthenticated)
@@ -2285,6 +2513,44 @@ namespace Memtly.Core.Controllers
                 else
                 {
                     return Json(new { success = false, message = _localizer["Failed_Update_Setting"].Value });
+                }
+            }
+
+            return Json(new { success = false });
+        }
+
+        private async Task<IActionResult> ResetSettings(int galleryId, SettingsPermissions accessPermissions)
+        {
+            if (galleryId > 0 && User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                try
+                {
+                    var success = true;
+
+                    GalleryModel? gallery = null;
+                    if (galleryId != null)
+                    {
+                        gallery = await _database.GetGallery((int)galleryId);
+                    }
+
+                    if (User.Identity.CanEdit(accessPermissions, gallery?.Owner))
+                    {
+                        try
+                        {
+                            await _database.DeleteAllSettings(gallery?.Id);
+                            await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_SettingsUpdated"].Value} '{(!string.IsNullOrWhiteSpace(gallery?.Name) ? gallery.Name : "Gallery Defaults")}' - Settings Reset", AuditSeverity.Information);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, $"{_localizer["Failed_Update_Setting"].Value} - {ex?.Message}");
+                        }
+                    }
+
+                    return Json(new { success = success });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"{_localizer["Failed_Update_Setting"].Value} - {ex?.Message}");
                 }
             }
 
@@ -2402,7 +2668,8 @@ namespace Memtly.Core.Controllers
                     {
                         Name = SystemGalleries.DefaultGallery,
                         SecretKey = PasswordHelper.GenerateGallerySecretKey(),
-                        Owner = user.Id
+                        Owner = user.Id,
+                        Type = GalleryType.Basic
                     });
                 }
                 catch (Exception ex)

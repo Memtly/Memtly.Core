@@ -272,6 +272,7 @@
                 public const string Enabled = "Memtly:Themes:ColourOverrides:Enabled";
                 public const string NavbarText = "Memtly:Themes:ColourOverrides:NavbarText";
                 public const string NavbarBackground = "Memtly:Themes:ColourOverrides:NavbarBackground";
+                public const string Text = "Memtly:Themes:ColourOverrides:Text";
                 public const string Background = "Memtly:Themes:ColourOverrides:Background";
                 public const string Primary1 = "Memtly:Themes:ColourOverrides:Primary1";
                 public const string Primary2 = "Memtly:Themes:ColourOverrides:Primary2";

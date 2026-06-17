@@ -11,6 +11,7 @@ namespace Memtly.Core.Attributes
     {
         public UserLevel User { get; set; } = UserLevel.Basic;
         public ReviewPermissions ReviewPermission { get; set; } = ReviewPermissions.None;
+        public CollectionPermissions CollectionPermission { get; set; } = CollectionPermissions.None;
         public GalleryPermissions GalleryPermission { get; set; } = GalleryPermissions.None;
         public UserPermissions UserPermission { get; set; } = UserPermissions.None;
         public CustomResourcePermissions CustomResourcePermission { get; set; } = CustomResourcePermissions.None;
@@ -32,6 +33,7 @@ namespace Memtly.Core.Attributes
                 var pemissions = filterContext.HttpContext?.User?.Identity?.GetUserPermissions() ?? new Permissions();
                 if (
                     (pemissions.Review != ReviewPermissions.None && !pemissions.Review.HasFlag(this.ReviewPermission))
+                    || (pemissions.Collection != CollectionPermissions.None && !pemissions.Collection.HasFlag(this.CollectionPermission))
                     || (pemissions.Gallery != GalleryPermissions.None && !pemissions.Gallery.HasFlag(this.GalleryPermission))
                     || (pemissions.Users != UserPermissions.None && !pemissions.Users.HasFlag(this.UserPermission))
                     || (pemissions.CustomResources != CustomResourcePermissions.None && !pemissions.CustomResources.HasFlag(this.CustomResourcePermission))

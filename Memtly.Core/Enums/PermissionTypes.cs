@@ -19,6 +19,18 @@
     }
 
     [Flags]
+    public enum CollectionPermissions : long
+    {
+        None = 0,
+        View = 1,
+        Create = 2,
+        Update = 4,
+        Delete = 8,
+        Download = 16,
+        Relink = 32
+    }
+
+    [Flags]
     public enum GalleryPermissions : long
     {
         None = 0,
@@ -66,6 +78,7 @@
         View = 1,
         Update = 2,
         Gallery_Update = 4,
+        Collection_Update = 5,
     }
 
     [Flags]

@@ -8,6 +8,7 @@ namespace Memtly.Core.Models
         {
             Account = AccountPermissions.None;
             Review = ReviewPermissions.None;
+            Collection = CollectionPermissions.None;
             Gallery = GalleryPermissions.None;
             Users = UserPermissions.None;
             CustomResources = CustomResourcePermissions.None;
@@ -20,6 +21,7 @@ namespace Memtly.Core.Models
 
         public AccountPermissions Account { get; set; }
         public ReviewPermissions Review { get; set; }
+        public CollectionPermissions Collection { get; set; }
         public GalleryPermissions Gallery { get; set; }
         public UserPermissions Users { get; set; }
         public CustomResourcePermissions CustomResources { get; set; }
@@ -40,6 +42,9 @@ namespace Memtly.Core.Models
                 | AccountPermissions.Payments) : AccountPermissions.None;
             Features = 
                 FeaturePermissions.UpgradeToUnlock;
+            Collection =
+                CollectionPermissions.View
+                | CollectionPermissions.Update;
             Gallery =
                 GalleryPermissions.View
                 | GalleryPermissions.Update;
@@ -66,6 +71,12 @@ namespace Memtly.Core.Models
                 ReviewPermissions.View
                 | ReviewPermissions.Approve
                 | ReviewPermissions.Reject;
+            Collection =
+                CollectionPermissions.View
+                | CollectionPermissions.Create
+                | CollectionPermissions.Update
+                | CollectionPermissions.Delete
+                | CollectionPermissions.Download;
             Gallery =
                 GalleryPermissions.View
                 | GalleryPermissions.Create
@@ -86,7 +97,8 @@ namespace Memtly.Core.Models
                 | CustomResourcePermissions.Update
                 | CustomResourcePermissions.Delete;
             Settings =
-                SettingsPermissions.Gallery_Update;
+                SettingsPermissions.Collection_Update
+                | SettingsPermissions.Gallery_Update;
             Audit =
                 AuditPermissions.View;
         }
@@ -104,6 +116,8 @@ namespace Memtly.Core.Models
                 | ReviewPermissions.Approve
                 | ReviewPermissions.Reject
                 | ReviewPermissions.Delete;
+            Collection =
+                CollectionPermissions.View;
             Gallery =
                 GalleryPermissions.View;
             Users =
@@ -123,11 +137,15 @@ namespace Memtly.Core.Models
                 | ReviewPermissions.Approve
                 | ReviewPermissions.Reject
                 | ReviewPermissions.Delete;
+            Collection =
+                CollectionPermissions.View
+                | CollectionPermissions.Update
+                | CollectionPermissions.Download;
             Gallery =
-                GalleryPermissions.View
-                | GalleryPermissions.Update
-                | GalleryPermissions.Upload
-                | GalleryPermissions.Download;
+               GalleryPermissions.View
+               | GalleryPermissions.Update
+               | GalleryPermissions.Upload
+               | GalleryPermissions.Download;
             Users =
                 UserPermissions.Login
                 | UserPermissions.View
@@ -152,6 +170,12 @@ namespace Memtly.Core.Models
                  | ReviewPermissions.Approve
                  | ReviewPermissions.Reject
                  | ReviewPermissions.Delete;
+            Collection =
+                CollectionPermissions.View
+                | CollectionPermissions.Create
+                | CollectionPermissions.Update
+                | CollectionPermissions.Delete
+                | CollectionPermissions.Download;
             Gallery =
                 GalleryPermissions.View
                 | GalleryPermissions.ViewAllGallery
@@ -181,6 +205,7 @@ namespace Memtly.Core.Models
             Settings =
                 SettingsPermissions.View
                 | SettingsPermissions.Update
+                | SettingsPermissions.Collection_Update
                 | SettingsPermissions.Gallery_Update;
             Audit =
                 AuditPermissions.View;

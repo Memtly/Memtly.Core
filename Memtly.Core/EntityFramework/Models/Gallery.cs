@@ -1,4 +1,5 @@
-﻿using Memtly.Core.Helpers;
+﻿using Memtly.Core.Enums;
+using Memtly.Core.Helpers;
 
 namespace Memtly.Core.EntityFramework.Models
 {
@@ -14,9 +15,11 @@ namespace Memtly.Core.EntityFramework.Models
         { 
             get { return !string.IsNullOrWhiteSpace(this.SecretKey); }
         }
+        public GalleryType Type { get; set; } = GalleryType.Basic;
         public DateTimeOffset CreatedAt { get; set; }
 
         public ICollection<GalleryItem> Items { get; set; } = new List<GalleryItem>();
+        public ICollection<GalleryCollection> Collections { get; set; } = new List<GalleryCollection>();
         public ICollection<GallerySetting> Settings { get; set; } = new List<GallerySetting>();
     }
 }

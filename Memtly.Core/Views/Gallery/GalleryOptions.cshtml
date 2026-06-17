@@ -27,10 +27,18 @@
         <div class="col-12 px-2 px-xl-0">
             @if (User?.Identity != null && User.Identity.IsAuthenticated && !Model.Gallery.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase) && (User.Identity.IsPrivilegedUser() || User.Identity.GetUserId() == Model.Gallery.Owner))
             {
-                @if (userPermissions.Settings.HasFlag(SettingsPermissions.Gallery_Update))
+                @if (Model.Gallery.Type == GalleryType.Basic && userPermissions.Settings.HasFlag(SettingsPermissions.Gallery_Update))
                 {
                     <div class="btn-group w-100 mb-2">
                         <button class="btnGallerySettings btn btn-danger btn-sm" type="button" data-gallery-name="@Model?.Gallery?.Name" data-gallery-id="@Model?.Gallery?.Id">
+                            @_localizer["Settings"].Value
+                        </button>
+                    </div>
+                }
+                else if (Model.Gallery.Type == GalleryType.Collection && userPermissions.Settings.HasFlag(SettingsPermissions.Collection_Update))
+                {
+                    <div class="btn-group w-100 mb-2">
+                        <button class="btnCollectionSettings btn btn-danger btn-sm" type="button" data-gallery-name="@Model?.Gallery?.Name" data-gallery-id="@Model?.Gallery?.Id">
                             @_localizer["Settings"].Value
                         </button>
                     </div>

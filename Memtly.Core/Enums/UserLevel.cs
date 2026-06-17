@@ -7,6 +7,7 @@
         Reviewer = 3,
         Moderator = 4,
         Admin = 5,
-        System = 9999
+        System = 9999,
+        All = 10000
     }
 }

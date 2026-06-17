@@ -28,6 +28,11 @@ namespace Memtly.Core.Extensions
 
                 foreach (UserLevel l in Enum.GetValues(typeof(UserLevel)))
                 {
+                    if (l == UserLevel.All)
+                    {
+                        continue;
+                    }
+
                     if (l.ToString().Equals(level, StringComparison.OrdinalIgnoreCase))
                     {
                         return l;

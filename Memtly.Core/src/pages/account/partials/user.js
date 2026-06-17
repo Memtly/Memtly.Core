@@ -23,9 +23,25 @@ function bindEventHandlers() {
 function bindSearchBox() {
     $(document).off('keyup', 'input#users-search-term').on('keyup', 'input#users-search-term', function (e) {
         const term = $('input#users-search-term').val();
+        const level = $('select#users-level').val();
 
         const url = new URL(window.location.href);
         url.searchParams.set('term', term);
+        url.searchParams.set('level', level);
+        url.searchParams.set('page', '1');
+
+        history.pushState({}, '', url);
+
+        updateUsersList();
+    });
+
+    $(document).off('change', 'select#users-level').on('change', 'select#users-level', function (e) {
+        const term = $('input#users-search-term').val();
+        const level = $('select#users-level').val();
+
+        const url = new URL(window.location.href);
+        url.searchParams.set('term', term);
+        url.searchParams.set('level', level);
         url.searchParams.set('page', '1');
 
         history.pushState({}, '', url);
@@ -106,7 +122,7 @@ function bindChangePasswordButton() {
 
                     let id = $('#popup-modal-field-user-id').val();
                     if (id == undefined || id.length == 0) {
-                        displayMessage(localization.translate('User_Edit'), localization.translate('User_Missing_Id'));
+                        displayMessage(localization.translate('User_Edit'), localization.translate('Missing_Id'));
                         return;
                     }
 
@@ -175,7 +191,7 @@ function bindMultiFactorWipeButton() {
 
                     let id = $('#popup-modal-field-user-id').val();
                     if (id == undefined || id.length == 0) {
-                        displayMessage(localization.translate('2FA_Setup'), localization.translate('User_Missing_Id'));
+                        displayMessage(localization.translate('2FA_Setup'), localization.translate('Missing_Id'));
                         return;
                     }
 
@@ -230,7 +246,7 @@ function bindActivateUserButton() {
 
                     let id = $('#popup-modal-field-user-id').val();
                     if (id == undefined || id.length == 0) {
-                        displayMessage(localization.translate('Activate_User'), localization.translate('User_Missing_Id'));
+                        displayMessage(localization.translate('Activate_User'), localization.translate('Missing_Id'));
                         return;
                     }
 
@@ -285,7 +301,7 @@ function bindFreezeUserButton() {
 
                     let id = $('#popup-modal-field-user-id').val();
                     if (id == undefined || id.length == 0) {
-                        displayMessage(localization.translate('Freeze_User'), localization.translate('User_Missing_Id'));
+                        displayMessage(localization.translate('Freeze_User'), localization.translate('Missing_Id'));
                         return;
                     }
 
@@ -340,7 +356,7 @@ function bindUnfreezeUserButton() {
 
                     let id = $('#popup-modal-field-user-id').val();
                     if (id == undefined || id.length == 0) {
-                        displayMessage(localization.translate('Unfreeze_User'), localization.translate('User_Missing_Id'));
+                        displayMessage(localization.translate('Unfreeze_User'), localization.translate('Missing_Id'));
                         return;
                     }
 
@@ -395,7 +411,7 @@ function bindDeleteUserButton() {
 
                     let id = $('#popup-modal-field-user-id').val();
                     if (id == undefined || id.length == 0) {
-                        displayMessage(localization.translate('User_Delete'), localization.translate('User_Missing_Id'));
+                        displayMessage(localization.translate('User_Delete'), localization.translate('Missing_Id'));
                         return;
                     }
 
@@ -727,7 +743,7 @@ function displayEditUserPopup(id, username, firstname, lastname, email, level, t
                 tier = $('#popup-modal-field-user-tier').val();
 
                 if (id == undefined || id.length == 0) {
-                    displayMessage(localization.translate('User_Edit'), localization.translate('User_Missing_Id'), null, () => {
+                    displayMessage(localization.translate('User_Edit'), localization.translate('Missing_Id'), null, () => {
                         displayEditUserPopup(id, username, firstname, lastname, email, level, tier, canModifyAccessLevel);
                     });
                     return;
@@ -802,12 +818,13 @@ function displayEditUserPopup(id, username, firstname, lastname, email, level, t
 
 export function updateUsersList() {
     const term = getQueryParam('term') ?? '';
+    const level = getQueryParam('level') ?? '';
     const page = getQueryParam('page') ?? 1;
     const limit = getQueryParam('limit') ?? 50;
 
     $.ajax({
         type: 'GET',
-        url: `/Account/UsersList?term=${term}&page=${page}&limit=${limit}`,
+        url: `/Account/UsersList?term=${term}&level=${level}&page=${page}&limit=${limit}`,
         success: function (data) {
             $('#users-list').html(data);
             bindEventHandlers();

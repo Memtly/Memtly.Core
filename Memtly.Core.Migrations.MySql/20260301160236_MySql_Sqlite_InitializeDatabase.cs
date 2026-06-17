@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Memtly.Core.Migrations.MySql
+namespace Memtly.Core.Migrations.MySql.Migrations
 {
     /// <inheritdoc />
     public partial class MySql_InitializeDatabase : Migration
@@ -52,9 +52,9 @@ namespace Memtly.Core.Migrations.MySql
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ActionAuthCode = table.Column<string>(type: "varchar(2000)", maxLength: 2000, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Level = table.Column<int>(type: "int", nullable: true, defaultValue: 0),
-                    Tier = table.Column<int>(type: "int", nullable: true, defaultValue: 0),
-                    State = table.Column<int>(type: "int", nullable: true, defaultValue: 2),
+                    Level = table.Column<int>(type: "int", nullable: true, defaultValue: 1),
+                    Tier = table.Column<int>(type: "int", nullable: true, defaultValue: 1),
+                    State = table.Column<int>(type: "int", nullable: true, defaultValue: 3),
                     PaidUntil = table.Column<long>(type: "bigint", nullable: true),
                     FailedLoginCount = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     LockoutUntil = table.Column<long>(type: "bigint", nullable: true),
@@ -75,7 +75,7 @@ namespace Memtly.Core.Migrations.MySql
                     Message = table.Column<string>(type: "varchar(2000)", maxLength: 2000, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     UserId = table.Column<int>(type: "int", nullable: true),
-                    Severity = table.Column<int>(type: "int", nullable: false, defaultValue: 2),
+                    Severity = table.Column<int>(type: "int", nullable: false, defaultValue: 3),
                     CreatedAt = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -156,7 +156,7 @@ namespace Memtly.Core.Migrations.MySql
                     Checksum = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     FileSize = table.Column<long>(type: "bigint", nullable: false, defaultValue: 0L),
-                    State = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
+                    State = table.Column<int>(type: "int", nullable: false, defaultValue: 2),
                     Type = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     Orientation = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     CreatedAt = table.Column<long>(type: "bigint", nullable: false)

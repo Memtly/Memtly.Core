@@ -84,6 +84,21 @@
                         break;
                 }
                 break;
+            case GalleryGroup.Gallery:
+                imageGroups = Model?.Images?.GroupBy(x => !string.IsNullOrWhiteSpace(x.GalleryName) ? x.GalleryName : "Unknown");
+                switch (Model?.OrderBy ?? GalleryOrder.Descending)
+                {
+                    case GalleryOrder.Ascending:
+                        imageGroups = imageGroups?.OrderBy(x => x.Key);
+                        break;
+                    case GalleryOrder.Random:
+                        imageGroups = imageGroups?.OrderBy(x => Guid.NewGuid());
+                        break;
+                    default:
+                        imageGroups = imageGroups?.OrderByDescending(x => x.Key);
+                        break;
+                }
+                break;
             default:
                 imageGroups = Model?.Images?.GroupBy(x => x.GalleryName ?? "Default");
                 switch (Model?.OrderBy ?? GalleryOrder.Descending)

@@ -16,6 +16,7 @@ namespace Memtly.Core.EntityFramework
         public DbSet<GalleryItem> GalleryItems { get; set; }
         public DbSet<GalleryLike> GalleryLikes { get; set; }
         public DbSet<GallerySetting> GallerySettings { get; set; }
+        public DbSet<GalleryCollection> GalleryCollections { get; set; }
         public DbSet<Setting> Settings { get; set; }
         public DbSet<CustomResource> CustomResources { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
@@ -72,6 +73,9 @@ namespace Memtly.Core.EntityFramework
                 );
 
                 e.Ignore(x => x.IsSecure);
+                e.Property(x => x.Type)
+                   .HasDefaultValue(GalleryType.Basic)
+                   .HasSentinel(0);
 
                 e.HasOne(x => x.User)
                  .WithMany()
@@ -103,6 +107,22 @@ namespace Memtly.Core.EntityFramework
                  .WithMany(g => g.Items)
                  .HasForeignKey(x => x.GalleryId)
                  .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            mb.Entity<GalleryCollection>(e =>
+            {
+                e.HasIndex(x => x.Id).IsUnique();
+                e.HasIndex(x => new { x.CollectionId, x.GalleryId }).IsUnique();
+
+                e.HasOne(x => x.Collection)
+                 .WithMany(g => g.Collections)
+                 .HasForeignKey(x => x.CollectionId)
+                 .OnDelete(DeleteBehavior.NoAction);
+
+                e.HasOne(x => x.Gallery)
+                 .WithMany()
+                 .HasForeignKey(x => x.GalleryId)
+                 .OnDelete(DeleteBehavior.NoAction);
             });
 
             mb.Entity<GalleryLike>(e =>
