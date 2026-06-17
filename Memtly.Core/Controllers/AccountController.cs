@@ -693,7 +693,7 @@ namespace Memtly.Core.Controllers
                     if (User?.Identity?.IsPrivilegedUser() ?? false)
                     {
                         result.Galleries = (await _database.GetGalleries(null, term, page, limit, type))?.Where(x => !x.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))?.ToList() ?? new List<GalleryModel>();
-                        if (result.Galleries != null && (type == GalleryType.Collection || type == GalleryType.Collection) && (string.IsNullOrEmpty(term) || SystemGalleries.AllGallery.Contains(term, StringComparison.OrdinalIgnoreCase)))
+                        if (result.Galleries != null && (type == GalleryType.All || type == GalleryType.Collection) && (string.IsNullOrEmpty(term) || SystemGalleries.AllGallery.Contains(term, StringComparison.OrdinalIgnoreCase)))
                         {
                             var all = await _database.GetAllGallery();
                             if (all != null)
