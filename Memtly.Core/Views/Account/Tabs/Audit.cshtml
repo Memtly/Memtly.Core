@@ -14,7 +14,7 @@
                 <input id="audit-log-search-term" class="form-control" type="text" placeholder="" />
                 <div class="form-text">@_localizer["Audit_SearchTerm_Help"].Value</div>
             </div>
-            <div class="col-12 col-lg-2 mb-3 mb-lg-0">
+            <div class="col-12 col-md-6 col-lg-2 mb-3 mb-lg-0">
                 <label>@_localizer["Severity"].Value</label>
                 <select id ="audit-log-severity" class="form-control">
                     @foreach (AuditSeverity severity in Enum.GetValues(typeof(AuditSeverity)))
@@ -31,7 +31,7 @@
                 </select>
                 <div class="form-text">@_localizer["Audit_Severity_Help"].Value</div>
             </div>
-            <div class="col-12 col-lg-2 mb-0">
+            <div class="col-12 col-md-6 col-lg-2 mb-0">
                 <label>@_localizer["Audit_Limit_Label"].Value</label>
                 <input id="audit-log-limit" class="form-control" type="number" min="10" max="1000" step="10" placeholder="100" value="10" />
                 <div class="form-text">@_localizer["Audit_Limit_Help"].Value</div>

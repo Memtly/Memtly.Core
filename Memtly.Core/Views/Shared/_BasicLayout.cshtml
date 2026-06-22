@@ -2,8 +2,9 @@
 @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostEnvironment
 
 @{
+    var forceHttps = await _settings.GetOrDefault(MemtlyConfiguration.Basic.ForceHttps, true);
     var title = await _settings.GetOrDefault(MemtlyConfiguration.Basic.Title, "Memtly");
-    var siteUrl = $"{Context!.Request.Scheme}://{Context!.Request.Host}";
+    var siteUrl = $"{(forceHttps ? "https" : Context.Request.Scheme)}://{Context!.Request.Host}";
     var isDemoMode = await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false);
 
     string logo;

@@ -64,6 +64,7 @@
             public const string ShowProfileIcon = "Memtly:Account:Show_Profile_Icon";
             public const string LockoutAttempts = "Memtly:Account:Lockout_Attempts";
             public const string LockoutMins = "Memtly:Account:Lockout_Mins";
+            public const string RecoveryMode = "Memtly:Account:Recovery_Mode";
 
             public class Admin
             {
@@ -124,6 +125,7 @@
                 public const string Enabled = "Memtly:Gallery:QR_Code:Enabled";
                 public const string DefaultView = "Memtly:Gallery:QR_Code:Default_View";
                 public const string DefaultSort = "Memtly:Gallery:QR_Code:Default_Sort";
+                public const string DefaultGroup = "Memtly:Gallery:QR_Code:Default_Group";
                 public const string IncludeCulture = "Memtly:Gallery:QR_Code:Include_Culture";
             }
         }

@@ -84,6 +84,8 @@ function bindLoginForm() {
                 } else {
                     displayMessage(localization.translate('Login'), localization.translate('Login_Invalid_Details'));
                 }
+
+                $('#frmLogin input.input-password').val('');
             })
             .fail((xhr, error) => {
                 hideLoader();

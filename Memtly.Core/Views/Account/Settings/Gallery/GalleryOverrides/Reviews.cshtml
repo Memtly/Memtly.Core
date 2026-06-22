@@ -1,7 +1,7 @@
-﻿@model IDictionary<string, string>?
+﻿@model Memtly.Core.Views.Account.Settings.Gallery.GalleryOverridesModel
 @using Memtly.Core.Constants
 
-@if (Model != null && Model.Any())
+@if (Model?.Settings != null && Model.Settings.Any())
 {
     <div class="setting-section">
         <h5 class="mb-3">@_localizer["Reviews"].Value</h5>
@@ -12,7 +12,7 @@
                 <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.RequireReview">
                     @foreach (var option in ViewOptions.YesNo)
                     {
-                        if (Model.GetValue(MemtlyConfiguration.Gallery.RequireReview.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                        if (Model.Settings.GetValue(MemtlyConfiguration.Gallery.RequireReview.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                         {
                             <option value="@option.Value" selected="selected">@option.Key</option>
                         }
@@ -32,7 +32,7 @@
                 <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.ReviewCounter">
                     @foreach (var option in ViewOptions.YesNo)
                     {
-                        if (Model.GetValue(MemtlyConfiguration.Gallery.ReviewCounter.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                        if (Model.Settings.GetValue(MemtlyConfiguration.Gallery.ReviewCounter.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
                         {
                             <option value="@option.Value" selected="selected">@option.Key</option>
                         }
@@ -46,24 +46,27 @@
             </div>
         </div>
 
-        <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
-            <div class="col-12">
-                <label class="setting-label">@_localizer["Settings_Gallery_RetainRejectedItems_Label"].Value</label>
-                <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.RetainRejectedItems">
-                    @foreach (var option in ViewOptions.YesNo)
-                    {
-                        if (Model.GetValue(MemtlyConfiguration.Gallery.RetainRejectedItems.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+        @if (Model.Type == GalleryType.Basic)
+        {
+            <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
+                <div class="col-12">
+                    <label class="setting-label">@_localizer["Settings_Gallery_RetainRejectedItems_Label"].Value</label>
+                    <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.RetainRejectedItems">
+                        @foreach (var option in ViewOptions.YesNo)
                         {
-                            <option value="@option.Value" selected="selected">@option.Key</option>
+                            if (Model.Settings.GetValue(MemtlyConfiguration.Gallery.RetainRejectedItems.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                            {
+                                <option value="@option.Value" selected="selected">@option.Key</option>
+                            }
+                            else
+                            {
+                                <option value="@option.Value">@option.Key</option>
+                            }
                         }
-                        else
-                        {
-                            <option value="@option.Value">@option.Key</option>
-                        }
-                    }
-                </select>
-                <div class="setting-hint form-text">@_localizer["Settings_Gallery_RetainRejectedItems_Help"].Value</div>
+                    </select>
+                    <div class="setting-hint form-text">@_localizer["Settings_Gallery_RetainRejectedItems_Help"].Value</div>
+                </div>
             </div>
-        </div>
+        }
     </div>
 }

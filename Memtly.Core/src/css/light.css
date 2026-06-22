@@ -97,6 +97,7 @@ footer {
 /* Headers */
 
 .card .card-header {
+    color: rgba(var(--text-contrast), 1.0) !important;
     background-color: rgba(var(--primary-1), 0.03) !important;
 }
 

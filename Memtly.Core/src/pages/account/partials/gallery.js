@@ -382,7 +382,7 @@ function bindAddCollectionButton() {
         })
             .done(secretKey => {
                 $.ajax({
-                    url: '/Account/GetCollectionItems',
+                    url: '/Collection/Items',
                     method: 'POST',
                     data: {
                         collectionId: null
@@ -417,7 +417,7 @@ function bindEditCollectionButton() {
         const secretKey = row.data('gallery-key');
 
         $.ajax({
-            url: '/Account/GetCollectionItems',
+            url: '/Collection/Items',
             method: 'POST',
             data: {
                 collectionId: id
@@ -662,11 +662,32 @@ function bindDeleteCollectionButton() {
     });
 }
 
-function bindCollectionItemSelection() {
+export function bindCollectionItemSelection() {
     $(document).off('click', '.gallery-checklist-item').on('click', '.gallery-checklist-item', function (e) {
         preventDefaults(e);
-        $(this).toggleClass('selected');
+
+        const elem = $(this);
+        const container = elem.closest('.gallery-checklist-container');
+        const selecttionType = getSelectionType(container);
+        if (selecttionType === 'single') {
+            $('.gallery-checklist-item').removeClass('selected');
+        }
+
+        elem.toggleClass('selected');
     });
+}
+
+function getSelectionType(container) {
+    if (container !== undefined) {
+        try {
+            const selectionType = container.attr('data-selection-type')?.trim()?.toLowerCase();
+            if (selectionType !== undefined && selectionType !== '') {
+                return selectionType;
+            }
+        } catch { }
+    }
+
+    return 'multi';
 }
 
 export function updateGalleryList() {
@@ -855,7 +876,7 @@ function displayAddCollectionPopup(name, secretKey, collectionItems) {
             <div class="row pb-3">
                 <div class="col-12">
                     <label>${localization.translate('Galleries')}</label>
-                    <div class="gallery-checklist-container">
+                    <div class="gallery-checklist-container" data-selection-type="multi">
                         ${collectionItems.map(item => {
                             return `<div class="gallery-checklist-item${item.selected ? ' selected' : ''}" data-gallery-id="${item.id}">${item.name}</div>`;
                         }).join('\n')}
@@ -957,7 +978,7 @@ function displayEditCollectionPopup(id, identifier, name, secretKey, collectionI
             <div class="row pb-3">
                 <div class="col-12">
                     <label>${localization.translate('Galleries')}</label>
-                    <div class="gallery-checklist-container">
+                    <div class="gallery-checklist-container" data-selection-type="multi">
                         ${collectionItems.map(item => {
                             return `<div class="gallery-checklist-item${item.selected ? ' selected' : ''}" data-gallery-id="${item.id}">${item.name}</div>`;
                         }).join('\n')}

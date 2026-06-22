@@ -45,7 +45,8 @@
             { "None", "0" },
             { "Date", "1" },
             { "MediaType", "2" },
-            { "Uploader", "3" }
+            { "Uploader", "3" },
+            { "Gallery", "4" }
         };
 
         public static IDictionary<string, string> GalleryDefaultOrder = new Dictionary<string, string>()
