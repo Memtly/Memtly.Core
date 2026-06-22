@@ -1646,6 +1646,11 @@ namespace Memtly.Core.Controllers
                             model.Password = _encryption.Encrypt(model.Password, model.Username.ToLower());
                             model.CPassword = string.Empty;
 
+                            if (model.Level != UserLevel.Paid)
+                            {
+                                model.Tier = PaidTier.None;
+                            }
+
                             await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_CreatedNewUser"].Value} '{model?.Username}'", AuditSeverity.Verbose);
 
                             return Json(new { success = string.Equals(model?.Username, (await _database.AddUser(model))?.Username, StringComparison.OrdinalIgnoreCase) });
@@ -1704,7 +1709,12 @@ namespace Memtly.Core.Controllers
                                 user.Level = model.Level;
                                 user.Tier = model.Tier;
                             }
-                         
+
+                            if (user.Level != UserLevel.Paid)
+                            {
+                                user.Tier = PaidTier.None;
+                            }
+
                             await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_UpdatedUser"].Value} '{user?.Username}'", AuditSeverity.Verbose);
 
                             return Json(new { success = string.Equals(user?.Username, (await _database.EditUser(user))?.Username, StringComparison.OrdinalIgnoreCase) });
@@ -2432,33 +2442,6 @@ namespace Memtly.Core.Controllers
             return Json(new { success = false });
         }
 
-        [HttpPost]
-        [RequiresRole(CollectionPermission = CollectionPermissions.View)]
-        public async Task<IActionResult> GetCollectionItems(int? collectionId = null)
-        {
-            var items = new List<CollectionSelectItem>();
-
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
-            {
-                var userId = User.Identity.GetUserId();
-
-                var galleries = await _database.GetGalleries(userId, type: GalleryType.Basic);
-                if (galleries != null && galleries.Any())
-                {
-                    var collections = collectionId != null ? await _database.GetCollections(userId, collectionId) : new List<GalleryCollectionModel>();
-                    if (collections != null)
-                    { 
-                        items = galleries
-                            .OrderBy(g => g.Name.ToUpper())
-                            .Select(g => new CollectionSelectItem(g.Id, g.Name, collections.Any(c => c.GalleryId == g.Id)))
-                            .ToList();
-                    }
-                }
-            }
-
-            return Json(new { items });
-        }
-
         private async Task<IActionResult> UpdateSettings(List<UpdateSettingsModel> model, int? galleryId, SettingsPermissions accessPermissions)
         {
             if (User?.Identity != null && User.Identity.IsAuthenticated)
@@ -2635,7 +2618,7 @@ namespace Memtly.Core.Controllers
                         galleries.Add(new PhotoGallery()
                         {
                             Gallery = gallery,
-                            Images = items?.Select(x => new PhotoGalleryImage()
+                            Images = galleryGroup?.Select(x => new PhotoGalleryImage()
                             {
                                 Id = x.Id,
                                 GalleryId = x.GalleryId,

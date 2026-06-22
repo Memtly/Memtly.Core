@@ -1,8 +1,6 @@
 ﻿@model GalleriesModel
 @using Memtly.Core.Constants
-@using Memtly.Core.Helpers
 @using Memtly.Core.Views.Account.Tabs
-@using Memtly.Core.Views.Shared
 
 @{
     var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
@@ -27,14 +25,14 @@
                             {
                                 <span class="btnAddGallery action link-primary-2 pointer" alt="@_localizer["Create"].Value" title="@_localizer["Create"].Value">
                                     <i class="fas fa-calendar-plus"></i>
-                                    <span>@_localizer["Create"].Value</span>
+                                    <span>@_localizer["Gallery"].Value</span>
                                 </span>
                             }
                             else if (userPermissions.Features.HasFlag(FeaturePermissions.UpgradeToUnlock))
                             {
                                 <span class="action text-muted pointer" alt="@_localizer["Create"].Value (@_localizer["Upgrade_To_Unlock"].Value)" title="@_localizer["Create"].Value (@_localizer["Upgrade_To_Unlock"].Value)">
                                     <i class="fas fa-calendar-plus upgradeToUnlock" disabled="disabled" alt="@_localizer["Create"].Value"></i>
-                                    <span>@_localizer["Create"].Value</span>
+                                    <span>@_localizer["Gallery"].Value</span>
                                 </span>
                             }
 
@@ -42,14 +40,14 @@
                             {
                                 <span class="btnAddCollection action link-primary-2 pointer" alt="@_localizer["Create"].Value" title="@_localizer["Create"].Value">
                                     <i class="fas fa-folder-plus"></i>
-                                    <span>@_localizer["Create"].Value</span>
+                                    <span>@_localizer["Collection"].Value</span>
                                 </span>
                             }
                             else if (userPermissions.Features.HasFlag(FeaturePermissions.UpgradeToUnlock))
                             {
                                 <span class="action text-muted pointer" alt="@_localizer["Create"].Value (@_localizer["Upgrade_To_Unlock"].Value)" title="@_localizer["Create"].Value (@_localizer["Upgrade_To_Unlock"].Value)">
                                     <i class="fas fa-folder-plus upgradeToUnlock" disabled="disabled" alt="@_localizer["Create"].Value"></i>
-                                    <span>@_localizer["Create"].Value</span>
+                                    <span>@_localizer["Collection"].Value</span>
                                 </span>
                             }
                         }
@@ -58,12 +56,12 @@
             </div>
         </div>
         <div class="row mt-3 mb-4">
-            <div class="col-12 col-lg-9 mb-lg-0">
+            <div class="col-12 col-md-7 col-lg-9 mb-lg-0">
                 <label>@_localizer["SearchTerm_Label"].Value</label>
                 <input id="galleries-search-term" class="form-control" type="text" placeholder="" value="@searchTerm" />
                 <div class="form-text">@_localizer["SearchTerm_Help"].Value</div>
             </div>
-            <div class="col-12 col-lg-3 mb-3 mb-lg-0">
+            <div class="col-12 col-md-5 col-lg-3 mb-3 mb-lg-0">
                 <label>@_localizer["Type"].Value</label>
                 <select id="galleries-type" class="form-control">
                     @foreach (GalleryType type in Enum.GetValues(typeof(GalleryType)))

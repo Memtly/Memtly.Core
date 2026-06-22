@@ -1,7 +1,5 @@
 ﻿@model Memtly.Core.Models.PhotoGallery
 @using Memtly.Core.Constants
-@using Memtly.Core.Helpers
-@using Memtly.Core.Views.Gallery
 @inject Memtly.Core.Helpers.IUrlHelper _url
 
 @{
@@ -17,6 +15,12 @@
     if (!string.IsNullOrWhiteSpace(qrDefaultOrder))
     {
         qrAppend.Add(new KeyValuePair<string, string>("order", qrDefaultOrder));
+    }
+
+    var qrDefaultGroup = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.QRCode.DefaultGroup, string.Empty, Model?.Gallery?.Id);
+    if (!string.IsNullOrWhiteSpace(qrDefaultGroup))
+    {
+        qrAppend.Add(new KeyValuePair<string, string>("group", qrDefaultGroup));
     }
 
     if (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.QRCode.IncludeCulture, true, Model?.Gallery?.Id))
@@ -42,14 +46,14 @@
     ViewBag.QRCodeLink = _url.GenerateFullUrl(Context.Request, Context.Request.Path, qrAppend, qrExclude);
 }
 
-@if (Model?.Gallery != null && Model!.Gallery!.Type != GalleryType.Collection && Model?.UploadActivated != null && Model.UploadActivated && Model.ViewMode != ViewMode.Presentation && Model.ViewMode != ViewMode.Slideshow)
+@if (Model?.Gallery != null && Model?.UploadActivated != null && Model.UploadActivated && Model.ViewMode != ViewMode.Presentation && Model.ViewMode != ViewMode.Slideshow)
 {
     var allowedFileTypes = (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", Model?.Gallery?.Id))?.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)?.Select(x => $".{x.Trim('.')}")?.OrderBy(x => x)?.ToList() ?? new List<string>();
     var identityRequired = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.RequireIdentityForUpload, false);
 
     <header class="file-uploader bg-dark py-1 py-lg-4">
         <div class="container px-0 px-lg-2">
-            <form class="file-uploader-form" data-identity-required="@((identityRequired && (string.IsNullOrWhiteSpace(Context?.Session?.GetString(SessionKey.Viewer.Identity)) || (Context?.Session?.GetString(SessionKey.Viewer.Identity)?.Equals("Anonymous", StringComparison.OrdinalIgnoreCase) ?? true))).ToString().ToLower())">
+            <form class="file-uploader-form" data-gallery-type="@Model!.Gallery.Type.ToString().ToLower()" data-identity-required="@((identityRequired && (string.IsNullOrWhiteSpace(Context?.Session?.GetString(SessionKey.Viewer.Identity)) || (Context?.Session?.GetString(SessionKey.Viewer.Identity)?.Equals("Anonymous", StringComparison.OrdinalIgnoreCase) ?? true))).ToString().ToLower())">
                 @Html.AntiForgeryToken()
 
                 <fieldset class="upload_drop text-center p-4 text-center">
@@ -61,7 +65,7 @@
                     <p class="small my-2">@(ViewBag.IsMobile ?? false ? _localizer["Click_To_Upload"].Value : _localizer["Drag_And_Drop"].Value)</p>
                     <p class="small my-2">(@string.Join(", ", allowedFileTypes).ToLower())</p>
 
-                    <input class="position-absolute invisible upload-input" data-post-gallery-id="@Model?.Gallery?.Id" data-post-url="/Gallery/UploadImage" data-post-key="@Model?.SecretKey" data-post-allow-camera="@(((ViewBag.IsMobile ?? false) && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.CameraUploads, false)).ToString().ToLower())" type="file" multiple accept="image/*,video/*" />
+                    <input class="position-absolute invisible upload-input" data-post-collection-id="@(Model!.Gallery.Type == GalleryType.Collection ? Model.Gallery.Id : 0)" data-post-gallery-id="@(Model!.Gallery.Type == GalleryType.Basic ? Model.Gallery.Id : 0)" data-post-url="/Gallery/UploadImage" data-post-key="@Model?.SecretKey" data-post-allow-camera="@(((ViewBag.IsMobile ?? false) && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.CameraUploads, false)).ToString().ToLower())" type="file" multiple accept="image/*,video/*" />
                 </fieldset>
             </form>
         </div>

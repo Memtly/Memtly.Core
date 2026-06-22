@@ -3,17 +3,11 @@
 @if (Model?.Settings != null && Model.Settings.Any())
 {
     <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/Layout.cshtml" model="Model" />
-    @if (Model.Type != GalleryType.Collection)
-    {
-        <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/Uploads.cshtml" model="Model.Settings" />
-    }
+    <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/Uploads.cshtml" model="Model" />
     <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/Downloads.cshtml" model="Model.Settings" />
-    @if (Model.Type != GalleryType.Collection)
-    {
-        <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/Reviews.cshtml" model="Model.Settings" />
-    }
+    <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/Reviews.cshtml" model="Model" />
     <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/ViewOptions.cshtml" model="Model.Settings" />
-    @if (Model.Type != GalleryType.Collection)
+    @if (Model.Type != GalleryType.Collection && (User?.Identity?.IsPrivilegedUser() ?? false))
     {
         <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/SizeLimits.cshtml" model="Model.Settings" />
     }

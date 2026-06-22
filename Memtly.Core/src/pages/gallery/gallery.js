@@ -29,6 +29,7 @@ function init() {
 }
 
 function bindEventHandlers() {
+    bindShareButton();
     bindQRCodeSave();
     bindDownloadGroup();
     bindDownloadGallery();
@@ -45,6 +46,23 @@ function bindPageResizeEvent() {
         resizeTimeout = setTimeout(() => {
             slideshow.init();
         }, 200);
+    });
+}
+
+function bindShareButton() {
+    $(document).off('click', 'button.btnCopyShareLink').on('click', 'button.btnCopyShareLink', (e) => {
+        preventDefaults(e);
+
+        if ($(e.currentTarget).attr('disabled') === 'disabled') {
+            return;
+        }
+
+        const link = $(e.currentTarget).data('share-link');
+        navigator.clipboard.writeText(link)
+            .then(() => displayMessage(
+                localization.translate('Share'),
+                localization.translate('Share_Link_Copied')
+            ));
     });
 }
 

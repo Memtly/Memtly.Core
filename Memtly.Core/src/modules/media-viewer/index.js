@@ -105,6 +105,17 @@ class MediaViewer {
             });
         });
 
+        $(document).off('keydown.selectAll').on('keydown.selectAll', (e) => {
+            if (e.ctrlKey && e.key.toLowerCase() === 'a') {
+                preventDefaults(e);
+
+                const deselectedCount = $('.btn-multi-select.fa-square').length;
+                $('.btn-multi-select').each((_, elem) => {
+                    this.setMultiSelectOption($(elem), deselectedCount > 0);
+                });
+            }
+        });
+
         $(document).off('click', '.btn-multi-deselect-all').on('click', '.btn-multi-deselect-all', (e) => {
             preventDefaults(e);
             $('.btn-multi-select').each((_, elem) => {

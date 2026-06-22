@@ -8,8 +8,9 @@
     var galleryIdentifier = (!string.IsNullOrWhiteSpace(ViewBag?.GalleryIdentifier) && !ViewBag.GalleryIdentifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase)) ? ViewBag.GalleryIdentifier.ToLower() : "default";
     var galleryId = (_database?.GetGalleryId(galleryIdentifier)?.Result) ?? 1;
 
+    var forceHttps = await _settings.GetOrDefault(MemtlyConfiguration.Basic.ForceHttps, true);
     var title = await _settings.GetOrDefault(MemtlyConfiguration.Basic.Title, "Memtly", galleryId);
-    var siteUrl = $"{Context!.Request.Scheme}://{Context!.Request.Host}";
+    var siteUrl = $"{(forceHttps ? "https" : Context.Request.Scheme)}://{Context!.Request.Host}";
     var isDemoMode = await _settings.GetOrDefault(MemtlyConfiguration.IsDemoMode, false);
 
     var logo = "/images/logo.png";

@@ -27,6 +27,7 @@ namespace Memtly.Core.Helpers.Database
                 .Where(g =>
                     userId == null || g.UserId == userId
                     && (type == GalleryType.All || g.Type == type)
+                    && (g.Identifier.ToLower().Equals(SystemGalleries.DefaultGallery.ToLower()) || (g.User != null && g.User.State == AccountState.Active))
                 )
                 .CountAsync();
         }
@@ -36,6 +37,7 @@ namespace Memtly.Core.Helpers.Database
             return await _db.Galleries
                 .Where(g =>
                     type == GalleryType.All || g.Type == type
+                    && (g.Identifier.ToLower().Equals(SystemGalleries.DefaultGallery.ToLower()) || (g.User != null && g.User.State == AccountState.Active))
                 )
                 .Include(g => g.User)
                 .ToDictionaryAsync(
@@ -78,6 +80,7 @@ namespace Memtly.Core.Helpers.Database
                     (userId == null || g.UserId == userId)
                     && (string.IsNullOrWhiteSpace(term) || g.Identifier.ToLower().Contains(term.ToLower()) || g.Name.ToLower().Contains(term.ToLower()) || g.User!.Username.ToLower().Contains(term.ToLower()))
                     && (type == GalleryType.All || g.Type == type)
+                    && (g.Identifier.ToLower().Equals(SystemGalleries.DefaultGallery.ToLower()) || (g.User != null && g.User.State == AccountState.Active))
                 )
                 .Include(g => g.Collections)
                     .ThenInclude(c => c.Gallery)
@@ -102,6 +105,32 @@ namespace Memtly.Core.Helpers.Database
                 .ToListAsync();
         }
 
+        public async Task<List<GalleryModel>> GetGalleriesByCollectionId(int collectionId)
+        {
+            return await _db.GalleryCollections
+               .Where(ci => 
+                    ci.CollectionId == collectionId
+                    && (ci.Gallery.Identifier.ToLower().Equals(SystemGalleries.DefaultGallery.ToLower()) || (ci.Gallery.User != null && ci.Gallery.User.State == AccountState.Active))
+                )
+               .Include(c => c.Gallery)
+                    .ThenInclude(g => g.Items)
+               .Select(ci => new GalleryModel
+               {
+                   Id = ci.Gallery!.Id,
+                   Identifier = ci.Gallery.Identifier,
+                   Name = ci.Gallery.Name,
+                   SecretKey = ci.Gallery.SecretKey,
+                   OwnerName = ci.Gallery.User!.Username,
+                   Type = ci.Gallery.Type,
+                   TotalItems = ci.Gallery.Type == GalleryType.Collection ? ci.Gallery.Collections.Sum(c => c.Gallery!.Items.Count) : ci.Gallery.Items.Count,
+                   ApprovedItems = ci.Gallery.Type == GalleryType.Collection ? ci.Gallery.Collections.Sum(c => c.Gallery!.Items.Count(gi => gi.State == GalleryItemState.Approved)) : ci.Gallery.Items.Count(gi => gi.State == GalleryItemState.Approved),
+                   PendingItems = ci.Gallery.Type == GalleryType.Collection ? ci.Gallery.Collections.Sum(c => c.Gallery!.Items.Count(gi => gi.State == GalleryItemState.Pending)) : ci.Gallery.Items.Count(gi => gi.State == GalleryItemState.Pending),
+                   TotalGallerySize = ci.Gallery.Type == GalleryType.Collection ? ci.Gallery.Collections.Sum(c => (c.Gallery!.Items.Sum(gi => (long?)gi.FileSize) ?? 0)) : (ci.Gallery.Items.Sum(gi => (long?)gi.FileSize) ?? 0),
+                   CollectionItems = ci.Gallery.Type == GalleryType.Collection ? ci.Gallery.Collections.Select(c => (int)c.GalleryId).ToList() : new List<int>() { ci.Gallery.Id }
+               })
+               .ToListAsync();
+        }
+
         public async Task<int?> GetGalleryIdByName(string name)
         {
             if (name.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))
@@ -110,6 +139,9 @@ namespace Memtly.Core.Helpers.Database
             }
 
             return (await _db.Galleries
+                .Where(g =>
+                    (g.Identifier.ToLower().Equals(SystemGalleries.DefaultGallery.ToLower()) || (g.User != null && g.User.State == AccountState.Active))
+                )
                 .FirstOrDefaultAsync(g => g.Name.ToLower().Equals(name.ToLower()))
             )?.Id;
         }
@@ -122,6 +154,9 @@ namespace Memtly.Core.Helpers.Database
             }
 
             return (await _db.Galleries
+                .Where(g =>
+                    (g.Identifier.ToLower().Equals(SystemGalleries.DefaultGallery.ToLower()) || (g.User != null && g.User.State == AccountState.Active))
+                )
                .FirstOrDefaultAsync(g => g.Identifier.ToLower().Equals(identifier.ToLower()))
             )?.Id;
         }
@@ -133,7 +168,12 @@ namespace Memtly.Core.Helpers.Database
                 return new GalleryIdentifierModel(0, SystemGalleries.AllGallery.ToLower(), SystemGalleries.AllGallery);
             }
 
-            var gallery = await _db.Galleries.FirstOrDefaultAsync(g => g.Id == id);
+            var gallery = await _db.Galleries
+                .Where(g =>
+                    (g.Identifier.ToLower().Equals(SystemGalleries.DefaultGallery.ToLower()) || (g.User != null && g.User.State == AccountState.Active))
+                )
+                .FirstOrDefaultAsync(g => g.Id == id);
+
             if (gallery != null)
             {
                 return new GalleryIdentifierModel(gallery.Id, gallery.Identifier, gallery.Name);
@@ -150,6 +190,9 @@ namespace Memtly.Core.Helpers.Database
             }
 
             return (await _db.Galleries
+                .Where(g =>
+                    (g.Identifier.ToLower().Equals(SystemGalleries.DefaultGallery.ToLower()) || (g.User != null && g.User.State == AccountState.Active))
+                )
                .FirstOrDefaultAsync(g => g.Id == id)
             )?.Name;
         }
@@ -181,6 +224,9 @@ namespace Memtly.Core.Helpers.Database
             }
 
             return await _db.Galleries
+                .Where(g =>
+                    (g.Identifier.ToLower().Equals(SystemGalleries.DefaultGallery.ToLower()) || (g.User != null && g.User.State == AccountState.Active))
+                )
                 .Include(g => g.Collections)
                     .ThenInclude(c => c.Gallery)
                         .ThenInclude(g => g.Items)
@@ -308,9 +354,9 @@ namespace Memtly.Core.Helpers.Database
         #region Gallery Items
         public async Task<IDictionary<string, int>> GetCollectionItemCount(int? collectionId = null, GalleryItemState state = GalleryItemState.All, MediaType type = MediaType.All, ImageOrientation orientation = ImageOrientation.All)
         {
-            if (collectionId != null && collectionId > 0)
-            { 
-                var galleryIds = (await GetCollections(collectionId))?.Select(ci => ci.GalleryId)?.ToList();
+            if (collectionId != null && collectionId >= 0)
+            {
+                var galleryIds = collectionId > 0 ? (await GetCollections(collectionId))?.Select(ci => ci.GalleryId)?.ToList() : new List<int>();
                 return await GetGalleryItemCount(galleryIds, state, type, orientation);
             }
 
@@ -516,6 +562,7 @@ namespace Memtly.Core.Helpers.Database
                 .Where(gi => gi.Id == model.Id)
                 .ExecuteDeleteAsync();
         }
+
         public async Task DeleteAllGalleryItems()
         {
             await _db.GalleryItems
@@ -718,11 +765,12 @@ namespace Memtly.Core.Helpers.Database
                 .CountAsync(u => u.Level == UserLevel.Admin && (state == null || u.State == state));
         }
 
-        public async Task<int> GetUserCount(UserLevel level = UserLevel.All)
+        public async Task<int> GetUserCount(UserLevel level = UserLevel.All, AccountState? state = null)
         {
             return await _db.Users
                 .Where(u =>
-                    level == UserLevel.All || u.Level == level
+                    (level == UserLevel.All || u.Level == level)
+                    && (state == null || u.State == state)
                 )
                 .CountAsync();
         }

@@ -118,7 +118,7 @@ namespace Memtly.Core.Extensions
                 app.UseHsts();
             }
 
-            if (settings.GetOrDefault(MemtlyConfiguration.Basic.ForceHttps, false).Result)
+            if (settings.GetOrDefault(MemtlyConfiguration.Basic.ForceHttps, true).Result)
             {
                 app.UseHttpsRedirection();
             }

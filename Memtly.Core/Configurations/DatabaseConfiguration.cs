@@ -178,12 +178,23 @@ namespace Memtly.Core.Configurations
                     adminAccount.Email = config.GetOrDefault(MemtlyConfiguration.Account.Admin.EmailAddress, "admin@example.com");
                     adminAccount.Firstname = "Admin";
                     adminAccount.Lastname = "User";
-                    adminAccount.Password = password;
-                    adminAccount.State = AccountState.Active;
                     adminAccount.Level = UserLevel.Admin;
 
+
+                    var activeAdminCount = await database.GetUserCount(UserLevel.Admin, AccountState.Active);
+                    if (adminAccount.State == AccountState.Frozen && activeAdminCount < 1)
+                    {
+                        adminAccount.State =  AccountState.Active;
+                    }
+
                     await database.EditUser(adminAccount);
-                    await database.ChangePassword(adminAccount);
+
+                    var isRecoveryMode = config.GetOrDefault(MemtlyConfiguration.Account.RecoveryMode, false);
+                    if (isRecoveryMode)
+                    { 
+                        adminAccount.Password = password;
+                        await database.ChangePassword(adminAccount);
+                    }
                 }
 
                 adminAccount = await database.GetUserByUsername(UserAccounts.AdminUser);

@@ -227,7 +227,7 @@ namespace Memtly.Core.Controllers
                     }
                     catch { }
 
-                    var galleryGroup = group ?? (GalleryGroup)(await _settings.GetOrDefault(MemtlyConfiguration.Gallery.DefaultGroup, (int)GalleryGroup.None, gallery?.Id));
+                    var galleryGroup = group ?? (GalleryGroup)(await _settings.GetOrDefault(MemtlyConfiguration.Gallery.DefaultGroup, gallery!.Type == GalleryType.Collection ? (int)GalleryGroup.Gallery : (int)GalleryGroup.None, gallery?.Id));
                     var galleryOrder = order ?? (GalleryOrder)(await _settings.GetOrDefault(MemtlyConfiguration.Gallery.DefaultOrder, (int)GalleryOrder.Descending, gallery?.Id));
                     var galleryFilter = filter ?? (GalleryFilter)(await _settings.GetOrDefault(MemtlyConfiguration.Gallery.DefaultFilter, (int)GalleryFilter.All, gallery?.Id));
 
@@ -286,7 +286,7 @@ namespace Memtly.Core.Controllers
 
                     var isGalleryAdmin = User?.Identity != null && User.Identity.IsAuthenticated && userPermissions.Gallery.HasFlag(GalleryPermissions.Upload);
                     
-                    var uploadActvated = gallery!.Type == GalleryType.Basic && (isGalleryAdmin || await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Upload, true, gallery?.Id));
+                    var uploadActvated = !gallery!.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase) && (isGalleryAdmin || await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Upload, true, gallery?.Id));
                     if (uploadActvated)
                     {
                         try
@@ -329,7 +329,7 @@ namespace Memtly.Core.Controllers
                     }
 
                     IDictionary<string, int> itemCounts;
-                    if (gallery!.Type == GalleryType.Collection && !gallery!.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))
+                    if (gallery!.Type == GalleryType.Collection)
                     {
                         itemCounts = await _database.GetCollectionItemCount(gallery?.Id, GalleryItemState.All, mediaType, orientation);
                     }
@@ -385,16 +385,22 @@ namespace Memtly.Core.Controllers
 
             try
             {
-                if (!int.TryParse((Request?.Form?.FirstOrDefault(x => string.Equals("Id", x.Key, StringComparison.OrdinalIgnoreCase)).Value)?.ToString()?.ToLower() ?? string.Empty, out var galleryId))
+                if (!int.TryParse((Request?.Form?.FirstOrDefault(x => string.Equals("CollectionId", x.Key, StringComparison.OrdinalIgnoreCase)).Value)?.ToString()?.ToLower() ?? "0", out var collectionId))
+                {
+                    return Json(new { success = false, uploaded = 0, errors = new List<string>() { _localizer["Invalid_Collection_Id"].Value } });
+                }
+
+                if (!int.TryParse((Request?.Form?.FirstOrDefault(x => string.Equals("GalleryId", x.Key, StringComparison.OrdinalIgnoreCase)).Value)?.ToString()?.ToLower() ?? string.Empty, out var galleryId))
                 {
                     return Json(new { success = false, uploaded = 0, errors = new List<string>() { _localizer["Invalid_Gallery_Id"].Value } });
                 }
-                
+
+                var collection = collectionId > 0 ? await _database.GetGallery(collectionId) : null;
                 var gallery = await _database.GetGallery(galleryId);
                 if (gallery != null)
                 {
                     string key = (Request?.Form?.FirstOrDefault(x => string.Equals("SecretKey", x.Key, StringComparison.OrdinalIgnoreCase)).Value)?.ToString() ?? string.Empty;
-                    if (!string.IsNullOrWhiteSpace(gallery.SecretKey) && !string.Equals(gallery.SecretKey, key))
+                    if (!string.IsNullOrWhiteSpace(collection?.SecretKey ?? gallery.SecretKey) && !string.Equals(collection?.SecretKey ?? gallery.SecretKey, key))
                     {
                         return Json(new { success = false, uploaded = 0, errors = new List<string>() { _localizer["Invalid_Secret_Key_Warning"].Value } });
                     }
@@ -405,9 +411,9 @@ namespace Memtly.Core.Controllers
                     var files = Request?.Form?.Files;
                     if (files != null && files.Count > 0)
                     {
-                        var galleryOwner = await _database.GetUser(gallery.Owner);
+                        var galleryOwner = await _database.GetUser(collection?.Owner ?? gallery.Owner);
                         var isFreeGallery = gallery.Owner > 0 && (galleryOwner?.Level ?? UserLevel.Basic) == UserLevel.Basic;
-                        var requiresReview = !isFreeGallery && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.RequireReview, true, gallery.Id);
+                        var requiresReview = !isFreeGallery && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.RequireReview, true, collection?.Id ?? gallery.Id);
 
                         var uploaded = 0;
                         var errors = new List<string>();
@@ -416,11 +422,11 @@ namespace Memtly.Core.Controllers
                             try
                             {
                                 var extension = Path.GetExtension(file.FileName);
-                                var maxGallerySize = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.MaxSizeMB, 1024L, gallery.Id) * 1000000;
-                                var maxFilesSize = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.MaxFileSizeMB, 50L, gallery.Id) * 1000000;
+                                var maxGallerySize = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.MaxSizeMB, 1024L, collection?.Id ?? gallery.Id) * 1000000;
+                                var maxFilesSize = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.MaxFileSizeMB, 50L, collection?.Id ?? gallery.Id) * 1000000;
                                 var galleryPath = Path.Combine(UploadsDirectory, gallery.Identifier);
 
-                                var allowedFileTypes = (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", gallery.Id)).Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                                var allowedFileTypes = (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", collection?.Id ?? gallery.Id)).Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
                                 if (!allowedFileTypes.Any(x => string.Equals(x.Trim('.'), extension.Trim('.'), StringComparison.OrdinalIgnoreCase)))
                                 {
                                     errors.Add($"{_localizer["File_Upload_Failed"].Value}. {_localizer["Invalid_File_Type"].Value}");
@@ -454,7 +460,7 @@ namespace Memtly.Core.Controllers
                                         }
 
                                         var checksum = await _fileHelper.GetChecksum(filePath);
-                                        if (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.PreventDuplicates, true, gallery.Id) && (string.IsNullOrWhiteSpace(checksum) || await _database.GetGalleryItemByChecksum(gallery.Id, checksum) != null))
+                                        if (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.PreventDuplicates, true, collection?.Id ?? gallery.Id) && (string.IsNullOrWhiteSpace(checksum) || await _database.GetGalleryItemByChecksum(gallery.Id, checksum) != null))
                                         {
                                             errors.Add($"{_localizer["File_Upload_Failed"].Value}. {_localizer["Duplicate_Item_Detected"].Value}");
                                             _fileHelper.DeleteFileIfExists(filePath);
@@ -529,16 +535,22 @@ namespace Memtly.Core.Controllers
 
             try
             {
-                if (!int.TryParse((Request?.Form?.FirstOrDefault(x => string.Equals("Id", x.Key, StringComparison.OrdinalIgnoreCase)).Value)?.ToString()?.ToLower() ?? string.Empty, out var galleryId))
+                if (!int.TryParse((Request?.Form?.FirstOrDefault(x => string.Equals("CollectionId", x.Key, StringComparison.OrdinalIgnoreCase)).Value)?.ToString()?.ToLower() ?? "0", out var collectionId))
+                {
+                    return Json(new { success = false, uploaded = 0, errors = new List<string>() { _localizer["Invalid_Collection_Id"].Value } });
+                }
+
+                if (!int.TryParse((Request?.Form?.FirstOrDefault(x => string.Equals("GalleryId", x.Key, StringComparison.OrdinalIgnoreCase)).Value)?.ToString()?.ToLower() ?? string.Empty, out var galleryId))
                 {
                     return Json(new { success = false, uploaded = 0, errors = new List<string>() { _localizer["Invalid_Gallery_Id"].Value } });
                 }
 
+                var collection = collectionId > 0 ? await _database.GetGallery(collectionId) : null;
                 var gallery = await _database.GetGallery(galleryId);
                 if (gallery != null)
                 {
                     string key = (Request?.Form?.FirstOrDefault(x => string.Equals("SecretKey", x.Key, StringComparison.OrdinalIgnoreCase)).Value)?.ToString() ?? string.Empty;
-                    if (!string.IsNullOrWhiteSpace(gallery.SecretKey) && !string.Equals(gallery.SecretKey, key))
+                    if (!string.IsNullOrWhiteSpace(collection?.SecretKey ?? gallery.SecretKey) && !string.Equals(collection?.SecretKey ?? gallery.SecretKey, key))
                     {
                         return Json(new { success = false, uploaded = 0, errors = new List<string>() { _localizer["Invalid_Secret_Key_Warning"].Value } });
                     }
@@ -547,7 +559,7 @@ namespace Memtly.Core.Controllers
 
                     var galleryOwner = await _database.GetUser(gallery.Owner);
                     var isFreeGallery = gallery.Owner > 0 && (galleryOwner?.Level ?? UserLevel.Basic) == UserLevel.Basic;
-                    var requiresReview = !isFreeGallery && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.RequireReview, true, gallery.Id);
+                    var requiresReview = !isFreeGallery && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.RequireReview, true, collection?.Id ?? gallery.Id);
 
                     int uploaded = int.Parse((Request?.Form?.FirstOrDefault(x => string.Equals("Count", x.Key, StringComparison.OrdinalIgnoreCase)).Value)?.ToString() ?? "0");
                     if (uploaded > 0 && requiresReview && await _settings.GetOrDefault(MemtlyConfiguration.Alerts.PendingReview, true))
@@ -557,7 +569,7 @@ namespace Memtly.Core.Controllers
 
                     Response.StatusCode = (int)HttpStatusCode.OK;
 
-                    return Json(new { success = true, counters = new { total = gallery?.TotalItems ?? 0, approved = gallery?.ApprovedItems ?? 0, pending = gallery?.PendingItems ?? 0 }, uploaded, uploadedBy, requiresReview });
+                    return Json(new { success = true, counters = new { total = collection?.TotalItems ?? gallery?.TotalItems ?? 0, approved = collection?.ApprovedItems ?? gallery?.ApprovedItems ?? 0, pending = collection?.PendingItems ?? gallery?.PendingItems ?? 0 }, uploaded, uploadedBy, requiresReview });
                 }
                 else
                 {
@@ -814,6 +826,53 @@ namespace Memtly.Core.Controllers
         public string GenerateSecretKey()
         {
             return PasswordHelper.GenerateGallerySecretKey();
+        }
+
+        [HttpPost]
+        [RequiresRole(CollectionPermission = CollectionPermissions.View)]
+        [Route("Collection/Items")]
+        public async Task<IActionResult> GetCollectionItems(int? collectionId = null)
+        {
+            var items = new List<CollectionSelectItem>();
+
+            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var userId = User.Identity.GetUserId();
+
+                var galleries = await _database.GetGalleries(userId, type: GalleryType.Basic);
+                if (galleries != null && galleries.Any())
+                {
+                    var collections = collectionId != null ? await _database.GetCollections(userId, collectionId) : new List<GalleryCollectionModel>();
+                    if (collections != null)
+                    {
+                        items = galleries
+                            .OrderBy(g => g.Name.ToUpper())
+                            .Select(g => new CollectionSelectItem(g.Id, g.Name, collections.Any(c => c.GalleryId == g.Id)))
+                            .ToList();
+                    }
+                }
+            }
+
+            return Json(new { items });
+        }
+
+        [HttpPost]
+        [RequiresRole(CollectionPermission = CollectionPermissions.View)]
+        [Route("Collection/Galleries")]
+        public async Task<IActionResult> GetCollectionGalleries(int collectionId)
+        {
+            var items = new List<CollectionSelectItem>();
+
+            var galleries = await _database.GetGalleriesByCollectionId(collectionId);
+            if (galleries != null)
+            {
+                items = galleries
+                    .OrderBy(g => g.Name.ToUpper())
+                    .Select(g => new CollectionSelectItem(g.Id, g.Name))
+                    .ToList();
+            }
+
+            return Json(new { items });
         }
     }
 }

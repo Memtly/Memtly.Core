@@ -3,6 +3,7 @@ import { displayPopup, hidePopup } from '@modules/popups';
 import { displayLoader, hideLoader } from '@modules/loader';
 import { displayIdentityCheck } from '@modules/identity-check';
 import { refreshGalleryPage } from '@pages/gallery/gallery';
+import { bindCollectionItemSelection } from '@pages/account/partials/gallery';
 
 class UploadBox {
     constructor() {
@@ -12,10 +13,15 @@ class UploadBox {
 
     init() {
         this.initializeDropZones();
+        bindCollectionItemSelection();
     }
 
     isIdentityRequired() {
         return $('form.file-uploader-form').attr('data-identity-required') === 'true';
+    }
+
+    isCollection() {
+        return $('form.file-uploader-form').attr('data-gallery-type') === 'collection';
     }
 
     triggerSelector(event) {
@@ -29,11 +35,23 @@ class UploadBox {
         const zone = event.target.closest('fieldset.upload_drop');
         const input = $(zone.querySelector('input.upload-input'));
 
-        if (input.data('post-allow-camera') === true) {
-            this.showUploadMethodPopup(input);
+        const galleryId = input.attr('data-post-gallery-id');
+        if (this.isCollection() && (galleryId === undefined || galleryId === '0')) {
+            const collectionId = input.attr('data-post-collection-id');
+            this.showGallerySelectorPopup(collectionId, (id) => {
+                if (id !== undefined && id > 0) {
+                    this.setGalleryId(input, id);
+                }
+
+                this.triggerSelector(event);
+            });
         } else {
-            this.setGalleryMode(input);
-            input[0].click();
+            if (input.data('post-allow-camera') === true) {
+                this.showUploadMethodPopup(input);
+            } else {
+                this.setGalleryMode(input);
+                input[0].click();
+            }
         }
     }
 
@@ -65,6 +83,58 @@ class UploadBox {
                 }
             ]
         });
+    }
+
+    showGallerySelectorPopup(collectionId, callback) {
+        $.ajax({
+            url: '/Collection/Galleries',
+            method: 'POST',
+            data: {
+                collectionId: collectionId
+            }
+        })
+            .done(collection => {
+                if (collection.items) {
+                    displayPopup({
+                        Title: localization.translate('Gallery_Selection'),
+                        FooterHtml: `
+                            <div class="row pb-3">
+                                <div class="col-12">
+                                    <div class="gallery-checklist-container" data-selection-type="single">
+                                        ${collection.items.map(item => {
+                                            return `<div class="gallery-checklist-item" data-gallery-id="${item.id}">${item.name}</div>`;
+                                        }).join('\n')}
+                                    </div>
+                                </div>
+                            </div>`,
+                        Buttons: [{
+                            Text: localization.translate('Select'),
+                            Class: 'btn-primary-2',
+                            Callback: () => {
+                                const galleryId = $('.popup-modal .modal-body .gallery-checklist-item.selected').map((index, item) => { return $(item).data('gallery-id'); }).get()[0] ?? 0;
+                                if (galleryId !== undefined && !isNaN(galleryId) && parseInt(galleryId) > 0) {
+                                    callback(galleryId)
+                                } else {
+                                    displayMessage(localization.translate('Gallery_Selection'), localization.translate('Please_Select_Gallery'), null, () => {
+                                        this.showGallerySelectorPopup(collectionId, callback);
+                                    });
+                                }
+                            }
+                        }, {
+                            Text: localization.translate('Close')
+                        }]
+                    });
+                } else {
+                    displayMessage(localization.translate('Gallery_Selection'), localization.translate('Failed_Get_Gallery_List'));
+                }
+            })
+            .fail((xhr, error) => {
+                displayMessage(localization.translate('Gallery_Selection'), localization.translate('Failed_Get_Gallery_List'), [error]);
+            });
+    }
+
+    setGalleryId(input, galleryId) {
+        input.attr('data-post-gallery-id', galleryId);
     }
 
     setGalleryMode(input) {
@@ -103,7 +173,19 @@ class UploadBox {
                 this.handleFiles(dataRefs);
             });
         } else {
-            this.handleFiles(dataRefs);
+            const galleryId = dataRefs.input.getAttribute('data-post-gallery-id');
+            if (this.isCollection() && (galleryId === undefined || galleryId === '0')) {
+                const collectionId = dataRefs.input.getAttribute('data-post-collection-id');
+                this.showGallerySelectorPopup(collectionId, (id) => {
+                    if (id !== undefined && id > 0) {
+                        this.setGalleryId($(dataRefs.input), id);
+                    }
+
+                    this.handleFiles(dataRefs);
+                });
+            } else {
+                this.handleFiles(dataRefs);
+            }
         }
     }
 
@@ -194,6 +276,7 @@ class UploadBox {
         }
 
         const token = $('form.file-uploader-form input[name=\'__RequestVerificationToken\']').val();
+        const collectionId = dataRefs.input.getAttribute('data-post-collection-id');
         const galleryId = dataRefs.input.getAttribute('data-post-gallery-id');
         const url = dataRefs.input.getAttribute('data-post-url');
         const secretKey = dataRefs.input.getAttribute('data-post-key');
@@ -214,6 +297,17 @@ class UploadBox {
             return;
         }
 
+        if (this.isCollection() && (galleryId === undefined || galleryId === '0')) {
+            this.showGallerySelectorPopup(collectionId, (id) => {
+                if (id !== undefined && id > 0) {
+                    this.setGalleryId($(dataRefs.input), id);
+                }
+
+                dataRefs.input.click();
+            });
+            return;
+        }
+
         let uploadedCount = 0;
         let requiresReview = true;
         let errors = [];
@@ -222,7 +316,8 @@ class UploadBox {
             if (i < dataRefs.files.length) {
                 const formData = new FormData();
                 formData.append('__RequestVerificationToken', token);
-                formData.append('Id', galleryId);
+                formData.append('CollectionId', collectionId);
+                formData.append('GalleryId', galleryId);
                 formData.append('SecretKey', secretKey);
                 formData.append(dataRefs.files[i].name, dataRefs.files[i]);
 
@@ -280,15 +375,19 @@ class UploadBox {
                     },
                 });
             } else {
-                this.handleUploadComplete(uploadedCount, requiresReview, errors, galleryId, secretKey, dataRefs);
+                this.handleUploadComplete(uploadedCount, requiresReview, errors, collectionId, galleryId, secretKey, dataRefs);
             }
         };
 
         processFileUpload(0);
     }
 
-    handleUploadComplete(uploadedCount, requiresReview, errors, galleryId, secretKey, dataRefs) {
+    handleUploadComplete(uploadedCount, requiresReview, errors, collectionId, galleryId, secretKey, dataRefs) {
         hideLoader();
+
+        if (this.isCollection()) {
+            this.setGalleryId($(dataRefs.input), '0');
+        }
 
         if (uploadedCount <= 0) {
             displayMessage(
@@ -303,7 +402,7 @@ class UploadBox {
                 errors
             );
 
-            this.notifyUploadCompleted(galleryId, secretKey, uploadedCount, dataRefs);
+            this.notifyUploadCompleted(collectionId, galleryId, secretKey, uploadedCount, dataRefs);
         } else {
             displayMessage(
                 localization.translate('Upload'),
@@ -314,9 +413,10 @@ class UploadBox {
         }
     }
 
-    notifyUploadCompleted(galleryId, secretKey, uploadedCount, dataRefs) {
+    notifyUploadCompleted(collectionId, galleryId, secretKey, uploadedCount, dataRefs) {
         const formData = new FormData();
-        formData.append('Id', galleryId);
+        formData.append('CollectionId', collectionId);
+        formData.append('GalleryId', galleryId);
         formData.append('SecretKey', secretKey);
         formData.append('Count', uploadedCount);
 

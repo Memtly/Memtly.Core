@@ -1,8 +1,5 @@
 @model Memtly.Core.Models.PhotoGallery
-@using System.Text
 @using Memtly.Core.Constants
-@using Memtly.Core.Helpers
-@using Memtly.Core.Views.Gallery
 @inject Memtly.Core.Helpers.IUrlHelper _url
 
 @{
@@ -52,6 +49,12 @@
                     </div>
                 }
             }
+
+            <div class="btn-group w-100 mb-2">
+                <button class="btnCopyShareLink btn btn-primary-2 btn-sm" type="button" data-share-link="@Html.Raw(ViewBag.QRCodeLink)">
+                    @_localizer["Share"].Value
+                </button>
+            </div>
 
             @if (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.ShowFilters, true, Model?.Gallery?.Id))
             {

@@ -233,7 +233,8 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 				session: session,
 				form: new Dictionary<string, StringValues>
 				{
-					{ "Id", "1" },
+					{ "CollectionId", "0" },
+					{ "GalleryId", "1" },
 					{ "SecretKey", "password" }
                 },
 				files: files);
@@ -263,7 +264,8 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
                 session: session,
                 form: new Dictionary<string, StringValues>
                 {
-                    { "Id", "1" },
+                    { "CollectionId", "0" },
+                    { "GalleryId", "1" },
                     { "SecretKey", "password" }
                 },
                 files: files);
@@ -283,8 +285,9 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 			var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext(form: new Dictionary<string, StringValues>
 			{
-				{ "Id", id }
-			});
+                { "CollectionId", "0" },
+                { "GalleryId", "1" },
+            });
 
 			JsonResult actual = (JsonResult)await controller.UploadImage();
 			Assert.That(actual, Is.TypeOf<JsonResult>());
@@ -301,8 +304,9 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 			var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext(form: new Dictionary<string, StringValues>
 			{
-				{ "Id", "1" },
-				{ "SecretKey", key }
+                { "CollectionId", "0" },
+                { "GalleryId", "1" },
+                { "SecretKey", key }
 			});
 
 			JsonResult actual = (JsonResult)await controller.UploadImage();
@@ -319,7 +323,8 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 			var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext(form: new Dictionary<string, StringValues>
 			{
-				{ "Id", Guid.NewGuid().ToString() }
+                { "CollectionId", Guid.NewGuid().ToString() },
+                { "GalleryId", "1" }
 			});
 
 			JsonResult actual = (JsonResult)await controller.UploadImage();
@@ -336,7 +341,8 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 			var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _logger, _localizer);
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext(form: new Dictionary<string, StringValues>
 			{
-				{ "Id", "1" },
+				{ "CollectionId", "0" },
+				{ "GalleryId", "1" },
 				{ "SecretKey", "password" }
 			});
 
@@ -355,8 +361,9 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext(
 				form: new Dictionary<string, StringValues>
 				{
-					{ "Id", "1" },
-					{ "SecretKey", "password" }
+                    { "CollectionId", "0" },
+                    { "GalleryId", "1" },
+                    { "SecretKey", "password" }
 				},
 				files: new FormFileCollection() {
 					new FormFile(null, 0, int.MaxValue, "TestFile_001", $"{Guid.NewGuid()}.jpg")
@@ -377,8 +384,9 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 			controller.ControllerContext.HttpContext = MockData.MockHttpContext(
 				form: new Dictionary<string, StringValues>
 				{
-					{ "Id", "1" },
-					{ "SecretKey", "password" }
+                    { "CollectionId", "0" },
+                    { "GalleryId", "1" },
+                    { "SecretKey", "password" }
 				},
 				files: new FormFileCollection() {
 					new FormFile(null, 0, int.MaxValue, "TestFile_001", $"{Guid.NewGuid()}.blaa")
