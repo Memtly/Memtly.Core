@@ -257,6 +257,7 @@
                 public const string Enabled = "Memtly:Logging:Graylog:Enabled";
                 public const string Endpoint = "Memtly:Logging:Graylog:Endpoint";
                 public const string Port = "Memtly:Logging:Graylog:Port";
+                public const string UseSSL = "Memtly:Logging:Graylog:UseSSL";
                 public const string TransportType = "Memtly:Logging:Graylog:Transport_Type";
                 public const string LogLevel = "Memtly:Logging:Graylog:Log_Level";
             }

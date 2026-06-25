@@ -17,16 +17,17 @@ namespace Memtly.Core.Configurations
                 .ReadFrom.Configuration(config)
                 .Enrich.FromLogContext();
 
+            var configHelper = bsp.GetRequiredService<IConfigHelper>();
             var settings = bsp.GetRequiredService<ISettingsHelper>();
 
             var enabled = settings.GetOrDefault(MemtlyConfiguration.Logging.Graylog.Enabled, true).Result;
             if (enabled)
             {
-                var endpoint = settings.GetOrDefault(MemtlyConfiguration.Logging.Graylog.Endpoint, string.Empty).Result;
+                var endpoint = configHelper.GetOrDefault(MemtlyConfiguration.Logging.Graylog.Endpoint, string.Empty);
                 if (!string.IsNullOrWhiteSpace(endpoint))
                 {
-                    var transportType = EnumHelper.TryParse(settings.GetOrDefault(MemtlyConfiguration.Logging.Graylog.TransportType, "tcp").Result, TransportType.Tcp);
-                    var logLevel = EnumHelper.TryParse(settings.GetOrDefault(MemtlyConfiguration.Logging.Graylog.TransportType, LogEventLevel.Error.ToString()).Result, LogEventLevel.Error);
+                    var transportType = EnumHelper.TryParse(configHelper.GetOrDefault(MemtlyConfiguration.Logging.Graylog.TransportType, "tcp"), TransportType.Tcp);
+                    var logLevel = EnumHelper.TryParse(configHelper.GetOrDefault(MemtlyConfiguration.Logging.Graylog.TransportType, LogEventLevel.Error.ToString()), LogEventLevel.Error);
                     if (endpoint.Contains("memtly.com", StringComparison.OrdinalIgnoreCase))
                     {
                         logLevel = LogEventLevel.Error;
@@ -36,7 +37,8 @@ namespace Memtly.Core.Configurations
                     {
                         Facility = $"Memtly ({MemtlyCore.Version})",
                         HostnameOrAddress = endpoint,
-                        Port = settings.GetOrDefault(MemtlyConfiguration.Logging.Graylog.Port, 12201).Result,
+                        Port = configHelper.GetOrDefault(MemtlyConfiguration.Logging.Graylog.Port, 443),
+                        UseSsl = configHelper.GetOrDefault(MemtlyConfiguration.Logging.Graylog.UseSSL, true),
                         TransportType = transportType,
                         MinimumLogEventLevel = logLevel
                     });

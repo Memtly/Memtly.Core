@@ -104,6 +104,11 @@ namespace Memtly.Core.BackgroundWorkers
                             {
                                 try
                                 {
+                                    if (galleryDir.StartsWith(Path.Combine(uploadsDirectory, SystemGalleries.AllGallery), StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        continue;
+                                    }
+
                                     var galleryName = Path.GetFileName(galleryDir).ToLower();
                                     var identifier = galleryName;
 
