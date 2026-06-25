@@ -108,62 +108,11 @@ function bindRelinkCustomResourceButton() {
             return;
         }
 
-        let id = $(this).data('id');
-        let element = $(this).closest('.custom-resource');
+        const id = $(this).data('id');
+        const element = $(this).closest('.custom-resource');
+        const username = element.data('custom-resource-username');
 
-        displayPopup({
-            Title: localization.translate('Custom_Resource_Relink'),
-            Fields: [{
-                Id: 'custom-resource-id',
-                Value: id,
-                Type: 'hidden'
-            }, {
-                Id: 'custom-resource-username',
-                Name: localization.translate('Username'),
-                Value: element.data('custom-resource-username'),
-                Hint: localization.translate('Relink_Username_Hint')
-            }],
-            Buttons: [{
-                Text: localization.translate('Update'),
-                Class: 'btn-primary-2',
-                Callback: function () {
-                    displayLoader(localization.translate('Loading'));
-
-                    let id = $('#popup-modal-field-custom-resource-id').val();
-                    if (id == undefined || id.length == 0) {
-                        displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Missing_Id'));
-                        return;
-                    }
-
-                    let username = $('#popup-modal-field-custom-resource-username').val();
-                    if (username == undefined || username.length == 0) {
-                        displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Missing_Username'));
-                        return;
-                    }
-
-                    $.ajax({
-                        url: '/Account/RelinkCustomResource',
-                        method: 'PUT',
-                        data: { Id: id, UploadedBy: username }
-                    })
-                        .done(data => {
-                            if (data.success === true) {
-                                updateCustomResources();
-                                displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Custom_Resource_Relink_Success'));
-                            } else if (data.message) {
-                                displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Custom_Resource_Relink_Failed'), [data.message]);
-                            } else {
-                                displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Custom_Resource_Relink_Failed'));
-                            }
-                        })
-                        .fail((xhr, error) => {
-                            displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Custom_Resource_Relink_Failed'), [error]);
-                        });
-                }
-            }, {
-                Text: localization.translate('Close')
-            }]
-        });
+        displayRelinkCustomResourcePopup(id, username, '');
     });
 }
 
@@ -307,6 +256,123 @@ export function updateCustomResources() {
             history.pushState({}, '', url);
         }
     });
+}
+
+function displayRelinkCustomResourcePopup(id, username, term) {
+    displayPopup({
+        Title: localization.translate('Custom_Resource_Relink'),
+        Fields: [{
+            Id: 'custom-resource-id',
+            Value: id,
+            Type: 'hidden'
+        }, {
+            Id: 'custom-resource-search-term',
+            Name: localization.translate('SearchTerm_Label'),
+            Value: term,
+            Placeholder: username,
+            Hint: localization.translate('SearchTerm_Help')
+        }],
+        FooterHtml: `
+            <div class="row pb-3">
+                <div class="col-12">
+                    <div class="checklist-container" data-selection-type="single"></div>
+                </div>
+            </div>`,
+        Buttons: [{
+            Text: localization.translate('Select'),
+            Class: 'btn-primary-2',
+            Callback: () => {
+                term = $('#popup-modal-field-custom-resource-search-term').val();
+
+                const userId = $('.popup-modal .modal-body .checklist-item.selected').map((index, item) => { return $(item).data('user-id'); }).get()[0] ?? 0;
+                if (userId !== undefined && !isNaN(userId) && parseInt(userId) > 0) {
+                    displayLoader(localization.translate('Loading'));
+
+                    id = $('#popup-modal-field-custom-resource-id').val();
+
+                    if (id == undefined || id.length == 0) {
+                        displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Missing_Id'), null, () => {
+                            displayRelinkCustomResourcePopup(id, username, term);
+                        });
+                        return;
+                    }
+
+                    const username = $('.popup-modal .modal-body .checklist-item.selected').map((index, item) => { return $(item).text(); }).get()[0] ?? '';
+                    if (username == undefined || username.length == 0) {
+                        displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Missing_Username'), null, () => {
+                            displayRelinkCustomResourcePopup(id, username, term);
+                        });
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/Account/RelinkCustomResource',
+                        method: 'PUT',
+                        data: { Id: id, OwnerName: username }
+                    })
+                        .done(data => {
+                            if (data.success === true) {
+                                updateCustomResources();
+                                displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Custom_Resource_Relink_Success'));
+                            } else if (data.message) {
+                                displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Custom_Resource_Relink_Failed'), [data.message], () => {
+                                    displayRelinkCustomResourcePopup(id, username, term);
+                                });
+                            } else {
+                                displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Custom_Resource_Relink_Failed'), null, () => {
+                                    displayRelinkCustomResourcePopup(id, username, term);
+                                });
+                            }
+                        })
+                        .fail((xhr, error) => {
+                            displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Custom_Resource_Relink_Failed'), [error], () => {
+                                displayRelinkCustomResourcePopup(id, username, term);
+                            });
+                        });
+                } else {
+                    displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Please_Select_User'), null, () => {
+                        displayRelinkCustomResourcePopup(id, username, term);
+                    });
+                }
+            }
+        }, {
+            Text: localization.translate('Close')
+        }]
+    }, () => {
+        updateUsersChecklist(term);
+
+        let searchTimeout = null;
+        $(document).off('keyup', '#popup-modal-field-custom-resource-search-term').on('keyup', '#popup-modal-field-custom-resource-search-term', (e) => {
+            const term = $(e.currentTarget).val();
+
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                updateUsersChecklist(term);
+            }, 500);
+        });
+    });
+}
+
+function updateUsersChecklist(term) {
+    $.ajax({
+        url: '/User/Search',
+        method: 'POST',
+        data: {
+            term: term
+        }
+    })
+        .done(users => {
+            if (users.items) {
+                $('.checklist-container').html(`${users.items.map(item => {
+                    return `<div class="checklist-item" data-user-id="${item.id}">${item.username}</div>`;
+                }).join('\n')}`);
+            } else {
+                displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Failed_Get_User_List'));
+            }
+        })
+        .fail((xhr, error) => {
+            displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Failed_Get_User_List'), [error]);
+        });
 }
 
 export default init;
