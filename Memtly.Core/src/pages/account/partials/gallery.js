@@ -26,7 +26,6 @@ function bindEventHandlers() {
     bindWipeAllGalleriesButton();
     bindDeleteGalleryButton();
     bindDeleteCollectionButton();
-    bindCollectionItemSelection();
 }
 
 function bindSearchBox() {
@@ -448,7 +447,7 @@ function bindRelinkGalleryButton() {
         const id = row.data('gallery-id');
         const username = row.data('gallery-username');
 
-        displayRelinkGalleryPopup(id, username);
+        displayRelinkGalleryPopup(id, username, '');
     });
 }
 
@@ -662,34 +661,6 @@ function bindDeleteCollectionButton() {
     });
 }
 
-export function bindCollectionItemSelection() {
-    $(document).off('click', '.gallery-checklist-item').on('click', '.gallery-checklist-item', function (e) {
-        preventDefaults(e);
-
-        const elem = $(this);
-        const container = elem.closest('.gallery-checklist-container');
-        const selecttionType = getSelectionType(container);
-        if (selecttionType === 'single') {
-            $('.gallery-checklist-item').removeClass('selected');
-        }
-
-        elem.toggleClass('selected');
-    });
-}
-
-function getSelectionType(container) {
-    if (container !== undefined) {
-        try {
-            const selectionType = container.attr('data-selection-type')?.trim()?.toLowerCase();
-            if (selectionType !== undefined && selectionType !== '') {
-                return selectionType;
-            }
-        } catch { }
-    }
-
-    return 'multi';
-}
-
 export function updateGalleryList() {
     const term = getQueryParam('term') ?? '';
     const type = getQueryParam('type') ?? '';
@@ -876,9 +847,9 @@ function displayAddCollectionPopup(name, secretKey, collectionItems) {
             <div class="row pb-3">
                 <div class="col-12">
                     <label>${localization.translate('Galleries')}</label>
-                    <div class="gallery-checklist-container" data-selection-type="multi">
+                    <div class="checklist-container" data-selection-type="multi">
                         ${collectionItems.map(item => {
-                            return `<div class="gallery-checklist-item${item.selected ? ' selected' : ''}" data-gallery-id="${item.id}">${item.name}</div>`;
+                            return `<div class="checklist-item${item.selected ? ' selected' : ''}" data-gallery-id="${item.id}">${item.name}</div>`;
                         }).join('\n')}
                     </div>
                 </div>
@@ -907,7 +878,7 @@ function displayAddCollectionPopup(name, secretKey, collectionItems) {
                     return;
                 }
 
-                const selectedGalleries = $('.popup-modal .modal-body .gallery-checklist-item.selected').map((index, item) => { return $(item).data('gallery-id'); }).get();
+                const selectedGalleries = $('.popup-modal .modal-body .checklist-item.selected').map((index, item) => { return $(item).data('gallery-id'); }).get();
                 if (selectedGalleries === undefined || selectedGalleries.length < 2) {
                     displayMessage(localization.translate('Collection_Create'), localization.translate('Collection_Not_Enough_Galleries'), null, () => {
                         displayAddCollectionPopup(name, secretKey, collectionItems);
@@ -978,9 +949,9 @@ function displayEditCollectionPopup(id, identifier, name, secretKey, collectionI
             <div class="row pb-3">
                 <div class="col-12">
                     <label>${localization.translate('Galleries')}</label>
-                    <div class="gallery-checklist-container" data-selection-type="multi">
+                    <div class="checklist-container" data-selection-type="multi">
                         ${collectionItems.map(item => {
-                            return `<div class="gallery-checklist-item${item.selected ? ' selected' : ''}" data-gallery-id="${item.id}">${item.name}</div>`;
+                            return `<div class="checklist-item${item.selected ? ' selected' : ''}" data-gallery-id="${item.id}">${item.name}</div>`;
                         }).join('\n')}
                     </div>
                 </div>
@@ -1009,7 +980,7 @@ function displayEditCollectionPopup(id, identifier, name, secretKey, collectionI
                     return;
                 }
 
-                const selectedGalleries = $('.popup-modal .modal-body .gallery-checklist-item.selected').map((index, item) => { return $(item).data('gallery-id'); }).get();
+                const selectedGalleries = $('.popup-modal .modal-body .checklist-item.selected').map((index, item) => { return $(item).data('gallery-id'); }).get();
                 if (selectedGalleries === undefined || selectedGalleries.length < 2) {
                     displayMessage(localization.translate('Collection_Edit'), localization.translate('Collection_Not_Enough_Galleries'), null, () => {
                         displayEditCollectionPopup(id, identifier, name, secretKey, collectionItems);
@@ -1048,7 +1019,7 @@ function displayEditCollectionPopup(id, identifier, name, secretKey, collectionI
     });
 }
 
-function displayRelinkGalleryPopup(id, username) {
+function displayRelinkGalleryPopup(id, username, term) {
     displayPopup({
         Title: localization.translate('Gallery_Relink'),
         Fields: [{
@@ -1056,63 +1027,113 @@ function displayRelinkGalleryPopup(id, username) {
             Value: id,
             Type: 'hidden'
         }, {
-            Id: 'gallery-username',
-            Name: localization.translate('Username'),
-            Value: username,
-            Hint: localization.translate('Relink_Username_Hint')
+            Id: 'search-term',
+            Name: localization.translate('SearchTerm_Label'),
+            Value: term,
+            Placeholder: username,
+            Hint: localization.translate('SearchTerm_Help')
         }],
+        FooterHtml: `
+            <div class="row pb-3">
+                <div class="col-12">
+                    <div class="checklist-container" data-selection-type="single"></div>
+                </div>
+            </div>`,
         Buttons: [{
-            Text: localization.translate('Update'),
+            Text: localization.translate('Select'),
             Class: 'btn-primary-2',
-            Callback: function () {
-                displayLoader(localization.translate('Loading'));
+            Callback: () => {
+                term = $('#popup-modal-field-search-term').val();
 
-                id = $('#popup-modal-field-gallery-id').val();
-                username = $('#popup-modal-field-gallery-username').val();
+                const userId = $('.popup-modal .modal-body .checklist-item.selected').map((index, item) => { return $(item).data('user-id'); }).get()[0] ?? 0;
+                if (userId !== undefined && !isNaN(userId) && parseInt(userId) > 0) {
+                    displayLoader(localization.translate('Loading'));
 
-                if (id == undefined || id.length == 0) {
-                    displayMessage(localization.translate('Gallery_Relink'), localization.translate('Missing_Id'), null, () => {
-                        displayRelinkGalleryPopup(id, username);
-                    });
-                    return;
-                }
-
-                if (username == undefined || username.length == 0) {
-                    displayMessage(localization.translate('Gallery_Relink'), localization.translate('Missing_Username'), null, () => {
-                        displayRelinkGalleryPopup(id, username);
-                    });
-                    return;
-                }
-
-                $.ajax({
-                    url: '/Account/RelinkGallery',
-                    method: 'PUT',
-                    data: { Id: id, OwnerName: username }
-                })
-                    .done(data => {
-                        if (data.success === true) {
-                            updateGalleryList();
-                            displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Relink_Success'));
-                        } else if (data.message) {
-                            displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Relink_Failed'), [data.message], () => {
-                                displayRelinkGalleryPopup(id, username);
-                            });
-                        } else {
-                            displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Relink_Failed'), null, () => {
-                                displayRelinkGalleryPopup(id, username);
-                            });
-                        }
-                    })
-                    .fail((xhr, error) => {
-                        displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Relink_Failed'), [error], () => {
-                            displayRelinkGalleryPopup(id, username);
+                    id = $('#popup-modal-field-gallery-id').val();
+                    
+                    if (id == undefined || id.length == 0) {
+                        displayMessage(localization.translate('Gallery_Relink'), localization.translate('Missing_Id'), null, () => {
+                            displayRelinkGalleryPopup(id, username, term);
                         });
+                        return;
+                    }
+
+                    const username = $('.popup-modal .modal-body .checklist-item.selected').map((index, item) => { return $(item).text(); }).get()[0] ?? '';
+                    if (username == undefined || username.length == 0) {
+                        displayMessage(localization.translate('Gallery_Relink'), localization.translate('Missing_Username'), null, () => {
+                            displayRelinkGalleryPopup(id, username, term);
+                        });
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/Account/RelinkGallery',
+                        method: 'PUT',
+                        data: { Id: id, OwnerName: username }
+                    })
+                        .done(data => {
+                            if (data.success === true) {
+                                updateGalleryList();
+                                displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Relink_Success'));
+                            } else if (data.message) {
+                                displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Relink_Failed'), [data.message], () => {
+                                    displayRelinkGalleryPopup(id, username, term);
+                                });
+                            } else {
+                                displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Relink_Failed'), null, () => {
+                                    displayRelinkGalleryPopup(id, username, term);
+                                });
+                            }
+                        })
+                        .fail((xhr, error) => {
+                            displayMessage(localization.translate('Gallery_Relink'), localization.translate('Gallery_Relink_Failed'), [error], () => {
+                                displayRelinkGalleryPopup(id, username, term);
+                            });
+                        });
+                } else {
+                    displayMessage(localization.translate('Gallery_Relink'), localization.translate('Please_Select_User'), null, () => {
+                        displayRelinkGalleryPopup(id, username, term);
                     });
+                }
             }
         }, {
             Text: localization.translate('Close')
         }]
+    }, () => {
+        updateUsersChecklist(term);
+
+        let searchTimeout = null;
+        $(document).off('keyup', '#popup-modal-field-search-term').on('keyup', '#popup-modal-field-search-term', (e) => {
+            const term = $(e.currentTarget).val();
+
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                updateUsersChecklist(term);
+            }, 500);
+        });
     });
+}
+
+function updateUsersChecklist(term) {
+    $.ajax({
+        url: '/User/Search',
+        method: 'POST',
+        data: {
+            term: term
+        }
+    })
+        .done(users => {
+            if (users.items) {
+                $('.checklist-container').html(`${users.items.map(item => {
+                    return `<div class="checklist-item" data-user-id="${item.id}">${item.username}</div>`;
+                }).join('\n')}`);
+            } else {
+                displayMessage(localization.translate('Gallery_Relink'), localization.translate('Failed_Get_User_List'));
+            }
+        })
+        .fail((xhr, error) => {
+            displayMessage(localization.translate('Gallery_Relink'), localization.translate('Failed_Get_User_List'), [error]);
+        });
 }
 
 export default init;

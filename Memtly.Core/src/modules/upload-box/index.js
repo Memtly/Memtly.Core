@@ -3,7 +3,6 @@ import { displayPopup, hidePopup } from '@modules/popups';
 import { displayLoader, hideLoader } from '@modules/loader';
 import { displayIdentityCheck } from '@modules/identity-check';
 import { refreshGalleryPage } from '@pages/gallery/gallery';
-import { bindCollectionItemSelection } from '@pages/account/partials/gallery';
 
 class UploadBox {
     constructor() {
@@ -13,7 +12,6 @@ class UploadBox {
 
     init() {
         this.initializeDropZones();
-        bindCollectionItemSelection();
     }
 
     isIdentityRequired() {
@@ -100,9 +98,9 @@ class UploadBox {
                         FooterHtml: `
                             <div class="row pb-3">
                                 <div class="col-12">
-                                    <div class="gallery-checklist-container" data-selection-type="single">
+                                    <div class="checklist-container" data-selection-type="single">
                                         ${collection.items.map(item => {
-                                            return `<div class="gallery-checklist-item" data-gallery-id="${item.id}">${item.name}</div>`;
+                                            return `<div class="checklist-item" data-gallery-id="${item.id}">${item.name}</div>`;
                                         }).join('\n')}
                                     </div>
                                 </div>
@@ -111,7 +109,7 @@ class UploadBox {
                             Text: localization.translate('Select'),
                             Class: 'btn-primary-2',
                             Callback: () => {
-                                const galleryId = $('.popup-modal .modal-body .gallery-checklist-item.selected').map((index, item) => { return $(item).data('gallery-id'); }).get()[0] ?? 0;
+                                const galleryId = $('.popup-modal .modal-body .checklist-item.selected').map((index, item) => { return $(item).data('gallery-id'); }).get()[0] ?? 0;
                                 if (galleryId !== undefined && !isNaN(galleryId) && parseInt(galleryId) > 0) {
                                     callback(galleryId)
                                 } else {
