@@ -20,6 +20,16 @@
             return value.Replace(needle, string.Empty);
         }
 
+        public static string RemoveNullBytes(this string value)
+        {
+            return value?.Replace("\0", string.Empty) ?? string.Empty;
+        }
+
+        public static string GetDbSafeValue(this string value)
+        {
+            return value?.RemoveNullBytes() ?? string.Empty;
+        }
+
         public static string ToHexColor(this string value)
         {
             if (!string.IsNullOrWhiteSpace(value))

@@ -1,4 +1,5 @@
 @using Memtly.Core.Constants
+@inject Memtly.Core.Helpers.IWebpackHelper WebpackHelper
 @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostEnvironment
 
 @{
@@ -78,28 +79,28 @@
             }
         </script>
 
-        <link rel="stylesheet" href="~/_content/Memtly.Core/dist/main.css" asp-append-version="true" />
+    <link rel="stylesheet" href="@WebpackHelper.GetAssetPath("main.css")" asp-append-version="true" />
         @if (theme.Equals(Themes.AutoDetect.ToString().ToLower(), StringComparison.OrdinalIgnoreCase))
         {
             if (MemtlyCore.Version == MemtlyVersion.Community)
             {
-                <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/blue.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" asp-append-version="true" />    
-                <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/darkblue.css" media="(prefers-color-scheme: dark)" asp-append-version="true" />
+                <link rel="stylesheet" href="@WebpackHelper.GetAssetPath("themes/blue.css")" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" asp-append-version="true" />    
+                <link rel="stylesheet" href="@WebpackHelper.GetAssetPath("themes/darkblue.css")" media="(prefers-color-scheme: dark)" asp-append-version="true" />
             }
             else
             {
-                <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/green.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" asp-append-version="true" />
-                <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/darkgreen.css" media="(prefers-color-scheme: dark)" asp-append-version="true" />
+                <link rel="stylesheet" href="@WebpackHelper.GetAssetPath("themes/green.css")" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" asp-append-version="true" />
+                <link rel="stylesheet" href="@WebpackHelper.GetAssetPath("themes/darkgreen.css")" media="(prefers-color-scheme: dark)" asp-append-version="true" />
             }
         }
         else if (theme.Equals(Themes.Custom.ToString().ToLower(), StringComparison.OrdinalIgnoreCase))
         {
-            <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/blue.css" asp-append-version="true" />
+            <link rel="stylesheet" href="@WebpackHelper.GetAssetPath("themes/blue.css")" asp-append-version="true" />
             <partial name="~/Views/Shared/_CustomThemeOverrides.cshtml" />
         }
         else
         {
-            <link rel="stylesheet" href="~/_content/Memtly.Core/dist/themes/@(theme).css" asp-append-version="true" />
+            <link rel="stylesheet" href="@WebpackHelper.GetAssetPath($"themes/{theme}.css")" asp-append-version="true" />
         }
     </head>
     <body data-theme="@theme">
@@ -145,7 +146,8 @@
         </footer>
 
         <!-- Webpack -->
-        <script src="~/_content/Memtly.Core/dist/main.js" asp-append-version="true"></script>
+        <script src="@WebpackHelper.GetAssetPath("runtime.js")" asp-append-version="true"></script>
+        <script src="@WebpackHelper.GetAssetPath("main.js")" asp-append-version="true"></script>
 
         @await RenderSectionAsync("Scripts", required: false)
 

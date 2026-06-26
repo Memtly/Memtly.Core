@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Memtly.Core.Constants;
 using Memtly.Core.Enums;
+using Memtly.Core.Extensions;
 using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Database;
 using Memtly.Core.Models.Database;
@@ -158,9 +159,9 @@ namespace Memtly.Core.BackgroundWorkers
                                                                 g = await db.AddGalleryItem(new GalleryItemModel()
                                                                 {
                                                                     GalleryId = galleryItem.Id,
-                                                                    GalleryName = galleryItem.Name,
-                                                                    Title = filename,
-                                                                    Checksum = await _fileHelper.GetChecksum(file),
+                                                                    GalleryName = galleryItem.Name.GetDbSafeValue(),
+                                                                    Title = filename.GetDbSafeValue(),
+                                                                    Checksum = (await _fileHelper.GetChecksum(file)).GetDbSafeValue(),
                                                                     MediaType = _imageHelper.GetMediaType(file),
                                                                     State = GalleryItemState.Approved,
                                                                     UploadedDate = fileCreated,
@@ -244,9 +245,9 @@ namespace Memtly.Core.BackgroundWorkers
                                                                     await db.AddGalleryItem(new GalleryItemModel()
                                                                     {
                                                                         GalleryId = galleryItem.Id,
-                                                                        GalleryName = galleryItem.Name,
-                                                                        Title = filename,
-                                                                        Checksum = await _fileHelper.GetChecksum(file),
+                                                                        GalleryName = galleryItem.Name.GetDbSafeValue(),
+                                                                        Title = filename.GetDbSafeValue(),
+                                                                        Checksum = (await _fileHelper.GetChecksum(file)).GetDbSafeValue(),
                                                                         MediaType = _imageHelper.GetMediaType(file),
                                                                         State = GalleryItemState.Pending,
                                                                         UploadedDate = fileCreated,
@@ -305,8 +306,8 @@ namespace Memtly.Core.BackgroundWorkers
                             {
                                 await db.AddCustomResource(new CustomResourceModel()
                                 {
-                                    Title = Path.GetFileNameWithoutExtension(filename),
-                                    FileName = filename,
+                                    Title = Path.GetFileNameWithoutExtension(filename).GetDbSafeValue(),
+                                    FileName = filename.GetDbSafeValue(),
                                     Owner = systemUser!.Id,
                                     OwnerName = "DirectoryScanner"
                                 });
