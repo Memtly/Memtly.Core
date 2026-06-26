@@ -3,7 +3,7 @@ stages:
 
 test:
   stage: test
-  image: mcr.microsoft.com/dotnet/sdk:9.0
+  image: mcr.microsoft.com/dotnet/sdk:10.0
   before_script:
     - apt-get update
     - apt-get install -y curl

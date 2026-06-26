@@ -2,6 +2,8 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const glob = require('glob');
+const CopyPlugin = require('copy-webpack-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
 const themeEntries = glob.sync(`${path.resolve(__dirname, 'src/themes')}/*.css`).reduce((acc, filePath) => {
     const themeName = path.basename(filePath, '.css');
@@ -28,9 +30,11 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'wwwroot/dist'),
-        filename: '[name].js',
+        filename: '[name].[contenthash:8].js',
         publicPath: '/_content/Memtly.Core/dist/',
-        clean: true
+        clean: {
+            keep: /fonts\/|images\//
+        }
     },
     module: {
         rules: [
@@ -69,13 +73,28 @@ module.exports = {
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: '[name].css'
+            filename: '[name].[contenthash:8].css'
         }),
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',
             'window.jQuery': 'jquery',
             Popper: ['@popperjs/core', 'default']
+        }),
+        new CopyPlugin({
+            patterns: [
+                {
+                    from: 'node_modules/@fortawesome/fontawesome-free/webfonts',
+                    to: 'fonts'
+                }
+            ]
+        }),
+        new WebpackManifestPlugin({
+            fileName: 'manifest.json',
+            publicPath: '/_content/Memtly.Core/dist/'
         })
-    ]
+    ],
+    optimization: {
+        runtimeChunk: 'single'
+    }
 };

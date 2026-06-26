@@ -2194,10 +2194,10 @@ namespace Memtly.Core.Controllers
 
                                     var item = await _database.AddCustomResource(new CustomResourceModel()
                                     {
-                                        Title = title,
-                                        FileName = fileName,
+                                        Title = title.GetDbSafeValue(),
+                                        FileName = fileName.GetDbSafeValue(),
                                         Owner = userId,
-                                        OwnerName = User?.Identity.Name
+                                        OwnerName = User?.Identity.Name ?? "Unknown"
                                     });
 
                                     if (item?.Id > 0)

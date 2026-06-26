@@ -6,6 +6,7 @@ namespace Memtly.Core.Configurations
     {
         public static void AddDependencyInjectionConfiguration(this IServiceCollection services)
         {
+            services.AddSingleton<IWebpackHelper, WebpackHelper>();
             services.AddSingleton<IConfigHelper, ConfigHelper>();
             services.AddSingleton<ISettingsHelper, SettingsHelper>();
             services.AddSingleton<IEnvironmentWrapper, EnvironmentWrapper>();

@@ -480,12 +480,12 @@ namespace Memtly.Core.Controllers
                                             var item = await _database.AddGalleryItem(new GalleryItemModel()
                                             {
                                                 GalleryId = gallery.Id,
-                                                GalleryName = gallery.Name,
-                                                Title = fileName,
-                                                UploadedBy = uploadedBy,
-                                                UploaderEmailAddress = uploaderEmail,
+                                                GalleryName = gallery.Name.GetDbSafeValue(),
+                                                Title = fileName.GetDbSafeValue(),
+                                                UploadedBy = uploadedBy.GetDbSafeValue(),
+                                                UploaderEmailAddress = uploaderEmail.GetDbSafeValue(),
                                                 UploadedDate = fileCreated,
-                                                Checksum = checksum,
+                                                Checksum = checksum.GetDbSafeValue(),
                                                 MediaType = _imageHelper.GetMediaType(filePath),
                                                 Orientation = await _imageHelper.GetOrientation(savePath),
                                                 State = requiresReview ? GalleryItemState.Pending : GalleryItemState.Approved,

@@ -13,12 +13,13 @@ namespace Memtly.Core.Configurations
         {
             var bsp = services.BuildServiceProvider();
             var config = bsp.GetRequiredService<IConfiguration>();
-            var loggerConfig = new LoggerConfiguration()
-                .ReadFrom.Configuration(config)
-                .Enrich.FromLogContext();
-
             var configHelper = bsp.GetRequiredService<IConfigHelper>();
             var settings = bsp.GetRequiredService<ISettingsHelper>();
+
+            var loggerConfig = new LoggerConfiguration()
+                .ReadFrom.Configuration(config)
+                .Enrich.FromLogContext()
+                .Enrich.WithProperty("Version", settings.GetReleaseVersion(4));
 
             var enabled = settings.GetOrDefault(MemtlyConfiguration.Logging.Graylog.Enabled, true).Result;
             if (enabled)
