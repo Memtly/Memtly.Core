@@ -1,5 +1,6 @@
 ﻿using Memtly.Core.Constants;
 using Memtly.Core.Helpers;
+using Microsoft.AspNetCore.HttpOverrides;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.Graylog;
@@ -19,6 +20,8 @@ namespace Memtly.Core.Configurations
             var loggerConfig = new LoggerConfiguration()
                 .ReadFrom.Configuration(config)
                 .Enrich.FromLogContext()
+                .Enrich.WithCorrelationId()
+                .Enrich.WithProperty("InstanceId", Guid.NewGuid().ToString())
                 .Enrich.WithProperty("Version", settings.GetReleaseVersion(4));
 
             var enabled = settings.GetOrDefault(MemtlyConfiguration.Logging.Graylog.Enabled, true).Result;
@@ -46,6 +49,7 @@ namespace Memtly.Core.Configurations
 
                     Log.Logger = loggerConfig.CreateLogger();
 
+                    services.AddHttpContextAccessor();
                     services.AddLogging(loggingBuilder =>
                     {
                         loggingBuilder.ClearProviders();
