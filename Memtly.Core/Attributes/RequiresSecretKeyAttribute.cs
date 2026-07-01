@@ -63,7 +63,7 @@ namespace Memtly.Core.Attributes
                                             var logger = filterContext.HttpContext.RequestServices.GetService<ILogger<RequiresSecretKeyAttribute>>();
                                             if (logger != null)
                                             {
-                                                logger.LogWarning($"A request was made to an endpoint with an invalid secure key");
+                                                logger.LogWarning($"A request was made to an endpoint with an invalid secret key");
                                             }
 
                                             filterContext.Result = new RedirectToActionResult("Index", "Error", new { Reason = ErrorCode.InvalidSecretKey }, false);
