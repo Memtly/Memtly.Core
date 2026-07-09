@@ -15,7 +15,7 @@ namespace Memtly.Core.EntityFramework
                 .Build();
 
             var provider = config[MemtlyConfiguration.Database.Type]!;
-            
+
             var options = new DbContextOptionsBuilder<CoreDbContext>();
             switch (provider.ToLower())
             {
@@ -42,17 +42,17 @@ namespace Memtly.Core.EntityFramework
                     break;
                 case "mssql":
                     options.UseSqlServer($"Server=(localdb)\\mssqllocaldb;Database=_design_temp_{provider.ToLower()};", x =>
-                        {
-                            x.MigrationsAssembly("Memtly.Core.Migrations.SqlServer");
-                            x.MigrationsHistoryTable($"__EFMigrationsHistory_{provider}");
-                        });
+                    {
+                        x.MigrationsAssembly("Memtly.Core.Migrations.SqlServer");
+                        x.MigrationsHistoryTable($"__EFMigrationsHistory_{provider}");
+                    });
                     break;
                 case "postgres":
                     options.UseNpgsql($"Host=localhost;Database=_design_temp_{provider.ToLower()};", x =>
-                        {
-                            x.MigrationsAssembly("Memtly.Core.Migrations.Postgres");
-                            x.MigrationsHistoryTable($"__EFMigrationsHistory_{provider}");
-                        });
+                    {
+                        x.MigrationsAssembly("Memtly.Core.Migrations.Postgres");
+                        x.MigrationsHistoryTable($"__EFMigrationsHistory_{provider}");
+                    });
                     break;
                 default:
                     throw new InvalidOperationException($"Unsupported database provider: '{provider}'. Supported: sqlite, mysql, mariadb, mssql, postgres");

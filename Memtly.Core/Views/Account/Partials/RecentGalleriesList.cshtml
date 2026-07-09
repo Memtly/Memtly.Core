@@ -1,0 +1,60 @@
+﻿@model GalleriesModel
+@using Memtly.Core.Constants
+@using Memtly.Core.Views.Account.Tabs
+@inject Memtly.Core.Helpers.IEncryptionHelper _encryption
+@inject Memtly.Core.Helpers.IUrlHelper _url
+
+@{
+    var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
+}
+
+@if (userPermissions.Gallery.HasFlag(GalleryPermissions.View) && Model.RecentGalleries != null && Model.RecentGalleries.Any())
+{
+    <table class="table table-rounded-border">
+        <tr>
+            <th class="col-10 col-md-7">@_localizer["Name"].Value</th>
+            <th class="col-2 d-none d-md-table-cell">@_localizer["Owner"].Value</th>
+            <th class="col-2 col-md-3">@_localizer["Actions"].Value</th>
+        </tr>
+        @foreach (var galleryHistory in Model.RecentGalleries.OrderByDescending(x => x.CreatedAt))
+        {
+            if (galleryHistory != null)
+            {
+                var append = new List<KeyValuePair<string, string>>()
+                {
+                    new KeyValuePair<string, string>("identifier", galleryHistory.GalleryIdentifier.ToLower())
+                };
+
+                if (!string.IsNullOrWhiteSpace(galleryHistory.SecretKey))
+                {
+                    var enc = _encryption.IsEncryptionEnabled();
+                    append.Add(new KeyValuePair<string, string>("key", enc ? _encryption.Encrypt(galleryHistory.SecretKey) : galleryHistory.SecretKey));
+                    append.Add(new KeyValuePair<string, string>("enc", enc.ToString().ToLower()));
+                }
+
+                <tr data-gallery-id="@galleryHistory.GalleryId" data-gallery-identifier="@galleryHistory.GalleryIdentifier" data-gallery-name="@galleryHistory.GalleryName" data-gallery-username="@galleryHistory.GalleryOwnerName" data-gallery-key="@galleryHistory.SecretKey" data-gallery-type="@((int)galleryHistory.GalleryType)">
+                    <td class="text-capitalize">
+                        <i class="fa @(galleryHistory.GalleryType == GalleryType.Basic ? "fa-image" : "fa-images")"></i> @galleryHistory.GalleryName
+                    </td>
+                    <td class="d-none d-md-table-cell text-capitalize">@galleryHistory.GalleryOwnerName</td>
+                    <td>
+                        <!-- ( Open Gallery ) -->
+                        @if (userPermissions.Gallery.HasFlag(GalleryPermissions.View))
+                        {
+                            var tooltip = _localizer["Open"].Value;
+                            <button class="btnOpenGallery btn btn-primary-3" data-url="@_url.GenerateFullUrl(Context?.Request, "/Gallery", append, new List<string>() { "partial", "tab" })" data-target="@(await _settings.GetOrDefault(MemtlyConfiguration.Basic.LinksOpenNewTab, true) ? "_blank" : "_self")" alt="@tooltip" title="@tooltip">
+                                <i class="fas fa-up-right-from-square"></i>
+                            </button>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+}
+else
+{
+    <div class="col-12 text-center border border-primary-1 rounded py-3 py-lg-4">
+        <h3 class="display-6">@_localizer["No_Data"].Value</h3>
+    </div>
+}

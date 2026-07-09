@@ -110,10 +110,11 @@ namespace Memtly.Core.Controllers
 
                         if (galleryOwner != null && galleryOwner > 0)
                         {
+                            identifier = GalleryHelper.IsValidGalleryIdentifier(identifier?.ToLower()) ? identifier!.ToLower() : GalleryHelper.GenerateGalleryIdentifier();
                             gallery = await _database.AddGallery(new GalleryModel()
                             {
-                                Identifier = identifier?.ToLower() ?? GalleryHelper.GenerateGalleryIdentifier(),
-                                Name = identifier?.ToLower() ?? GalleryHelper.GenerateGalleryIdentifier(),
+                                Identifier = identifier,
+                                Name = identifier,
                                 SecretKey = key,
                                 Owner = galleryOwner ?? 0,
                                 Type = GalleryType.Basic
@@ -371,6 +372,20 @@ namespace Memtly.Core.Controllers
                         LoadScripts = !partial
                     };
 
+                    var userId = User?.Identity?.GetUserId();
+                    if (userId != null && userId > 0)
+                    {
+                        try
+                        {
+                            var galleryHistoryLimit = await _settings.GetOrDefault(MemtlyConfiguration.Account.GalleryHistoryLimit, 5);
+                            await _database.AddGalleryHistory((int)userId, gallery.Id, gallery.SecretKey, limit: galleryHistoryLimit);
+                        }
+                        catch
+                        {
+                            _logger.LogWarning($"Failed to log gallery history for user '{userId}' on gallery '{gallery?.Id}'");
+                        }
+                    }
+
                     return partial ? PartialView("~/Views/Gallery/GalleryWrapper.cshtml", model) : View(model);
                 }
             }
@@ -480,12 +495,12 @@ namespace Memtly.Core.Controllers
                                             var item = await _database.AddGalleryItem(new GalleryItemModel()
                                             {
                                                 GalleryId = gallery.Id,
-                                                GalleryName = gallery.Name.GetDbSafeValue(),
-                                                Title = fileName.GetDbSafeValue(),
-                                                UploadedBy = uploadedBy.GetDbSafeValue(),
-                                                UploaderEmailAddress = uploaderEmail.GetDbSafeValue(),
+                                                GalleryName = gallery.Name,
+                                                Title = fileName,
+                                                UploadedBy = uploadedBy,
+                                                UploaderEmailAddress = uploaderEmail,
                                                 UploadedDate = fileCreated,
-                                                Checksum = checksum.GetDbSafeValue(),
+                                                Checksum = checksum,
                                                 MediaType = _imageHelper.GetMediaType(filePath),
                                                 Orientation = await _imageHelper.GetOrientation(savePath),
                                                 State = requiresReview ? GalleryItemState.Pending : GalleryItemState.Approved,

@@ -578,7 +578,7 @@ function displayAddUserPopup(username, firstname, lastname, email, password, cpa
                 }
 
                 const emailRegex = /^((?!\.)[\w\-_.]*[^.])(@[\w\-_]+)(\.\w+(\.\w+)?[^.\W])$/;
-                if (email != undefined && email.length > 0 && !emailRegex.test(email)) {
+                if (email == undefined || email.length == 0 || email.length > 200 || !emailRegex.test(email)) {
                     displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Email'), null, () => {
                         displayAddUserPopup(username, firstname, lastname, email, password, cpassword, level, tier);
                     });
@@ -764,7 +764,7 @@ function displayEditUserPopup(id, username, firstname, lastname, email, level, t
                 }
 
                 const emailRegex = /^((?!\.)[\w\-_.]*[^.])(@[\w\-_]+)(\.\w+(\.\w+)?[^.\W])$/;
-                if (email != undefined && email.length > 0 && !emailRegex.test(email)) {
+                if (email == undefined || email.length == 0 || email.length > 200 || !emailRegex.test(email)) {
                     displayMessage(localization.translate('User_Edit'), localization.translate('User_Invalid_Email'), null, () => {
                         displayEditUserPopup(id, username, firstname, lastname, email, level, tier, canModifyAccessLevel);
                     });

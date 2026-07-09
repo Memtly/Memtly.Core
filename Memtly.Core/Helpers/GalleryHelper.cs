@@ -6,7 +6,15 @@ namespace Memtly.Core.Helpers
     {
         public static string GenerateGalleryIdentifier()
         {
-            return Guid.NewGuid().ToString().Replace("-", string.Empty).ToLower();
+            var maxLength = 32;
+
+            var identifier = Guid.NewGuid().ToString().Replace("-", string.Empty).ToLower();
+            if (identifier.Length > maxLength)
+            {
+                identifier = identifier.Substring(0, maxLength);
+            }
+
+            return identifier;
         }
 
         public static bool IsValidGalleryIdentifier(string? value)

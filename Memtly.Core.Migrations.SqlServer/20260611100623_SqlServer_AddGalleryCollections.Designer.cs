@@ -13,7 +13,7 @@ namespace Memtly.Core.Migrations.SqlServer.Migrations
 {
     [DbContext(typeof(CoreDbContext))]
     [Migration("20260611100623_SqlServer_MySql_Sqlite_AddGalleryCollections")]
-    partial class SqlServer_MySql_Sqlite_AddGalleryCollections
+    partial class SqlServer_AddGalleryCollections
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

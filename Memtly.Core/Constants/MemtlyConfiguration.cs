@@ -2,6 +2,7 @@
 {
     public class MemtlyConfiguration
     {
+        public const string CodePublisher = "Code_Built_By";
         public const string IsDemoMode = "Memtly:Demo_Mode";
 
         public class Database
@@ -65,6 +66,7 @@
             public const string LockoutAttempts = "Memtly:Account:Lockout_Attempts";
             public const string LockoutMins = "Memtly:Account:Lockout_Mins";
             public const string RecoveryMode = "Memtly:Account:Recovery_Mode";
+            public const string GalleryHistoryLimit = "Memtly:Account:Gallery_History_Limit";
 
             public class Admin
             {

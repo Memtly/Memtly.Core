@@ -158,6 +158,41 @@ namespace Memtly.Core.Migrations.SqlServer.Migrations
                     b.ToTable("GalleryCollections");
                 });
 
+            modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int?>("GalleryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SecretKey")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GalleryId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("UserId", "GalleryId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL AND [GalleryId] IS NOT NULL");
+
+                    b.ToTable("GalleryHistory");
+                });
+
             modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryItem", b =>
                 {
                     b.Property<int>("Id")
@@ -416,18 +451,35 @@ namespace Memtly.Core.Migrations.SqlServer.Migrations
             modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryCollection", b =>
                 {
                     b.HasOne("Memtly.Core.EntityFramework.Models.Gallery", "Collection")
-                        .WithMany()
+                        .WithMany("Collections")
                         .HasForeignKey("CollectionId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Memtly.Core.EntityFramework.Models.Gallery", "Gallery")
-                        .WithMany("Collections")
+                        .WithMany()
                         .HasForeignKey("GalleryId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Collection");
 
                     b.Navigation("Gallery");
+                });
+
+            modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryHistory", b =>
+                {
+                    b.HasOne("Memtly.Core.EntityFramework.Models.Gallery", "Gallery")
+                        .WithMany()
+                        .HasForeignKey("GalleryId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Memtly.Core.EntityFramework.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Gallery");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryItem", b =>

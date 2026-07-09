@@ -3,6 +3,7 @@ using Memtly.Core.Constants;
 using Memtly.Core.EntityFramework;
 using Memtly.Core.EntityFramework.Models;
 using Memtly.Core.Enums;
+using Memtly.Core.Extensions;
 using Memtly.Core.Models;
 using Memtly.Core.Models.Database;
 using Microsoft.EntityFrameworkCore;
@@ -75,6 +76,8 @@ namespace Memtly.Core.Helpers.Database
 
         public async Task<List<GalleryModel>> GetGalleries(int? userId = null, string term = "", int page = 1, int limit = int.MaxValue, GalleryType type = GalleryType.All)
         {
+            term = term?.GetDbSafeValue() ?? string.Empty;
+
             return await _db.Galleries
                 .Where(g => 
                     (userId == null || g.UserId == userId)
@@ -133,6 +136,8 @@ namespace Memtly.Core.Helpers.Database
 
         public async Task<int?> GetGalleryIdByName(string name)
         {
+            name = name?.GetDbSafeValue() ?? string.Empty;
+
             if (name.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))
             {
                 return 0;
@@ -148,6 +153,8 @@ namespace Memtly.Core.Helpers.Database
 
         public async Task<int?> GetGalleryId(string identifier)
         {
+            identifier = identifier?.GetDbSafeValue() ?? string.Empty;
+
             if (identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))
             {
                 return 0;
@@ -256,9 +263,9 @@ namespace Memtly.Core.Helpers.Database
 
             var galleryEntry = await _db.Galleries.AddAsync(new EntityFramework.Models.Gallery()
             {
-                Identifier = model.Identifier,
-                Name = model.Name,
-                SecretKey = model.SecretKey,
+                Identifier = (GalleryHelper.IsValidGalleryIdentifier(model.Identifier) ? model.Identifier : GalleryHelper.GenerateGalleryIdentifier()).GetDbSafeValue(),
+                Name = model.Name.GetDbSafeValue(),
+                SecretKey = model.SecretKey?.GetDbSafeValue(),
                 UserId = model.Owner,
                 Type = model.Type,
                 CreatedAt = DateTimeOffset.UtcNow
@@ -279,8 +286,8 @@ namespace Memtly.Core.Helpers.Database
                     return await GetGallery(gallery.Id); // Prevent users from creating galleries with the same name as a protected gallery
                 }
 
-                gallery.Name = model.Name;
-                gallery.SecretKey = model.SecretKey;
+                gallery.Name = model.Name.GetDbSafeValue();
+                gallery.SecretKey = model.SecretKey?.GetDbSafeValue();
 
                 await _db.SaveChangesAsync();
 
@@ -496,6 +503,8 @@ namespace Memtly.Core.Helpers.Database
 
         public async Task<GalleryItemModel?> GetGalleryItemByChecksum(int galleryId, string checksum) 
         {
+            checksum = checksum?.GetDbSafeValue() ?? string.Empty;
+
             return await _db.GalleryItems
                 .Include(g => g.Gallery)
                 .Select(gi => new GalleryItemModel()
@@ -521,10 +530,10 @@ namespace Memtly.Core.Helpers.Database
             var galleryItemEntry = await _db.GalleryItems.AddAsync(new GalleryItem()
             {
                 GalleryId = model.GalleryId,
-                Title = model.Title,
+                Title = model.Title.GetDbSafeValue(),
                 State = model.State,
-                UploadedBy = model.UploadedBy ?? string.Empty,
-                Checksum = model.Checksum ?? string.Empty,
+                UploadedBy = model.UploadedBy?.GetDbSafeValue() ?? string.Empty,
+                Checksum = model.Checksum?.GetDbSafeValue() ?? string.Empty,
                 Type = model.MediaType,
                 Orientation = model.Orientation,
                 FileSize = model.FileSize,
@@ -542,10 +551,10 @@ namespace Memtly.Core.Helpers.Database
 
             if (galleryItem != null)
             {
-                galleryItem.Title = model.Title;
+                galleryItem.Title = model.Title.GetDbSafeValue();
                 galleryItem.State = model.State;
-                galleryItem.UploadedBy = model.UploadedBy ?? string.Empty;
-                galleryItem.Checksum = model.Checksum ?? string.Empty;
+                galleryItem.UploadedBy = model.UploadedBy?.GetDbSafeValue() ?? string.Empty;
+                galleryItem.Checksum = model.Checksum?.GetDbSafeValue() ?? string.Empty;
                 galleryItem.Type = model.MediaType;
                 galleryItem.Orientation = model.Orientation;
                 galleryItem.FileSize = model.FileSize;
@@ -660,6 +669,7 @@ namespace Memtly.Core.Helpers.Database
                 .Where(gl => gl.GalleryItemId == galleryItemId)
                 .ExecuteDeleteAsync();
         }
+        
         public async Task DeleteAllGalleryItemLikes()
         {
             await _db.GalleryLikes
@@ -752,9 +762,114 @@ namespace Memtly.Core.Helpers.Database
         }
         #endregion
 
+        #region Gallery History
+        public async Task<IEnumerable<GalleryHistoryModel>?> GetGalleryHistory(int userId)
+        {
+            var items = await _db.GalleryHistory
+                .Include(x => x.Gallery)
+                    .ThenInclude(x => x!.User)
+                .Where(gh => gh.UserId == userId)
+                .ToListAsync();
+
+            return items?
+                .OrderByDescending(gh => gh.CreatedAt)
+                .Select(gh => new GalleryHistoryModel()
+                {
+                    Id = gh.Id,
+                    UserId = gh!.UserId ?? 0,
+                    GalleryId = gh!.GalleryId ?? 0,
+                    GalleryIdentifier = gh.Gallery!.Identifier,
+                    GalleryName = gh.Gallery!.Name,
+                    GalleryOwnerName = gh.Gallery!.User!.Username,
+                    GalleryType = gh.Gallery.Type,
+                    SecretKey = gh!.SecretKey,
+                    CreatedAt = gh.CreatedAt
+                });
+        }
+
+        public async Task<GalleryHistoryModel?> GetGalleryHistoryRecord(int userId, int galleryId)
+        {
+            return await _db.GalleryHistory
+                .Where(gh => gh.UserId == userId 
+                    && gh.GalleryId == galleryId)
+                .Include(x => x.Gallery)
+                    .ThenInclude(x => x!.User)
+                .Select(gh => new GalleryHistoryModel()
+                {
+                    Id = gh.Id,
+                    UserId = gh!.UserId ?? 0,
+                    GalleryId = gh!.GalleryId ?? 0,
+                    GalleryIdentifier = gh.Gallery!.Identifier,
+                    GalleryName = gh.Gallery!.Name,
+                    GalleryOwnerName = gh.Gallery!.User!.Username,
+                    GalleryType = gh.Gallery.Type,
+                    SecretKey = gh!.SecretKey,
+                    CreatedAt = gh.CreatedAt
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task AddGalleryHistory(int userId, int galleryId, string? secreyKey, int limit = 10)
+        {
+            var history = await GetGalleryHistory(userId);
+            var item = history?.FirstOrDefault(x => x.GalleryId == galleryId);
+
+            if (item == null)
+            {
+                if (history != null && history.Count() >= limit)
+                {
+                    foreach (var excess in history.Skip(limit - 1))
+                    {
+                        await _db.GalleryItems
+                            .Where(x => x.Id == excess.Id)
+                            .ExecuteDeleteAsync();
+                    }
+                }
+
+                await _db.GalleryHistory.AddAsync(new GalleryHistory()
+                {
+                    UserId = userId,
+                    GalleryId = galleryId,
+                    SecretKey = secreyKey?.GetDbSafeValue(),
+                    CreatedAt = DateTimeOffset.UtcNow
+                });
+            }
+            else
+            {
+                item.SecretKey = secreyKey?.GetDbSafeValue();
+                item.CreatedAt = DateTimeOffset.UtcNow;
+            }
+
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task DeleteGalleryHistoryByUser(int userId)
+        {
+            await _db.GalleryHistory
+                .Where(gh => gh.UserId == userId)
+                .ExecuteDeleteAsync();
+        }
+
+        public async Task DeleteGalleryHistoryByGallery(int galleryId)
+        {
+            await _db.GalleryHistory
+                .Where(gh => gh.GalleryId == galleryId)
+                .ExecuteDeleteAsync();
+        }
+
+        public async Task DeleteAllGalleryHistory()
+        {
+            await _db.GalleryHistory
+                .ExecuteDeleteAsync();
+        }
+        #endregion
+
         #region Users
         public async Task<bool> ValidateCredentials(string username, string password)
         {
+            username = username?.GetDbSafeValue() ?? string.Empty;
+            password = password?.GetDbSafeValue() ?? string.Empty;
+
             return (await _db.Users
                 .CountAsync(u => u.Level != UserLevel.System && u.Username.ToLower().Equals(username.ToLower()) && u.Password.Equals(password))) > 0;
         }
@@ -777,6 +892,8 @@ namespace Memtly.Core.Helpers.Database
 
         public async Task<List<UserModel>?> GetUsers(string term = "", int page = 1, int limit = int.MaxValue, UserLevel level = UserLevel.All)
         {
+            term = term?.GetDbSafeValue() ?? string.Empty;
+
             return await _db.Users
                 .Where(u => 
                     !u.Username.ToLower().Equals(UserAccounts.SystemUser.ToLower())
@@ -827,6 +944,8 @@ namespace Memtly.Core.Helpers.Database
 
         public async Task<UserModel?> GetUserByUsername(string username)
         {
+            username = username?.GetDbSafeValue() ?? string.Empty;
+
             return await _db.Users
                 .Select(u => new UserModel()
                 {
@@ -848,6 +967,8 @@ namespace Memtly.Core.Helpers.Database
 
         public async Task<UserModel?> GetUserByEmail(string email)
         {
+            email = email?.GetDbSafeValue() ?? string.Empty;
+
             return await _db.Users
                 .Select(u => new UserModel()
                 {
@@ -871,11 +992,11 @@ namespace Memtly.Core.Helpers.Database
         {
             var userEntry = await _db.Users.AddAsync(new User()
             {
-                Username = model.Username,
-                EmailAddress = model.Email ?? string.Empty,
-                Firstname = model.Firstname ?? string.Empty,
-                Lastname = model.Lastname ?? string.Empty,
-                Password = model.Password ?? PasswordHelper.GenerateTempPassword(),
+                Username = model.Username.GetDbSafeValue(),
+                EmailAddress = model.Email?.GetDbSafeValue() ?? string.Empty,
+                Firstname = model.Firstname?.GetDbSafeValue() ?? string.Empty,
+                Lastname = model.Lastname?.GetDbSafeValue() ?? string.Empty,
+                Password = model.Password?.GetDbSafeValue() ?? PasswordHelper.GenerateTempPassword(),
                 Level = model.Level,
                 Tier = model.Tier,
                 State = model.State,
@@ -897,9 +1018,9 @@ namespace Memtly.Core.Helpers.Database
 
             if (user != null)
             {
-                user.EmailAddress = model.Email ?? string.Empty;
-                user.Firstname = model.Firstname ?? string.Empty;
-                user.Lastname = model.Lastname ?? string.Empty;
+                user.EmailAddress = model.Email?.GetDbSafeValue() ?? string.Empty;
+                user.Firstname = model.Firstname?.GetDbSafeValue() ?? string.Empty;
+                user.Lastname = model.Lastname?.GetDbSafeValue() ?? string.Empty;
                 user.Level = model.Level;
                 user.Tier = model.Tier;
                 user.State = model.State;
@@ -938,7 +1059,7 @@ namespace Memtly.Core.Helpers.Database
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Level != UserLevel.System && u.Id == model.Id);
             if (user != null)
             {
-                user.Password = model.Password ?? PasswordHelper.GenerateTempPassword();
+                user.Password = model.Password?.GetDbSafeValue() ?? PasswordHelper.GenerateTempPassword();
 
                 await _db.SaveChangesAsync();
 
@@ -953,7 +1074,7 @@ namespace Memtly.Core.Helpers.Database
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Level != UserLevel.System && u.Id == id);
             if (user != null)
             {
-                user.MultiFactorAuthToken = token;
+                user.MultiFactorAuthToken = token?.GetDbSafeValue() ?? string.Empty;
 
                 await _db.SaveChangesAsync();
 
@@ -968,7 +1089,7 @@ namespace Memtly.Core.Helpers.Database
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Level != UserLevel.System && u.Id == id);
             if (user != null)
             {
-                user.ActionAuthCode = secretCode;
+                user.ActionAuthCode = secretCode?.GetDbSafeValue() ?? string.Empty;
 
                 await _db.SaveChangesAsync();
 
@@ -980,6 +1101,8 @@ namespace Memtly.Core.Helpers.Database
 
         public async Task<bool> VerifyUserSecret(int id, string secretCode)
         {
+            secretCode = secretCode?.GetDbSafeValue() ?? string.Empty;
+
             return (await _db.Users
                 .CountAsync(u => u.Level != UserLevel.System && u.Id == id && u.ActionAuthCode.Equals(secretCode))) > 0;
         }
@@ -1123,6 +1246,8 @@ namespace Memtly.Core.Helpers.Database
 
         public async Task<List<CustomResourceModel>> GetCustomResources(int? userId = null, string term = "", int page = 1, int limit = int.MaxValue)
         {
+            term = term?.GetDbSafeValue() ?? string.Empty;
+
             return await _db.CustomResources
                 .Where(cr => 
                     (userId == null || cr.UserId == userId)
@@ -1146,8 +1271,8 @@ namespace Memtly.Core.Helpers.Database
         {
             var customResourceEntry = await _db.CustomResources.AddAsync(new CustomResource()
             {
-                Title = model.Title,
-                Filename = model.FileName,
+                Title = model.Title.GetDbSafeValue(),
+                Filename = model.FileName.GetDbSafeValue(),
                 UserId = model.Owner,
                 CreatedAt = DateTimeOffset.UtcNow
             });
@@ -1162,8 +1287,8 @@ namespace Memtly.Core.Helpers.Database
 
             if (customResource != null)
             {
-                customResource.Title = model.Title;
-                customResource.Filename = model.FileName;
+                customResource.Title = model.Title.GetDbSafeValue();
+                customResource.Filename = model.FileName.GetDbSafeValue();
                 customResource.UserId = model.Owner;
 
                 await _db.SaveChangesAsync();
@@ -1191,19 +1316,20 @@ namespace Memtly.Core.Helpers.Database
         public async Task DeleteCustomResource(CustomResourceModel model)
         {
             await _db.Settings
-                .Where(s => s.Value.ToLower().Equals($"/custom_resources/{model.FileName}".ToLower()))
+                .Where(s => s.Value.ToLower().Equals($"/custom_resources/{model.FileName.GetDbSafeValue()}".ToLower()))
                 .ExecuteUpdateAsync(setter => setter
                     .SetProperty(s => s.Value, string.Empty)
                 );
 
             await _db.GallerySettings
-                .Where(gs => gs.Setting!.Key.ToLower().Equals(MemtlyConfiguration.Gallery.BannerImage.ToLower()) && gs.Value.ToLower().Equals($"/custom_resources/{model.FileName}".ToLower()))
+                .Where(gs => gs.Setting!.Key.ToLower().Equals(MemtlyConfiguration.Gallery.BannerImage.ToLower()) && gs.Value.ToLower().Equals($"/custom_resources/{model.FileName.GetDbSafeValue()}".ToLower()))
                 .ExecuteDeleteAsync();
 
             await _db.CustomResources
                 .Where(cr => cr.Id == model.Id)
                 .ExecuteDeleteAsync();
         }
+        
         public async Task DeleteAllCustomResources()
         {
             await _db.Settings
@@ -1261,7 +1387,7 @@ namespace Memtly.Core.Helpers.Database
 
         public async Task<IEnumerable<SettingModel>?> GetSettingsStartingWith(string key, int? galleryId = null)
         {
-            key = key.ToUpper();
+            key = key.GetDbSafeValue().ToUpper();
 
             var globalSettings = await _db.Settings
                 .Where(s => s.Key.StartsWith(key))
@@ -1301,6 +1427,8 @@ namespace Memtly.Core.Helpers.Database
 
         public async Task<SettingModel?> GetSetting(string id, int? galleryId = null)
         {
+            id = id?.GetDbSafeValue() ?? string.Empty;
+
             if (galleryId != null)
             {
                 var gallerySetting = await _db.GallerySettings
@@ -1330,6 +1458,8 @@ namespace Memtly.Core.Helpers.Database
 
         public async Task<SettingModel?> GetGallerySpecificSetting(string id, int galleryId)
         {
+            id = id?.GetDbSafeValue() ?? string.Empty;
+
             return await _db.GallerySettings
                 .Where(gs => gs.Setting!.Key.ToLower().Equals(id.ToLower()) && gs.GalleryId == galleryId)
                 .Select(gs => new SettingModel
@@ -1349,7 +1479,7 @@ namespace Memtly.Core.Helpers.Database
                 var settingEntry = await _db.Settings.AddAsync(new Setting()
                 {
                     Key = model.Id,
-                    Value = galleryId == null ? model.Value ?? string.Empty : string.Empty,
+                    Value = galleryId == null ? model.Value?.GetDbSafeValue() ?? string.Empty : string.Empty,
                     CreatedAt = DateTimeOffset.UtcNow
                 });
                 await _db.SaveChangesAsync();
@@ -1362,7 +1492,7 @@ namespace Memtly.Core.Helpers.Database
                 await _db.GallerySettings.AddAsync(new GallerySetting()
                 {
                     SettingId = settingId,
-                    Value = model.Value ?? string.Empty,
+                    Value = model.Value?.GetDbSafeValue() ?? string.Empty,
                     GalleryId = galleryId,
                     CreatedAt = DateTimeOffset.UtcNow
                 });
@@ -1377,11 +1507,11 @@ namespace Memtly.Core.Helpers.Database
             if (galleryId != null)
             {
                 var setting = await _db.GallerySettings
-                    .FirstOrDefaultAsync(gs => gs.GalleryId == galleryId && gs.Setting!.Key.ToLower().Equals(model.Id.ToLower()));
+                    .FirstOrDefaultAsync(gs => gs.GalleryId == galleryId && gs.Setting!.Key.ToLower().Equals(model.Id.GetDbSafeValue().ToLower()));
 
                 if (setting != null)
                 { 
-                    setting.Value = model.Value ?? string.Empty;
+                    setting.Value = model.Value?.GetDbSafeValue() ?? string.Empty;
 
                     await _db.SaveChangesAsync();
                 }
@@ -1389,11 +1519,11 @@ namespace Memtly.Core.Helpers.Database
             else
             {
                 var setting = await _db.Settings
-                    .FirstOrDefaultAsync(s => s.Key.ToLower().Equals(model.Id.ToLower()));
+                    .FirstOrDefaultAsync(s => s.Key.ToLower().Equals(model.Id.GetDbSafeValue().ToLower()));
 
                 if (setting != null)
                 {
-                    setting.Value = model.Value ?? string.Empty;
+                    setting.Value = model.Value?.GetDbSafeValue() ?? string.Empty;
 
                     await _db.SaveChangesAsync();
                 }
@@ -1411,58 +1541,58 @@ namespace Memtly.Core.Helpers.Database
                     if (galleryId != null)
                     {
                         // Gallery Override
-                        var result = await GetGallerySpecificSetting(model.Id, galleryId.Value);
+                        var result = await GetGallerySpecificSetting(model.Id.GetDbSafeValue(), galleryId.Value);
                         if (result == null && !string.IsNullOrEmpty(model.Value))
                         {
                             return await AddSetting(new SettingModel()
                             {
-                                Id = model.Id.ToUpper(),
-                                Value = model.Value
+                                Id = model.Id.GetDbSafeValue().ToUpper(),
+                                Value = model.Value.GetDbSafeValue()
                             }, galleryId);
                         }
                         else if (result != null && !string.IsNullOrEmpty(model.Value))
                         {
                             return await EditSetting(new SettingModel()
                             {
-                                Id = model.Id.ToUpper(),
-                                Value = model.Value
+                                Id = model.Id.GetDbSafeValue().ToUpper(),
+                                Value = model.Value.GetDbSafeValue()
                             }, galleryId);
                         }
                         else if (result != null && string.IsNullOrEmpty(model.Value))
                         {
                             await DeleteSetting(new SettingModel()
                             {
-                                Id = model.Id.ToUpper(),
-                                Value = model.Value
+                                Id = model.Id.GetDbSafeValue().ToUpper(),
+                                Value = model.Value?.GetDbSafeValue()
                             }, galleryId);
                         }
                     }
                     else
                     {
                         // Default Setting
-                        var result = await GetSetting(model.Id);
+                        var result = await GetSetting(model.Id.GetDbSafeValue());
                         if (result == null && !string.IsNullOrEmpty(model.Value))
                         {
                             return await AddSetting(new SettingModel()
                             {
-                                Id = model.Id.ToUpper(),
-                                Value = model.Value
+                                Id = model.Id.GetDbSafeValue().ToUpper(),
+                                Value = model.Value.GetDbSafeValue()
                             });
                         }
                         else if (result != null && !string.IsNullOrEmpty(model.Value))
                         {
                             return await EditSetting(new SettingModel()
                             {
-                                Id = model.Id.ToUpper(),
-                                Value = model.Value
+                                Id = model.Id.GetDbSafeValue().ToUpper(),
+                                Value = model.Value.GetDbSafeValue()
                             });
                         }
                         else if (result != null && string.IsNullOrEmpty(model.Value))
                         {
                             await DeleteSetting(new SettingModel()
                             {
-                                Id = model.Id.ToUpper(),
-                                Value = model.Value
+                                Id = model.Id.GetDbSafeValue().ToUpper(),
+                                Value = model.Value?.GetDbSafeValue()
                             });
                         }
                     }
@@ -1472,7 +1602,7 @@ namespace Memtly.Core.Helpers.Database
 
             return new SettingModel()
             {
-                Id = model.Id.ToUpper(),
+                Id = model.Id.GetDbSafeValue().ToUpper(),
                 Value = null
             };
         }
@@ -1482,17 +1612,17 @@ namespace Memtly.Core.Helpers.Database
             if (galleryId != null)
             {
                 await _db.GallerySettings
-                    .Where(gs => gs.GalleryId == galleryId && gs.Setting!.Key.ToLower().Equals(model.Id.ToLower()))
+                    .Where(gs => gs.GalleryId == galleryId && gs.Setting!.Key.ToLower().Equals(model.Id.GetDbSafeValue().ToLower()))
                     .ExecuteDeleteAsync();
             }
             else
             {
                 await _db.GallerySettings
-                    .Where(gs => gs.Setting!.Key.ToLower().Equals(model.Id.ToLower()))
+                    .Where(gs => gs.Setting!.Key.ToLower().Equals(model.Id.GetDbSafeValue().ToLower()))
                     .ExecuteDeleteAsync();
 
                 await _db.Settings
-                    .Where(s => s.Key.ToLower().Equals(model.Id.ToLower()))
+                    .Where(s => s.Key.ToLower().Equals(model.Id.GetDbSafeValue().ToLower()))
                     .ExecuteDeleteAsync();
             }
         }
@@ -1531,6 +1661,8 @@ namespace Memtly.Core.Helpers.Database
 
         public async Task<IEnumerable<AuditLogModel>?> GetAuditLogs(int? userId = null, string term = "", AuditSeverity severity = AuditSeverity.Information, int limit = 100)
         {
+            term = term?.GetDbSafeValue() ?? string.Empty;
+
             return await _db.AuditLogs
                 .Where(al => (userId == null || al.UserId == userId)
                     && (string.IsNullOrWhiteSpace(term)
@@ -1556,7 +1688,7 @@ namespace Memtly.Core.Helpers.Database
             var auditLogEntity = await _db.AuditLogs.AddAsync(new AuditLog()
             {
                 UserId = model.UserId,
-                Message = model.Message,
+                Message = model.Message.GetDbSafeValue(),
                 Severity = model.Severity,
                 CreatedAt = DateTimeOffset.UtcNow
             });
@@ -1583,6 +1715,7 @@ namespace Memtly.Core.Helpers.Database
         #region Other
         public async Task WipeSystem()
         {
+            await DeleteAllGalleryHistory();
             await DeleteAllGalleryItemLikes();
             await DeleteAllGalleryItems();
             await DeleteAllGalleries();

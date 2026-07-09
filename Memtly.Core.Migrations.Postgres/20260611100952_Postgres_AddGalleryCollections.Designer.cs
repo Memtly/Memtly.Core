@@ -3,6 +3,7 @@ using System;
 using Memtly.Core.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Memtly.Core.Migrations.Postgres.Migrations
 {
     [DbContext(typeof(CoreDbContext))]
-    partial class CoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260611100952_Postgres_SqlServer_MySql_Sqlite_AddGalleryCollections")]
+    partial class Postgres_AddGalleryCollections
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,40 +158,6 @@ namespace Memtly.Core.Migrations.Postgres.Migrations
                         .IsUnique();
 
                     b.ToTable("GalleryCollections");
-                });
-
-            modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("GalleryId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("SecretKey")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GalleryId");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.HasIndex("UserId", "GalleryId")
-                        .IsUnique();
-
-                    b.ToTable("GalleryHistory");
                 });
 
             modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryItem", b =>
@@ -449,35 +418,18 @@ namespace Memtly.Core.Migrations.Postgres.Migrations
             modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryCollection", b =>
                 {
                     b.HasOne("Memtly.Core.EntityFramework.Models.Gallery", "Collection")
-                        .WithMany("Collections")
+                        .WithMany()
                         .HasForeignKey("CollectionId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Memtly.Core.EntityFramework.Models.Gallery", "Gallery")
-                        .WithMany()
+                        .WithMany("Collections")
                         .HasForeignKey("GalleryId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Collection");
 
                     b.Navigation("Gallery");
-                });
-
-            modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryHistory", b =>
-                {
-                    b.HasOne("Memtly.Core.EntityFramework.Models.Gallery", "Gallery")
-                        .WithMany()
-                        .HasForeignKey("GalleryId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("Memtly.Core.EntityFramework.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Gallery");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryItem", b =>

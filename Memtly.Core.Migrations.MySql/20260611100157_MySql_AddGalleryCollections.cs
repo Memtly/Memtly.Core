@@ -1,13 +1,13 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Memtly.Core.Migrations.Postgres.Migrations
+namespace Memtly.Core.Migrations.MySql.Migrations
 {
     /// <inheritdoc />
-    public partial class Postgres_SqlServer_MySql_Sqlite_AddGalleryCollections : Migration
+    public partial class MySql_AddGalleryCollections : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,7 +15,7 @@ namespace Memtly.Core.Migrations.Postgres.Migrations
             migrationBuilder.AddColumn<int>(
                 name: "Type",
                 table: "Galleries",
-                type: "integer",
+                type: "int",
                 nullable: false,
                 defaultValue: 1);
 
@@ -23,11 +23,11 @@ namespace Memtly.Core.Migrations.Postgres.Migrations
                 name: "GalleryCollections",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CollectionId = table.Column<int>(type: "integer", nullable: true),
-                    GalleryId = table.Column<int>(type: "integer", nullable: true),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CollectionId = table.Column<int>(type: "int", nullable: true),
+                    GalleryId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,7 +42,8 @@ namespace Memtly.Core.Migrations.Postgres.Migrations
                         column: x => x.GalleryId,
                         principalTable: "Galleries",
                         principalColumn: "Id");
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GalleryCollections_CollectionId_GalleryId",
