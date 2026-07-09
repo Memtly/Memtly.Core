@@ -50,10 +50,26 @@ namespace Memtly.Core.Configurations
                         break;
                     case "mysql":
                     case "mariadb":
-                        options.UseMySql(connString, ServerVersion.AutoDetect(connString), x =>
+                        ServerVersion? serverVersion = null;
+                        var retries = 5;
+                        while (retries-- > 0)
+                        {
+                            try
+                            {
+                                serverVersion = ServerVersion.AutoDetect(connString);
+                                break;
+                            }
+                            catch (Exception) when (retries > 0)
+                            {
+                                Thread.Sleep(3000);
+                            }
+                        }
+
+                        options.UseMySql(connString, serverVersion, x =>
                         {
                             x.MigrationsAssembly("Memtly.Core.Migrations.MySql");
                             x.MigrationsHistoryTable($"__EFMigrationsHistory_{provider}");
+                            x.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                         });
                         break;
                     case "mssql":
@@ -61,6 +77,7 @@ namespace Memtly.Core.Configurations
                         {
                             x.MigrationsAssembly("Memtly.Core.Migrations.SqlServer");
                             x.MigrationsHistoryTable($"__EFMigrationsHistory_{provider}");
+                            x.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                         });
                         break;
                     case "postgres":
@@ -68,6 +85,7 @@ namespace Memtly.Core.Configurations
                         {
                             x.MigrationsAssembly("Memtly.Core.Migrations.Postgres");
                             x.MigrationsHistoryTable($"__EFMigrationsHistory_{provider}");
+                            x.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                         });
                         break;
                     default:
@@ -205,10 +223,11 @@ namespace Memtly.Core.Configurations
 
                     if (defaultGallery == null)
                     {
+                        var identifier = GalleryHelper.IsValidGalleryIdentifier(SystemGalleries.DefaultGallery.ToLower()) ? SystemGalleries.DefaultGallery.ToLower() : GalleryHelper.GenerateGalleryIdentifier();
                         var secretKey = !string.IsNullOrWhiteSpace(defaultSecretKey) || allowInsecureGalleries ? defaultSecretKey : PasswordHelper.GenerateGallerySecretKey();
                         await database.AddGallery(new GalleryModel
                         {
-                            Identifier = SystemGalleries.DefaultGallery.ToLower(),
+                            Identifier = identifier,
                             Name = SystemGalleries.DefaultGallery,
                             SecretKey = secretKey,
                             Owner = adminAccount.Id,

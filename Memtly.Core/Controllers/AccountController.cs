@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Web;
 using Memtly.Core.Attributes;
 using Memtly.Core.BackgroundWorkers;
@@ -180,7 +181,7 @@ namespace Memtly.Core.Controllers
             {
                 try
                 {
-                    if (string.IsNullOrWhiteSpace(model?.Username) || model.Username.Length < 5 || model.Username.Length > 50)
+                    if (string.IsNullOrWhiteSpace(model?.Username) || model.Username.Length < 5 || model.Username.Length > 50 || !Regex.IsMatch(model.Username, @"^[a-zA-Z0-9\-\s-_~]+$", RegexOptions.Compiled))
                     {
                         return Json(new { success = false, message = _localizer["Registration_Invalid_Username"].Value });
                     }
@@ -603,6 +604,7 @@ namespace Memtly.Core.Controllers
                         else if (model.ActiveTab == AccountTabs.Galleries)
                         {
                             model.Galleries = (await _database.GetGalleries(null, term, page, limit))?.Where(x => !x.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))?.ToList();
+                            model.RecentGalleries = (await _database.GetGalleryHistory(user.Id))?.ToList();
                             if (model.Galleries != null)
                             {
                                 var all = await _database.GetAllGallery();
@@ -643,6 +645,7 @@ namespace Memtly.Core.Controllers
                         else if (model.ActiveTab == AccountTabs.Galleries)
                         {
                             model.Galleries = await _database.GetGalleries(user.Id, term, page, limit);
+                            model.RecentGalleries = (await _database.GetGalleryHistory(user.Id))?.ToList();
                             model.TotalItems = await _database.GetGalleryCount(user.Id);
                         }
                         else if (model.ActiveTab == AccountTabs.Users)
@@ -1044,6 +1047,7 @@ namespace Memtly.Core.Controllers
                         {
                             if (userGalleries.Count() < User.Identity.GetGalleryLimit() && await _database.GetGalleryCount() < await _settings.GetOrDefault(MemtlyConfiguration.Basic.MaxGalleryCount, 1000000))
                             {
+                                model.Identifier = GalleryHelper.IsValidGalleryIdentifier(model.Identifier) ? model.Identifier : GalleryHelper.GenerateGalleryIdentifier();
                                 model.Owner = userId;
                                 model.Type = GalleryType.Basic;
 
@@ -1173,6 +1177,7 @@ namespace Memtly.Core.Controllers
                         {
                             if (userGalleries.Count() < User.Identity.GetGalleryLimit() && await _database.GetGalleryCount() < await _settings.GetOrDefault(MemtlyConfiguration.Basic.MaxGalleryCount, 1000000))
                             {
+                                model.Identifier = GalleryHelper.IsValidGalleryIdentifier(model.Identifier) ? model.Identifier : GalleryHelper.GenerateGalleryIdentifier();
                                 model.Owner = userId;
                                 model.Type = GalleryType.Collection;
 
@@ -1633,7 +1638,43 @@ namespace Memtly.Core.Controllers
         {
             if (User?.Identity != null && User.Identity.IsAuthenticated && (User?.Identity?.IsPrivilegedUser() ?? false))
             {
-                if (!string.IsNullOrWhiteSpace(model?.Username) && !string.IsNullOrWhiteSpace(model?.Password) && string.Equals(model.Password, model.CPassword))
+                if (string.IsNullOrWhiteSpace(model?.Username) || model.Username.Length == 0 || model.Username.Length > 50 || !Regex.IsMatch(model.Username, @"^[a-zA-Z0-9\-\s-_~]+$", RegexOptions.Compiled))
+                {
+                    return Json(new { success = false, message = _localizer["User_Invalid_Username"].Value });
+                }
+                else if (string.IsNullOrWhiteSpace(model?.Firstname) || model.Firstname.Length < 1 || model.Firstname.Length > 50)
+                {
+                    return Json(new { success = false, message = _localizer["User_Invalid_Firstname"].Value });
+                }
+                else if (string.IsNullOrWhiteSpace(model?.Lastname) || model.Lastname.Length < 1 || model.Lastname.Length > 50)
+                {
+                    return Json(new { success = false, message = _localizer["User_Invalid_Lastname"].Value });
+                }
+                else if (string.IsNullOrWhiteSpace(model?.Email) || model.Email.Length == 0 || model.Email.Length > 200 || !EmailValidationHelper.IsValid(model.Email))
+                {
+                    return Json(new { success = false, message = _localizer["User_Invalid_Email"].Value });
+                }
+                else if (string.IsNullOrWhiteSpace(model?.Password) || model.Password.Length < 8 || model.Password.Length > 500 || !PasswordHelper.IsValid(model.Password))
+                {
+                    return Json(new { success = false, message = _localizer["User_Invalid_Password"].Value });
+                }
+                else if (PasswordHelper.IsWeak(model.Password))
+                {
+                    return Json(new { success = false, message = _localizer["User_Invalid_Password"].Value });
+                }
+                else if (string.IsNullOrWhiteSpace(model?.CPassword) || !model.CPassword.Equals(model.Password))
+                {
+                    return Json(new { success = false, message = _localizer["User_Invalid_Password"].Value });
+                }
+                else if (model?.Level == null)
+                {
+                    return Json(new { success = false, message = _localizer["User_Invalid_Level"].Value });
+                }
+                else if (model?.Tier == null)
+                {
+                    return Json(new { success = false, message = _localizer["User_Invalid_Tier"].Value });
+                }
+                else
                 {
                     try
                     {
@@ -1665,13 +1706,9 @@ namespace Memtly.Core.Controllers
                         _logger.LogError(ex, $"{_localizer["Failed_Add_User"].Value} - {ex?.Message}");
                     }
                 }
-                else
-                {
-                    return Json(new { success = false, message = _localizer["Failed_Add_User"].Value });
-                }
             }
 
-            return Json(new { success = false });
+            return Json(new { success = false, message = _localizer["Failed_Add_User"].Value });
         }
 
         [HttpPut]
@@ -1687,37 +1724,60 @@ namespace Memtly.Core.Controllers
                         var user = await _database.GetUser(model.Id);
                         if (user != null && User.Identity.CanEdit(UserPermissions.Update, user.Id))
                         {
-                            user.Firstname = model.Firstname?.Trim();
-                            user.Lastname = model.Lastname?.Trim();
-                            user.Email = model.Email?.Trim();
-
-                            if (User.Identity.IsPrivilegedUser() && User.Identity.GetUserPermissions().Users.HasFlag(UserPermissions.Change_Permissions_Level))
+                            if (string.IsNullOrWhiteSpace(model?.Firstname) || model.Firstname.Length < 1 || model.Firstname.Length > 50)
                             {
-                                if (user.Id == User.Identity.GetUserId() && (user.Level != model.Level || user.Tier != model.Tier))
+                                return Json(new { success = false, message = _localizer["User_Invalid_Firstname"].Value });
+                            }
+                            else if (string.IsNullOrWhiteSpace(model?.Lastname) || model.Lastname.Length < 1 || model.Lastname.Length > 50)
+                            {
+                                return Json(new { success = false, message = _localizer["User_Invalid_Lastname"].Value });
+                            }
+                            else if (string.IsNullOrWhiteSpace(model?.Email) || model.Email.Length == 0 || model.Email.Length > 200 || !EmailValidationHelper.IsValid(model.Email))
+                            {
+                                return Json(new { success = false, message = _localizer["User_Invalid_Email"].Value });
+                            }
+                            else if (model?.Level == null)
+                            {
+                                return Json(new { success = false, message = _localizer["User_Invalid_Level"].Value });
+                            }
+                            else if (model?.Tier == null)
+                            {
+                                return Json(new { success = false, message = _localizer["User_Invalid_Tier"].Value });
+                            }
+                            else
+                            {
+                                user.Firstname = model.Firstname?.Trim();
+                                user.Lastname = model.Lastname?.Trim();
+                                user.Email = model.Email?.Trim();
+
+                                if (User.Identity.IsPrivilegedUser() && User.Identity.GetUserPermissions().Users.HasFlag(UserPermissions.Change_Permissions_Level))
                                 {
-                                    return Json(new { success = false, message = _localizer["Cannot_Change_Current_User_Level_Tier"].Value });
-                                }
-                                else if (user.Level == UserLevel.Admin && model.Level != UserLevel.Admin)
-                                {
-                                    var activeAdminCount = await _database.GetAdminCount(AccountState.Active);
-                                    if (activeAdminCount <= 1)
+                                    if (user.Id == User.Identity.GetUserId() && (user.Level != model.Level || user.Tier != model.Tier))
                                     {
-                                        return Json(new { success = false, message = _localizer["Cannot_Change_Only_Admin"].Value });
+                                        return Json(new { success = false, message = _localizer["Cannot_Change_Current_User_Level_Tier"].Value });
                                     }
+                                    else if (user.Level == UserLevel.Admin && model.Level != UserLevel.Admin)
+                                    {
+                                        var activeAdminCount = await _database.GetAdminCount(AccountState.Active);
+                                        if (activeAdminCount <= 1)
+                                        {
+                                            return Json(new { success = false, message = _localizer["Cannot_Change_Only_Admin"].Value });
+                                        }
+                                    }
+
+                                    user.Level = model.Level;
+                                    user.Tier = model.Tier;
                                 }
 
-                                user.Level = model.Level;
-                                user.Tier = model.Tier;
+                                if (user.Level != UserLevel.Paid)
+                                {
+                                    user.Tier = PaidTier.None;
+                                }
+
+                                await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_UpdatedUser"].Value} '{user?.Username}'", AuditSeverity.Verbose);
+
+                                return Json(new { success = string.Equals(user?.Username, (await _database.EditUser(user))?.Username, StringComparison.OrdinalIgnoreCase) });
                             }
-
-                            if (user.Level != UserLevel.Paid)
-                            {
-                                user.Tier = PaidTier.None;
-                            }
-
-                            await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_UpdatedUser"].Value} '{user?.Username}'", AuditSeverity.Verbose);
-
-                            return Json(new { success = string.Equals(user?.Username, (await _database.EditUser(user))?.Username, StringComparison.OrdinalIgnoreCase) });
                         }
                         else
                         {
@@ -1735,7 +1795,7 @@ namespace Memtly.Core.Controllers
                 }
             }
 
-            return Json(new { success = false });
+            return Json(new { success = false, message = _localizer["Failed_Edit_User"].Value });
         }
 
         [HttpPut]
@@ -1751,11 +1811,26 @@ namespace Memtly.Core.Controllers
                         var user = await _database.GetUser(model.Id);
                         if (user != null && User.Identity.CanEdit(UserPermissions.Change_Password, user.Id))
                         {
-                            user.Password = _encryption.Encrypt(model.Password, user.Username.ToLower());
+                            if (string.IsNullOrWhiteSpace(model?.Password) || model.Password.Length < 8 || model.Password.Length > 500 || !PasswordHelper.IsValid(model.Password))
+                            {
+                                return Json(new { success = false, message = _localizer["User_Invalid_Password"].Value });
+                            }
+                            else if (PasswordHelper.IsWeak(model.Password))
+                            {
+                                return Json(new { success = false, message = _localizer["User_Invalid_Password"].Value });
+                            }
+                            else if (string.IsNullOrWhiteSpace(model?.CPassword) || !model.CPassword.Equals(model.Password))
+                            {
+                                return Json(new { success = false, message = _localizer["User_Invalid_Password"].Value });
+                            }
+                            else
+                            {
+                                user.Password = _encryption.Encrypt(model.Password, user.Username.ToLower());
 
-                            await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_UpdatedUser"].Value} '{user?.Username}'", AuditSeverity.Verbose);
+                                await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_UpdatedUser"].Value} '{user?.Username}'", AuditSeverity.Verbose);
 
-                            return Json(new { success = await _database.ChangePassword(user) });
+                                return Json(new { success = await _database.ChangePassword(user) });
+                            }
                         }
                         else
                         {
@@ -1773,7 +1848,7 @@ namespace Memtly.Core.Controllers
                 }
             }
 
-            return Json(new { success = false });
+            return Json(new { success = false, message = _localizer["Failed_Edit_User"].Value });
         }
 
         [HttpPut]
@@ -2194,8 +2269,8 @@ namespace Memtly.Core.Controllers
 
                                     var item = await _database.AddCustomResource(new CustomResourceModel()
                                     {
-                                        Title = title.GetDbSafeValue(),
-                                        FileName = fileName.GetDbSafeValue(),
+                                        Title = title,
+                                        FileName = fileName,
                                         Owner = userId,
                                         OwnerName = User?.Identity.Name ?? "Unknown"
                                     });
@@ -2649,6 +2724,7 @@ namespace Memtly.Core.Controllers
                 {
                     gallery = await _database.AddGallery(new GalleryModel()
                     {
+                        Identifier = GalleryHelper.GenerateGalleryIdentifier(),
                         Name = SystemGalleries.DefaultGallery,
                         SecretKey = PasswordHelper.GenerateGallerySecretKey(),
                         Owner = user.Id,

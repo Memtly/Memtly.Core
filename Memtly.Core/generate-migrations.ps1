@@ -5,6 +5,7 @@
     [switch]$VerboseLogs
 )
 
+$dotNetVersion = "net10.0"
 $providers = @(
     @{
         Name      = "Sqlite"
@@ -106,7 +107,7 @@ try {
 Write-Host "Generating migration files..." -ForegroundColor Yellow
 
 foreach ($provider in $providers) {
-    $MigrationName = "$($provider.Name)_$($MigrationName)"
+    $FinalMigrationName = "$($provider.Name)_$($MigrationName)"
 
     if (-not [string]::IsNullOrWhiteSpace($ProviderFilter) -and $provider.Name -ne $ProviderFilter) {
         Write-Host "  (Skipped $($provider.Name) - doesn't match specified provider '$($ProviderFilter)')" -ForegroundColor DarkGray
@@ -137,8 +138,8 @@ foreach ($provider in $providers) {
         continue
     }
 
-    $startupBin = Join-Path $startupProjectFile.DirectoryName "bin/Debug/net9.0"
-    $migrationBin = Join-Path $providerProjectFile.DirectoryName "bin/Debug/net9.0"
+    $startupBin = Join-Path $startupProjectFile.DirectoryName "bin/Debug/$($dotNetVersion)"
+    $migrationBin = Join-Path $providerProjectFile.DirectoryName "bin/Debug/$($dotNetVersion)"
 
     Get-ChildItem -Path $migrationBin -Filter "Memtly.Core.Migrations.$($provider.Name)*" |
         ForEach-Object {
@@ -146,14 +147,14 @@ foreach ($provider in $providers) {
             Write-Host "  Copied $($_.Name) to startup bin" -ForegroundColor DarkGray
         }
 
-    dotnet ef migrations add $MigrationName `
+    dotnet ef migrations add $FinalMigrationName `
         --project $providerProjectFile.FullName `
         --startup-project $startupProjectFile.FullName `
         --output-dir .
         $verboseFlag
 
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "  ✓ Successfully generated: $MigrationName" -ForegroundColor Green
+        Write-Host "  ✓ Successfully generated: $FinalMigrationName" -ForegroundColor Green
     } else {
         Write-Host "  ✗ Failed" -ForegroundColor Red
     }

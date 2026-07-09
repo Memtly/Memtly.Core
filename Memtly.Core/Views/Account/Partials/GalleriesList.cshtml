@@ -1,7 +1,5 @@
 ﻿@model GalleriesModel
 @using Memtly.Core.Constants
-@using Memtly.Core.Views.Account
-@using Memtly.Core.Models.Database
 @using Memtly.Core.Views.Account.Tabs
 @using Memtly.Core.Views.Shared
 @inject Memtly.Core.Helpers.IEncryptionHelper _encryption
@@ -260,11 +258,14 @@
         }
     </table>
 
-    <div class="row mt-5">
-        <div class="col-12">
-            <partial name="~/Views/Shared/_Pagination.cshtml" model="new PaginationModel() { CurrentPage = currentPage, TotalItems = Model?.TotalItems ?? 0, ItemsPerPage = Model?.TotalItemsPerPage ?? 50 }" />
+    @if (Model.TotalItems > Model.TotalItemsPerPage)
+    {
+        <div class="row mt-5">
+            <div class="col-12">
+                <partial name="~/Views/Shared/_Pagination.cshtml" model="new PaginationModel() { CurrentPage = currentPage, TotalItems = Model?.TotalItems ?? 0, ItemsPerPage = Model?.TotalItemsPerPage ?? 50 }" />
+            </div>
         </div>
-    </div>
+    }
 }
 else
 {

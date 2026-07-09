@@ -10,6 +10,7 @@ namespace Memtly.Core.Views.Account.Tabs
         }
 
         public List<GalleryModel>? Galleries { get; set; }
+        public List<GalleryHistoryModel>? RecentGalleries { get; set; }
         public int TotalItems { get; set; } = 0;
         public int TotalItemsPerPage { get; set; } = 50;
 

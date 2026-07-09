@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Memtly.Core.Migrations.SqlServer.Migrations
 {
     /// <inheritdoc />
-    public partial class SqlServer_MySql_Sqlite_AddGalleryCollections : Migration
+    public partial class SqlServer_AddGalleryCollections : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

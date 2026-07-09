@@ -7,59 +7,54 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Memtly.Core.Migrations.MySql.Migrations
 {
     /// <inheritdoc />
-    public partial class MySql_Sqlite_AddGalleryCollections : Migration
+    public partial class MySql_AddGalleryHistory : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "Type",
-                table: "Galleries",
-                type: "int",
-                nullable: false,
-                defaultValue: 1);
-
             migrationBuilder.CreateTable(
-                name: "GalleryCollections",
+                name: "GalleryHistory",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    CollectionId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true),
                     GalleryId = table.Column<int>(type: "int", nullable: true),
+                    SecretKey = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GalleryCollections", x => x.Id);
+                    table.PrimaryKey("PK_GalleryHistory", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GalleryCollections_Galleries_CollectionId",
-                        column: x => x.CollectionId,
+                        name: "FK_GalleryHistory_Galleries_GalleryId",
+                        column: x => x.GalleryId,
                         principalTable: "Galleries",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_GalleryCollections_Galleries_GalleryId",
-                        column: x => x.GalleryId,
-                        principalTable: "Galleries",
+                        name: "FK_GalleryHistory_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GalleryCollections_CollectionId_GalleryId",
-                table: "GalleryCollections",
-                columns: new[] { "CollectionId", "GalleryId" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GalleryCollections_GalleryId",
-                table: "GalleryCollections",
+                name: "IX_GalleryHistory_GalleryId",
+                table: "GalleryHistory",
                 column: "GalleryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GalleryCollections_Id",
-                table: "GalleryCollections",
+                name: "IX_GalleryHistory_Id",
+                table: "GalleryHistory",
                 column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GalleryHistory_UserId_GalleryId",
+                table: "GalleryHistory",
+                columns: new[] { "UserId", "GalleryId" },
                 unique: true);
         }
 
@@ -67,11 +62,7 @@ namespace Memtly.Core.Migrations.MySql.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "GalleryCollections");
-
-            migrationBuilder.DropColumn(
-                name: "Type",
-                table: "Galleries");
+                name: "GalleryHistory");
         }
     }
 }

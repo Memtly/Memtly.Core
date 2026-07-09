@@ -91,7 +91,7 @@
         }
         else if (Model.ActiveTab == AccountTabs.Galleries && userPermissions.Gallery.HasFlag(GalleryPermissions.View))
         {
-            <partial name="~/Views/Account/Tabs/Galleries.cshtml" model="new GalleriesModel() { Galleries = Model?.Galleries, TotalItems = Model?.TotalItems ?? 0, TotalItemsPerPage = Model?.TotalItemsPerPage ?? 50 }" />
+            <partial name="~/Views/Account/Tabs/Galleries.cshtml" model="new GalleriesModel() { Galleries = Model?.Galleries, RecentGalleries = Model?.RecentGalleries, TotalItems = Model?.TotalItems ?? 0, TotalItemsPerPage = Model?.TotalItemsPerPage ?? 50 }" />
         }
         else if (Model.ActiveTab == AccountTabs.Users && userPermissions.Users.HasFlag(UserPermissions.View))
         {

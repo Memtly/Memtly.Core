@@ -79,10 +79,23 @@
                 <div class="form-text">@_localizer["Gallery_Type_Help"].Value</div>
             </div>
         </div>
-        <div class="row pb-5">
+        <div class="row mb-2">
             <div id="galleries-list" class="col-12">
                 <partial name="~/Views/Account/Partials/GalleriesList.cshtml" model="Model" />
             </div>
         </div>
+        @if (Model.RecentGalleries != null && Model.RecentGalleries.Any())
+        {
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="display-6">@_localizer["Recent"].Value</h1>
+                </div>
+            </div>
+            <div class="row pb-5">
+                <div id="galleries-list" class="col-12">
+                    <partial name="~/Views/Account/Partials/RecentGalleriesList.cshtml" model="Model" />
+                </div>
+            </div>
+        }
     </div>
 </section>

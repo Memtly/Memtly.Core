@@ -61,6 +61,15 @@ namespace Memtly.Core.Helpers.Database
         Task DeleteAllCollections();
         #endregion
 
+        #region Gallery History
+        Task<IEnumerable<GalleryHistoryModel>?> GetGalleryHistory(int userId);
+        Task<GalleryHistoryModel?> GetGalleryHistoryRecord(int userId, int galleryId);
+        Task AddGalleryHistory(int userId, int galleryId, string? secretKey, int limit = 10);
+        Task DeleteGalleryHistoryByUser(int userId);
+        Task DeleteGalleryHistoryByGallery(int galleryId);
+        Task DeleteAllGalleryHistory();
+        #endregion
+
         #region Users
         Task<bool> ValidateCredentials(string username, string password);
         Task<int> GetAdminCount(AccountState? state = null);

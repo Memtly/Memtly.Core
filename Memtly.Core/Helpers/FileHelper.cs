@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using Memtly.Core.Extensions;
 
 namespace Memtly.Core.Helpers
 {
@@ -180,7 +181,7 @@ namespace Memtly.Core.Helpers
                     _logger.LogWarning(ex, $"Failed to compute MD5 checksum for file '{path}'");
                 }
 
-                return checksum;
+                return checksum.RemoveNullBytes();
             });
         }
 

@@ -1,6 +1,5 @@
 ﻿using Memtly.Core.Constants;
 using Memtly.Core.Helpers;
-using Microsoft.AspNetCore.HttpOverrides;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.Graylog;
@@ -21,6 +20,7 @@ namespace Memtly.Core.Configurations
                 .ReadFrom.Configuration(config)
                 .Enrich.FromLogContext()
                 .Enrich.WithCorrelationId()
+                .Enrich.WithProperty("CodeBuiltBy", configHelper.GetOrDefault(MemtlyConfiguration.CodePublisher, "3rd Party"))
                 .Enrich.WithProperty("InstanceId", Guid.NewGuid().ToString())
                 .Enrich.WithProperty("Version", settings.GetReleaseVersion(4));
 
