@@ -1,6 +1,8 @@
 ﻿using Memtly.Core.Enums;
 using MetadataExtractor;
 using MetadataExtractor.Formats.Exif;
+using MetadataExtractor.Formats.Png;
+using MetadataExtractor.Formats.Xmp;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Localization;
 using SixLabors.ImageSharp;
@@ -177,14 +179,39 @@ namespace Memtly.Core.Helpers
 
                 var subIfd = directories.OfType<ExifSubIfdDirectory>().FirstOrDefault();
                 if (subIfd?.TryGetDateTime(ExifDirectoryBase.TagDateTimeOriginal, out var dateOriginal) == true)
-                { 
+                {
                     return dateOriginal;
+                }
+
+                if (subIfd?.TryGetDateTime(ExifDirectoryBase.TagDateTimeDigitized, out var dateDigitized) == true)
+                {
+                    return dateDigitized;
                 }
 
                 var ifd0 = directories.OfType<ExifIfd0Directory>().FirstOrDefault();
                 if (ifd0?.TryGetDateTime(ExifDirectoryBase.TagDateTime, out var dateTime) == true)
-                { 
+                {
                     return dateTime;
+                }
+
+                var pngDir = directories.OfType<PngDirectory>().FirstOrDefault();
+                if (pngDir?.TryGetDateTime(PngDirectory.TagLastModificationTime, out var pngDate) == true)
+                {
+                    return pngDate;
+                }
+
+                var xmpDir = directories.OfType<XmpDirectory>().FirstOrDefault();
+                if (xmpDir?.XmpMeta != null)
+                {
+                    try
+                    {
+                        var xmpDateStr = xmpDir.XmpMeta.GetPropertyString("http://ns.adobe.com/xap/1.0/", "xmp:CreateDate");
+                        if (!string.IsNullOrEmpty(xmpDateStr) && DateTime.TryParse(xmpDateStr, out var xmpDate))
+                        {
+                            return xmpDate;
+                        }
+                    } 
+                    catch { }
                 }
             }
             catch (Exception ex)

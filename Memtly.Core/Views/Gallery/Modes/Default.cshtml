@@ -1,7 +1,6 @@
 ﻿@model Memtly.Core.Models.PhotoGallery
 
 @using Memtly.Core.Constants
-@using Memtly.Core.Views.Gallery.Modes
 
 @{
     var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
@@ -37,9 +36,9 @@
     IEnumerable<IGrouping<string?, PhotoGalleryImage>>? imageGroups = null;
     if (Model?.Images != null && Model.Images.Any())
     {
-        switch (Model?.GroupBy ?? GalleryGroup.Date)
+        switch (Model?.GroupBy ?? GalleryGroup.DateUploaded)
         {
-            case GalleryGroup.Date:
+            case GalleryGroup.DateUploaded:
                 imageGroups = Model?.Images?.GroupBy(x => (x.UploadDate != null ? x.UploadDate.Value.ToLocalTime().ToString("dddd, d MMMM yyyy") : "Unknown"));
                 switch (Model?.OrderBy ?? GalleryOrder.Descending)
                 {
@@ -51,6 +50,21 @@
                         break;
                     default:
                         imageGroups = imageGroups?.OrderByDescending(x => x.FirstOrDefault()?.UploadDate ?? new DateTime());
+                        break;
+                }
+                break;
+            case GalleryGroup.DateTaken:
+                imageGroups = Model?.Images?.GroupBy(x => (x.CaptureDate != null ? x.CaptureDate.Value.ToLocalTime().ToString("dddd, d MMMM yyyy") : "Unknown"));
+                switch (Model?.OrderBy ?? GalleryOrder.Descending)
+                {
+                    case GalleryOrder.Ascending:
+                        imageGroups = imageGroups?.OrderBy(x => x.FirstOrDefault()?.CaptureDate ?? new DateTime());
+                        break;
+                    case GalleryOrder.Random:
+                        imageGroups = imageGroups?.OrderBy(x => Guid.NewGuid());
+                        break;
+                    default:
+                        imageGroups = imageGroups?.OrderByDescending(x => x.FirstOrDefault()?.CaptureDate ?? new DateTime());
                         break;
                 }
                 break;

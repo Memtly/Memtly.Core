@@ -107,6 +107,8 @@ namespace Memtly.Core.Controllers
                 }
                 else
                 {
+                    name = HtmlSanitizer.Sanitize(name);
+
                     HttpContext.Session.SetString(SessionKey.Viewer.Identity, name);
                     HttpContext.Session.SetString(SessionKey.Viewer.EmailAddress, email ?? string.Empty);
 

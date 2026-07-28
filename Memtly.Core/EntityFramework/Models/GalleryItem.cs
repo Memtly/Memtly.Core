@@ -9,8 +9,10 @@ namespace Memtly.Core.EntityFramework.Models
         public Gallery? Gallery { get; set; }
         public string Title { get; set; } = string.Empty;
         public string UploadedBy { get; set; } = string.Empty;
+        public string UploaderEmailAddress { get; set; } = string.Empty;
         public string Checksum { get; set; } = string.Empty;
         public long FileSize { get; set; } = 0;
+        public DateTimeOffset? DateTaken { get; set; }
         public GalleryItemState State { get; set; } = GalleryItemState.Pending;
         public MediaType Type { get; set; } = MediaType.Unknown;
         public ImageOrientation Orientation { get; set; } = ImageOrientation.Unknown;

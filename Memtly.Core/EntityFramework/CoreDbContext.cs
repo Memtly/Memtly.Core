@@ -18,6 +18,7 @@ namespace Memtly.Core.EntityFramework
         public DbSet<GallerySetting> GallerySettings { get; set; }
         public DbSet<GalleryCollection> GalleryCollections { get; set; }
         public DbSet<GalleryHistory> GalleryHistory { get; set; }
+        public DbSet<GalleryShare> GalleryShare { get; set; }
         public DbSet<Setting> Settings { get; set; }
         public DbSet<CustomResource> CustomResources { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
@@ -29,7 +30,7 @@ namespace Memtly.Core.EntityFramework
             mb.Entity<User>(e =>
             {
                 e.HasIndex(x => x.Username).IsUnique();
-                e.Property(x => x.Username).HasMaxLength(10);
+                e.Property(x => x.Username).HasMaxLength(20);
                 e.HasIndex(x => x.EmailAddress).IsUnique();
                 e.Property(x => x.EmailAddress).HasMaxLength(200);
                 e.Property(x => x.Firstname).HasMaxLength(50);
@@ -84,12 +85,33 @@ namespace Memtly.Core.EntityFramework
                  .OnDelete(DeleteBehavior.Cascade);
             });
 
+            mb.Entity<GalleryCollection>(e =>
+            {
+                e.HasIndex(x => x.Id).IsUnique();
+                e.HasIndex(x => new { x.CollectionId, x.GalleryId }).IsUnique();
+
+                e.HasOne(x => x.Collection)
+                 .WithMany(g => g.Collections)
+                 .HasForeignKey(x => x.CollectionId)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(x => x.Gallery)
+                 .WithMany()
+                 .HasForeignKey(x => x.GalleryId)
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
             mb.Entity<GalleryItem>(e =>
             {
                 e.Property(x => x.Title).HasMaxLength(500);
                 e.Property(x => x.UploadedBy).HasMaxLength(100);
+                e.Property(x => x.UploaderEmailAddress).HasMaxLength(500);
                 e.Property(x => x.Checksum).HasMaxLength(1000);
                 e.Property(x => x.FileSize).HasDefaultValue(0);
+                e.Property(x => x.DateTaken).HasConversion(
+                    v => v.HasValue ? v.Value.UtcTicks : (long?)null,
+                    v => v.HasValue ? new DateTimeOffset(v.Value, TimeSpan.Zero) : (DateTimeOffset?)null
+                );
                 e.Property(x => x.State)
                     .HasDefaultValue(GalleryItemState.Pending)
                     .HasSentinel(0);
@@ -110,20 +132,20 @@ namespace Memtly.Core.EntityFramework
                  .OnDelete(DeleteBehavior.Cascade);
             });
 
-            mb.Entity<GalleryCollection>(e =>
+            mb.Entity<GalleryShare>(e =>
             {
                 e.HasIndex(x => x.Id).IsUnique();
-                e.HasIndex(x => new { x.CollectionId, x.GalleryId }).IsUnique();
+                e.HasIndex(x => new { x.UserId, x.GalleryId }).IsUnique();
 
-                e.HasOne(x => x.Collection)
-                 .WithMany(g => g.Collections)
-                 .HasForeignKey(x => x.CollectionId)
-                 .OnDelete(DeleteBehavior.NoAction);
+                e.HasOne(x => x.User)
+                 .WithMany()
+                 .HasForeignKey(x => x.UserId)
+                 .OnDelete(DeleteBehavior.Cascade);
 
                 e.HasOne(x => x.Gallery)
                  .WithMany()
                  .HasForeignKey(x => x.GalleryId)
-                 .OnDelete(DeleteBehavior.NoAction);
+                 .OnDelete(DeleteBehavior.Cascade);
             });
 
             mb.Entity<GalleryHistory>(e =>
@@ -135,12 +157,12 @@ namespace Memtly.Core.EntityFramework
                 e.HasOne(x => x.User)
                  .WithMany()
                  .HasForeignKey(x => x.UserId)
-                 .OnDelete(DeleteBehavior.NoAction);
+                 .OnDelete(DeleteBehavior.Cascade);
 
                 e.HasOne(x => x.Gallery)
                  .WithMany()
                  .HasForeignKey(x => x.GalleryId)
-                 .OnDelete(DeleteBehavior.NoAction);
+                 .OnDelete(DeleteBehavior.Cascade);
             });
 
             mb.Entity<GalleryLike>(e =>
@@ -161,6 +183,17 @@ namespace Memtly.Core.EntityFramework
                  .OnDelete(DeleteBehavior.Cascade);
             });
 
+            mb.Entity<Setting>(e =>
+            {
+                e.HasIndex(x => x.Key).IsUnique();
+                e.Property(x => x.Key).HasMaxLength(255);
+                e.Property(x => x.Value).HasMaxLength(1000);
+                e.Property(x => x.CreatedAt).HasConversion(
+                    v => v.UtcTicks,
+                    v => new DateTimeOffset(v, TimeSpan.Zero)
+                );
+            });
+
             mb.Entity<GallerySetting>(e =>
             {
                 e.Property(x => x.Value).HasMaxLength(1000);
@@ -178,17 +211,6 @@ namespace Memtly.Core.EntityFramework
                  .WithMany()
                  .HasForeignKey(x => x.SettingId)
                  .OnDelete(DeleteBehavior.Cascade);
-            });
-
-            mb.Entity<Setting>(e =>
-            {
-                e.HasIndex(x => x.Key).IsUnique();
-                e.Property(x => x.Key).HasMaxLength(255);
-                e.Property(x => x.Value).HasMaxLength(1000);
-                e.Property(x => x.CreatedAt).HasConversion(
-                    v => v.UtcTicks,
-                    v => new DateTimeOffset(v, TimeSpan.Zero)
-                );
             });
 
             mb.Entity<CustomResource>(e =>

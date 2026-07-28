@@ -98,7 +98,7 @@ class UploadBox {
                         FooterHtml: `
                             <div class="row pb-3">
                                 <div class="col-12">
-                                    <div class="checklist-container" data-selection-type="single">
+                                    <div id="gallery-selection-checklist" class="checklist-container" data-selection-type="single">
                                         ${collection.items.map(item => {
                                             return `<div class="checklist-item" data-gallery-id="${item.id}">${item.name}</div>`;
                                         }).join('\n')}
@@ -109,7 +109,7 @@ class UploadBox {
                             Text: localization.translate('Select'),
                             Class: 'btn-primary-2',
                             Callback: () => {
-                                const galleryId = $('.popup-modal .modal-body .checklist-item.selected').map((index, item) => { return $(item).data('gallery-id'); }).get()[0] ?? 0;
+                                const galleryId = $('#gallery-selection-checklist .checklist-item.selected').map((index, item) => { return $(item).data('gallery-id'); }).get()[0] ?? 0;
                                 if (galleryId !== undefined && !isNaN(galleryId) && parseInt(galleryId) > 0) {
                                     callback(galleryId)
                                 } else {

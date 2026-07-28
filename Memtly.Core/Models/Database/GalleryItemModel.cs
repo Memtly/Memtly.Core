@@ -5,11 +5,11 @@ namespace Memtly.Core.Models.Database
     public class GalleryItemModel
     {
         public GalleryItemModel()
-            : this(0, 0, string.Empty, string.Empty, null, null, new DateTime(0, DateTimeKind.Utc), null, MediaType.Unknown, ImageOrientation.Unknown, GalleryItemState.Pending, 0)
+            : this(0, 0, string.Empty, string.Empty, null, null, new DateTime(0, DateTimeKind.Utc), null, null, MediaType.Unknown, ImageOrientation.Unknown, GalleryItemState.Pending, 0)
         {
         }
 
-        public GalleryItemModel(int id, int galleryId, string galleryName, string title, string? uploadedBy, string? uploaderEmailAddress, DateTimeOffset uploadedDate, string? checksum, MediaType mediaType, ImageOrientation orientation, GalleryItemState state, long file_size)
+        public GalleryItemModel(int id, int galleryId, string galleryName, string title, string? uploadedBy, string? uploaderEmailAddress, DateTimeOffset uploadedDate, DateTimeOffset? dateTaken, string? checksum, MediaType mediaType, ImageOrientation orientation, GalleryItemState state, long file_size)
         {
             Id = id;
             GalleryId = galleryId;
@@ -18,6 +18,7 @@ namespace Memtly.Core.Models.Database
             UploadedBy = uploadedBy;
             UploaderEmailAddress = uploaderEmailAddress;
             UploadedDate = uploadedDate;
+            DateTaken = dateTaken;
             Checksum = checksum;
             MediaType = mediaType;
             Orientation = orientation;
@@ -32,6 +33,7 @@ namespace Memtly.Core.Models.Database
         public string? UploadedBy { get; set; }
         public string? UploaderEmailAddress { get; set; }
         public DateTimeOffset UploadedDate { get; set; }
+        public DateTimeOffset? DateTaken { get; set; }
         public string? Checksum { get; set; }
         public MediaType MediaType { get; set; } = MediaType.Unknown;
         public ImageOrientation Orientation { get; set; } = ImageOrientation.Unknown;

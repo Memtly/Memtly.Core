@@ -18,7 +18,7 @@ function bindRegistrationForm() {
         var token = $('#frmRegisterAccount input[name=\'__RequestVerificationToken\']').val();
 
         var username = $('#frmRegisterAccount input.input-username').val();
-        if (username === undefined || username.length < 5 || username.length > 50) {
+        if (username === undefined || username.length < 5 || username.length > 20) {
             displayMessage(localization.translate('Registration'), localization.translate('Registration_Invalid_Username'));
             return;
         }

@@ -45,21 +45,21 @@ namespace Memtly.Core.Helpers
         {
             if (ctx != null)
             {
-                append = append ?? new List<KeyValuePair<string, string>>();
-                exclude = exclude ?? new List<string>();
+                var appendKeys = append?.Select(x => x)?.ToList() ?? new List<KeyValuePair<string, string>>();
+                var excludeKeys = exclude?.Select(x => x)?.ToList() ?? new List<string>();
                 
-                foreach (var a in append)
+                foreach (var a in appendKeys)
                 {
-                    exclude.Add(a.Key);
+                    excludeKeys.Add(a.Key);
                 }
 
                 var queryString = new StringBuilder();
-                foreach (var q in ctx.Query.Where(x => !exclude.Any(f => f.Equals(x.Key, StringComparison.OrdinalIgnoreCase))))
+                foreach (var q in ctx.Query.Where(x => !excludeKeys.Any(f => f.Equals(x.Key, StringComparison.OrdinalIgnoreCase))))
                 {
                     queryString.Append($"&{HttpUtility.UrlEncode(q.Key)}={HttpUtility.UrlEncode(q.Value)}");
                 }
 
-                foreach (var a in append)
+                foreach (var a in appendKeys)
                 {
                     queryString.Append($"&{HttpUtility.UrlEncode(a.Key)}={HttpUtility.UrlEncode(a.Value)}");
                 }

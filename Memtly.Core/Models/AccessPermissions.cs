@@ -47,7 +47,8 @@ namespace Memtly.Core.Models
                 | CollectionPermissions.Update;
             Gallery =
                 GalleryPermissions.View
-                | GalleryPermissions.Update;
+                | GalleryPermissions.Update
+                | GalleryPermissions.Share;
             Users =
                 UserPermissions.Login
                 | UserPermissions.View
@@ -84,6 +85,7 @@ namespace Memtly.Core.Models
                 | GalleryPermissions.Delete
                 | GalleryPermissions.Upload
                 | GalleryPermissions.Download
+                | GalleryPermissions.Share
                 | GalleryPermissions.Wipe;
             Users =
                 UserPermissions.Login
@@ -101,6 +103,8 @@ namespace Memtly.Core.Models
                 | SettingsPermissions.Gallery_Update;
             Audit =
                 AuditPermissions.View;
+            Features = 
+                FeaturePermissions.RequireGalleryItemReview;
         }
     }
 
@@ -142,10 +146,11 @@ namespace Memtly.Core.Models
                 | CollectionPermissions.Update
                 | CollectionPermissions.Download;
             Gallery =
-               GalleryPermissions.View
-               | GalleryPermissions.Update
-               | GalleryPermissions.Upload
-               | GalleryPermissions.Download;
+                GalleryPermissions.View
+                | GalleryPermissions.Update
+                | GalleryPermissions.Upload
+                | GalleryPermissions.Share
+                | GalleryPermissions.Download;
             Users =
                 UserPermissions.Login
                 | UserPermissions.View
@@ -155,6 +160,9 @@ namespace Memtly.Core.Models
                 CustomResourcePermissions.View;
             Audit =
                 AuditPermissions.View;
+            Features =
+                FeaturePermissions.RequireGalleryItemReview
+                | FeaturePermissions.RetainRejectedItems;
         }
     }
 
@@ -185,7 +193,8 @@ namespace Memtly.Core.Models
                 | GalleryPermissions.Upload
                 | GalleryPermissions.Download
                 | GalleryPermissions.Wipe
-                | GalleryPermissions.Relink;
+                | GalleryPermissions.Relink
+                | GalleryPermissions.Share;
             Users =
                 UserPermissions.Login
                 | UserPermissions.View
@@ -218,6 +227,9 @@ namespace Memtly.Core.Models
                 BackgroundWorkerPermissions.RequestInstantRun
                 | BackgroundWorkerPermissions.RequestDirectoryScanner
                 | BackgroundWorkerPermissions.RequestCleanup;
+            Features =
+                FeaturePermissions.RequireGalleryItemReview
+                | FeaturePermissions.RetainRejectedItems;
         }
     }
 }

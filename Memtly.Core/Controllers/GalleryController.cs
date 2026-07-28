@@ -355,6 +355,7 @@ namespace Memtly.Core.Controllers
                                 UploadedBy = x.UploadedBy ?? "Unknown",
                                 UploaderEmailAddress = x.UploaderEmailAddress,
                                 UploadDate = x.UploadedDate,
+                                CaptureDate = x.DateTaken ?? x.UploadedDate,
                                 ImagePath = $"/{Path.Combine(UploadsDirectory, galleryIdentifier!.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{x.Title}",
                                 ThumbnailPath = $"/{Path.Combine(ThumbnailsDirectory, galleryIdentifier!.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(x.Title)}.webp",
                                 MediaType = x.MediaType
@@ -372,17 +373,20 @@ namespace Memtly.Core.Controllers
                         LoadScripts = !partial
                     };
 
-                    var userId = User?.Identity?.GetUserId();
-                    if (userId != null && userId > 0)
-                    {
-                        try
+                    if (gallery.Id > 0)
+                    { 
+                        var userId = User?.Identity?.GetUserId();
+                        if (userId != null && userId > 0)
                         {
-                            var galleryHistoryLimit = await _settings.GetOrDefault(MemtlyConfiguration.Account.GalleryHistoryLimit, 5);
-                            await _database.AddGalleryHistory((int)userId, gallery.Id, gallery.SecretKey, limit: galleryHistoryLimit);
-                        }
-                        catch
-                        {
-                            _logger.LogWarning($"Failed to log gallery history for user '{userId}' on gallery '{gallery?.Id}'");
+                            try
+                            {
+                                var galleryHistoryLimit = await _settings.GetOrDefault(MemtlyConfiguration.Account.GalleryHistoryLimit, 5);
+                                await _database.AddGalleryHistory((int)userId, gallery.Id, gallery.SecretKey, limit: galleryHistoryLimit);
+                            }
+                            catch
+                            {
+                                _logger.LogWarning($"Failed to log gallery history for user '{userId}' on gallery '{gallery?.Id}'");
+                            }
                         }
                     }
 
@@ -427,8 +431,7 @@ namespace Memtly.Core.Controllers
                     if (files != null && files.Count > 0)
                     {
                         var galleryOwner = await _database.GetUser(collection?.Owner ?? gallery.Owner);
-                        var isFreeGallery = gallery.Owner > 0 && (galleryOwner?.Level ?? UserLevel.Basic) == UserLevel.Basic;
-                        var requiresReview = !isFreeGallery && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.RequireReview, true, collection?.Id ?? gallery.Id);
+                        var requiresReview = galleryOwner!.CanUseFeature(FeaturePermissions.RequireGalleryItemReview) && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.RequireReview, true, collection?.Id ?? gallery.Id);
 
                         var uploaded = 0;
                         var errors = new List<string>();
@@ -499,7 +502,8 @@ namespace Memtly.Core.Controllers
                                                 Title = fileName,
                                                 UploadedBy = uploadedBy,
                                                 UploaderEmailAddress = uploaderEmail,
-                                                UploadedDate = fileCreated,
+                                                UploadedDate = DateTimeOffset.UtcNow,
+                                                DateTaken = fileCreated,
                                                 Checksum = checksum,
                                                 MediaType = _imageHelper.GetMediaType(filePath),
                                                 Orientation = await _imageHelper.GetOrientation(savePath),
@@ -704,8 +708,11 @@ namespace Memtly.Core.Controllers
                                                         case GalleryGroup.Gallery:
                                                             filtered = galleryItems?.GroupBy(x => x.GalleryName);
                                                             break;
-                                                        case GalleryGroup.Date:
+                                                        case GalleryGroup.DateUploaded:
                                                             filtered = galleryItems?.GroupBy(x => x.UploadedDate.ToLocalTime().ToString("dddd, d MMMM yyyy"));
+                                                            break;
+                                                        case GalleryGroup.DateTaken:
+                                                            filtered = galleryItems?.GroupBy(x => (x.DateTaken ?? x.UploadedDate).ToLocalTime().ToString("dddd, d MMMM yyyy"));
                                                             break;
                                                         case GalleryGroup.MediaType:
                                                             filtered = galleryItems?.GroupBy(x => x.MediaType.ToString());
@@ -885,6 +892,30 @@ namespace Memtly.Core.Controllers
                     .OrderBy(g => g.Name.ToUpper())
                     .Select(g => new CollectionSelectItem(g.Id, g.Name))
                     .ToList();
+            }
+
+            return Json(new { items });
+        }
+
+        [HttpPost]
+        [RequiresRole(CollectionPermission = CollectionPermissions.View)]
+        [Route("Gallery/Shares")]
+        public async Task<IActionResult> GetGalleryShareUsers(int galleryId)
+        {
+            var items = new List<ShareSelectItem>();
+
+            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var userId = User.Identity.GetUserId();
+
+                var shares = await _database.GetGalleryShareUsers(galleryId);
+                if (shares != null && shares.Any())
+                {
+                    items = shares
+                        .OrderBy(s => s.UserName.ToUpper())
+                        .Select(s => new ShareSelectItem(s.UserId, s.UserName, true))
+                        .ToList();
+                }
             }
 
             return Json(new { items });

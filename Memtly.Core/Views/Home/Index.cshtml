@@ -29,7 +29,7 @@
                         <div class="input-group">
                             @if (galleryNameDropdown)
                             {
-                                <select id="gallery-id" class="form-control form-select capitalize" aria-describedby="gallery-id-help" aria-label="@_localizer["Name"].Value">
+                                <select id="gallery-id" class="form-control form-select capitalize" aria-describedby="gallery-id-help" aria-label="@_localizer["Name"].Value" autofocus>
                                     @if (Model?.GalleryNames != null && Model.GalleryNames.Any())
                                     {
                                         foreach (var gallery in Model.GalleryNames)
@@ -41,7 +41,7 @@
                             }
                             else
                             {
-                                <input type="text" id="gallery-id" class="form-control" aria-describedby="gallery-id-help" placeholder="@_localizer["Gallery_Identifier_Placeholder"].Value" aria-label="@_localizer["Name"].Value" />
+                                <input type="text" id="gallery-id" class="form-control" aria-describedby="gallery-id-help" placeholder="@_localizer["Gallery_Identifier_Placeholder"].Value" aria-label="@_localizer["Name"].Value" autofocus />
                                 @if (await _settings.GetOrDefault(MemtlyConfiguration.Basic.GuestGalleryCreation, false) || (User?.Identity != null && User.Identity.IsAuthenticated))
                                 {
                                     <input type="button" id="btnGenerateGalleryName" class="btn btn-primary-2" value="@_localizer["Generate"].Value" />

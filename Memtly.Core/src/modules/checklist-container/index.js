@@ -9,11 +9,13 @@ function bindCollectionItemSelection() {
         const elem = $(this);
         const container = elem.closest('.checklist-container');
         const selecttionType = getSelectionType(container);
-        if (selecttionType === 'single') {
-            container.find('.checklist-item').removeClass('selected');
-        }
+        if (selecttionType !== 'read-only') {
+            if (selecttionType === 'single') {
+                container.find('.checklist-item').removeClass('selected');
+            }
 
-        elem.toggleClass('selected');
+            elem.toggleClass('selected');
+        }
     });
 }
 

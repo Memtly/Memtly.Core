@@ -88,7 +88,8 @@ namespace Memtly.Core.Helpers.Database
                 .Include(g => g.Collections)
                     .ThenInclude(c => c.Gallery)
                         .ThenInclude(g => g.Items)
-                .OrderByDescending(g => g.Type == GalleryType.Collection ? g.Collections.Sum(c => c.Gallery!.Items.Sum(gi => (long?)gi.FileSize) ?? 0) : g.Items.Sum(gi => (long?)gi.FileSize) ?? 0)
+                .OrderBy(g => g.Type == GalleryType.Collection ? 0 : 1)
+                    .ThenByDescending(g => g.Type == GalleryType.Collection ? g.Collections.Sum(c => c.Gallery!.Items.Sum(gi => (long?)gi.FileSize) ?? 0) : g.Items.Sum(gi => (long?)gi.FileSize) ?? 0)
                 .Skip((page - 1) * limit)
                 .Take(limit)
                 .Select(g => new GalleryModel
@@ -97,6 +98,7 @@ namespace Memtly.Core.Helpers.Database
                     Identifier = g.Identifier,
                     Name = g.Name,
                     SecretKey = g.SecretKey,
+                    Owner = g.User!.Id,
                     OwnerName = g.User!.Username,
                     Type = g.Type,
                     TotalItems = g.Type == GalleryType.Collection ? g.Collections.Sum(c => c.Gallery!.Items.Count) : g.Items.Count,
@@ -123,6 +125,7 @@ namespace Memtly.Core.Helpers.Database
                    Identifier = ci.Gallery.Identifier,
                    Name = ci.Gallery.Name,
                    SecretKey = ci.Gallery.SecretKey,
+                   Owner = ci.Gallery.User!.Id,
                    OwnerName = ci.Gallery.User!.Username,
                    Type = ci.Gallery.Type,
                    TotalItems = ci.Gallery.Type == GalleryType.Collection ? ci.Gallery.Collections.Sum(c => c.Gallery!.Items.Count) : ci.Gallery.Items.Count,
@@ -243,6 +246,7 @@ namespace Memtly.Core.Helpers.Database
                     Identifier = g.Identifier,
                     Name = g.Name,
                     SecretKey = g.SecretKey,
+                    Owner = g.User!.Id,
                     OwnerName = g.User!.Username,
                     Type = g.Type,
                     TotalItems = g.Type == GalleryType.Collection ? g.Collections.Sum(c => c.Gallery!.Items.Count) : g.Items.Count,
@@ -469,8 +473,9 @@ namespace Memtly.Core.Helpers.Database
                     Title = gi.Title,
                     State = gi.State,
                     UploadedBy = gi.UploadedBy,
-                    //UploaderEmailAddress = gi?.Gallery?.User?.EmailAddress ?? string.Empty,
+                    UploaderEmailAddress = gi.UploaderEmailAddress,
                     UploadedDate = gi.CreatedAt,
+                    DateTaken = gi.DateTaken,
                     Checksum = gi.Checksum,
                     MediaType = gi.Type,
                     Orientation = gi.Orientation,
@@ -491,8 +496,9 @@ namespace Memtly.Core.Helpers.Database
                     Title = gi.Title,
                     State = gi.State,
                     UploadedBy = gi.UploadedBy,
-                    //UploaderEmailAddress = gi.User
+                    UploaderEmailAddress = gi.UploaderEmailAddress,
                     UploadedDate = gi.CreatedAt,
+                    DateTaken = gi.DateTaken,
                     Checksum = gi.Checksum,
                     MediaType = gi.Type,
                     Orientation = gi.Orientation,
@@ -515,8 +521,9 @@ namespace Memtly.Core.Helpers.Database
                     Title = gi.Title,
                     State = gi.State,
                     UploadedBy = gi.UploadedBy,
-                    //UploaderEmailAddress = gi.User
+                    UploaderEmailAddress = gi.UploaderEmailAddress,
                     UploadedDate = gi.CreatedAt,
+                    DateTaken = gi.DateTaken,
                     Checksum = gi.Checksum,
                     MediaType = gi.Type,
                     Orientation = gi.Orientation,
@@ -533,6 +540,8 @@ namespace Memtly.Core.Helpers.Database
                 Title = model.Title.GetDbSafeValue(),
                 State = model.State,
                 UploadedBy = model.UploadedBy?.GetDbSafeValue() ?? string.Empty,
+                UploaderEmailAddress = model.UploaderEmailAddress?.GetDbSafeValue() ?? string.Empty,
+                DateTaken = model.DateTaken,
                 Checksum = model.Checksum?.GetDbSafeValue() ?? string.Empty,
                 Type = model.MediaType,
                 Orientation = model.Orientation,
@@ -554,6 +563,8 @@ namespace Memtly.Core.Helpers.Database
                 galleryItem.Title = model.Title.GetDbSafeValue();
                 galleryItem.State = model.State;
                 galleryItem.UploadedBy = model.UploadedBy?.GetDbSafeValue() ?? string.Empty;
+                galleryItem.UploaderEmailAddress = model.UploaderEmailAddress?.GetDbSafeValue() ?? string.Empty;
+                galleryItem.DateTaken = model.DateTaken;
                 galleryItem.Checksum = model.Checksum?.GetDbSafeValue() ?? string.Empty;
                 galleryItem.Type = model.MediaType;
                 galleryItem.Orientation = model.Orientation;
@@ -762,17 +773,151 @@ namespace Memtly.Core.Helpers.Database
         }
         #endregion
 
+        #region Gallery Shares
+        public async Task<IEnumerable<GalleryShareModel>?> GetGalleryShares(int userId, string term = "", int page = 1, int limit = int.MaxValue, GalleryType type = GalleryType.All)
+        {
+            var items = await _db.GalleryShare
+                .Include(x => x.Gallery)
+                    .ThenInclude(x => x!.User)
+                .Include(x => x.User)
+                .Where(gs => 
+                    gs.UserId == userId
+                    && gs.User != null && gs.Gallery != null
+                    && (string.IsNullOrWhiteSpace(term) || gs.Gallery.Identifier.ToLower().Contains(term.ToLower()) || gs.Gallery.Name.ToLower().Contains(term.ToLower()) || gs.Gallery.User!.Username.ToLower().Contains(term.ToLower()))
+                    && (type == GalleryType.All || gs.Gallery.Type == type)
+                    && (gs.Gallery.Identifier.ToLower().Equals(SystemGalleries.DefaultGallery.ToLower()) || (gs.Gallery.User != null && gs.Gallery.User.State == AccountState.Active)))
+                .ToListAsync();
+
+            return items?
+                .OrderBy(g => g!.User!.Username)
+                .ThenBy(g => g!.Gallery!.Name)
+                .Skip((page - 1) * limit)
+                .Take(limit)
+                .Select(gh => new GalleryShareModel()
+                {
+                    Id = gh.Id,
+                    UserId = gh!.UserId ?? 0,
+                    UserName = gh!.User!.Username,
+                    GalleryId = gh!.GalleryId ?? 0,
+                    GalleryIdentifier = gh.Gallery!.Identifier,
+                    GalleryName = gh.Gallery!.Name,
+                    GalleryOwnerName = gh.Gallery!.User!.Username,
+                    GalleryType = gh.Gallery.Type,
+                    SecretKey = gh.Gallery.SecretKey,
+                    CreatedAt = gh.CreatedAt
+                });
+        }
+
+        public async Task<IEnumerable<GalleryShareModel>?> GetGalleryShareUsers(int galleryId)
+        {
+            var items = await _db.GalleryShare
+                .Include(x => x.Gallery)
+                    .ThenInclude(x => x!.User)
+                .Include(x => x.User)
+                .Where(gs => gs.GalleryId == galleryId)
+                .ToListAsync();
+
+            return items?
+                .OrderBy(g => g!.User!.Username)
+                .Select(gh => new GalleryShareModel()
+                {
+                    Id = gh.Id,
+                    UserId = gh!.UserId ?? 0,
+                    UserName = gh!.User!.Username,
+                    GalleryId = gh!.GalleryId ?? 0,
+                    GalleryIdentifier = gh.Gallery!.Identifier,
+                    GalleryName = gh.Gallery!.Name,
+                    GalleryOwnerName = gh.Gallery!.User!.Username,
+                    GalleryType = gh.Gallery.Type,
+                    SecretKey = gh.Gallery.SecretKey,
+                    CreatedAt = gh.CreatedAt
+                });
+        }
+
+        public async Task<GalleryShareModel?> GetGalleryShareRecord(int userId, int galleryId)
+        {
+            return await _db.GalleryShare
+                .Where(gh => gh.UserId == userId
+                    && gh.GalleryId == galleryId)
+                .Include(x => x.Gallery)
+                    .ThenInclude(x => x!.User)
+                .Include(x => x.User)
+                .Select(gh => new GalleryShareModel()
+                {
+                    Id = gh.Id,
+                    UserId = gh!.UserId ?? 0,
+                    UserName = gh!.User!.Username,
+                    GalleryId = gh!.GalleryId ?? 0,
+                    GalleryIdentifier = gh.Gallery!.Identifier,
+                    GalleryName = gh.Gallery!.Name,
+                    GalleryOwnerName = gh.Gallery!.User!.Username,
+                    GalleryType = gh.Gallery.Type,
+                    SecretKey = gh.Gallery.SecretKey,
+                    CreatedAt = gh.CreatedAt
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task AddGalleryShare(GalleryShareModel model)
+        {
+            await _db.GalleryShare.AddAsync(new GalleryShare()
+            {
+                UserId = model.UserId,
+                GalleryId = model.GalleryId,
+                CreatedAt = DateTimeOffset.UtcNow
+            });
+
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task DeleteGalleryShare(GalleryShareModel model)
+        {
+            await _db.GalleryShare
+                .Where(gs => gs.Id == model.Id)
+                .ExecuteDeleteAsync();
+
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task DeleteGallerySharesByUser(int userId)
+        {
+            await _db.GalleryShare
+                .Where(gh => gh.UserId == userId)
+                .ExecuteDeleteAsync();
+        }
+
+        public async Task DeleteGallerySharesByGallery(int galleryId)
+        {
+            await _db.GalleryShare
+                .Where(gh => gh.GalleryId == galleryId)
+                .ExecuteDeleteAsync();
+        }
+
+        public async Task DeleteAllGalleryShares()
+        {
+            await _db.GalleryShare
+                .ExecuteDeleteAsync();
+        }
+        #endregion
+
         #region Gallery History
-        public async Task<IEnumerable<GalleryHistoryModel>?> GetGalleryHistory(int userId)
+        public async Task<IEnumerable<GalleryHistoryModel>?> GetGalleryHistory(int userId, string term = "", int page = 1, int limit = int.MaxValue, GalleryType type = GalleryType.All)
         {
             var items = await _db.GalleryHistory
                 .Include(x => x.Gallery)
                     .ThenInclude(x => x!.User)
-                .Where(gh => gh.UserId == userId)
+                .Where(gh => 
+                    gh.UserId == userId
+                    && gh.User != null && gh.Gallery != null
+                    && (string.IsNullOrWhiteSpace(term) || gh.Gallery.Identifier.ToLower().Contains(term.ToLower()) || gh.Gallery.Name.ToLower().Contains(term.ToLower()) || gh.Gallery.User!.Username.ToLower().Contains(term.ToLower()))
+                    && (type == GalleryType.All || gh.Gallery.Type == type)
+                    && (gh.Gallery.Identifier.ToLower().Equals(SystemGalleries.DefaultGallery.ToLower()) || (gh.Gallery.User != null && gh.Gallery.User.State == AccountState.Active)))
                 .ToListAsync();
 
             return items?
                 .OrderByDescending(gh => gh.CreatedAt)
+                .Skip((page - 1) * limit)
+                .Take(limit)
                 .Select(gh => new GalleryHistoryModel()
                 {
                     Id = gh.Id,
@@ -890,7 +1035,7 @@ namespace Memtly.Core.Helpers.Database
                 .CountAsync();
         }
 
-        public async Task<List<UserModel>?> GetUsers(string term = "", int page = 1, int limit = int.MaxValue, UserLevel level = UserLevel.All)
+        public async Task<List<UserModel>?> GetUsers(string term = "", int page = 1, int limit = int.MaxValue, UserLevel level = UserLevel.All, int[]? exclude = null)
         {
             term = term?.GetDbSafeValue() ?? string.Empty;
 
@@ -899,6 +1044,7 @@ namespace Memtly.Core.Helpers.Database
                     !u.Username.ToLower().Equals(UserAccounts.SystemUser.ToLower())
                     && (string.IsNullOrWhiteSpace(term) || u.Username.ToLower().Contains(term.ToLower()))
                     && (level == UserLevel.All || u.Level == level)
+                    && (exclude == null || !exclude.Contains(u.Id))
                 )
                 .OrderBy(u => u.Username.ToLower())
                 .Skip((page - 1) * limit)
@@ -1716,6 +1862,7 @@ namespace Memtly.Core.Helpers.Database
         public async Task WipeSystem()
         {
             await DeleteAllGalleryHistory();
+            await DeleteAllGalleryShares();
             await DeleteAllGalleryItemLikes();
             await DeleteAllGalleryItems();
             await DeleteAllGalleries();

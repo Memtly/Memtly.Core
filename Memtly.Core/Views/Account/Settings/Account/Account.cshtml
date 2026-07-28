@@ -79,5 +79,13 @@
                 <div class="setting-hint form-text">@_localizer["Settings_Account_Lockout_Mins_Help"].Value</div>
             </div>
         </div>
+
+        <div class="row mb-4 mb-lg-4 setting-container">
+            <div class="col-12">
+                <label class="setting-label">@_localizer["Settings_Account_Recent_History_Limit_Label"].Value</label>
+                <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Account.GalleryHistoryLimit" placeholder="5" value="@Model.GetValue(MemtlyConfiguration.Account.GalleryHistoryLimit.ToUpper(), "5")" type="number" min="1" max="50" step="1" />
+                <div class="setting-hint form-text">@_localizer["Settings_Account_Recent_History_Limit_Help"].Value</div>
+            </div>
+        </div>
     </div>
 }

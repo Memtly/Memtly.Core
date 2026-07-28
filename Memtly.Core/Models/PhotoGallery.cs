@@ -63,6 +63,7 @@ namespace Memtly.Core.Models
         public string UploadedBy { get; set; }
         public string? UploaderEmailAddress { get; set; }
         public DateTimeOffset? UploadDate { get; set; }
+        public DateTimeOffset? CaptureDate { get; set; }
         public string? ImagePath { get; set; }
         public string? ThumbnailPath { get; set; }
         public MediaType MediaType { get; set; }

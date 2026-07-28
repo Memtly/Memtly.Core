@@ -6,25 +6,28 @@
     <div class="setting-section">
         <h5 class="mb-3">@_localizer["Reviews"].Value</h5>
 
-        <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
-            <div class="col-12">
-                <label class="setting-label">@_localizer["Settings_Gallery_RequireReview_Label"].Value</label>
-                <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.RequireReview">
-                    @foreach (var option in ViewOptions.YesNo)
-                    {
-                        if (Model.Settings.GetValue(MemtlyConfiguration.Gallery.RequireReview.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+        @if (User.Identity!.CanUseFeature(FeaturePermissions.RequireGalleryItemReview))
+        {
+            <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
+                <div class="col-12">
+                    <label class="setting-label">@_localizer["Settings_Gallery_RequireReview_Label"].Value</label>
+                    <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.RequireReview">
+                        @foreach (var option in ViewOptions.YesNo)
                         {
-                            <option value="@option.Value" selected="selected">@option.Key</option>
+                            if (Model.Settings.GetValue(MemtlyConfiguration.Gallery.RequireReview.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                            {
+                                <option value="@option.Value" selected="selected">@option.Key</option>
+                            }
+                            else
+                            {
+                                <option value="@option.Value">@option.Key</option>
+                            }
                         }
-                        else
-                        {
-                            <option value="@option.Value">@option.Key</option>
-                        }
-                    }
-                </select>
-                <div class="setting-hint form-text">@_localizer["Settings_Gallery_RequireReview_Help"].Value</div>
+                    </select>
+                    <div class="setting-hint form-text">@_localizer["Settings_Gallery_RequireReview_Help"].Value</div>
+                </div>
             </div>
-        </div>
+        }
 
         <div class="row mb-4 mb-lg-4 setting-container">
             <div class="col-12">
@@ -46,7 +49,7 @@
             </div>
         </div>
 
-        @if (Model.Type == GalleryType.Basic)
+        @if (Model.Type == GalleryType.Basic && User.Identity!.CanUseFeature(FeaturePermissions.RetainRejectedItems))
         {
             <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
                 <div class="col-12">

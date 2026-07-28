@@ -181,7 +181,7 @@ namespace Memtly.Core.Controllers
             {
                 try
                 {
-                    if (string.IsNullOrWhiteSpace(model?.Username) || model.Username.Length < 5 || model.Username.Length > 50 || !Regex.IsMatch(model.Username, @"^[a-zA-Z0-9\-\s-_~]+$", RegexOptions.Compiled))
+                    if (string.IsNullOrWhiteSpace(model?.Username) || model.Username.Length < 5 || model.Username.Length > 20 || !Regex.IsMatch(model.Username, @"^[a-zA-Z0-9\-\s-_~]+$", RegexOptions.Compiled))
                     {
                         return Json(new { success = false, message = _localizer["Registration_Invalid_Username"].Value });
                     }
@@ -604,6 +604,7 @@ namespace Memtly.Core.Controllers
                         else if (model.ActiveTab == AccountTabs.Galleries)
                         {
                             model.Galleries = (await _database.GetGalleries(null, term, page, limit))?.Where(x => !x.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))?.ToList();
+                            model.SharedGalleries = (await _database.GetGalleryShares(user.Id))?.ToList();
                             model.RecentGalleries = (await _database.GetGalleryHistory(user.Id))?.ToList();
                             if (model.Galleries != null)
                             {
@@ -645,6 +646,7 @@ namespace Memtly.Core.Controllers
                         else if (model.ActiveTab == AccountTabs.Galleries)
                         {
                             model.Galleries = await _database.GetGalleries(user.Id, term, page, limit);
+                            model.SharedGalleries = (await _database.GetGalleryShares(user.Id))?.ToList(); 
                             model.RecentGalleries = (await _database.GetGalleryHistory(user.Id))?.ToList();
                             model.TotalItems = await _database.GetGalleryCount(user.Id);
                         }
@@ -719,6 +721,60 @@ namespace Memtly.Core.Controllers
             }
 
             return PartialView("~/Views/Account/Partials/GalleriesList.cshtml", result);
+        }
+
+        [HttpGet]
+        [RequiresRole(GalleryPermission = GalleryPermissions.View)]
+        public async Task<IActionResult> SharedGalleriesList(GalleryType type = GalleryType.All, string term = "", int page = 1, int limit = 50)
+        {
+            if (User?.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                return Redirect("/");
+            }
+
+            var result = new GalleriesModel();
+
+            try
+            {
+                var user = await _database.GetUser(User.Identity.GetUserId());
+                if (user != null)
+                {
+                    result.SharedGalleries = (await _database.GetGalleryShares(user.Id, term, page, limit, type))?.Where(x => !x.GalleryIdentifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))?.ToList() ?? new List<GalleryShareModel>();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{_localizer["Gallery_List_Failed"].Value} - {ex?.Message}");
+            }
+
+            return PartialView("~/Views/Account/Partials/SharedGalleriesList.cshtml", result);
+        }
+
+        [HttpGet]
+        [RequiresRole(GalleryPermission = GalleryPermissions.View)]
+        public async Task<IActionResult> RecentGalleriesList(GalleryType type = GalleryType.All, string term = "", int page = 1, int limit = 50)
+        {
+            if (User?.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                return Redirect("/");
+            }
+
+            var result = new GalleriesModel();
+
+            try
+            {
+                var user = await _database.GetUser(User.Identity.GetUserId());
+                if (user != null)
+                {
+                    result.RecentGalleries = (await _database.GetGalleryHistory(user.Id, term, page, limit, type))?.Where(x => !x.GalleryIdentifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))?.ToList() ?? new List<GalleryHistoryModel>();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{_localizer["Gallery_List_Failed"].Value} - {ex?.Message}");
+            }
+
+            return PartialView("~/Views/Account/Partials/RecentGalleriesList.cshtml", result);
         }
 
         [HttpGet]
@@ -919,7 +975,8 @@ namespace Memtly.Core.Controllers
                             }
                             else if (action == ReviewAction.Rejected)
                             {
-                                var retain = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.RetainRejectedItems, false);
+                                var galleryOwner = await _database.GetUser(gallery.Owner);
+                                var retain = galleryOwner!.CanUseFeature(FeaturePermissions.RetainRejectedItems) && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.RetainRejectedItems, false, gallery.Id);
                                 if (retain)
                                 {
                                     var rejectedDir = Path.Combine(galleryDir, "Rejected");
@@ -988,7 +1045,8 @@ namespace Memtly.Core.Controllers
                                     }
                                     else if (action == ReviewAction.Rejected)
                                     {
-                                        var retain = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.RetainRejectedItems, false);
+                                        var galleryOwner = await _database.GetUser(gallery.Owner);
+                                        var retain = galleryOwner!.CanUseFeature(FeaturePermissions.RetainRejectedItems) && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.RetainRejectedItems, false, gallery.Id);
                                         if (retain)
                                         {
                                             var rejectedDir = Path.Combine(galleryDir, "Rejected");
@@ -1374,6 +1432,95 @@ namespace Memtly.Core.Controllers
             return Json(new { success = false });
         }
 
+        [HttpPut]
+        [RequiresRole(GalleryPermission = GalleryPermissions.Share)]
+        public async Task<IActionResult> ShareGallery(int galleryId, List<GalleryShareModel> users)
+        {
+            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                try
+                {
+                    var gallery = await _database.GetGallery(galleryId);
+                    if (gallery != null && User.Identity.CanEdit(GalleryPermissions.Share, gallery.Owner))
+                    {
+                        users = users.Where(u => u.UserId != gallery.Owner).ToList();
+
+                        var shares = await _database.GetGalleryShareUsers(gallery.Id);
+
+                        List<GalleryShareModel> usersToAdd;
+                        List<GalleryShareModel> usersToRemove;
+
+                        if (shares != null && shares.Any())
+                        {
+                            usersToAdd = users.Where(u => !shares.Any(sh => sh.UserId == u.UserId)).ToList();
+                            usersToRemove = shares.Where(sh => !users.Any(u => u.UserId == sh.UserId)).ToList();
+                        }
+                        else
+                        {
+                            usersToAdd = users;
+                            usersToRemove = new List<GalleryShareModel>();
+                        }
+
+                        foreach (var user in usersToAdd)
+                        {
+                            await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_SharedGallery"].Value} '{user.UserName}'", AuditSeverity.Debug);
+                            await _database.AddGalleryShare(user);
+                        }
+
+                        foreach (var user in usersToRemove)
+                        {
+                            await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_UnSharedGallery"].Value} '{user.UserName}'", AuditSeverity.Debug);
+                            await _database.DeleteGalleryShare(user);
+                        }
+
+                        return Json(new { success = true, added = usersToAdd?.Count ?? 0, removed = usersToRemove?.Count ?? 0 });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = _localizer["Gallery_Share_Failed"].Value });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"{_localizer["Gallery_Share_Failed"].Value} - {ex?.Message}");
+                }
+            }
+
+            return Json(new { success = false });
+        }
+
+        [HttpDelete]
+        [RequiresRole(GalleryPermission = GalleryPermissions.View)]
+        public async Task<IActionResult> LeaveShare(int id)
+        {
+            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                try
+                {
+                    var galleryShare = await _database.GetGalleryShareRecord(User.Identity.GetUserId(), id);
+                    var gallery = await _database.GetGallery(id);
+
+                    if (galleryShare != null && gallery != null)
+                    {
+                        await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_Left_Share"].Value} '{gallery?.Name} ({gallery?.OwnerName})'", AuditSeverity.Warning);
+                        await _database.DeleteGalleryShare(galleryShare);
+
+                        return Json(new { success = true });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = _localizer["Leave_Share_Failed"].Value });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"{_localizer["Leave_Share_Failed"].Value} - {ex?.Message}");
+                }
+            }
+
+            return Json(new { success = false });
+        }
+
         [HttpDelete]
         [RequiresRole(GalleryPermission = GalleryPermissions.Wipe)]
         public async Task<IActionResult> WipeGallery(int id)
@@ -1638,7 +1785,7 @@ namespace Memtly.Core.Controllers
         {
             if (User?.Identity != null && User.Identity.IsAuthenticated && (User?.Identity?.IsPrivilegedUser() ?? false))
             {
-                if (string.IsNullOrWhiteSpace(model?.Username) || model.Username.Length == 0 || model.Username.Length > 50 || !Regex.IsMatch(model.Username, @"^[a-zA-Z0-9\-\s-_~]+$", RegexOptions.Compiled))
+                if (string.IsNullOrWhiteSpace(model?.Username) || model.Username.Length == 0 || model.Username.Length > 20 || !Regex.IsMatch(model.Username, @"^[a-zA-Z0-9\-\s-_~]+$", RegexOptions.Compiled))
                 {
                     return Json(new { success = false, message = _localizer["User_Invalid_Username"].Value });
                 }
@@ -1660,7 +1807,7 @@ namespace Memtly.Core.Controllers
                 }
                 else if (PasswordHelper.IsWeak(model.Password))
                 {
-                    return Json(new { success = false, message = _localizer["User_Invalid_Password"].Value });
+                    return Json(new { success = false, message = _localizer["Weak_Password"].Value });
                 }
                 else if (string.IsNullOrWhiteSpace(model?.CPassword) || !model.CPassword.Equals(model.Password))
                 {
@@ -1817,7 +1964,7 @@ namespace Memtly.Core.Controllers
                             }
                             else if (PasswordHelper.IsWeak(model.Password))
                             {
-                                return Json(new { success = false, message = _localizer["User_Invalid_Password"].Value });
+                                return Json(new { success = false, message = _localizer["Weak_Password"].Value });
                             }
                             else if (string.IsNullOrWhiteSpace(model?.CPassword) || !model.CPassword.Equals(model.Password))
                             {
@@ -2701,6 +2848,7 @@ namespace Memtly.Core.Controllers
                                 UploadedBy = x.UploadedBy ?? "Unknown",
                                 UploaderEmailAddress = x.UploaderEmailAddress,
                                 UploadDate = x.UploadedDate,
+                                CaptureDate = x.DateTaken ?? x.UploadedDate,
                                 ImagePath = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/Pending/{x.Title}",
                                 ThumbnailPath = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(x.Title)}.webp",
                                 MediaType = x.MediaType

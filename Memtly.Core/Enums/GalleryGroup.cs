@@ -3,7 +3,8 @@
     public enum GalleryGroup
     {
         None,
-        Date,
+        DateTaken,
+        DateUploaded,
         MediaType,
         Uploader,
         Gallery
