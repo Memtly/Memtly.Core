@@ -42,7 +42,8 @@
         Download = 32,
         Wipe = 64,
         ViewAllGallery = 128,
-        Relink = 256
+        Relink = 256,
+        Share = 512
     }
 
     [Flags]
@@ -113,5 +114,7 @@
     {
         None = 0,
         UpgradeToUnlock = 1,
+        RequireGalleryItemReview = 2,
+        RetainRejectedItems = 4
     }
 }

@@ -15,7 +15,7 @@ namespace Memtly.Core.Migrations.Sqlite.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.17");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.18");
 
             modelBuilder.Entity("Memtly.Core.EntityFramework.Models.AuditLog", b =>
                 {
@@ -190,6 +190,9 @@ namespace Memtly.Core.Migrations.Sqlite.Migrations
                     b.Property<long>("CreatedAt")
                         .HasColumnType("INTEGER");
 
+                    b.Property<long?>("DateTaken")
+                        .HasColumnType("INTEGER");
+
                     b.Property<long>("FileSize")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
@@ -221,6 +224,11 @@ namespace Memtly.Core.Migrations.Sqlite.Migrations
                     b.Property<string>("UploadedBy")
                         .IsRequired()
                         .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UploaderEmailAddress")
+                        .IsRequired()
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -281,6 +289,34 @@ namespace Memtly.Core.Migrations.Sqlite.Migrations
                     b.HasIndex("SettingId");
 
                     b.ToTable("GallerySettings");
+                });
+
+            modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryShare", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("GalleryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GalleryId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("UserId", "GalleryId")
+                        .IsUnique();
+
+                    b.ToTable("GalleryShare");
                 });
 
             modelBuilder.Entity("Memtly.Core.EntityFramework.Models.Setting", b =>
@@ -377,7 +413,7 @@ namespace Memtly.Core.Migrations.Sqlite.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(10)
+                        .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -426,12 +462,12 @@ namespace Memtly.Core.Migrations.Sqlite.Migrations
                     b.HasOne("Memtly.Core.EntityFramework.Models.Gallery", "Collection")
                         .WithMany("Collections")
                         .HasForeignKey("CollectionId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Memtly.Core.EntityFramework.Models.Gallery", "Gallery")
                         .WithMany()
                         .HasForeignKey("GalleryId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Collection");
 
@@ -443,12 +479,12 @@ namespace Memtly.Core.Migrations.Sqlite.Migrations
                     b.HasOne("Memtly.Core.EntityFramework.Models.Gallery", "Gallery")
                         .WithMany()
                         .HasForeignKey("GalleryId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Memtly.Core.EntityFramework.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Gallery");
 
@@ -497,6 +533,23 @@ namespace Memtly.Core.Migrations.Sqlite.Migrations
                     b.Navigation("Gallery");
 
                     b.Navigation("Setting");
+                });
+
+            modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryShare", b =>
+                {
+                    b.HasOne("Memtly.Core.EntityFramework.Models.Gallery", "Gallery")
+                        .WithMany()
+                        .HasForeignKey("GalleryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Memtly.Core.EntityFramework.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Gallery");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Memtly.Core.EntityFramework.Models.Gallery", b =>

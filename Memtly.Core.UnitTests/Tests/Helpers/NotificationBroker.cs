@@ -43,7 +43,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Endpoint, Arg.Any<string>()).Returns("https://unit.test.com/");
             _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Token, Arg.Any<string>()).Returns("UnitTest");
             _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Topic, Arg.Any<string>()).Returns("UnitTest");
-            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Priority, Arg.Any<int>()).Returns(4);
+            _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Priority, Arg.Any<int>()).Returns(3);
 
             _settings.GetOrDefault(MemtlyConfiguration.Notifications.Gotify.Enabled, Arg.Any<bool>()).Returns(true);
             _settings.GetOrDefault(MemtlyConfiguration.Notifications.Gotify.Endpoint, Arg.Any<string>()).Returns("https://unit.test.com/");

@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
 using System.Security.Principal;
-using Memtly.Core;
 using Memtly.Core.Enums;
 using Memtly.Core.Models;
+using Memtly.Core.Models.Database;
 
 namespace Memtly.Core.Extensions
 {
@@ -91,7 +91,17 @@ namespace Memtly.Core.Extensions
         {
             try
             {
-                var level = identity.GetUserLevel();
+                return identity.GetUserLevel().GetUserPermissions();
+            }
+            catch { }
+
+            return new Permissions();
+        }
+
+        public static Permissions GetUserPermissions(this UserLevel level)
+        {
+            try
+            {
                 switch (level)
                 {
                     case UserLevel.Basic:
@@ -104,7 +114,7 @@ namespace Memtly.Core.Extensions
                         return new ModeratorPermissions();
                     case UserLevel.Admin:
                         return new AdminPermissions();
-                    default: 
+                    default:
                         return new Permissions();
                 }
             }
@@ -246,6 +256,21 @@ namespace Memtly.Core.Extensions
             catch { }
 
             return false;
+        }
+
+        public static bool CanUseFeature(this IIdentity identity, FeaturePermissions feature)
+        {
+            return identity.GetUserPermissions().CanUseFeature(feature);
+        }
+
+        public static bool CanUseFeature(this UserModel user, FeaturePermissions feature)
+        {
+            return user.Level.GetUserPermissions().CanUseFeature(feature);
+        }
+
+        public static bool CanUseFeature(this Permissions permissions, FeaturePermissions feature)
+        {
+            return permissions.Features.HasFlag(feature);
         }
     }
 }

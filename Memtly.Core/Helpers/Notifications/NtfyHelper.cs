@@ -25,7 +25,7 @@ namespace Memtly.Core.Helpers.Notifications
                     var endpoint = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Endpoint, string.Empty);
                     var token = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Token, string.Empty);
                     var topic = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Topic, "Memtly");
-                    var priority = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Priority, 4);
+                    var priority = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Ntfy.Priority, 3);
 
                     return await Send(endpoint, topic, token, priority, title, message, actionLink);
                 }

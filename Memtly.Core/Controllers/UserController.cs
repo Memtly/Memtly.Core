@@ -1,3 +1,4 @@
+using Memtly.Core.Extensions;
 using Memtly.Core.Helpers.Database;
 using Memtly.Core.Models.Database;
 using Microsoft.AspNetCore.Authorization;
@@ -23,13 +24,13 @@ namespace Memtly.Core.Controllers
 
         [HttpPost]
         [Route("User/Search")]
-        public async Task<IActionResult> Search(string term, int limit = 5)
+        public async Task<IActionResult> Search(string term, int limit = 5, int[]? excludeUserIds = null)
         {
             List<UserModel>? result = null;
 
             try
             {
-                result = await _database.GetUsers(term, page: 1, limit: limit);
+                result = await _database.GetUsers(term, page: 1, limit: limit, exclude: excludeUserIds);
             }
             catch (Exception ex)
             {

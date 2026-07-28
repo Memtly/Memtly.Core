@@ -22,6 +22,8 @@ function bindEventHandlers() {
     bindAddCollectionButton();
     bindEditCollectionButton();
     bindRelinkGalleryButton();
+    bindShareGalleryButton();
+    bindLeaveShareButton();
     bindWipeGalleryButton();
     bindWipeAllGalleriesButton();
     bindDeleteGalleryButton();
@@ -451,6 +453,79 @@ function bindRelinkGalleryButton() {
     });
 }
 
+function bindShareGalleryButton() {
+    $(document).off('click', '.btnShareGallery').on('click', '.btnShareGallery', function (e) {
+        preventDefaults(e);
+
+        if ($(this).attr('disabled') == 'disabled') {
+            return;
+        }
+
+        let row = $(this).closest('tr');
+        const id = row.data('gallery-id');
+        const username = row.data('gallery-username');
+        const excludeUserIds = $(this).data('exclude').split(',').map(item => parseInt(item));
+
+        displayShareGalleryPopup(id, username, '', excludeUserIds);
+    });
+}
+
+function bindLeaveShareButton() {
+    $(document).off('click', '.btnLeaveShare').on('click', '.btnLeaveShare', function (e) {
+        preventDefaults(e);
+
+        if ($(this).attr('disabled') == 'disabled') {
+            return;
+        }
+
+        let row = $(this).closest('tr');
+        let name = row.data('gallery-name');
+        displayPopup({
+            Title: localization.translate('Gallery_Share'),
+            Message: localization.translate('Leave_Are_You_Sure'),
+            Fields: [{
+                Id: 'gallery-id',
+                Value: row.data('gallery-id'),
+                Type: 'hidden'
+            }],
+            Buttons: [{
+                Text: localization.translate('Leave'),
+                Class: 'btn-danger',
+                Callback: function () {
+                    displayLoader(localization.translate('Loading'));
+
+                    let id = $('#popup-modal-field-gallery-id').val();
+                    if (id == undefined || id.length == 0) {
+                        displayMessage(localization.translate('Gallery_Share'), localization.translate('Missing_Id'));
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/Account/LeaveShare',
+                        method: 'DELETE',
+                        data: { id }
+                    })
+                        .done(data => {
+                            if (data.success === true) {
+                                updateGalleryList();
+                                displayMessage(localization.translate('Gallery_Share'), localization.translate('Leave_Share_Success'));
+                            } else if (data.message) {
+                                displayMessage(localization.translate('Gallery_Share'), localization.translate('Leave_Share_Failed'), [data.message]);
+                            } else {
+                                displayMessage(localization.translate('Gallery_Share'), localization.translate('Leave_Share_Failed'));
+                            }
+                        })
+                        .fail((xhr, error) => {
+                            displayMessage(localization.translate('Gallery_Share'), localization.translate('Leave_Share_Failed'), [error]);
+                        });
+                }
+            }, {
+                    Text: localization.translate('Close')
+            }]
+        });
+    });
+}
+
 function bindWipeGalleryButton() {
     $(document).off('click', '.btnWipeGallery').on('click', '.btnWipeGallery', function (e) {
         preventDefaults(e);
@@ -675,6 +750,24 @@ export function updateGalleryList() {
             bindEventHandlers();
         }
     });
+
+    $.ajax({
+        type: 'GET',
+        url: `/Account/RecentGalleriesList?term=${term}&type=${type}&page=${page}&limit=${limit}`,
+        success: function (data) {
+            $('#recent-galleries-list').html(data);
+            bindEventHandlers();
+        }
+    });
+
+    $.ajax({
+        type: 'GET',
+        url: `/Account/SharedGalleriesList?term=${term}&type=${type}&page=${page}&limit=${limit}`,
+        success: function (data) {
+            $('#shared-galleries-list').html(data);
+            bindEventHandlers();
+        }
+    });
 }
 
 function displayAddGalleryPopup(name, secretKey) {
@@ -847,7 +940,7 @@ function displayAddCollectionPopup(name, secretKey, collectionItems) {
             <div class="row pb-3">
                 <div class="col-12">
                     <label>${localization.translate('Galleries')}</label>
-                    <div class="checklist-container" data-selection-type="multi">
+                    <div id="collection-checklist" class="checklist-container" data-selection-type="multi">
                         ${collectionItems.map(item => {
                             return `<div class="checklist-item${item.selected ? ' selected' : ''}" data-gallery-id="${item.id}">${item.name}</div>`;
                         }).join('\n')}
@@ -878,7 +971,7 @@ function displayAddCollectionPopup(name, secretKey, collectionItems) {
                     return;
                 }
 
-                const selectedGalleries = $('.popup-modal .modal-body .checklist-item.selected').map((index, item) => { return $(item).data('gallery-id'); }).get();
+                const selectedGalleries = $('#collection-checklist .checklist-item.selected').map((index, item) => { return $(item).data('gallery-id'); }).get();
                 if (selectedGalleries === undefined || selectedGalleries.length < 2) {
                     displayMessage(localization.translate('Collection_Create'), localization.translate('Collection_Not_Enough_Galleries'), null, () => {
                         displayAddCollectionPopup(name, secretKey, collectionItems);
@@ -949,7 +1042,7 @@ function displayEditCollectionPopup(id, identifier, name, secretKey, collectionI
             <div class="row pb-3">
                 <div class="col-12">
                     <label>${localization.translate('Galleries')}</label>
-                    <div class="checklist-container" data-selection-type="multi">
+                    <div id="collection-checklist" class="checklist-container" data-selection-type="multi">
                         ${collectionItems.map(item => {
                             return `<div class="checklist-item${item.selected ? ' selected' : ''}" data-gallery-id="${item.id}">${item.name}</div>`;
                         }).join('\n')}
@@ -980,7 +1073,7 @@ function displayEditCollectionPopup(id, identifier, name, secretKey, collectionI
                     return;
                 }
 
-                const selectedGalleries = $('.popup-modal .modal-body .checklist-item.selected').map((index, item) => { return $(item).data('gallery-id'); }).get();
+                const selectedGalleries = $('#collection-checklist .checklist-item.selected').map((index, item) => { return $(item).data('gallery-id'); }).get();
                 if (selectedGalleries === undefined || selectedGalleries.length < 2) {
                     displayMessage(localization.translate('Collection_Edit'), localization.translate('Collection_Not_Enough_Galleries'), null, () => {
                         displayEditCollectionPopup(id, identifier, name, secretKey, collectionItems);
@@ -1036,7 +1129,7 @@ function displayRelinkGalleryPopup(id, username, term) {
         FooterHtml: `
             <div class="row pb-3">
                 <div class="col-12">
-                    <div class="checklist-container" data-selection-type="single"></div>
+                    <div id="gallery-relink-checklist" class="checklist-container" data-selection-type="single"></div>
                 </div>
             </div>`,
         Buttons: [{
@@ -1045,7 +1138,7 @@ function displayRelinkGalleryPopup(id, username, term) {
             Callback: () => {
                 term = $('#popup-modal-field-search-term').val();
 
-                const userId = $('.popup-modal .modal-body .checklist-item.selected').map((index, item) => { return $(item).data('user-id'); }).get()[0] ?? 0;
+                const userId = $('#gallery-relink-checklist .checklist-item.selected').map((index, item) => { return $(item).data('user-id'); }).get()[0] ?? 0;
                 if (userId !== undefined && !isNaN(userId) && parseInt(userId) > 0) {
                     displayLoader(localization.translate('Loading'));
 
@@ -1058,8 +1151,8 @@ function displayRelinkGalleryPopup(id, username, term) {
                         return;
                     }
 
-                    const username = $('.popup-modal .modal-body .checklist-item.selected').map((index, item) => { return $(item).text(); }).get()[0] ?? '';
-                    if (username == undefined || username.length == 0) {
+                    const newOwner = $('#gallery-relink-checklist .checklist-item.selected').map((index, item) => { return $(item).data('user-name'); }).get()[0] ?? '';
+                    if (newOwner == undefined || newOwner.length == 0) {
                         displayMessage(localization.translate('Gallery_Relink'), localization.translate('Missing_Username'), null, () => {
                             displayRelinkGalleryPopup(id, username, term);
                         });
@@ -1069,7 +1162,7 @@ function displayRelinkGalleryPopup(id, username, term) {
                     $.ajax({
                         url: '/Account/RelinkGallery',
                         method: 'PUT',
-                        data: { Id: id, OwnerName: username }
+                        data: { Id: id, OwnerName: newOwner }
                     })
                         .done(data => {
                             if (data.success === true) {
@@ -1098,41 +1191,253 @@ function displayRelinkGalleryPopup(id, username, term) {
             }
         }, {
             Text: localization.translate('Close')
-        }]
+            }]
     }, () => {
-        updateUsersChecklist(term);
-
         let searchTimeout = null;
-        $(document).off('keyup', '#popup-modal-field-search-term').on('keyup', '#popup-modal-field-search-term', (e) => {
-            const term = $(e.currentTarget).val();
 
+        function updateList(items) {
+            if (items !== undefined && items.length > 0) {
+                $('#gallery-relink-checklist').html(`${items.map(item => {
+                    return `<div class="checklist-item${item.selected ? ' selected' : ''}" data-user-id="${item.id}" data-user-name="${item.name}">${item.name}</div>`;
+                }).join('\n')}`);
+            }
+        }
+
+        function search(term) {
             clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                updateUsersChecklist(term);
-            }, 500);
+            if (term !== undefined && term.length > 0) {
+                searchTimeout = setTimeout(() => {
+                    $.ajax({
+                        url: '/User/Search',
+                        method: 'POST',
+                        data: {
+                            term: term
+                        }
+                    })
+                        .done(users => {
+                            if (users.items) {
+                                if (users.items.length > 0) {
+                                    updateList(users.items.map(user => {
+                                        return { id: user.id, name: user.username, selected: user.username.toLowerCase() === username.toLowerCase() };
+                                    }));
+                                } else {
+                                    $('#gallery-relink-checklist').html(`<div class="checklist-message">${localization.translate('No_Users_Found_Matching')} '${term}'</div>`);
+                                }
+                            } else {
+                                displayMessage(localization.translate('Gallery_Relink'), localization.translate('Failed_Get_User_List'));
+                            }
+                        })
+                        .fail((xhr, error) => {
+                            displayMessage(localization.translate('Gallery_Relink'), localization.translate('Failed_Get_User_List'), [error]);
+                        });
+                }, 500);
+            } else {
+                updateList([{ id: username, name: username, selected: true }]);
+            }
+        }
+
+        search(term);
+
+        $(document).off('keyup', '#popup-modal-field-search-term').on('keyup', '#popup-modal-field-search-term', (e) => {
+            search($(e.currentTarget).val());
         });
     });
 }
 
-function updateUsersChecklist(term) {
+function displayShareGalleryPopup(id, username, term, excludeUserIds) {
     $.ajax({
-        url: '/User/Search',
+        url: '/Gallery/Shares',
         method: 'POST',
         data: {
-            term: term
+            galleryId: id
         }
     })
-        .done(users => {
-            if (users.items) {
-                $('.checklist-container').html(`${users.items.map(item => {
-                    return `<div class="checklist-item" data-user-id="${item.id}">${item.username}</div>`;
-                }).join('\n')}`);
-            } else {
-                displayMessage(localization.translate('Gallery_Relink'), localization.translate('Failed_Get_User_List'));
-            }
+        .done(shares => {
+            displayPopup({
+                Title: localization.translate('Gallery_Share'),
+                Fields: [{
+                    Id: 'gallery-id',
+                    Value: id,
+                    Type: 'hidden'
+                }, {
+                    Id: 'search-term',
+                    Name: localization.translate('SearchTerm_Label'),
+                    Value: term,
+                    Placeholder: username,
+                    Hint: localization.translate('SearchTerm_Help')
+                }],
+                FooterHtml: `
+                    <div class="row pb-3 d-none">
+                        <div class="col-12">
+                            <div id="gallery-share-search-checklist" class="checklist-container checklist-container-xs" data-selection-type="multi"></div>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <label>${localization.translate('Users_With_Access') }</labl>
+                        <div class="col-12">
+                            <div id="gallery-share-checklist" class="checklist-container" data-selection-type="read-only"></div>
+                        </div>
+                    </div>`,
+                Buttons: [{
+                    Text: localization.translate('Update'),
+                    Class: 'btn-primary-2',
+                    Callback: () => {
+                        displayLoader(localization.translate('Loading'));
+
+                        id = $('#popup-modal-field-gallery-id').val();
+                        term = $('#popup-modal-field-search-term').val();
+
+                        if (id == undefined || id.length == 0) {
+                            displayMessage(localization.translate('Gallery_Share'), localization.translate('Missing_Id'), null, () => {
+                                displayShareGalleryPopup(id, username, term, excludeUserIds);
+                            });
+                            return;
+                        }
+
+                        const users = $('#gallery-share-checklist .checklist-item').map((index, item) => {
+                            const elem = $(item);
+                            return { GalleryId: id, UserId: elem.data('user-id'), UserName: elem.data('user-name') }
+                        }).get();
+
+                        if (users == undefined) {
+                            displayMessage(localization.translate('Gallery_Share'), localization.translate('Missing_Username'), null, () => {
+                                displayShareGalleryPopup(id, username, term, excludeUserIds);
+                            });
+                            return;
+                        }
+
+                        $.ajax({
+                            url: '/Account/ShareGallery',
+                            method: 'PUT',
+                            data: { GalleryId: id, Users: users }
+                        })
+                            .done(data => {
+                                if (data.success === true) {
+                                    if (data.added > 0 && data.removed == 0) {
+                                        displayMessage(localization.translate('Gallery_Share'), localization.translate('Gallery_Share_Success'));
+                                    } else if (data.added == 0 && data.removed > 0) {
+                                        displayMessage(localization.translate('Gallery_Share'), localization.translate('Gallery_UnShare_Success'));
+                                    } else {
+                                        displayMessage(localization.translate('Gallery_Share'), localization.translate('Gallery_Share_Update_Success'));
+                                    }
+                                } else if (data.message) {
+                                    displayMessage(localization.translate('Gallery_Share'), localization.translate('Gallery_Share_Failed'), [data.message], () => {
+                                        displayShareGalleryPopup(id, username, term, excludeUserIds);
+                                    });
+                                } else {
+                                    displayMessage(localization.translate('Gallery_Share'), localization.translate('Gallery_Share_Failed'), null, () => {
+                                        displayShareGalleryPopup(id, username, term, excludeUserIds);
+                                    });
+                                }
+                            })
+                            .fail((xhr, error) => {
+                                displayMessage(localization.translate('Gallery_Share'), localization.translate('Gallery_Share_Failed'), [error], () => {
+                                    displayShareGalleryPopup(id, username, term, excludeUserIds);
+                                });
+                            });
+                    }
+                }, {
+                    Text: localization.translate('Close')
+                    }]
+            }, () => {
+                let searchTimeout = null;
+
+                function updateSearchList(items, term = '') {
+                    if (items !== undefined && items.length > 0) {
+                        $('#gallery-share-search-checklist').html(`${items.filter(item => !item.selected).map(item => {
+                            return `<div class="checklist-item${item.selected ? ' selected' : ''}" data-user-id="${item.id}" data-user-name="${item.name}">${item.name}</div>`;
+                        }).join('\n')}`);
+                    } else if (term != undefined && term.length > 0) {
+                        $('#gallery-share-search-checklist').html(`<div class="checklist-message">${localization.translate('No_Users_Found_Matching')} '${term}'</div>`);
+                    }
+                }
+
+                function updateShareList(items) {
+                    const results = items?.filter(item => item.selected) ?? [];
+                    if (results !== undefined) {
+                        $('#gallery-share-checklist').html(`${results.map(item => {
+                            return `<div class="checklist-item" data-user-id="${item.id}" data-user-name="${item.name}">${item.name}</div>`;
+                        }).join('\n')}`);
+                    }
+                }
+
+                function search(term, delay = 500) {
+                    clearTimeout(searchTimeout);
+
+                    term = term?.trim();
+
+                    if (term !== undefined && term.length > 0) {
+                        searchTimeout = setTimeout(() => {
+                            $.ajax({
+                                url: '/User/Search',
+                                method: 'POST',
+                                data: {
+                                    term: term,
+                                    excludeUserIds: [...new Set(excludeUserIds.concat(shares.items.map(item => parseInt(item.id))))].join(',')
+                                }
+                            })
+                                .done(users => {
+                                    if (users.items) {
+                                        const elem = $('#gallery-share-search-checklist').closest('.row');
+                                        if (elem.hasClass('d-none')) {
+                                            elem.removeClass('d-none').hide();
+                                        }
+
+                                        updateSearchList(users?.items?.map(user => {
+                                            return { id: user.id, name: user.username, selected: shares.items.some(share => share.id == user.id && share.selected) };
+                                        }), term);
+
+                                        elem.slideDown(200);
+                                    } else {
+                                        displayMessage(localization.translate('Gallery_Share'), localization.translate('Failed_Get_User_List'));
+                                    }
+                                })
+                                .fail((xhr, error) => {
+                                    displayMessage(localization.translate('Gallery_Share'), localization.translate('Failed_Get_User_List'), [error]);
+                                });
+                        }, delay);
+                    } else {
+                        updateSearchList([], term);
+
+                        const elem = $('#gallery-share-search-checklist').closest('.row');
+                        elem.slideUp(200);
+                    }
+                }
+
+                updateShareList(shares.items);
+
+                $(document).off('keyup', '#popup-modal-field-search-term').on('keyup', '#popup-modal-field-search-term', (e) => {
+                    search($(e.currentTarget).val());
+                });
+
+                $(document).off('click', '#gallery-share-search-checklist .checklist-item').on('click', '#gallery-share-search-checklist .checklist-item', (e) => {
+                    const id = $(e.currentTarget).data('user-id');
+                    const name = $(e.currentTarget).data('user-name');
+                    const exists = shares.items.some(share => share.id == id);
+
+                    if (exists) {
+                        shares.items = shares.items.filter(share => share.id !== id);
+                    } else {
+                        shares.items.push({ id, name, selected: true });
+                    }
+
+                    search($('#popup-modal-field-search-term').val(), 0);
+                    updateShareList(shares.items);
+                });
+
+                $(document).off('click', '#gallery-share-checklist .checklist-item').on('click', '#gallery-share-checklist .checklist-item', (e) => {
+                    const id = $(e.currentTarget).data('user-id');
+                    const name = $(e.currentTarget).data('user-name');
+                    
+                    shares.items = shares.items.filter(share => share.id !== id);
+
+                    search($('#popup-modal-field-search-term').val(), 0);
+                    updateShareList(shares.items);
+                });
+            });
         })
         .fail((xhr, error) => {
-            displayMessage(localization.translate('Gallery_Relink'), localization.translate('Failed_Get_User_List'), [error]);
+            displayMessage(localization.translate('Gallery_Share'), localization.translate('Failed_Get_Share_List'), [error]);
         });
 }
 

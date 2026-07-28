@@ -191,7 +191,10 @@ namespace Memtly.Core.Helpers
             {
                 try
                 {
-                    return new FileInfo(path).CreationTimeUtc;
+                    var fsTime = File.GetLastWriteTimeUtc(path);
+                    var creationTime = File.GetCreationTimeUtc(path);
+
+                    return creationTime < fsTime ? creationTime : fsTime;
                 }
                 catch
                 {

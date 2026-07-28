@@ -11,12 +11,22 @@ namespace Memtly.Core.Helpers
 
             if (!string.IsNullOrWhiteSpace(output))
             {
+                output = SanitizePossibleXSS(output);
+                output = HttpUtility.HtmlEncode(output);
+            }
+
+            return output;
+        }
+
+        public static string SanitizePossibleXSS(string input)
+        {
+            var output = input;
+
+            if (!string.IsNullOrWhiteSpace(output))
+            {
                 output = SanitizeHtmlTags(input, new[] { ".*" });
                 output = SanitizeHtmlAttributes(output, new[] { ".*" });
-
                 output = SanitizeLinks(output);
-
-                output = HttpUtility.HtmlEncode(output);
             }
 
             return output;
@@ -58,7 +68,7 @@ namespace Memtly.Core.Helpers
 
         public static bool MayContainXss(string input)
         {
-            var sanitized = Sanitize(input);
+            var sanitized = SanitizePossibleXSS(input);
 
             return !string.Equals(input, sanitized);
         }

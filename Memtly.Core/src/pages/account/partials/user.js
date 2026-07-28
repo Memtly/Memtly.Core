@@ -18,6 +18,7 @@ function bindEventHandlers() {
     bindFreezeUserButton();
     bindUnfreezeUserButton();
     bindDeleteUserButton();
+    bindLevelChange();
 }
 
 function bindSearchBox() {
@@ -441,6 +442,13 @@ function bindDeleteUserButton() {
     });
 }
 
+function bindLevelChange() {
+    $(document).off('change', '#popup-modal-field-user-level').on('change', '#popup-modal-field-user-level', function (e) {
+        preventDefaults(e);
+        toggleTierSelection();
+    });
+}
+
 function displayAddUserPopup(username, firstname, lastname, email, password, cpassword, level, tier) {
     displayPopup({
         Title: localization.translate('User_Create'),
@@ -556,7 +564,7 @@ function displayAddUserPopup(username, firstname, lastname, email, password, cpa
                 tier = $('#popup-modal-field-user-tier').val();
 
                 const usernameRegex = /^[a-zA-Z0-9\-\s-_~]+$/;
-                if (username == undefined || username.length == 0 || !usernameRegex.test(username)) {
+                if (username == undefined || username.length == 0 || username.length > 20 || !usernameRegex.test(username)) {
                     displayMessage(localization.translate('User_Create'), localization.translate('User_Invalid_Username'), null, () => {
                         displayAddUserPopup(username, firstname, lastname, email, password, cpassword, level, tier);
                     });
@@ -642,6 +650,7 @@ function displayAddUserPopup(username, firstname, lastname, email, password, cpa
             Text: localization.translate('Close')
         }]
     }, () => {
+        toggleTierSelection();
         initPasswordValidation();
     });
 }
@@ -813,6 +822,8 @@ function displayEditUserPopup(id, username, firstname, lastname, email, level, t
         }, {
             Text: localization.translate('Close')
         }]
+    }, () => {
+        toggleTierSelection();
     });
 }
 
@@ -835,6 +846,15 @@ export function updateUsersList() {
             history.pushState({}, '', url);
         }
     });
+}
+
+function toggleTierSelection() {
+    const level = parseInt($('#popup-modal-field-user-level').val());
+    if (level === 1) {
+        $('#popup-modal-field-user-tier').closest('.row').show();
+    } else {
+        $('#popup-modal-field-user-tier').closest('.row').hide();
+    }
 }
 
 export default init;

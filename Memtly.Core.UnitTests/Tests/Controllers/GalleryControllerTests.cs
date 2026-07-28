@@ -87,7 +87,8 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 		}
 
         [TestCase(DeviceType.Desktop, 1, "default", "default", "password", ViewMode.Default, GalleryGroup.None, GalleryOrder.Descending, true)]
-        [TestCase(DeviceType.Mobile, 2, "blaa", "blaa", "456789", ViewMode.Presentation, GalleryGroup.Date, GalleryOrder.Ascending, true)]
+        [TestCase(DeviceType.Mobile, 2, "blaa", "blaa", "456789", ViewMode.Presentation, GalleryGroup.DateUploaded, GalleryOrder.Ascending, true)]
+        [TestCase(DeviceType.Mobile, 2, "blaa", "blaa", "456789", ViewMode.Presentation, GalleryGroup.DateTaken, GalleryOrder.Ascending, true)]
         [TestCase(DeviceType.Tablet, 101, "missing", "missing", "123456", ViewMode.Slideshow, GalleryGroup.Uploader, GalleryOrder.Ascending, false)]
         public async Task GalleryController_Index(DeviceType deviceType, int id, string? identifier, string? name, string? key, ViewMode? mode, GalleryGroup group, GalleryOrder order, bool existing)
         {
@@ -189,7 +190,8 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         }
 
         [TestCase(DeviceType.Desktop, ViewMode.Default, GalleryGroup.None, GalleryOrder.Descending)]
-		[TestCase(DeviceType.Mobile, ViewMode.Presentation, GalleryGroup.Date, GalleryOrder.Ascending)]
+		[TestCase(DeviceType.Mobile, ViewMode.Presentation, GalleryGroup.DateUploaded, GalleryOrder.Ascending)]
+		[TestCase(DeviceType.Mobile, ViewMode.Presentation, GalleryGroup.DateTaken, GalleryOrder.Ascending)]
 		[TestCase(DeviceType.Tablet, ViewMode.Slideshow, GalleryGroup.Uploader, GalleryOrder.Ascending)]
 		public async Task GalleryController_Index_SingleGalleryMode(DeviceType deviceType, ViewMode? mode, GalleryGroup group, GalleryOrder order)
 		{
@@ -217,6 +219,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
 		[TestCase(false, 3, "Unit Testing")]
 		public async Task GalleryController_UploadImage(bool requiresReview, int fileCount, string? uploadedBy)
 		{
+            _database.GetUser(Arg.Any<int>()).Returns(new UserModel());
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.RequireReview, Arg.Any<bool>()).Returns(requiresReview);
 
 			var files = new FormFileCollection();
@@ -251,6 +254,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [TestCase]
         public async Task GalleryController_UploadImage_Duplicate()
         {
+            _database.GetUser(Arg.Any<int>()).Returns(new UserModel());
             _database.GetGalleryItemByChecksum(Arg.Any<int>(), Arg.Any<string>()).Returns(Task.FromResult(MockData.MockGalleryItems(1, 1, GalleryItemState.Approved).FirstOrDefault()));
 
             var files = new FormFileCollection();

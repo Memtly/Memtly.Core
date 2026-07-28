@@ -1,4 +1,5 @@
-﻿using Memtly.Core.Enums;
+﻿using Memtly.Core.EntityFramework.Models;
+using Memtly.Core.Enums;
 using Memtly.Core.Models;
 using Memtly.Core.Models.Database;
 
@@ -61,8 +62,19 @@ namespace Memtly.Core.Helpers.Database
         Task DeleteAllCollections();
         #endregion
 
+        #region Gallery Shares
+        Task<IEnumerable<GalleryShareModel>?> GetGalleryShares(int userId, string term = "", int page = 1, int limit = int.MaxValue, GalleryType type = GalleryType.All);
+        Task<IEnumerable<GalleryShareModel>?> GetGalleryShareUsers(int galleryId);
+        Task<GalleryShareModel?> GetGalleryShareRecord(int userId, int galleryId);
+        Task AddGalleryShare(GalleryShareModel model);
+        Task DeleteGalleryShare(GalleryShareModel model);
+        Task DeleteGallerySharesByUser(int userId);
+        Task DeleteGallerySharesByGallery(int galleryId);
+        Task DeleteAllGalleryShares();
+        #endregion
+
         #region Gallery History
-        Task<IEnumerable<GalleryHistoryModel>?> GetGalleryHistory(int userId);
+        Task<IEnumerable<GalleryHistoryModel>?> GetGalleryHistory(int userId, string term = "", int page = 1, int limit = int.MaxValue, GalleryType type = GalleryType.All);
         Task<GalleryHistoryModel?> GetGalleryHistoryRecord(int userId, int galleryId);
         Task AddGalleryHistory(int userId, int galleryId, string? secretKey, int limit = 10);
         Task DeleteGalleryHistoryByUser(int userId);
@@ -74,7 +86,7 @@ namespace Memtly.Core.Helpers.Database
         Task<bool> ValidateCredentials(string username, string password);
         Task<int> GetAdminCount(AccountState? state = null);
         Task<int> GetUserCount(UserLevel level = UserLevel.All, AccountState? state = null);
-        Task<List<UserModel>?> GetUsers(string term = "", int page = 1, int limit = int.MaxValue, UserLevel level = UserLevel.All);
+        Task<List<UserModel>?> GetUsers(string term = "", int page = 1, int limit = int.MaxValue, UserLevel level = UserLevel.All, int[]? exclude = null);
         Task<UserModel?> GetUser(int id);
         Task<UserModel?> GetUserByUsername(string name);
         Task<UserModel?> GetUserByEmail(string email);

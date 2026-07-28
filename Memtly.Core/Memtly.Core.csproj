@@ -8,6 +8,10 @@
     <SixLaborsLicenseFile>sixlabors.lic</SixLaborsLicenseFile>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+  </PropertyGroup>
+
   <Target Name="CleanDist" BeforeTargets="NpmInstall">
     <RemoveDir Directories="$(ProjectDir)wwwroot/dist" />
   </Target>
@@ -122,26 +126,26 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Memtly.Localization" Version="1.0.4.15" />
+    <PackageReference Include="Memtly.Localization" Version="1.0.4.24" />
     <PackageReference Include="MetadataExtractor" Version="2.9.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.18" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.18" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="9.0.14" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.*" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.*" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.*" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.*">
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.18" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.18" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.18" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.18">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.14" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.14" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
-    <PackageReference Include="MySql.Data" Version="9.*" />
+    <PackageReference Include="MySql.Data" Version="9.0.18" />
     <PackageReference Include="NCrontab" Version="3.4.0" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.*" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.*" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
     <PackageReference Include="Razor.Templating.Core" Version="3.1.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageReference Include="Serilog.Enrichers.ClientInfo" Version="2.9.0" />

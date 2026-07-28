@@ -39,10 +39,14 @@ async function init() {
     initPage();
     initGdpr();
     initThemes();
-    initIdentityCheck();
     initSponsors();
     initQrCodes();
     initChecklistContainers();
+
+    const path = window.location.pathname.toLowerCase();
+    if (!path.startsWith('/account/login')) {
+        initIdentityCheck();
+    }
 
     app.config.theme = getSelectedTheme();
     app.initialized = true;

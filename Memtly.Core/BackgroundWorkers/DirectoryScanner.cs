@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Memtly.Core.Constants;
 using Memtly.Core.Enums;
-using Memtly.Core.Extensions;
 using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Database;
 using Memtly.Core.Models.Database;
@@ -163,7 +162,8 @@ namespace Memtly.Core.BackgroundWorkers
                                                                     Checksum = (await _fileHelper.GetChecksum(file)),
                                                                     MediaType = _imageHelper.GetMediaType(file),
                                                                     State = GalleryItemState.Approved,
-                                                                    UploadedDate = fileCreated,
+                                                                    UploadedDate = DateTimeOffset.UtcNow,
+                                                                    DateTaken = fileCreated,
                                                                     FileSize = _fileHelper.FileSize(file)
                                                                 });
                                                                 await _auditHelper.LogAction($"Directory scanner added new approved item '{filename}' to gallery '{identifier}'", AuditSeverity.Verbose);
@@ -214,6 +214,12 @@ namespace Memtly.Core.BackgroundWorkers
                                                                     updated = true;
                                                                 }
 
+                                                                if (g.DateTaken == null)
+                                                                {
+                                                                    g.DateTaken = _imageHelper.GetExifCreationDateTaken(file) ?? await _fileHelper.GetCreationDatetime(file);
+                                                                    updated = true;
+                                                                }
+
                                                                 if (updated)
                                                                 {
                                                                     await db.EditGalleryItem(g);
@@ -249,7 +255,8 @@ namespace Memtly.Core.BackgroundWorkers
                                                                         Checksum = (await _fileHelper.GetChecksum(file)),
                                                                         MediaType = _imageHelper.GetMediaType(file),
                                                                         State = GalleryItemState.Pending,
-                                                                        UploadedDate = fileCreated,
+                                                                        UploadedDate = DateTimeOffset.UtcNow,
+                                                                        DateTaken = fileCreated,
                                                                         FileSize = new FileInfo(file).Length
                                                                     });
                                                                     await _auditHelper.LogAction($"Directory scanner added new pending item '{filename}' to gallery '{identifier}'", AuditSeverity.Verbose);

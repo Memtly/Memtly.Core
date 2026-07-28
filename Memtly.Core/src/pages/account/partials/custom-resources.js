@@ -275,7 +275,7 @@ function displayRelinkCustomResourcePopup(id, username, term) {
         FooterHtml: `
             <div class="row pb-3">
                 <div class="col-12">
-                    <div class="checklist-container" data-selection-type="single"></div>
+                    <div id="custom-resource-checklist" class="checklist-container" data-selection-type="single"></div>
                 </div>
             </div>`,
         Buttons: [{
@@ -284,7 +284,7 @@ function displayRelinkCustomResourcePopup(id, username, term) {
             Callback: () => {
                 term = $('#popup-modal-field-custom-resource-search-term').val();
 
-                const userId = $('.popup-modal .modal-body .checklist-item.selected').map((index, item) => { return $(item).data('user-id'); }).get()[0] ?? 0;
+                const userId = $('#custom-resource-checklist .checklist-item.selected').map((index, item) => { return $(item).data('user-id'); }).get()[0] ?? 0;
                 if (userId !== undefined && !isNaN(userId) && parseInt(userId) > 0) {
                     displayLoader(localization.translate('Loading'));
 
@@ -297,8 +297,8 @@ function displayRelinkCustomResourcePopup(id, username, term) {
                         return;
                     }
 
-                    const username = $('.popup-modal .modal-body .checklist-item.selected').map((index, item) => { return $(item).text(); }).get()[0] ?? '';
-                    if (username == undefined || username.length == 0) {
+                    const newOwner = $('#custom-resource-checklist .checklist-item.selected').map((index, item) => { return $(item).data('user-name'); }).get()[0] ?? '';
+                    if (newOwner == undefined || newOwner.length == 0) {
                         displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Missing_Username'), null, () => {
                             displayRelinkCustomResourcePopup(id, username, term);
                         });
@@ -308,7 +308,7 @@ function displayRelinkCustomResourcePopup(id, username, term) {
                     $.ajax({
                         url: '/Account/RelinkCustomResource',
                         method: 'PUT',
-                        data: { Id: id, OwnerName: username }
+                        data: { Id: id, OwnerName: newOwner }
                     })
                         .done(data => {
                             if (data.success === true) {
@@ -337,42 +337,58 @@ function displayRelinkCustomResourcePopup(id, username, term) {
             }
         }, {
             Text: localization.translate('Close')
-        }]
+            }]
     }, () => {
-        updateUsersChecklist(term);
-
         let searchTimeout = null;
-        $(document).off('keyup', '#popup-modal-field-custom-resource-search-term').on('keyup', '#popup-modal-field-custom-resource-search-term', (e) => {
-            const term = $(e.currentTarget).val();
 
+        function updateList(items) {
+            if (items !== undefined && items.length > 0) {
+                $('#custom-resource-checklist').html(`${items.map(item => {
+                    return `<div class="checklist-item${item.selected ? ' selected' : ''}" data-user-id="${item.id}" data-user-name="${item.name}">${item.name}</div>`;
+                }).join('\n')}`);
+            }
+        }
+
+        function search(term) {
             clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                updateUsersChecklist(term);
-            }, 500);
+
+            if (term !== undefined && term.length > 0) {
+                searchTimeout = setTimeout(() => {
+                    $.ajax({
+                        url: '/User/Search',
+                        method: 'POST',
+                        data: {
+                            term: term
+                        }
+                    })
+                        .done(users => {
+                            if (users.items) {
+                                if (users.items.length > 0) {
+                                    updateList(users.items.map(user => {
+                                        return { id: user.id, name: user.username, selected: user.username.toLowerCase() === username.toLowerCase() };
+                                    }));
+                                } else {
+                                    $('#custom-resource-checklist').html(`<div class="checklist-message">${localization.translate('No_Users_Found_Matching')} '${term}'</div>`);
+                                }
+                            } else {
+                                displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Failed_Get_User_List'));
+                            }
+                        })
+                        .fail((xhr, error) => {
+                            displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Failed_Get_User_List'), [error]);
+                        });
+                }, 500);
+            } else {
+                updateList([{ id: username, name: username, selected: true }]);
+            }
+        }
+
+        search(term);
+
+        $(document).off('keyup', '#popup-modal-field-search-term').on('keyup', '#popup-modal-field-search-term', (e) => {
+            search($(e.currentTarget).val());
         });
     });
-}
-
-function updateUsersChecklist(term) {
-    $.ajax({
-        url: '/User/Search',
-        method: 'POST',
-        data: {
-            term: term
-        }
-    })
-        .done(users => {
-            if (users.items) {
-                $('.checklist-container').html(`${users.items.map(item => {
-                    return `<div class="checklist-item" data-user-id="${item.id}">${item.username}</div>`;
-                }).join('\n')}`);
-            } else {
-                displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Failed_Get_User_List'));
-            }
-        })
-        .fail((xhr, error) => {
-            displayMessage(localization.translate('Custom_Resource_Relink'), localization.translate('Failed_Get_User_List'), [error]);
-        });
 }
 
 export default init;

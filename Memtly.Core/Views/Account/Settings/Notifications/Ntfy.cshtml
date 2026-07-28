@@ -69,7 +69,7 @@ else if (Model != null && Model.Any())
         <div class="row mb-4 mb-lg-4 setting-container">
             <div class="col-12">
                 <label class="setting-label">@_localizer["Settings_Ntfy_Priority_Label"].Value</label>
-                <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Notifications.Ntfy.Priority" placeholder="4" value="@Model.GetValue(MemtlyConfiguration.Notifications.Ntfy.Priority.ToUpper(), "4")" type="number" min="1" max="10" step="1" />
+                <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Notifications.Ntfy.Priority" placeholder="3" value="@Model.GetValue(MemtlyConfiguration.Notifications.Ntfy.Priority.ToUpper(), "3")" type="number" min="1" max="5" step="1" />
                 <div class="setting-hint form-text">@_localizer["Settings_Ntfy_Priority_Help"].Value</div>
             </div>
         </div>

@@ -43,7 +43,7 @@ export function displayPopup(options, callbackFn) {
                     input = `<select id="popup-modal-field-${field?.Id}" class="form-control ${field?.Class ?? ""}" aria-describedby="${field?.DescribedBy ?? ""}" placeholder="${field?.Placeholder ?? ""}" aria-label="${field?.Name}" ${field?.Disabled ? "disabled=\"disabled\"" : ""}>${options}</select>`;
                 }
             } else {
-                input = `<input type="${field?.Type?.toLowerCase() ?? "text"}" id="popup-modal-field-${field?.Id}" class="form-control ${field?.Class ?? ""}" aria-describedby="${field?.DescribedBy ?? ""}" placeholder="${field?.Placeholder ?? ""}" value="${field?.Value ?? ""}" aria-label="${field?.Name}" ${field?.Disabled ? "disabled=\"disabled\"" : ""} ${field?.Accept ? "accept=\"" + field?.Accept + "\"" : ""} />`;
+                input = `<input type="${field?.Type?.toLowerCase() ?? "text"}" id="popup-modal-field-${field?.Id}" class="form-control ${field?.Class ?? ""}" aria-describedby="${field?.DescribedBy ?? ""}" placeholder="${field?.Placeholder ?? ""}" value="${field?.Value ?? ""}" aria-label="${field?.Name}" ${field?.Disabled ? "disabled=\"disabled\"" : ""} ${field?.Accept ? "accept=\"" + field?.Accept + "\"" : ""} ${index == 0 ? "autofocus" : ""} />`;
             }
 
             if (input !== undefined && input.length > 0) {
