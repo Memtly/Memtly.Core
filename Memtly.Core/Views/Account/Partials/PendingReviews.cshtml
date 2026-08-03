@@ -1,4 +1,5 @@
 @model ReviewsModel
+@using System.Web
 @using Memtly.Core.Constants
 @using Memtly.Core.Views.Account.Tabs
 @using Memtly.Core.Views.Shared
@@ -56,7 +57,7 @@
                                                 <b>@_localizer["Gallery"].Value:</b> @gallery.Gallery.Name
                                             </div>
                                             <div class="col-12 col-lg-6 text-lg-center text-truncate" alt="@uploaderName" title="@uploaderName">
-                                                <b>@_localizer["Uploader"].Value:</b> @uploaderName
+                                                <b>@_localizer["Uploader"].Value:</b> @HttpUtility.HtmlDecode(uploaderName)
                                             </div>
                                             @if (requireEmailEnabled)
                                             {
