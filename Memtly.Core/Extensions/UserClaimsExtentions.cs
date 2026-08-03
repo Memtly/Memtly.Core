@@ -265,12 +265,12 @@ namespace Memtly.Core.Extensions
 
         public static bool CanUseFeature(this UserModel user, FeaturePermissions feature)
         {
-            return user.Level.GetUserPermissions().CanUseFeature(feature);
+            return user?.Level.GetUserPermissions()?.CanUseFeature(feature) ?? false;
         }
 
         public static bool CanUseFeature(this Permissions permissions, FeaturePermissions feature)
         {
-            return permissions.Features.HasFlag(feature);
+            return permissions?.Features.HasFlag(feature) ?? false;
         }
     }
 }

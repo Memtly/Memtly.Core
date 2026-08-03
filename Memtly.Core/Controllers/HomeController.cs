@@ -16,16 +16,18 @@ namespace Memtly.Core.Controllers
         private readonly IDatabaseHelper _database;
         private readonly IDeviceDetector _deviceDetector;
         private readonly IAuditHelper _audit;
+        private readonly IIdentityHelper _identity;
         private readonly ILogger _logger;
         private readonly IStringLocalizer<Localization.Translations> _localizer;
 
-        public HomeController(ISettingsHelper settings, IDatabaseHelper database, IDeviceDetector deviceDetector, IAuditHelper audit, ILogger<HomeController> logger, IStringLocalizer<Localization.Translations> localizer)
+        public HomeController(ISettingsHelper settings, IDatabaseHelper database, IDeviceDetector deviceDetector, IAuditHelper audit, IIdentityHelper identity, ILogger<HomeController> logger, IStringLocalizer<Localization.Translations> localizer)
             : base()
         {
             _settings = settings;
             _database = database;
             _deviceDetector = deviceDetector;
             _audit = audit;
+            _identity = identity;
             _logger = logger;
             _localizer = localizer;
         }

@@ -40,7 +40,7 @@ function bindGallerySelector() {
 function bindGalleryNameGenerateButton() {
     $(document).off('click', '#btnGenerateGalleryName').on('click', '#btnGenerateGalleryName', function (e) {
         preventDefaults(e);
-        $('input#gallery-id').val(uuidv4());
+        $('input#gallery-id').val(uuidv4().replace(/\-/g, ''));
     });
 }
 

@@ -69,11 +69,38 @@
         }
         else
         {
+            var imageLookup = Model.Images.ToLookup(x => x.State);
+
+            var pendingImages = imageLookup[GalleryItemState.Pending];
+            var approvedImages = imageLookup[GalleryItemState.Approved];
+
+            if (pendingImages != null && pendingImages.Any())
+            {
+                Model.Images = pendingImages?.ToList();
+
+                <div class="row">
+                    <div class="col-12">
+                        <h5>@(_localizer[_identity.IsOwner(User, Model!.Gallery!.Owner) || _identity.IsPrivilegedUser(User) ? "Pending_Uploads" : "Your_Pending_Uploads"].Value)</h5>
+                    </div>
+                </div>
+                <partial name="~/Views/Gallery/Modes/Default.cshtml" model="Model" />
+
+                if (approvedImages != null && approvedImages.Any())
+                {
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>@(_localizer["Approved_Gallery_Uploads"].Value)</h5>
+                        </div>
+                    </div>
+                }
+            }
+                        
+            Model.Images = approvedImages?.ToList();
             <partial name="~/Views/Gallery/Modes/Default.cshtml" model="Model" />
         }
     </div>
 
-    @if (Model.Pagination && Model.ViewMode == ViewMode.Default)
+    @if (Model.Pagination && Model.ViewMode != ViewMode.Slideshow)
     {
         <div class="row">
             <div class="col-12">
@@ -86,7 +113,37 @@ else
 {
     <div class="row mx-1 my-5">
         <div class="col-12 text-center">
-            <h3 class="display-6">@(Model?.UploadActivated != null ? _localizer["Gallery_Empty_Upload"].Value : _localizer["Gallery_Empty"].Value)</h3>
+            @if (Model?.Gallery != null && (Model?.UploadActivated ?? false))
+            {
+                if (Model.Gallery.Type == GalleryType.Drop && Model.Gallery.TotalItems > 0)
+                {
+                    if (_identity.IsValid(User))
+                    {
+                        <h3 class="display-6">@(_localizer["Gallery_Empty_Drop"].Value)</h3>
+                    }
+                    else
+                    {
+                        <h3 class="display-6">@(_localizer["Gallery_Empty_Drop_Unregistered_User"].Value)</h3>
+                    }
+                }
+                else if (Model.Gallery.Type == GalleryType.Drop && Model.Gallery.TotalItems <= 0)
+                {
+                    <h3 class="display-6">@(_localizer["Gallery_Empty_Upload"].Value)</h3>
+                }
+                else
+                {
+                    <h3 class="display-6">@(_localizer["Gallery_Empty_Upload"].Value)</h3>
+                }
+            }
+            else
+            {
+                <h3 class="display-6">@(_localizer["Gallery_Empty"].Value)</h3>
+            }
+
+            @if (Model?.Gallery != null && Model.Gallery.Type == GalleryType.Drop)
+            {
+                <h6 class="display-8 pt-3">@(_identity.IsValid(User) ? _localizer["Gallery_Empty_Drop_Note"].Value : _localizer["Gallery_Empty_Drop_Note_Unregistered_User"].Value)</h6>
+            }
         </div>
     </div>
 }

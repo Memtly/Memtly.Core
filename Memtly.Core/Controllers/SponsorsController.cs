@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Memtly.Core.Constants;
 using Memtly.Core.Helpers;
 using Memtly.Core.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Memtly.Core.Controllers
 {
@@ -12,14 +12,16 @@ namespace Memtly.Core.Controllers
     {
         private readonly ISettingsHelper _settings;
         private readonly IHttpClientFactory _clientFactory;
+        private readonly IIdentityHelper _identity;
         private readonly ILogger _logger;
         private readonly IStringLocalizer<Localization.Translations> _localizer;
 
-        public SponsorsController(ISettingsHelper settings, IHttpClientFactory clientFactory, ILogger<HomeController> logger, IStringLocalizer<Localization.Translations> localizer)
+        public SponsorsController(ISettingsHelper settings, IHttpClientFactory clientFactory, IIdentityHelper identity, ILogger<HomeController> logger, IStringLocalizer<Localization.Translations> localizer)
             : base()
         {
             _settings = settings;
             _clientFactory = clientFactory;
+            _identity = identity;
             _logger = logger;
             _localizer = localizer;
         }

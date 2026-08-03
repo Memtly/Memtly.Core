@@ -7,34 +7,16 @@ namespace Memtly.Core.Models
     public class PhotoGallery
     {
         public PhotoGallery()
-            : this(ViewMode.Default, GalleryGroup.None, GalleryOrder.Descending)
         {
-        }
-
-        public PhotoGallery(ViewMode viewMode, GalleryGroup groupBy, GalleryOrder orderBy)
-            : this(null, string.Empty, viewMode, groupBy, orderBy, new List<PhotoGalleryImage>(), false)
-        {
-        }
-
-        public PhotoGallery(GalleryModel? gallery, string secretKey, ViewMode viewMode, GalleryGroup groupBy, GalleryOrder orderBy, List<PhotoGalleryImage> images, bool uploadActivated)
-        {
-            this.Gallery = gallery;
-            this.SecretKey = secretKey;
-            this.ViewMode = viewMode;
-            this.GroupBy = groupBy;
-            this.OrderBy = orderBy;
-            this.PendingCount = 0;
-            this.Images = images;
-            this.UploadActivated = uploadActivated;
         }
 
         public GalleryModel? Gallery { get; set; }
         public string? SecretKey { get; set; }
-        public ViewMode ViewMode { get; set; }
-        public GalleryGroup GroupBy { get; set; }
-        public GalleryOrder OrderBy { get; set; }
-        public int ApprovedCount { get; set; }
-        public int PendingCount { get; set; }
+        public ViewMode ViewMode { get; set; } = ViewMode.Default;
+        public GalleryGroup GroupBy { get; set; } = GalleryGroup.None;
+        public GalleryOrder OrderBy { get; set; } = GalleryOrder.Descending;
+        public int ApprovedCount { get; set; } = 0;
+        public int PendingCount { get; set; } = 0;
         public int ItemsPerPage { get; set; } = 50;
         public int CurrentPage { get; set; } = 1;
         public bool Pagination { get; set; } = true;
@@ -60,24 +42,15 @@ namespace Memtly.Core.Models
         public int? GalleryId { get; set; }
         public string? GalleryName { get; set; }
         public string? Name { get; set; }
-        public string UploadedBy { get; set; }
+        public int? UploaderId { get; set; }
+        public string UploadedBy { get; set; } = string.Empty;
         public string? UploaderEmailAddress { get; set; }
         public DateTimeOffset? UploadDate { get; set; }
         public DateTimeOffset? CaptureDate { get; set; }
         public string? ImagePath { get; set; }
         public string? ThumbnailPath { get; set; }
         public MediaType MediaType { get; set; }
-    }
-
-    public class PhotoGalleryImageExtended
-    {
-        public PhotoGalleryImageExtended()
-        {
-            this.Likes = new PhotoGalleryImageLikes();
-        }
-
-        [JsonPropertyName("likes")]
-        public PhotoGalleryImageLikes Likes { get; set; }
+        public GalleryItemState State { get; set; }
     }
 
     public class PhotoGalleryImageLikes

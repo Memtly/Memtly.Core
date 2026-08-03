@@ -19,19 +19,22 @@ namespace Memtly.Core.UnitTests.Helpers
             return ctx;
         }
 
-        public static List<GalleryItemModel> MockGalleryItems(int count = 10, int? galleryId = null, GalleryItemState state = GalleryItemState.All)
+        public static List<GalleryItemModel> MockGalleryItems(int count = 10, int? galleryId = null, GalleryItemState state = GalleryItemState.All, string? fileExtension = null)
 		{
 			var result = new List<GalleryItemModel>();
 
 			for (var i = 0; i < count; i++)
 			{
-				result.Add(MockGalleryItem(galleryId, state));
+				var item = MockGalleryItem(galleryId, state, fileExtension);
+				item.UserId = i + 1;
+
+                result.Add(item);
 			}
 
 			return result;
 		}
 
-		public static GalleryItemModel MockGalleryItem(int? galleryId = null, GalleryItemState state = GalleryItemState.All)
+		public static GalleryItemModel MockGalleryItem(int? galleryId = null, GalleryItemState state = GalleryItemState.All, string? fileExtension = null)
 		{
 			var rand = new Random();
 
@@ -40,7 +43,8 @@ namespace Memtly.Core.UnitTests.Helpers
 				Id = rand.Next(),
                 GalleryId = galleryId != null ? (int)galleryId : rand.Next(),
                 GalleryName = Guid.NewGuid().ToString(),
-                Title = $"{Guid.NewGuid()}.{MockFileExtension()}",
+				UserId = rand.Next(),
+                Title = $"{Guid.NewGuid()}.{(!string.IsNullOrWhiteSpace(fileExtension) ? fileExtension : MockFileExtension())}",
 				UploadedBy = rand.Next(2) % 2 == 0 ? Guid.NewGuid().ToString() : null,
 				MediaType = (MediaType)rand.Next(3),
 				State = state == GalleryItemState.All ? (GalleryItemState)rand.Next(2) : state,

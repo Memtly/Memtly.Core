@@ -1,12 +1,10 @@
 @model ReviewsModel
 @using Memtly.Core.Constants
-@using Memtly.Core.Models.Database
-@using Memtly.Core.Views.Account.Partials
 @using Memtly.Core.Views.Account.Tabs
 @using Memtly.Core.Views.Shared
 
 @{
-    var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
+    var userPermissions = _identity.GetUserPermissions(User);
     var identityEnabled = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.Enabled, true);
     var requireEmailEnabled = identityEnabled ? await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.RequireEmail, false) : false;
 

@@ -3,7 +3,7 @@
 @using Memtly.Core.Views.Account.Tabs
 
 @{
-    var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
+    var userPermissions = _identity.GetUserPermissions(User);
 }
 
 @if (Model?.Settings != null)

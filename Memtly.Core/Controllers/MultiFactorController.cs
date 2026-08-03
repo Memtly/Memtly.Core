@@ -1,14 +1,12 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
-using TwoFactorAuthNet;
 using Memtly.Core.Attributes;
 using Memtly.Core.Constants;
 using Memtly.Core.Enums;
-using Memtly.Core.Extensions;
 using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Database;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using TwoFactorAuthNet;
 
 namespace Memtly.Core.Controllers
 {
@@ -19,16 +17,18 @@ namespace Memtly.Core.Controllers
         private readonly ISettingsHelper _settings;
         private readonly IDatabaseHelper _database;
         private readonly IAuditHelper _audit;
+        private readonly IIdentityHelper _identity;
         private readonly ILogger _logger;
         private readonly IStringLocalizer<Localization.Translations> _localizer;
 
-        public MultiFactorController(IWebHostEnvironment hostingEnvironment, ISettingsHelper settings, IDatabaseHelper database, IAuditHelper audit, ILoggerFactory loggerFactory, IStringLocalizer<Localization.Translations> localizer)
+        public MultiFactorController(IWebHostEnvironment hostingEnvironment, ISettingsHelper settings, IDatabaseHelper database, IAuditHelper audit, IIdentityHelper identity, ILoggerFactory loggerFactory, IStringLocalizer<Localization.Translations> localizer)
             : base()
         {
             _hostingEnvironment = hostingEnvironment;
             _settings = settings;
             _database = database;
             _audit = audit;
+            _identity = identity;
             _logger = loggerFactory.CreateLogger<MultiFactorController>();
             _localizer = localizer;
         }
@@ -52,7 +52,7 @@ namespace Memtly.Core.Controllers
         {
             if (!string.IsNullOrWhiteSpace(secret) && !string.IsNullOrWhiteSpace(code))
             {
-                if (User?.Identity != null && User.Identity.IsAuthenticated)
+                if (_identity.IsValid(User))
                 {
                     try
                     {
@@ -66,13 +66,13 @@ namespace Memtly.Core.Controllers
                         var valid = tfa.VerifyCode(secret, code);
                         if (valid)
                         {
-                            var userId = User.Identity.GetUserId();
+                            var userId = _identity.GetUserId(User);
                             if (userId > 0)
                             {
                                 var set = await _database.SetMultiFactorToken(userId, secret);
                                 if (set)
                                 {
-                                    await _audit.LogAction(User?.Identity?.GetUserId(), _localizer["Audit_MultiFactorAdded"].Value, AuditSeverity.Verbose);
+                                    await _audit.LogAction(userId, _localizer["Audit_MultiFactorAdded"].Value, AuditSeverity.Verbose);
 
                                     HttpContext.Session.SetString(SessionKey.MultiFactor.TokenSet, "true");
                                     return Json(new { success = true });
@@ -94,13 +94,15 @@ namespace Memtly.Core.Controllers
         [RequiresRole(UserPermission = UserPermissions.Reset_MFA)]
         public async Task<IActionResult> Reset()
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
-                    await _audit.LogAction(User?.Identity?.GetUserId(), _localizer["Audit_MultiFactorReset"].Value, AuditSeverity.Information);
+                    var userId = _identity.GetUserId(User);
 
-                    return await ResetForUser(User.Identity.GetUserId());
+                    await _audit.LogAction(userId, _localizer["Audit_MultiFactorReset"].Value, AuditSeverity.Information);
+
+                    return await ResetForUser(userId);
                 }
                 catch (Exception ex)
                 {
@@ -115,25 +117,25 @@ namespace Memtly.Core.Controllers
         [RequiresRole(UserPermission = UserPermissions.Reset_MFA)]
         public async Task<IActionResult> ResetForUser(int userId)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
                     if (userId > 0)
                     {
                         var user = await _database.GetUser(userId);
-                        if (user != null && User.Identity.CanEdit(UserPermissions.Reset_MFA, user.Id))
+                        if (user != null && _identity.CanEdit(User, UserPermissions.Reset_MFA, user.Id))
                         { 
                             var cleared = await _database.SetMultiFactorToken(userId, string.Empty);
                             if (cleared)
                             {
-                                var currentUserId = User.Identity.GetUserId();
+                                var currentUserId = _identity.GetUserId(User);
                                 if (userId == currentUserId)
                                 { 
                                     HttpContext.Session.SetString(SessionKey.MultiFactor.TokenSet, "false");
                                 }
 
-                                await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_MultiFactorResetUser"].Value} '{user?.Username}'", AuditSeverity.Information);
+                                await _audit.LogAction(currentUserId, $"{_localizer["Audit_MultiFactorResetUser"].Value} '{user?.Username}'", AuditSeverity.Information);
 
                                 return Json(new { success = true });
                             }

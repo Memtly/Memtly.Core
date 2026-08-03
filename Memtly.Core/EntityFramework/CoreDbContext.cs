@@ -130,6 +130,11 @@ namespace Memtly.Core.EntityFramework
                  .WithMany(g => g.Items)
                  .HasForeignKey(x => x.GalleryId)
                  .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(x => x.User)
+                 .WithMany()
+                 .HasForeignKey(x => x.UserId)
+                 .OnDelete(DeleteBehavior.Cascade);
             });
 
             mb.Entity<GalleryShare>(e =>

@@ -18,19 +18,21 @@ namespace Memtly.Core.Configurations
         {
             var bsp = services.BuildServiceProvider();
             var config = bsp.GetRequiredService<IConfigHelper>();
+            var fileHelper = bsp.GetRequiredService<IFileHelper>();
             
             var provider = config.GetOrDefault(MemtlyConfiguration.Database.Type, "sqlite");
             var connString = config.GetOrDefault(MemtlyConfiguration.Database.ConnectionString, "Data Source=./config/memtly.db");
-            
+
+            var databaseFilePath = string.Empty;
             if (provider.Equals("sqlite", StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {
-                    var fileHelper = bsp.GetRequiredService<IFileHelper>();
                     var databasePathMatch = Regex.Match(connString, "Data Source=(.+?)(;|$)", RegexOptions.Multiline);
                     if (databasePathMatch?.Groups != null && databasePathMatch.Groups.Count == 3)
                     {
-                        fileHelper.CreateDirectoryIfNotExists(Path.GetDirectoryName(databasePathMatch.Groups[1].Value)!);
+                        databaseFilePath = databasePathMatch.Groups[1].Value;
+                        fileHelper.CreateDirectoryIfNotExists(Path.GetDirectoryName(databaseFilePath)!);
                     }
                 }
                 catch { }
@@ -127,6 +129,17 @@ namespace Memtly.Core.Configurations
                 }
 
                 logger.LogDebug(builder.ToString());
+
+                var takeMigrationBackup = config.GetOrDefault(MemtlyConfiguration.Database.TakeMigrationBackup, true);
+                if (takeMigrationBackup && provider.Equals("sqlite", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(databaseFilePath))
+                {
+                    logger.LogDebug($"Creating database file backup");
+                    var ext = $".{Path.GetExtension(databaseFilePath).Trim('.')}";
+                    var backupFilePath = databaseFilePath.Replace(ext, ".bak");
+                    fileHelper.DeleteFileIfExists(backupFilePath);
+                    fileHelper.CopyFileIfExists(databaseFilePath, backupFilePath);
+                    logger.LogDebug($"Database backup file created");
+                }
 
                 logger.LogDebug($"Performing database migration");
                 ctx.Database.Migrate();

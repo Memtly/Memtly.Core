@@ -2,10 +2,9 @@
 @using Memtly.Core.Extensions
 @using Memtly.Core.Views.Account.Settings.Basic
 @using Memtly.Core.Views.Account.Settings.Gallery
-@using Memtly.Core.Views.Account.Tabs
 
 @{
-    var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
+    var userPermissions = _identity.GetUserPermissions(User);
 }
 
 @if (userPermissions.Settings.HasFlag(SettingsPermissions.View) && Model != null)

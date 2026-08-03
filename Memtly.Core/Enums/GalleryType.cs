@@ -4,6 +4,7 @@
     {
         Basic = 1,
         Collection = 2,
-        All = 3
+        Drop = 3,
+        All = 4
     }
 }

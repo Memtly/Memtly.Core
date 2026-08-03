@@ -291,6 +291,7 @@ namespace Memtly.Core.Helpers.Database
                 }
 
                 gallery.Name = model.Name.GetDbSafeValue();
+                gallery.Type = model.Type;
                 gallery.SecretKey = model.SecretKey?.GetDbSafeValue();
 
                 await _db.SaveChangesAsync();
@@ -427,42 +428,44 @@ namespace Memtly.Core.Helpers.Database
             var query = _db.GalleryItems
                 .Include(gi => gi.Gallery)
                 .Where(gi =>
-                    (userId == null || gi.Gallery!.UserId == userId)
+                    (userId == null || gi.UserId == userId || gi.Gallery!.UserId == userId)
                     && (galleryIds == null || !galleryIds.Any() || galleryIds.Contains(gi.GalleryId ?? 0))
                     && (state == GalleryItemState.All || gi.State == state)
                     && (type == MediaType.All || gi.Type == type)
                     && (orientation == ImageOrientation.All || gi.Orientation == orientation)
-                );
+                )
+                .OrderBy(gi => gi.State == GalleryItemState.Pending ? 0 : 1);
 
             switch (group)
             {
                 case GalleryGroup.Gallery:
-                    query = order == GalleryOrder.Ascending ? query.OrderBy(gi => gi.Gallery.Name) : query.OrderByDescending(gi => gi.Gallery.Name);
+                    query = order == GalleryOrder.Ascending ? query.ThenBy(gi => gi.Gallery.Name) : query.ThenByDescending(gi => gi.Gallery.Name);
                     break;
                 case GalleryGroup.Uploader:
-                    query = order == GalleryOrder.Ascending ? query.OrderBy(gi => gi.UploadedBy) : query.OrderByDescending(gi => gi.UploadedBy);
+                    query = order == GalleryOrder.Ascending ? query.ThenBy(gi => gi.UploadedBy) : query.ThenByDescending(gi => gi.UploadedBy);
                     break;
                 case GalleryGroup.MediaType:
-                    query = order == GalleryOrder.Ascending ? query.OrderBy(gi => gi.Type) : query.OrderByDescending(gi => gi.Type);
+                    query = order == GalleryOrder.Ascending ? query.ThenBy(gi => gi.Type) : query.ThenByDescending(gi => gi.Type);
                     break;
                 case GalleryGroup.None:
                     switch (order)
                     {
                         case GalleryOrder.Random:
-                            query = query.OrderBy(gi => EF.Functions.Random());
+                            query = query.ThenBy(gi => EF.Functions.Random());
                             break;
                         default:
-                            query = order == GalleryOrder.Ascending ? query.OrderBy(gi => gi.CreatedAt) : query.OrderByDescending(gi => gi.CreatedAt);
+                            query = order == GalleryOrder.Ascending ? query.ThenBy(gi => gi.CreatedAt) : query.ThenByDescending(gi => gi.CreatedAt);
                             break;
                     }
                     break;
                 default:
-                    query = order == GalleryOrder.Ascending ? query.OrderBy(gi => gi.CreatedAt) : query.OrderByDescending(gi => gi.CreatedAt);
+                    query = order == GalleryOrder.Ascending ? query.ThenBy(gi => gi.CreatedAt) : query.ThenByDescending(gi => gi.CreatedAt);
                     break;
             }
 
             return await query
                 .Include(g => g.Gallery)
+                .Include(g => g.User)
                 .Skip((page - 1) * limit)
                 .Take(limit)
                 .Select(gi => new GalleryItemModel()
@@ -470,6 +473,7 @@ namespace Memtly.Core.Helpers.Database
                     Id = gi.Id,
                     GalleryId = gi.GalleryId ?? 0,
                     GalleryName = gi.Gallery!.Name,
+                    UserId = gi.UserId,
                     Title = gi.Title,
                     State = gi.State,
                     UploadedBy = gi.UploadedBy,
@@ -493,6 +497,7 @@ namespace Memtly.Core.Helpers.Database
                     Id = gi.Id,
                     GalleryId = gi.GalleryId ?? 0,
                     GalleryName = gi.Gallery!.Name,
+                    UserId = gi.UserId,
                     Title = gi.Title,
                     State = gi.State,
                     UploadedBy = gi.UploadedBy,
@@ -518,6 +523,7 @@ namespace Memtly.Core.Helpers.Database
                     Id = gi.Id,
                     GalleryId = gi.GalleryId ?? 0,
                     GalleryName = gi.Gallery!.Name,
+                    UserId = gi.UserId,
                     Title = gi.Title,
                     State = gi.State,
                     UploadedBy = gi.UploadedBy,
@@ -537,6 +543,7 @@ namespace Memtly.Core.Helpers.Database
             var galleryItemEntry = await _db.GalleryItems.AddAsync(new GalleryItem()
             {
                 GalleryId = model.GalleryId,
+                UserId = model.UserId,
                 Title = model.Title.GetDbSafeValue(),
                 State = model.State,
                 UploadedBy = model.UploadedBy?.GetDbSafeValue() ?? string.Empty,

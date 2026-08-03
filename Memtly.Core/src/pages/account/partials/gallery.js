@@ -346,7 +346,7 @@ function bindAddGalleryButton() {
             method: 'GET'
         })
             .done(secretKey => {
-                displayAddGalleryPopup('', secretKey);
+                displayAddGalleryPopup('', 1, secretKey);
             });
     });
 }
@@ -363,9 +363,10 @@ function bindEditGalleryButton() {
         const id = row.data('gallery-id');
         const identifier = row.data('gallery-identifier');
         const name = row.data('gallery-name');
+        const type = row.data('gallery-type');
         const secretKey = row.data('gallery-key');
 
-        displayEditGalleryPopup(id, identifier, name, secretKey);
+        displayEditGalleryPopup(id, identifier, name, type, secretKey);
     });
 }
 
@@ -770,7 +771,7 @@ export function updateGalleryList() {
     });
 }
 
-function displayAddGalleryPopup(name, secretKey) {
+function displayAddGalleryPopup(name, type, secretKey) {
     displayPopup({
         Title: localization.translate('Gallery_Create'),
         Fields: [{
@@ -778,6 +779,20 @@ function displayAddGalleryPopup(name, secretKey) {
             Name: localization.translate('Name'),
             Hint: localization.translate('Gallery_Name_Hint'),
             Value: name
+        }, {
+            Id: 'gallery-type',
+            Name: localization.translate('Type'),
+            Hint: localization.translate('Gallery_Type_Hint'),
+            Type: 'select',
+            SelectOptions: [{
+                key: 1,
+                value: localization.translate('Basic'),
+                selected: parseInt(type) === 1
+            }, {
+                key: 3,
+                value: localization.translate('Drop'),
+                selected: parseInt(type) === 3
+            }]
         }, {
             Id: 'gallery-key',
             Name: localization.translate('Secret_Key'),
@@ -791,11 +806,12 @@ function displayAddGalleryPopup(name, secretKey) {
                 displayLoader(localization.translate('Loading'));
 
                 name = $('#popup-modal-field-gallery-name').val();
+                type = $('#popup-modal-field-gallery-type').val();
                 secretKey = $('#popup-modal-field-gallery-key').val();
 
                 if (name == undefined || name.length == 0) {
                     displayMessage(localization.translate('Gallery_Create'), localization.translate('Missing_Name'), null, () => {
-                        displayAddGalleryPopup(name, secretKey);
+                        displayAddGalleryPopup(name, type, secretKey);
                     });
                     return;
                 }
@@ -803,7 +819,14 @@ function displayAddGalleryPopup(name, secretKey) {
                 const regex = /^[a-zA-Z0-9\-\s-_~]+$/;
                 if (!regex.test(name)) {
                     displayMessage(localization.translate('Gallery_Create'), localization.translate('Invalid_Name'), null, () => {
-                        displayAddGalleryPopup(name, secretKey);
+                        displayAddGalleryPopup(name, type, secretKey);
+                    });
+                    return;
+                }
+
+                if (type == undefined || isNaN(type) || parseInt(type) < 0) {
+                    displayMessage(localization.translate('Gallery_Create'), localization.translate('Invalid_Gallery_Type'), null, () => {
+                        displayAddGalleryPopup(name, type, secretKey);
                     });
                     return;
                 }
@@ -811,7 +834,7 @@ function displayAddGalleryPopup(name, secretKey) {
                 $.ajax({
                     url: '/Account/AddGallery',
                     method: 'POST',
-                    data: { Id: 0, Name: name, SecretKey: secretKey }
+                    data: { Id: 0, Name: name, Type: parseInt(type), SecretKey: secretKey }
                 })
                     .done(data => {
                         if (data.success === true) {
@@ -819,17 +842,17 @@ function displayAddGalleryPopup(name, secretKey) {
                             displayMessage(localization.translate('Gallery_Create'), localization.translate('Gallery_Create_Success'));
                         } else if (data.message) {
                             displayMessage(localization.translate('Gallery_Create'), localization.translate('Gallery_Create_Failed'), [data.message], () => {
-                                displayAddGalleryPopup(name, secretKey);
+                                displayAddGalleryPopup(name, type, secretKey);
                             });
                         } else {
                             displayMessage(localization.translate('Gallery_Create'), localization.translate('Gallery_Create_Failed'), null, () => {
-                                displayAddGalleryPopup(name, secretKey);
+                                displayAddGalleryPopup(name, type, secretKey);
                             });
                         }
                     })
                     .fail((xhr, error) => {
                         displayMessage(localization.translate('Gallery_Create'), localization.translate('Gallery_Create_Failed'), [error], () => {
-                            displayAddGalleryPopup(name, secretKey);
+                            displayAddGalleryPopup(name, type, secretKey);
                         });
                     });
             }
@@ -839,7 +862,7 @@ function displayAddGalleryPopup(name, secretKey) {
     });
 }
 
-function displayEditGalleryPopup(id, identifier, name, secretKey) {
+function displayEditGalleryPopup(id, identifier, name, type, secretKey) {
     displayPopup({
         Title: localization.translate('Gallery_Edit'),
         Fields: [{
@@ -857,6 +880,20 @@ function displayEditGalleryPopup(id, identifier, name, secretKey) {
             Value: name,
             Hint: localization.translate('Gallery_Name_Hint')
         }, {
+            Id: 'gallery-type',
+            Name: localization.translate('Type'),
+            Hint: localization.translate('Gallery_Type_Hint'),
+            Type: 'select',
+            SelectOptions: [{
+                key: 1,
+                value: localization.translate('Basic'),
+                selected: parseInt(type) === 1
+            }, {
+                key: 3,
+                value: localization.translate('Drop'),
+                selected: parseInt(type) === 3
+            }]
+        }, {
             Id: 'gallery-key',
             Name: localization.translate('Secret_Key'),
             Value: secretKey,
@@ -870,18 +907,26 @@ function displayEditGalleryPopup(id, identifier, name, secretKey) {
 
                 id = $('#popup-modal-field-gallery-id').val();
                 name = $('#popup-modal-field-gallery-name').val();
+                type = $('#popup-modal-field-gallery-type').val();
                 secretKey = $('#popup-modal-field-gallery-key').val();
 
                 if (id == undefined || id.length == 0) {
                     displayMessage(localization.translate('Gallery_Edit'), localization.translate('Missing_Id'), null, () => {
-                        displayEditGalleryPopup(id, identifier, name, secretKey);
+                        displayEditGalleryPopup(id, identifier, name, type, secretKey);
                     });
                     return;
                 }
 
                 if (name == undefined || name.length == 0) {
                     displayMessage(localization.translate('Gallery_Edit'), localization.translate('Missing_Name'), null, () => {
-                        displayEditGalleryPopup(id, identifier, name, secretKey);
+                        displayEditGalleryPopup(id, identifier, name, type, secretKey);
+                    });
+                    return;
+                }
+
+                if (type == undefined || isNaN(type) || parseInt(type) < 0) {
+                    displayMessage(localization.translate('Gallery_Create'), localization.translate('Invalid_Gallery_Type'), null, () => {
+                        displayAddGalleryPopup(name, type, secretKey);
                     });
                     return;
                 }
@@ -889,7 +934,7 @@ function displayEditGalleryPopup(id, identifier, name, secretKey) {
                 $.ajax({
                     url: '/Account/EditGallery',
                     method: 'PUT',
-                    data: { Id: id, Name: name, SecretKey: secretKey }
+                    data: { Id: id, Name: name, Type: parseInt(type), SecretKey: secretKey }
                 })
                     .done(data => {
                         if (data.success === true) {
@@ -897,17 +942,17 @@ function displayEditGalleryPopup(id, identifier, name, secretKey) {
                             displayMessage(localization.translate('Gallery_Edit'), localization.translate('Gallery_Edit_Success'));
                         } else if (data.message) {
                             displayMessage(localization.translate('Gallery_Edit'), localization.translate('Gallery_Edit_Failed'), [data.message], () => {
-                                displayEditGalleryPopup(id, identifier, name, secretKey);
+                                displayEditGalleryPopup(id, identifier, name, type, secretKey);
                             });
                         } else {
                             displayMessage(localization.translate('Gallery_Edit'), localization.translate('Gallery_Edit_Failed'), null, () => {
-                                displayEditGalleryPopup(id, identifier, name, secretKey);
+                                displayEditGalleryPopup(id, identifier, name, type, secretKey);
                             });
                         }
                     })
                     .fail((xhr, error) => {
                         displayMessage(localization.translate('Gallery_Edit'), localization.translate('Gallery_Edit_Failed'), [error], () => {
-                            displayEditGalleryPopup(id, identifier, name, secretKey);
+                            displayEditGalleryPopup(id, identifier, name, type, secretKey);
                         });
                     });
             }

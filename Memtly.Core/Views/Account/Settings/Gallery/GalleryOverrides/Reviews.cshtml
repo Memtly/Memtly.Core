@@ -6,7 +6,7 @@
     <div class="setting-section">
         <h5 class="mb-3">@_localizer["Reviews"].Value</h5>
 
-        @if (User.Identity!.CanUseFeature(FeaturePermissions.RequireGalleryItemReview))
+        @if (_identity.CanUseFeature(User, FeaturePermissions.RequireGalleryItemReview))
         {
             <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
                 <div class="col-12">
@@ -49,7 +49,7 @@
             </div>
         </div>
 
-        @if (Model.Type == GalleryType.Basic && User.Identity!.CanUseFeature(FeaturePermissions.RetainRejectedItems))
+        @if (Model.Type != GalleryType.Collection && _identity.CanUseFeature(User, FeaturePermissions.RetainRejectedItems))
         {
             <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
                 <div class="col-12">

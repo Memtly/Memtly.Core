@@ -1,4 +1,4 @@
-using Memtly.Core.Extensions;
+using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Database;
 using Memtly.Core.Models.Database;
 using Microsoft.AspNetCore.Authorization;
@@ -11,13 +11,15 @@ namespace Memtly.Core.Controllers
     public class UserController : BaseController
     {
         private readonly IDatabaseHelper _database;
+        private readonly IIdentityHelper _identity;
         private readonly ILogger<ThemesController> _logger;
         private readonly IStringLocalizer<Localization.Translations> _localizer;
 
-        public UserController(IDatabaseHelper database, ILogger<ThemesController> logger, IStringLocalizer<Localization.Translations> localizer)
+        public UserController(IDatabaseHelper database, IIdentityHelper identity, ILogger<ThemesController> logger, IStringLocalizer<Localization.Translations> localizer)
             : base()
         {
             _database = database;
+            _identity = identity;
             _logger = logger;
             _localizer = localizer;
         }

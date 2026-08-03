@@ -1,9 +1,8 @@
 ﻿@model ReviewsModel
 @using Memtly.Core.Views.Account.Tabs
-@using Memtly.Core.Views.Shared
 
 @{
-    var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
+    var userPermissions = _identity.GetUserPermissions(User);
 
     var currentPage = 1;
     try

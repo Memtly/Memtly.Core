@@ -1,9 +1,8 @@
 ﻿@model IEnumerable<AuditLogModel>?
-@using Memtly.Core.Views.Account
 @using Memtly.Core.Models.Database
 
 @{
-    var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
+    var userPermissions = _identity.GetUserPermissions(User);
 }
 
 @if (userPermissions.Audit.HasFlag(AuditPermissions.View) && Model != null && Model.Any())

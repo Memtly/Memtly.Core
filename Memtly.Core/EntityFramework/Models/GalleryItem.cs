@@ -7,6 +7,8 @@ namespace Memtly.Core.EntityFramework.Models
         public int Id { get; set; }
         public int? GalleryId { get; set; }
         public Gallery? Gallery { get; set; }
+        public int? UserId { get; set; }
+        public User? User { get; set; }
         public string Title { get; set; } = string.Empty;
         public string UploadedBy { get; set; } = string.Empty;
         public string UploaderEmailAddress { get; set; } = string.Empty;

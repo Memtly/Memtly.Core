@@ -15,14 +15,16 @@ namespace Memtly.Core.Controllers
     {
         private readonly ISettingsHelper _settings;
         private readonly ILanguageHelper _languageHelper;
+        private readonly IIdentityHelper _identity;
         private readonly ILogger<LanguageController> _logger; 
         private readonly IStringLocalizer<Localization.Translations> _localizer;
 
-        public LanguageController(ISettingsHelper settings, ILanguageHelper languageHelper, ILogger<LanguageController> logger, IStringLocalizer<Localization.Translations> localizer)
+        public LanguageController(ISettingsHelper settings, ILanguageHelper languageHelper, IIdentityHelper identity, ILogger<LanguageController> logger, IStringLocalizer<Localization.Translations> localizer)
             : base()
         {
             _settings = settings;
             _languageHelper = languageHelper;
+            _identity = identity;
             _logger = logger; 
             _localizer = localizer;
         }

@@ -7,7 +7,7 @@
     <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/Downloads.cshtml" model="Model.Settings" />
     <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/Reviews.cshtml" model="Model" />
     <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/ViewOptions.cshtml" model="Model.Settings" />
-    @if (Model.Type != GalleryType.Collection && (User?.Identity?.IsPrivilegedUser() ?? false))
+    @if (Model.Type != GalleryType.Collection && _identity.IsPrivilegedUser(User))
     {
         <partial name="~/Views/Account/Settings/Gallery/GalleryOverrides/SizeLimits.cshtml" model="Model.Settings" />
     }
