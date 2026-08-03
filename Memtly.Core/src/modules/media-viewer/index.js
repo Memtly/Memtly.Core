@@ -326,11 +326,11 @@ class MediaViewer {
                 let width = $('.media-viewer-content img').innerWidth();
                 let height = $('.media-viewer-content img').innerHeight();
                 $('.media-viewer-content').html(`
-                <video width="${width}" height="${height}" controls autoplay>
-                    <source src="${source}" type="video/mp4">
-                    ${localization.translate('Browser_Does_Not_Support')}
-                </video>
-            `);
+                    <video width="${width}" height="${height}" controls autoplay>
+                        <source src="${source}" type="video/mp4">
+                        ${localization.translate('Browser_Does_Not_Support')}
+                    </video>
+                `);
             }
 
             popup.fadeTo(500, 1.0);

@@ -13,13 +13,15 @@ namespace Memtly.Core.Controllers
     public class ThemesController : BaseController
     {
         private readonly ISettingsHelper _settings;
+        private readonly IIdentityHelper _identity;
         private readonly ILogger<ThemesController> _logger;
         private readonly IStringLocalizer<Localization.Translations> _localizer;
 
-        public ThemesController(ISettingsHelper settings, ILanguageHelper languageHelper, ILogger<ThemesController> logger, IStringLocalizer<Localization.Translations> localizer)
+        public ThemesController(ISettingsHelper settings, ILanguageHelper languageHelper, IIdentityHelper identity, ILogger<ThemesController> logger, IStringLocalizer<Localization.Translations> localizer)
             : base()
         {
             _settings = settings;
+            _identity = identity;
             _logger = logger;
             _localizer = localizer;
         }

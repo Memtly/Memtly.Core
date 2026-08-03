@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using Memtly.Core.Models;
+using Memtly.Core.Enums;
 
 namespace Memtly.Core.Views.MediaViewer
 {
@@ -17,6 +18,7 @@ namespace Memtly.Core.Views.MediaViewer
         public string? Title { get; set; }
         public string? Description { get; set; }
         public string Type { get; set; } = "Image";
+        public GalleryItemState State { get; set; } = GalleryItemState.Unknown;
         public bool DownloadEnabled { get; set; } = false;
         public PhotoGalleryImageLikes? Likes { get; set; } = null;
     }

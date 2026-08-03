@@ -5,15 +5,16 @@ namespace Memtly.Core.Models.Database
     public class GalleryItemModel
     {
         public GalleryItemModel()
-            : this(0, 0, string.Empty, string.Empty, null, null, new DateTime(0, DateTimeKind.Utc), null, null, MediaType.Unknown, ImageOrientation.Unknown, GalleryItemState.Pending, 0)
+            : this(0, 0, string.Empty, null, string.Empty, null, null, new DateTime(0, DateTimeKind.Utc), null, null, MediaType.Unknown, ImageOrientation.Unknown, GalleryItemState.Pending, 0)
         {
         }
 
-        public GalleryItemModel(int id, int galleryId, string galleryName, string title, string? uploadedBy, string? uploaderEmailAddress, DateTimeOffset uploadedDate, DateTimeOffset? dateTaken, string? checksum, MediaType mediaType, ImageOrientation orientation, GalleryItemState state, long file_size)
+        public GalleryItemModel(int id, int galleryId, string galleryName, int? userId, string title, string? uploadedBy, string? uploaderEmailAddress, DateTimeOffset uploadedDate, DateTimeOffset? dateTaken, string? checksum, MediaType mediaType, ImageOrientation orientation, GalleryItemState state, long file_size)
         {
             Id = id;
             GalleryId = galleryId;
             GalleryName = galleryName;
+            UserId = userId;
             Title = title;
             UploadedBy = uploadedBy;
             UploaderEmailAddress = uploaderEmailAddress;
@@ -29,6 +30,7 @@ namespace Memtly.Core.Models.Database
         public int Id { get; set; }
         public int GalleryId { get; set; }
         public string GalleryName { get; set; }
+        public int? UserId { get; set; }
         public string Title { get; set; }
         public string? UploadedBy { get; set; }
         public string? UploaderEmailAddress { get; set; }

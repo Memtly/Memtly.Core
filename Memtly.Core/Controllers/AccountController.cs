@@ -42,6 +42,7 @@ namespace Memtly.Core.Controllers
         private readonly ISmtpClientWrapper _smtpClientWrapper;
         private readonly Helpers.IUrlHelper _url;
         private readonly IAuditHelper _audit;
+        private readonly IIdentityHelper _identity;
         private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger _logger;
         private readonly IStringLocalizer<Localization.Translations> _localizer;
@@ -53,7 +54,7 @@ namespace Memtly.Core.Controllers
         private readonly string ThumbnailsDirectory;
         private readonly string CustomResourcesDirectory;
 
-        public AccountController(ISettingsHelper settings, IDatabaseHelper database, IDeviceDetector deviceDetector, IFileHelper fileHelper, IEncryptionHelper encryption, INotificationHelper notificationHelper, ISmtpClientWrapper smtpClientWrapper, Helpers.IUrlHelper url, IAuditHelper audit, ILoggerFactory loggerFactory, IStringLocalizer<Localization.Translations> localizer)
+        public AccountController(ISettingsHelper settings, IDatabaseHelper database, IDeviceDetector deviceDetector, IFileHelper fileHelper, IEncryptionHelper encryption, INotificationHelper notificationHelper, ISmtpClientWrapper smtpClientWrapper, Helpers.IUrlHelper url, IAuditHelper audit, IIdentityHelper identity, ILoggerFactory loggerFactory, IStringLocalizer<Localization.Translations> localizer)
             : base()
         {
             _settings = settings;
@@ -65,6 +66,7 @@ namespace Memtly.Core.Controllers
             _smtpClientWrapper = smtpClientWrapper;
             _url = url;
             _audit = audit;
+            _identity = identity;
             _loggerFactory = loggerFactory;
             _logger = loggerFactory.CreateLogger<AccountController>();
             _localizer = localizer;
@@ -82,7 +84,7 @@ namespace Memtly.Core.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Login()
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 return RedirectToAction("Index", "Account");
             }
@@ -164,7 +166,7 @@ namespace Memtly.Core.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Register()
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 return RedirectToAction("Index", "Account");
             }
@@ -561,7 +563,7 @@ namespace Memtly.Core.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Logout()
         {
-            await _audit.LogAction(User?.Identity?.GetUserId(), _localizer["Audit_LoggedOut"].Value, AuditSeverity.Verbose);
+            await _audit.LogAction(_identity.GetUserId(User), _localizer["Audit_LoggedOut"].Value, AuditSeverity.Verbose);
             this.HttpContext.Session.Clear();
             await this.HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Account");
@@ -570,14 +572,14 @@ namespace Memtly.Core.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(AccountTabs? tab = null, string term = "", int page = 1, int limit = 50)
         {
-            if (User?.Identity == null || !User.Identity.IsAuthenticated)
+            if (!_identity.IsValid(User))
             { 
                 return Redirect("/");
             }
 
             var model = new IndexModel()
             {
-                ActiveTab = tab ?? (User?.Identity?.GetDefaultTab() ?? AccountTabs.Reviews)
+                ActiveTab = tab ?? _identity.GetDefaultTab(User)
             };
 
             var deviceType = HttpContext.Session.GetString(SessionKey.Device.Type);
@@ -589,12 +591,12 @@ namespace Memtly.Core.Controllers
 
             try
             {
-                var user = await _database.GetUser(User.Identity.GetUserId());
+                var user = await _database.GetUser(_identity.GetUserId(User));
                 if (user != null)
                 {
                     model.Account = user;
 
-                    if (User?.Identity?.IsPrivilegedUser() ?? false)
+                    if (_identity.IsPrivilegedUser(User))
                     {
                         if (model.ActiveTab == AccountTabs.Reviews)
                         {
@@ -683,7 +685,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(GalleryPermission = GalleryPermissions.View)]
         public async Task<IActionResult> GalleriesList(GalleryType type = GalleryType.All, string term = "", int page = 1, int limit = 50)
         {
-            if (User?.Identity == null || !User.Identity.IsAuthenticated)
+            if (!_identity.IsValid(User))
             {
                 return Redirect("/");
             }
@@ -692,10 +694,10 @@ namespace Memtly.Core.Controllers
 
             try
             {
-                var user = await _database.GetUser(User.Identity.GetUserId());
+                var user = await _database.GetUser(_identity.GetUserId(User));
                 if (user != null)
                 {
-                    if (User?.Identity?.IsPrivilegedUser() ?? false)
+                    if (_identity.IsPrivilegedUser(User))
                     {
                         result.Galleries = (await _database.GetGalleries(null, term, page, limit, type))?.Where(x => !x.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))?.ToList() ?? new List<GalleryModel>();
                         if (result.Galleries != null && (type == GalleryType.All || type == GalleryType.Collection) && (string.IsNullOrEmpty(term) || SystemGalleries.AllGallery.Contains(term, StringComparison.OrdinalIgnoreCase)))
@@ -727,7 +729,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(GalleryPermission = GalleryPermissions.View)]
         public async Task<IActionResult> SharedGalleriesList(GalleryType type = GalleryType.All, string term = "", int page = 1, int limit = 50)
         {
-            if (User?.Identity == null || !User.Identity.IsAuthenticated)
+            if (!_identity.IsValid(User))
             {
                 return Redirect("/");
             }
@@ -736,7 +738,7 @@ namespace Memtly.Core.Controllers
 
             try
             {
-                var user = await _database.GetUser(User.Identity.GetUserId());
+                var user = await _database.GetUser(_identity.GetUserId(User));
                 if (user != null)
                 {
                     result.SharedGalleries = (await _database.GetGalleryShares(user.Id, term, page, limit, type))?.Where(x => !x.GalleryIdentifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))?.ToList() ?? new List<GalleryShareModel>();
@@ -754,7 +756,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(GalleryPermission = GalleryPermissions.View)]
         public async Task<IActionResult> RecentGalleriesList(GalleryType type = GalleryType.All, string term = "", int page = 1, int limit = 50)
         {
-            if (User?.Identity == null || !User.Identity.IsAuthenticated)
+            if (!_identity.IsValid(User))
             {
                 return Redirect("/");
             }
@@ -763,7 +765,7 @@ namespace Memtly.Core.Controllers
 
             try
             {
-                var user = await _database.GetUser(User.Identity.GetUserId());
+                var user = await _database.GetUser(_identity.GetUserId(User));
                 if (user != null)
                 {
                     result.RecentGalleries = (await _database.GetGalleryHistory(user.Id, term, page, limit, type))?.Where(x => !x.GalleryIdentifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))?.ToList() ?? new List<GalleryHistoryModel>();
@@ -781,7 +783,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(ReviewPermission = ReviewPermissions.View)]
         public async Task<IActionResult> PendingReviews(int page = 1, int limit = 50)
         {
-            if (User?.Identity == null || !User.Identity.IsAuthenticated)
+            if (!_identity.IsValid(User))
             {
                 return Redirect("/");
             }
@@ -790,10 +792,10 @@ namespace Memtly.Core.Controllers
 
             try
             {
-                var user = await _database.GetUser(User.Identity.GetUserId());
+                var user = await _database.GetUser(_identity.GetUserId(User));
                 if (user != null)
                 {
-                    if (User?.Identity?.IsPrivilegedUser() ?? false)
+                    if (_identity.IsPrivilegedUser(User))
                     {
                         result.PendingRequests = await GetPendingReviews(null, page, limit);
                         result.TotalItems = (await _database.GetGalleryItemCount(null, GalleryItemState.Pending))[GalleryItemState.Pending.ToString()];
@@ -817,7 +819,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(UserPermission = UserPermissions.View)]
         public async Task<IActionResult> UsersList(string term = "", int page = 1, int limit = 50, UserLevel level = UserLevel.All)
         {
-            if (User?.Identity == null || !User.Identity.IsAuthenticated)
+            if (!_identity.IsValid(User))
             {
                 return Redirect("/");
             }
@@ -826,10 +828,10 @@ namespace Memtly.Core.Controllers
 
             try
             {
-                var user = await _database.GetUser(User.Identity.GetUserId());
+                var user = await _database.GetUser(_identity.GetUserId(User));
                 if (user != null)
                 {
-                    if (User?.Identity?.IsPrivilegedUser() ?? false)
+                    if (_identity.IsPrivilegedUser(User))
                     {
                         result.Users = await _database.GetUsers(term, page, limit, level);
                         result.TotalItems = await _database.GetUserCount(level);
@@ -853,7 +855,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(CustomResourcePermission = CustomResourcePermissions.View)]
         public async Task<IActionResult> CustomResources(string term = "", int page = 1, int limit = 50)
         {
-            if (User?.Identity == null || !User.Identity.IsAuthenticated)
+            if (!_identity.IsValid(User))
             {
                 return Redirect("/");
             }
@@ -862,10 +864,10 @@ namespace Memtly.Core.Controllers
 
             try
             {
-                var user = await _database.GetUser(User.Identity.GetUserId());
+                var user = await _database.GetUser(_identity.GetUserId(User));
                 if (user != null)
                 {
-                    if (User?.Identity?.IsPrivilegedUser() ?? false)
+                    if (_identity.IsPrivilegedUser(User))
                     {
                         result.CustomResources = await _database.GetCustomResources(null, term, page, limit);
                         result.TotalItems = await _database.GetCustomResourceCount(null);
@@ -889,7 +891,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(SettingsPermission = SettingsPermissions.View)]
         public async Task<IActionResult> SettingsPartial()
         {
-            if (User?.Identity == null || !User.Identity.IsAuthenticated)
+            if (!_identity.IsValid(User))
             {
                 return Redirect("/");
             }
@@ -898,10 +900,10 @@ namespace Memtly.Core.Controllers
 
             try
             {
-                var user = await _database.GetUser(User.Identity.GetUserId());
+                var user = await _database.GetUser(_identity.GetUserId(User));
                 if (user != null)
                 {
-                    if (User?.Identity?.IsPrivilegedUser() ?? false)
+                    if (_identity.IsPrivilegedUser(User))
                     {
                         model.Settings = (await _database.GetAllSettings())?.ToDictionary(x => x.Id.ToUpper(), x => x.Value ?? string.Empty);
                         model.CustomResources = await _database.GetCustomResources();
@@ -921,7 +923,7 @@ namespace Memtly.Core.Controllers
         [Route("Account/Settings")]
         public async Task<IActionResult> GallerySettingsPartial(int galleryId, GalleryType type = GalleryType.Basic)
         {
-            if (User?.Identity == null || !User.Identity.IsAuthenticated)
+            if (!_identity.IsValid(User))
             {
                 return Redirect("/");
             }
@@ -937,7 +939,7 @@ namespace Memtly.Core.Controllers
                 if (!string.IsNullOrWhiteSpace(gallery?.Name))
                 {
                     model.Settings = (await _database.GetAllSettings(gallery.Id))?.Where(x => x.Id.StartsWith(MemtlyConfiguration.Gallery.BaseKey, StringComparison.OrdinalIgnoreCase))?.ToDictionary(x => x.Id.ToUpper(), x => x.Value ?? string.Empty);
-                    model.CustomResources = User.Identity.IsPrivilegedUser() ? await _database.GetCustomResources() : await _database.GetCustomResources(User.Identity.GetUserId());
+                    model.CustomResources = _identity.IsPrivilegedUser(User) ? await _database.GetCustomResources() : await _database.GetCustomResources(_identity.GetUserId(User));
                 }
             }
             catch (Exception ex)
@@ -952,7 +954,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(ReviewPermission = ReviewPermissions.View)]
         public async Task<IActionResult> ReviewPhoto(int id, ReviewAction action)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
@@ -960,7 +962,7 @@ namespace Memtly.Core.Controllers
                     if (review != null)
                     {
                         var gallery = await _database.GetGallery(review.GalleryId);
-                        if (gallery != null && User.Identity.CanEdit(ReviewPermissions.View, gallery.Owner))
+                        if (gallery != null && _identity.CanEdit(User, ReviewPermissions.View, gallery.Owner))
                         { 
                             var galleryDir = Path.Combine(UploadsDirectory, gallery.Identifier);
                             var reviewFile = Path.Combine(galleryDir, "Pending", review.Title);
@@ -971,7 +973,7 @@ namespace Memtly.Core.Controllers
                                 review.State = GalleryItemState.Approved;
                                 await _database.EditGalleryItem(review);
 
-                                await _audit.LogAction(User?.Identity?.GetUserId(), $"'{review.Title}' {_localizer["Audit_ItemApprovedInGallery"].Value} '{gallery.Identifier}'", AuditSeverity.Verbose);
+                                await _audit.LogAction(_identity.GetUserId(User), $"'{review.Title}' {_localizer["Audit_ItemApprovedInGallery"].Value} '{gallery.Identifier}'", AuditSeverity.Verbose);
                             }
                             else if (action == ReviewAction.Rejected)
                             {
@@ -990,7 +992,7 @@ namespace Memtly.Core.Controllers
 
                                 await _database.DeleteGalleryItem(review);
 
-                                await _audit.LogAction(User?.Identity?.GetUserId(), $"'{review.Title}' {_localizer["Audit_ItemRejectedInGallery"].Value} '{gallery.Identifier}'", AuditSeverity.Verbose);
+                                await _audit.LogAction(_identity.GetUserId(User), $"'{review.Title}' {_localizer["Audit_ItemRejectedInGallery"].Value} '{gallery.Identifier}'", AuditSeverity.Verbose);
                             }
                             else if (action == ReviewAction.Unknown)
                             {
@@ -1018,7 +1020,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(ReviewPermission = ReviewPermissions.View)]
         public async Task<IActionResult> BulkReview(ReviewAction action, int[] ids)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
@@ -1028,7 +1030,7 @@ namespace Memtly.Core.Controllers
                         foreach (var galleryGroup in items.GroupBy(x => x.GalleryId))
                         {
                             var gallery = await _database.GetGallery(galleryGroup.Key);
-                            if (gallery != null && User.Identity.CanEdit(ReviewPermissions.View, gallery.Owner))
+                            if (gallery != null && _identity.CanEdit(User, ReviewPermissions.View, gallery.Owner))
                             {
                                 foreach (var review in galleryGroup)
                                 {
@@ -1041,7 +1043,7 @@ namespace Memtly.Core.Controllers
                                         review.State = GalleryItemState.Approved;
                                         await _database.EditGalleryItem(review);
 
-                                        await _audit.LogAction(User?.Identity?.GetUserId(), _localizer["Audit_BulkApproveReviews"].Value, AuditSeverity.Verbose);
+                                        await _audit.LogAction(_identity.GetUserId(User), _localizer["Audit_BulkApproveReviews"].Value, AuditSeverity.Verbose);
                                     }
                                     else if (action == ReviewAction.Rejected)
                                     {
@@ -1060,7 +1062,7 @@ namespace Memtly.Core.Controllers
 
                                         await _database.DeleteGalleryItem(review);
 
-                                        await _audit.LogAction(User?.Identity?.GetUserId(), _localizer["Audit_BulkRejectReviews"].Value, AuditSeverity.Verbose);
+                                        await _audit.LogAction(_identity.GetUserId(User), _localizer["Audit_BulkRejectReviews"].Value, AuditSeverity.Verbose);
                                     }
                                     else if (action == ReviewAction.Unknown)
                                     {
@@ -1086,7 +1088,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(GalleryPermission = GalleryPermissions.Create)]
         public async Task<IActionResult> AddGallery(GalleryModel model)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 if (!string.IsNullOrWhiteSpace(model?.Name))
                 {
@@ -1097,22 +1099,26 @@ namespace Memtly.Core.Controllers
                             return Json(new { success = false, message = _localizer["Protected_Name"].Value });
                         }
 
-                        var userId = User.Identity.GetUserId();
+                        var userId = _identity.GetUserId(User);
                         var userGalleries = await _database.GetGalleries(userId);
 
                         var alreadyExists = userGalleries.Any(x => x.Name.Equals(model.Name, StringComparison.OrdinalIgnoreCase)) || ((await _database.GetGalleryId(model.Identifier)) != null);
                         if (!alreadyExists)
                         {
-                            if (userGalleries.Count() < User.Identity.GetGalleryLimit() && await _database.GetGalleryCount() < await _settings.GetOrDefault(MemtlyConfiguration.Basic.MaxGalleryCount, 1000000))
+                            if (userGalleries.Count() < _identity.GetGalleryLimit(User) && await _database.GetGalleryCount() < await _settings.GetOrDefault(MemtlyConfiguration.Basic.MaxGalleryCount, 1000000))
                             {
                                 model.Identifier = GalleryHelper.IsValidGalleryIdentifier(model.Identifier) ? model.Identifier : GalleryHelper.GenerateGalleryIdentifier();
                                 model.Owner = userId;
-                                model.Type = GalleryType.Basic;
+
+                                if (model.Type != GalleryType.Basic && model.Type != GalleryType.Drop)
+                                {
+                                    model.Type = GalleryType.Basic;
+                                }
 
                                 var gallery = await _database.AddGallery(model);
                                 if (gallery != null)
                                 {
-                                    await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_CreatedGallery"].Value} '{model?.Name}'", AuditSeverity.Debug);
+                                    await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_CreatedGallery"].Value} '{model?.Name}'", AuditSeverity.Debug);
 
                                     return Json(new { success = string.Equals(model?.Name, gallery?.Name, StringComparison.OrdinalIgnoreCase) });
                                 }
@@ -1149,7 +1155,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(GalleryPermission = GalleryPermissions.Update)]
         public async Task<IActionResult> EditGallery(GalleryModel model)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 if (!string.IsNullOrWhiteSpace(model?.Name))
                 {
@@ -1164,16 +1170,21 @@ namespace Memtly.Core.Controllers
                         if (check == null || model.Id == check.Id)
                         {
                             var gallery = await _database.GetGallery(model.Id);
-                            if (gallery != null && gallery.Type == GalleryType.Basic && User.Identity.CanEdit(GalleryPermissions.Update, gallery.Owner))
+                            if (gallery != null && gallery.Type != GalleryType.Collection && _identity.CanEdit(User, GalleryPermissions.Update, gallery.Owner))
                             {
                                 gallery.Name = model.Name;
                                 gallery.SecretKey = model.SecretKey;
-                                gallery.Type = GalleryType.Basic;
+                                gallery.Type = model.Type;
+
+                                if (gallery.Type != GalleryType.Basic && gallery.Type != GalleryType.Drop)
+                                {
+                                    gallery.Type = GalleryType.Basic;
+                                }
 
                                 gallery = await _database.EditGallery(gallery);
                                 if (gallery != null)
                                 {
-                                    await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_UpdatedGallery"].Value} '{model?.Name}'", AuditSeverity.Debug);
+                                    await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_UpdatedGallery"].Value} '{model?.Name}'", AuditSeverity.Debug);
                                 
                                     return Json(new { success = string.Equals(model?.Name, gallery?.Name, StringComparison.OrdinalIgnoreCase) });
                                 }
@@ -1210,7 +1221,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(CollectionPermission = CollectionPermissions.Create)]
         public async Task<IActionResult> AddCollection(GalleryModel model)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 if (!string.IsNullOrWhiteSpace(model?.Name))
                 {
@@ -1221,10 +1232,10 @@ namespace Memtly.Core.Controllers
                             return Json(new { success = false, message = _localizer["Protected_Name"].Value });
                         }
 
-                        var userId = User.Identity.GetUserId();
+                        var userId = _identity.GetUserId(User);
                         var userGalleries = await _database.GetGalleries(userId);
                         
-                        var collectionItems = userGalleries.Where(g => g.Type == GalleryType.Basic && model?.CollectionItems != null && model.CollectionItems.Any(id => g.Id == id)).ToList();
+                        var collectionItems = userGalleries.Where(g => g.Type != GalleryType.Collection && model?.CollectionItems != null && model.CollectionItems.Any(id => g.Id == id)).ToList();
                         if (collectionItems == null || collectionItems.Count < 2)
                         {
                             return Json(new { success = false, message = _localizer["Collection_Not_Enough_Galleries"].Value });
@@ -1233,7 +1244,7 @@ namespace Memtly.Core.Controllers
                         var alreadyExists = userGalleries.Any(x => x.Name.Equals(model.Name, StringComparison.OrdinalIgnoreCase)) || ((await _database.GetGalleryId(model.Identifier)) != null);
                         if (!alreadyExists)
                         {
-                            if (userGalleries.Count() < User.Identity.GetGalleryLimit() && await _database.GetGalleryCount() < await _settings.GetOrDefault(MemtlyConfiguration.Basic.MaxGalleryCount, 1000000))
+                            if (userGalleries.Count() < _identity.GetGalleryLimit(User) && await _database.GetGalleryCount() < await _settings.GetOrDefault(MemtlyConfiguration.Basic.MaxGalleryCount, 1000000))
                             {
                                 model.Identifier = GalleryHelper.IsValidGalleryIdentifier(model.Identifier) ? model.Identifier : GalleryHelper.GenerateGalleryIdentifier();
                                 model.Owner = userId;
@@ -1251,7 +1262,7 @@ namespace Memtly.Core.Controllers
                                         });
                                     }
 
-                                    await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_CreatedCollection"].Value} '{model?.Name}'", AuditSeverity.Debug);
+                                    await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_CreatedCollection"].Value} '{model?.Name}'", AuditSeverity.Debug);
 
                                     return Json(new { success = string.Equals(model?.Name, collection?.Name, StringComparison.OrdinalIgnoreCase) });
                                 }
@@ -1288,7 +1299,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(CollectionPermission = CollectionPermissions.Update)]
         public async Task<IActionResult> EditCollection(GalleryModel model)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 if (!string.IsNullOrWhiteSpace(model?.Name))
                 {
@@ -1303,12 +1314,12 @@ namespace Memtly.Core.Controllers
                         if (check == null || model.Id == check.Id)
                         {
                             var collection = await _database.GetGallery(model.Id);
-                            if (collection != null && collection.Type == GalleryType.Collection && User.Identity.CanEdit(CollectionPermissions.Update, collection.Owner))
+                            if (collection != null && collection.Type == GalleryType.Collection && _identity.CanEdit(User, CollectionPermissions.Update, collection.Owner))
                             {
-                                var userId = User.Identity.GetUserId();
+                                var userId = _identity.GetUserId(User);
                                 var userGalleries = await _database.GetGalleries(userId);
 
-                                var collectionItems = userGalleries.Where(g => g.Type == GalleryType.Basic && model?.CollectionItems != null && model.CollectionItems.Any(id => g.Id == id)).ToList();
+                                var collectionItems = userGalleries.Where(g => g.Type != GalleryType.Collection && model?.CollectionItems != null && model.CollectionItems.Any(id => g.Id == id)).ToList();
                                 if (collectionItems == null || collectionItems.Count < 2)
                                 {
                                     return Json(new { success = false, message = _localizer["Collection_Not_Enough_Galleries"].Value });
@@ -1336,7 +1347,7 @@ namespace Memtly.Core.Controllers
                                         });
                                     }
 
-                                    await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_UpdatedCollection"].Value} '{model?.Name}'", AuditSeverity.Debug);
+                                    await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_UpdatedCollection"].Value} '{model?.Name}'", AuditSeverity.Debug);
 
                                     return Json(new { success = string.Equals(model?.Name, collection?.Name, StringComparison.OrdinalIgnoreCase) });
                                 }
@@ -1373,14 +1384,14 @@ namespace Memtly.Core.Controllers
         [RequiresRole(GalleryPermission = GalleryPermissions.Relink)]
         public async Task<IActionResult> RelinkGallery(GalleryModel model)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 if (!string.IsNullOrWhiteSpace(model?.OwnerName))
                 {
                     try
                     {
                         var gallery = await _database.GetGallery(model.Id);
-                        if (gallery != null && User.Identity.CanEdit(GalleryPermissions.Relink, gallery.Owner))
+                        if (gallery != null && _identity.CanEdit(User, GalleryPermissions.Relink, gallery.Owner))
                         {
                             var user = await _database.GetUserByUsername(model.OwnerName);
                             if (user != null)
@@ -1399,7 +1410,7 @@ namespace Memtly.Core.Controllers
                                 gallery = await _database.RelinkGallery(gallery);
                                 if (gallery != null)
                                 {
-                                    await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_RelinkedGallery"].Value} '{model?.Name}' - {originalOwner} > {user.Username}", AuditSeverity.Debug);
+                                    await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_RelinkedGallery"].Value} '{model?.Name}' - {originalOwner} > {user.Username}", AuditSeverity.Debug);
 
                                     return Json(new { success = string.Equals(model?.OwnerName, gallery?.OwnerName, StringComparison.OrdinalIgnoreCase) });
                                 }
@@ -1436,12 +1447,12 @@ namespace Memtly.Core.Controllers
         [RequiresRole(GalleryPermission = GalleryPermissions.Share)]
         public async Task<IActionResult> ShareGallery(int galleryId, List<GalleryShareModel> users)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
                     var gallery = await _database.GetGallery(galleryId);
-                    if (gallery != null && User.Identity.CanEdit(GalleryPermissions.Share, gallery.Owner))
+                    if (gallery != null && _identity.CanEdit(User, GalleryPermissions.Share, gallery.Owner))
                     {
                         users = users.Where(u => u.UserId != gallery.Owner).ToList();
 
@@ -1463,13 +1474,13 @@ namespace Memtly.Core.Controllers
 
                         foreach (var user in usersToAdd)
                         {
-                            await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_SharedGallery"].Value} '{user.UserName}'", AuditSeverity.Debug);
+                            await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_SharedGallery"].Value} '{user.UserName}'", AuditSeverity.Debug);
                             await _database.AddGalleryShare(user);
                         }
 
                         foreach (var user in usersToRemove)
                         {
-                            await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_UnSharedGallery"].Value} '{user.UserName}'", AuditSeverity.Debug);
+                            await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_UnSharedGallery"].Value} '{user.UserName}'", AuditSeverity.Debug);
                             await _database.DeleteGalleryShare(user);
                         }
 
@@ -1493,16 +1504,16 @@ namespace Memtly.Core.Controllers
         [RequiresRole(GalleryPermission = GalleryPermissions.View)]
         public async Task<IActionResult> LeaveShare(int id)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
-                    var galleryShare = await _database.GetGalleryShareRecord(User.Identity.GetUserId(), id);
+                    var galleryShare = await _database.GetGalleryShareRecord(_identity.GetUserId(User), id);
                     var gallery = await _database.GetGallery(id);
 
                     if (galleryShare != null && gallery != null)
                     {
-                        await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_Left_Share"].Value} '{gallery?.Name} ({gallery?.OwnerName})'", AuditSeverity.Warning);
+                        await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_Left_Share"].Value} '{gallery?.Name} ({gallery?.OwnerName})'", AuditSeverity.Warning);
                         await _database.DeleteGalleryShare(galleryShare);
 
                         return Json(new { success = true });
@@ -1525,12 +1536,12 @@ namespace Memtly.Core.Controllers
         [RequiresRole(GalleryPermission = GalleryPermissions.Wipe)]
         public async Task<IActionResult> WipeGallery(int id)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
                     var gallery = await _database.GetGallery(id);
-                    if (gallery != null && gallery.Type == GalleryType.Basic && User.Identity.CanEdit(GalleryPermissions.Wipe, gallery.Owner))
+                    if (gallery != null && gallery.Type != GalleryType.Collection && _identity.CanEdit(User, GalleryPermissions.Wipe, gallery.Owner))
                     {
                         var galleryDir = Path.Combine(UploadsDirectory, gallery.Identifier);
                         if (_fileHelper.DirectoryExists(galleryDir))
@@ -1550,7 +1561,7 @@ namespace Memtly.Core.Controllers
                             }
                         }
                             
-                        await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_WipedGallery"].Value} '{gallery?.Name}'", AuditSeverity.Warning);
+                        await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_WipedGallery"].Value} '{gallery?.Name}'", AuditSeverity.Warning);
                         await _database.WipeGallery(gallery);
 
                         return Json(new { success = true });
@@ -1573,7 +1584,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(GalleryPermission = GalleryPermissions.Wipe)]
         public async Task<IActionResult> WipeAllGalleries()
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated && (User?.Identity?.IsPrivilegedUser() ?? false))
+            if (_identity.IsValid(User) && _identity.IsPrivilegedUser(User))
             {
                 try
                 {
@@ -1597,7 +1608,7 @@ namespace Memtly.Core.Controllers
                         }
                     }
                         
-                    await _audit.LogAction(User?.Identity?.GetUserId(), _localizer["Audit_WipeAllGalleries"].Value, AuditSeverity.Warning);
+                    await _audit.LogAction(_identity.GetUserId(User), _localizer["Audit_WipeAllGalleries"].Value, AuditSeverity.Warning);
                     await _database.WipeAllGalleries();
 
                     return Json(new { success = true });
@@ -1615,7 +1626,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(DataPermission = DataPermissions.Wipe)]
         public async Task<IActionResult> WipeSystem()
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated && (User?.Identity?.IsPrivilegedUser() ?? false))
+            if (_identity.IsValid(User) && _identity.IsPrivilegedUser(User))
             {
                 try
                 {
@@ -1645,7 +1656,7 @@ namespace Memtly.Core.Controllers
                     }
 
                     await _database.WipeSystem();
-                    await _audit.LogAction(User?.Identity?.GetUserId(), _localizer["Audit_WipeSystem"].Value, AuditSeverity.Warning);
+                    await _audit.LogAction(_identity.GetUserId(User), _localizer["Audit_WipeSystem"].Value, AuditSeverity.Warning);
 
                     return Json(new { success = true });
                 }
@@ -1662,12 +1673,12 @@ namespace Memtly.Core.Controllers
         [RequiresRole(GalleryPermission = GalleryPermissions.Delete)]
         public async Task<IActionResult> DeleteGallery(int id)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
                     var gallery = await _database.GetGallery(id);
-                    if (gallery != null && gallery.Type == GalleryType.Basic && User.Identity.CanEdit(GalleryPermissions.Delete, gallery.Owner))
+                    if (gallery != null && gallery.Type != GalleryType.Collection && _identity.CanEdit(User, GalleryPermissions.Delete, gallery.Owner))
                     {
                         if (gallery.Identifier.Equals(SystemGalleries.DefaultGallery, StringComparison.OrdinalIgnoreCase))
                         {
@@ -1688,7 +1699,7 @@ namespace Memtly.Core.Controllers
                             await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"{_localizer["Destructive_Action_Gallery"].Value} '{gallery.Name}'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                         }
 
-                        await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_DeletedGallery"].Value} '{gallery?.Name} ({gallery?.OwnerName})'", AuditSeverity.Warning);
+                        await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_DeletedGallery"].Value} '{gallery?.Name} ({gallery?.OwnerName})'", AuditSeverity.Warning);
                         await _database.DeleteGallery(gallery);
 
                         return Json(new { success = true });
@@ -1711,19 +1722,19 @@ namespace Memtly.Core.Controllers
         [RequiresRole(CollectionPermission = CollectionPermissions.Delete)]
         public async Task<IActionResult> DeleteCollection(int id)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
                     var collection = await _database.GetGallery(id);
-                    if (collection != null && collection.Type == GalleryType.Collection && User.Identity.CanEdit(CollectionPermissions.Delete, collection.Owner))
+                    if (collection != null && collection.Type == GalleryType.Collection && _identity.CanEdit(User, CollectionPermissions.Delete, collection.Owner))
                     {
                         if (await _settings.GetOrDefault(MemtlyConfiguration.Alerts.DestructiveAction, true))
                         {
                             await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"{_localizer["Destructive_Action_Collection"].Value} '{collection.Name}'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                         }
 
-                        await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_DeletedCollection"].Value} '{collection?.Name} ({collection?.OwnerName})'", AuditSeverity.Warning);
+                        await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_DeletedCollection"].Value} '{collection?.Name} ({collection?.OwnerName})'", AuditSeverity.Warning);
                         await _database.DeleteGallery(collection);
 
                         return Json(new { success = true });
@@ -1746,7 +1757,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(ReviewPermission = ReviewPermissions.Delete)]
         public async Task<IActionResult> DeletePhoto(int id)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
@@ -1754,12 +1765,14 @@ namespace Memtly.Core.Controllers
                     if (photo != null)
                     {
                         var gallery = await _database.GetGallery(photo.GalleryId);
-                        if (gallery != null && User.Identity.CanEdit(ReviewPermissions.Delete, gallery.Owner))
-                        { 
-                            var photoPath = Path.Combine(UploadsDirectory, gallery.Identifier, photo.Title);
+                        if (gallery != null && (_identity.CanEdit(User, ReviewPermissions.Delete, gallery.Owner) || _identity.IsOwner(User, gallery.Owner) || _identity.IsOwner(User, photo.UserId)))
+                        {
+                            var galleryDir = Path.Combine(UploadsDirectory, gallery.Identifier);
+                            var photoPath = Path.Combine(galleryDir, photo.State == GalleryItemState.Pending ? "Pending" : string.Empty, photo.Title);
+
                             _fileHelper.DeleteFileIfExists(photoPath);
 
-                            await _audit.LogAction(User?.Identity?.GetUserId(), $"'{photo?.Title}' {_localizer["Audit_ItemDeletedInGallery"].Value} '{gallery?.Name}'", AuditSeverity.Warning);
+                            await _audit.LogAction(_identity.GetUserId(User), $"'{photo?.Title}' {_localizer["Audit_ItemDeletedInGallery"].Value} '{gallery?.Name}'", AuditSeverity.Warning);
                             await _database.DeleteGalleryItem(photo);
 
                             return Json(new { success = true });
@@ -1783,7 +1796,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(UserPermission = UserPermissions.Create)]
         public async Task<IActionResult> AddUser(UserModel model)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated && (User?.Identity?.IsPrivilegedUser() ?? false))
+            if (_identity.IsValid(User) && _identity.IsPrivilegedUser(User))
             {
                 if (string.IsNullOrWhiteSpace(model?.Username) || model.Username.Length == 0 || model.Username.Length > 20 || !Regex.IsMatch(model.Username, @"^[a-zA-Z0-9\-\s-_~]+$", RegexOptions.Compiled))
                 {
@@ -1839,7 +1852,7 @@ namespace Memtly.Core.Controllers
                                 model.Tier = PaidTier.None;
                             }
 
-                            await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_CreatedNewUser"].Value} '{model?.Username}'", AuditSeverity.Verbose);
+                            await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_CreatedNewUser"].Value} '{model?.Username}'", AuditSeverity.Verbose);
 
                             return Json(new { success = string.Equals(model?.Username, (await _database.AddUser(model))?.Username, StringComparison.OrdinalIgnoreCase) });
                         }
@@ -1862,14 +1875,14 @@ namespace Memtly.Core.Controllers
         [RequiresRole(UserPermission = UserPermissions.Update)]
         public async Task<IActionResult> EditUser(UserModel model)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 if (model?.Id != null)
                 {
                     try
                     {
                         var user = await _database.GetUser(model.Id);
-                        if (user != null && User.Identity.CanEdit(UserPermissions.Update, user.Id))
+                        if (user != null && _identity.CanEdit(User, UserPermissions.Update, user.Id))
                         {
                             if (string.IsNullOrWhiteSpace(model?.Firstname) || model.Firstname.Length < 1 || model.Firstname.Length > 50)
                             {
@@ -1897,9 +1910,9 @@ namespace Memtly.Core.Controllers
                                 user.Lastname = model.Lastname?.Trim();
                                 user.Email = model.Email?.Trim();
 
-                                if (User.Identity.IsPrivilegedUser() && User.Identity.GetUserPermissions().Users.HasFlag(UserPermissions.Change_Permissions_Level))
+                                if (_identity.IsPrivilegedUser(User) && _identity.GetUserPermissions(User).Users.HasFlag(UserPermissions.Change_Permissions_Level))
                                 {
-                                    if (user.Id == User.Identity.GetUserId() && (user.Level != model.Level || user.Tier != model.Tier))
+                                    if (user.Id == _identity.GetUserId(User) && (user.Level != model.Level || user.Tier != model.Tier))
                                     {
                                         return Json(new { success = false, message = _localizer["Cannot_Change_Current_User_Level_Tier"].Value });
                                     }
@@ -1921,7 +1934,7 @@ namespace Memtly.Core.Controllers
                                     user.Tier = PaidTier.None;
                                 }
 
-                                await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_UpdatedUser"].Value} '{user?.Username}'", AuditSeverity.Verbose);
+                                await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_UpdatedUser"].Value} '{user?.Username}'", AuditSeverity.Verbose);
 
                                 return Json(new { success = string.Equals(user?.Username, (await _database.EditUser(user))?.Username, StringComparison.OrdinalIgnoreCase) });
                             }
@@ -1949,14 +1962,14 @@ namespace Memtly.Core.Controllers
         [RequiresRole(UserPermission = UserPermissions.Change_Password)]
         public async Task<IActionResult> ChangeUserPassword(UserModel model)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 if (model?.Id != null && !string.IsNullOrWhiteSpace(model?.Password) && string.Equals(model.Password, model.CPassword))
                 {
                     try
                     {
                         var user = await _database.GetUser(model.Id);
-                        if (user != null && User.Identity.CanEdit(UserPermissions.Change_Password, user.Id))
+                        if (user != null && _identity.CanEdit(User, UserPermissions.Change_Password, user.Id))
                         {
                             if (string.IsNullOrWhiteSpace(model?.Password) || model.Password.Length < 8 || model.Password.Length > 500 || !PasswordHelper.IsValid(model.Password))
                             {
@@ -1974,7 +1987,7 @@ namespace Memtly.Core.Controllers
                             {
                                 user.Password = _encryption.Encrypt(model.Password, user.Username.ToLower());
 
-                                await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_UpdatedUser"].Value} '{user?.Username}'", AuditSeverity.Verbose);
+                                await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_UpdatedUser"].Value} '{user?.Username}'", AuditSeverity.Verbose);
 
                                 return Json(new { success = await _database.ChangePassword(user) });
                             }
@@ -2002,14 +2015,14 @@ namespace Memtly.Core.Controllers
         [RequiresRole(UserPermission = UserPermissions.Freeze)]
         public async Task<IActionResult> FreezeUser(int id)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
                     var user = await _database.GetUser(id);
-                    if (user != null && User.Identity.CanEdit(UserPermissions.Freeze, user.Id))
+                    if (user != null && _identity.CanEdit(User, UserPermissions.Freeze, user.Id))
                     {
-                        if (user.Id == User.Identity.GetUserId())
+                        if (user.Id == _identity.GetUserId(User))
                         {
                             return Json(new { success = false, message = _localizer["Cannot_Deactivate_Current_User"].Value });
                         }
@@ -2024,7 +2037,7 @@ namespace Memtly.Core.Controllers
 
                         user.State = AccountState.Frozen;
 
-                        await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_FrozeUser"].Value} '{user?.Username}'", AuditSeverity.Information);
+                        await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_FrozeUser"].Value} '{user?.Username}'", AuditSeverity.Information);
 
                         return Json(new { success = (await _database.EditUser(user))?.State == user.State });
                     }
@@ -2046,16 +2059,16 @@ namespace Memtly.Core.Controllers
         [RequiresRole(UserPermission = UserPermissions.Freeze)]
         public async Task<IActionResult> UnfreezeUser(int id)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
                     var user = await _database.GetUser(id);
-                    if (user != null && User.Identity.CanEdit(UserPermissions.Freeze, user.Id))
+                    if (user != null && _identity.CanEdit(User, UserPermissions.Freeze, user.Id))
                     {
                         user.State = AccountState.Active;
 
-                        await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_UnfrozeUser"].Value} '{user?.Username}'", AuditSeverity.Information);
+                        await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_UnfrozeUser"].Value} '{user?.Username}'", AuditSeverity.Information);
 
                         return Json(new { success = (await _database.EditUser(user))?.State == user.State });
                     }
@@ -2077,19 +2090,19 @@ namespace Memtly.Core.Controllers
         [RequiresRole(UserPermission = UserPermissions.Freeze)]
         public async Task<IActionResult> ActivateUser(int id)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
                     var user = await _database.GetUser(id);
-                    if (user != null && User.Identity.CanEdit(UserPermissions.Freeze, user.Id))
+                    if (user != null && _identity.CanEdit(User, UserPermissions.Freeze, user.Id))
                     {
                         user.State = AccountState.Active;
 
                         await _database.SetUserSecret(user.Id, PasswordHelper.GenerateSecretCode());
                         await CreateDefaultUserGallery(user);
 
-                        await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_ActivateUser"].Value} '{user?.Username}'", AuditSeverity.Information);
+                        await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_ActivateUser"].Value} '{user?.Username}'", AuditSeverity.Information);
 
                         return Json(new { success = (await _database.EditUser(user))?.State == user.State });
                     }
@@ -2111,14 +2124,14 @@ namespace Memtly.Core.Controllers
         [RequiresRole(UserPermission = UserPermissions.Delete)]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
                     var user = await _database.GetUser(id);
-                    if (user != null && User.Identity.CanEdit(UserPermissions.Delete, user.Id))
+                    if (user != null && _identity.CanEdit(User, UserPermissions.Delete, user.Id))
                     {
-                        if (user.Id == User.Identity.GetUserId())
+                        if (user.Id == _identity.GetUserId(User))
                         {
                             return Json(new { success = false, message = _localizer["Cannot_Deactivate_Current_User"].Value });
                         }
@@ -2158,7 +2171,7 @@ namespace Memtly.Core.Controllers
                             await _notificationHelper.Send(_localizer["Destructive_Action_Performed"].Value, $"The destructive action 'Delete' was performed on user '{user.Username}'.", _url.GenerateBaseUrl(HttpContext?.Request, "/Account"));
                         }
 
-                        await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_DeletedUser"].Value} '{user?.Username}'", AuditSeverity.Warning);
+                        await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_DeletedUser"].Value} '{user?.Username}'", AuditSeverity.Warning);
                         await _database.DeleteUser(user);
 
                         return Json(new { success = true });
@@ -2217,7 +2230,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(DataPermission = DataPermissions.Export)]
         public async Task<IActionResult> ExportBackup(ExportOptions options)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated && (User?.Identity?.IsPrivilegedUser() ?? false))
+            if (_identity.IsValid(User) && _identity.IsPrivilegedUser(User))
             {
                 var exportDir = Path.Combine(TempDirectory, "Export");
 
@@ -2272,7 +2285,7 @@ namespace Memtly.Core.Controllers
 
                             _fileHelper.DeleteFileIfExists(dbExport);
 
-                            await _audit.LogAction(User?.Identity?.GetUserId(), _localizer["Audit_ExportedBackup"].Value, AuditSeverity.Information);
+                            await _audit.LogAction(_identity.GetUserId(User), _localizer["Audit_ExportedBackup"].Value, AuditSeverity.Information);
 
                             return response;
                         }
@@ -2304,7 +2317,7 @@ namespace Memtly.Core.Controllers
                 return Json(new { success = false, message = _localizer["Feature_Unavailable_Demo_Mode"].Value });
             }
 
-            if (User?.Identity != null && User.Identity.IsAuthenticated && (User?.Identity?.IsPrivilegedUser() ?? false))
+            if (_identity.IsValid(User) && _identity.IsPrivilegedUser(User))
             {
                 var importDir = Path.Combine(TempDirectory, "Import");
 
@@ -2346,7 +2359,7 @@ namespace Memtly.Core.Controllers
                                     //var dbImport = Path.Combine(importDir, "Memtly.bak");
                                     //var imported = await _database.Import($"Data Source={dbImport}");
 
-                                    await _audit.LogAction(User?.Identity?.GetUserId(), _localizer["Audit_ImportedBackup"].Value, AuditSeverity.Information);
+                                    await _audit.LogAction(_identity.GetUserId(User), _localizer["Audit_ImportedBackup"].Value, AuditSeverity.Information);
 
                                     return Json(new { success = true });
                                 }
@@ -2373,14 +2386,14 @@ namespace Memtly.Core.Controllers
         {
             Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
                     var files = Request?.Form?.Files;
                     if (files != null && files.Count > 0)
                     {
-                        var userId = User.Identity.GetUserId();
+                        var userId = _identity.GetUserId(User);
 
                         var uploaded = 0;
                         var errors = new List<string>();
@@ -2419,13 +2432,13 @@ namespace Memtly.Core.Controllers
                                         Title = title,
                                         FileName = fileName,
                                         Owner = userId,
-                                        OwnerName = User?.Identity.Name ?? "Unknown"
+                                        OwnerName = User?.Identity?.Name ?? "Unknown"
                                     });
 
                                     if (item?.Id > 0)
                                     {
                                         uploaded++;
-                                        await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_CustomResourceUploaded"].Value} '{item?.FileName}'", AuditSeverity.Verbose);
+                                        await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_CustomResourceUploaded"].Value} '{item?.FileName}'", AuditSeverity.Verbose);
                                     }
                                 }
                             }
@@ -2457,14 +2470,14 @@ namespace Memtly.Core.Controllers
         [RequiresRole(CustomResourcePermission = CustomResourcePermissions.Relink)]
         public async Task<IActionResult> RelinkCustomResource(CustomResourceModel model)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 if (!string.IsNullOrWhiteSpace(model?.OwnerName))
                 {
                     try
                     {
                         var resource = await _database.GetCustomResource(model.Id);
-                        if (resource != null && User.Identity.CanEdit(CustomResourcePermissions.Relink, resource.Owner))
+                        if (resource != null && _identity.CanEdit(User, CustomResourcePermissions.Relink, resource.Owner))
                         {
                             var user = await _database.GetUserByUsername(model.OwnerName);
                             if (user != null)
@@ -2477,7 +2490,7 @@ namespace Memtly.Core.Controllers
                                 resource = await _database.RelinkCustomResource(resource);
                                 if (resource != null)
                                 {
-                                    await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_RelinkedCustomResource"].Value} '{model?.OwnerName}' - {originalOwner} > {user.Username}", AuditSeverity.Debug);
+                                    await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_RelinkedCustomResource"].Value} '{model?.OwnerName}' - {originalOwner} > {user.Username}", AuditSeverity.Debug);
 
                                     return Json(new { success = string.Equals(model?.OwnerName, resource?.OwnerName, StringComparison.OrdinalIgnoreCase) });
                                 }
@@ -2516,12 +2529,12 @@ namespace Memtly.Core.Controllers
         {
             Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
                     var resource = await _database.GetCustomResource(id);
-                    if (resource != null && User.Identity.CanEdit(CustomResourcePermissions.Delete, resource.Owner))
+                    if (resource != null && _identity.CanEdit(User, CustomResourcePermissions.Delete, resource.Owner))
                     {
                         await _database.DeleteCustomResource(resource);
 
@@ -2530,7 +2543,7 @@ namespace Memtly.Core.Controllers
                             _fileHelper.DeleteFileIfExists(Path.Combine(CustomResourcesDirectory, resource.FileName));
                         }
 
-                        await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_CustomResourceDeleted"].Value} '{resource?.FileName}'", AuditSeverity.Warning);
+                        await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_CustomResourceDeleted"].Value} '{resource?.FileName}'", AuditSeverity.Warning);
 
                         Response.StatusCode = (int)HttpStatusCode.OK;
 
@@ -2552,7 +2565,7 @@ namespace Memtly.Core.Controllers
         {
             Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 var success = true;
 
@@ -2561,7 +2574,7 @@ namespace Memtly.Core.Controllers
                     try
                     {
                         var resource = await _database.GetCustomResource(id);
-                        if (resource != null && User.Identity.CanEdit(CustomResourcePermissions.Delete, resource.Owner))
+                        if (resource != null && _identity.CanEdit(User, CustomResourcePermissions.Delete, resource.Owner))
                         {
                             await _database.DeleteCustomResource(resource);
 
@@ -2570,7 +2583,7 @@ namespace Memtly.Core.Controllers
                                 _fileHelper.DeleteFileIfExists(Path.Combine(CustomResourcesDirectory, resource.FileName));
                             }
 
-                            await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_CustomResourceDeleted"].Value} '{resource?.FileName}'", AuditSeverity.Warning);
+                            await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_CustomResourceDeleted"].Value} '{resource?.FileName}'", AuditSeverity.Warning);
                         }
                     }
                     catch (Exception ex)
@@ -2596,12 +2609,12 @@ namespace Memtly.Core.Controllers
         {
             Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
-                    var user = await _database.GetUser(User.Identity.GetUserId());
-                    if (user != null && User.Identity.CanEdit(UserPermissions.Login, user.Id))
+                    var user = await _database.GetUser(_identity.GetUserId(User));
+                    if (user != null && _identity.CanEdit(User, UserPermissions.Login, user.Id))
                     {
                         Response.StatusCode = (int)HttpStatusCode.OK;
 
@@ -2624,13 +2637,13 @@ namespace Memtly.Core.Controllers
         {
             Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User) && _identity.IsPrivilegedUser(User))
             {
                 try
                 {
-                    var user = await _database.GetUser(User.Identity.GetUserId());
+                    var user = await _database.GetUser(_identity.GetUserId(User));
 
-                    if (type == BackgroundWorkerType.DirectoryScanner && user != null && User.Identity.CanEdit(BackgroundWorkerPermissions.RequestDirectoryScanner, user.Id))
+                    if (type == BackgroundWorkerType.DirectoryScanner && user != null && _identity.CanEdit(User, BackgroundWorkerPermissions.RequestDirectoryScanner, user.Id))
                     {
                         Response.StatusCode = (int)HttpStatusCode.OK;
 
@@ -2638,7 +2651,7 @@ namespace Memtly.Core.Controllers
 
                         return Json(new { success = true });
                     }
-                    else if (type == BackgroundWorkerType.Cleanup && user != null && User.Identity.CanEdit(BackgroundWorkerPermissions.RequestCleanup, user.Id))
+                    else if (type == BackgroundWorkerType.Cleanup && user != null && _identity.CanEdit(User, BackgroundWorkerPermissions.RequestCleanup, user.Id))
                     {
                         Response.StatusCode = (int)HttpStatusCode.OK;
 
@@ -2646,7 +2659,7 @@ namespace Memtly.Core.Controllers
 
                         return Json(new { success = true });
                     }
-                    else if (type == BackgroundWorkerType.NotificationReport && user != null && User.Identity.CanEdit(BackgroundWorkerPermissions.RequestNotificationReport, user.Id))
+                    else if (type == BackgroundWorkerType.NotificationReport && user != null && _identity.CanEdit(User, BackgroundWorkerPermissions.RequestNotificationReport, user.Id))
                     {
                         Response.StatusCode = (int)HttpStatusCode.OK;
 
@@ -2666,7 +2679,7 @@ namespace Memtly.Core.Controllers
 
         private async Task<IActionResult> UpdateSettings(List<UpdateSettingsModel> model, int? galleryId, SettingsPermissions accessPermissions)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 if (model != null && model.Count() > 0)
                 {
@@ -2680,7 +2693,7 @@ namespace Memtly.Core.Controllers
                             gallery = await _database.GetGallery((int)galleryId);
                         }
 
-                        if (User.Identity.CanEdit(accessPermissions, gallery?.Owner))
+                        if (_identity.CanEdit(User, accessPermissions, gallery?.Owner))
                         {
                             foreach (var m in model)
                             {
@@ -2698,7 +2711,7 @@ namespace Memtly.Core.Controllers
                                     }
                                     else
                                     {
-                                        await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_SettingsUpdated"].Value} '{(!string.IsNullOrWhiteSpace(gallery?.Name) ? gallery.Name : "Gallery Defaults")}' - '{setting?.Id}'='{setting?.Value}'", AuditSeverity.Information);
+                                        await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_SettingsUpdated"].Value} '{(!string.IsNullOrWhiteSpace(gallery?.Name) ? gallery.Name : "Gallery Defaults")}' - '{setting?.Id}'='{setting?.Value}'", AuditSeverity.Information);
                                     }
                                 }
                                 catch (Exception ex)
@@ -2726,7 +2739,7 @@ namespace Memtly.Core.Controllers
 
         private async Task<IActionResult> ResetSettings(int galleryId, SettingsPermissions accessPermissions)
         {
-            if (galleryId > 0 && User?.Identity != null && User.Identity.IsAuthenticated)
+            if (galleryId > 0 && _identity.IsValid(User))
             {
                 try
                 {
@@ -2738,12 +2751,12 @@ namespace Memtly.Core.Controllers
                         gallery = await _database.GetGallery((int)galleryId);
                     }
 
-                    if (User.Identity.CanEdit(accessPermissions, gallery?.Owner))
+                    if (_identity.CanEdit(User, accessPermissions, gallery?.Owner))
                     {
                         try
                         {
                             await _database.DeleteAllSettings(gallery?.Id);
-                            await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_SettingsUpdated"].Value} '{(!string.IsNullOrWhiteSpace(gallery?.Name) ? gallery.Name : "Gallery Defaults")}' - Settings Reset", AuditSeverity.Information);
+                            await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_SettingsUpdated"].Value} '{(!string.IsNullOrWhiteSpace(gallery?.Name) ? gallery.Name : "Gallery Defaults")}' - Settings Reset", AuditSeverity.Information);
                         }
                         catch (Exception ex)
                         {
@@ -2846,12 +2859,14 @@ namespace Memtly.Core.Controllers
                                 GalleryId = x.GalleryId,
                                 Name = Path.GetFileName(x.Title),
                                 UploadedBy = x.UploadedBy ?? "Unknown",
+                                UploaderId = x.UserId,
                                 UploaderEmailAddress = x.UploaderEmailAddress,
                                 UploadDate = x.UploadedDate,
                                 CaptureDate = x.DateTaken ?? x.UploadedDate,
-                                ImagePath = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/Pending/{x.Title}",
-                                ThumbnailPath = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(x.Title)}.webp",
-                                MediaType = x.MediaType
+                                ImagePath = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/Pending/{HttpUtility.UrlEncode(x.Title)}",
+                                ThumbnailPath = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{HttpUtility.UrlEncode(Path.GetFileNameWithoutExtension(x.Title))}.webp",
+                                MediaType = x.MediaType,
+                                State = x.State
                             })?.ToList(),
                             ItemsPerPage = int.MaxValue,
                         });

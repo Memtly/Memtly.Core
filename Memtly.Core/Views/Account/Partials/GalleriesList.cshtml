@@ -7,8 +7,8 @@
 @inject Memtly.Core.Helpers.IUrlHelper _url
 
 @{
-    var userId = User?.Identity?.GetUserId() ?? 0;
-    var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
+    var userId = _identity.GetUserId(User);
+    var userPermissions = _identity.GetUserPermissions(User);
     var tooltipDisabled = $"({_localizer["Disabled"].Value})";
     var tooltipUpgradeToUnlock = $"({_localizer["Upgrade_To_Unlock"].Value})";
 
@@ -50,7 +50,25 @@
 
                 <tr data-gallery-id="@gallery.Id" data-gallery-identifier="@gallery.Identifier" data-gallery-name="@gallery.Name" data-gallery-username="@gallery.OwnerName" data-gallery-key="@gallery.SecretKey" data-gallery-type="@((int)gallery.Type)">
                     <td class="gallery-name text-capitalize">
-                        <i class="fa @(gallery.Type == GalleryType.Basic ? "fa-image" : "fa-images")"></i> @gallery.Name (@gallery.OwnerName)
+                        @{
+                            var icon = "fa-image";
+                            switch (gallery.Type)
+                            {
+                                case GalleryType.Basic:
+                                    icon = "fa-image";
+                                    break;
+                                case GalleryType.Drop:
+                                    icon = "fa-droplet";
+                                    break;
+                                case GalleryType.Collection:
+                                    icon = "fa-images";
+                                    break;
+                                default:
+                                    icon = "fa-image";
+                                    break;
+                            }
+                        }
+                        <i class="fa @(icon)"></i> @gallery.Name (@gallery.OwnerName)
                     </td>
                     <td class="d-none d-md-table-cell text-center">@gallery.TotalItems</td>
                     <td class="d-none d-md-table-cell text-center">@gallery.ApprovedItems</td>
@@ -97,7 +115,7 @@
                         }
 
                         <!-- ( Edit Gallery / Collection ) -->
-                        @if (gallery.Type == GalleryType.Basic && userPermissions.Gallery.HasFlag(GalleryPermissions.Update))
+                        @if (gallery!.Type != GalleryType.Collection && userPermissions.Gallery.HasFlag(GalleryPermissions.Update))
                         {
                             var tooltip = _localizer["Edit"].Value;
                             if (!gallery.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))
@@ -131,7 +149,7 @@
                         }
 
                         <!-- ( Relink Gallery ) -->
-                        @if (gallery.Type == GalleryType.Basic)
+                        @if (gallery!.Type != GalleryType.Collection)
                         {
                             if (userPermissions.Gallery.HasFlag(GalleryPermissions.Relink))
                             {
@@ -170,7 +188,7 @@
                         }
 
                         <!-- ( Gallery / Collection Settings ) -->
-                        @if (gallery.Type == GalleryType.Basic && userPermissions.Settings.HasFlag(SettingsPermissions.Gallery_Update))
+                        @if (gallery!.Type != GalleryType.Collection && userPermissions.Settings.HasFlag(SettingsPermissions.Gallery_Update))
                         {
                             var tooltip = _localizer["Settings"].Value;
                             if (!gallery!.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))
@@ -206,12 +224,12 @@
                         {
                             var tooltip = $"{_localizer["Wipe"].Value} {tooltipUpgradeToUnlock}";
                             <button class="btn btn-disabled upgradeToUnlock" disabled=disabled alt="@tooltip" title="@tooltip">
-                                <i class="fas fa-broom"></i>
+                                <i class="fas fa-gear"></i>
                             </button>
                         }
 
                         <!-- ( Wipe Gallery ) -->
-                        @if (gallery.Type == GalleryType.Basic)
+                        @if (gallery!.Type != GalleryType.Collection)
                         {
                             if (userPermissions.Gallery.HasFlag(GalleryPermissions.Wipe))
                             {
@@ -239,10 +257,10 @@
                         }
 
                         <!-- ( Delete Gallery / Collection ) -->
-                        @if (gallery.Type == GalleryType.Basic && userPermissions.Gallery.HasFlag(GalleryPermissions.Delete))
+                        @if (gallery!.Type != GalleryType.Collection)
                         {
                             var tooltip = _localizer["Delete"].Value;
-                            if (!gallery!.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))
+                            if (!gallery!.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase) && userPermissions.Gallery.HasFlag(GalleryPermissions.Delete))
                             {
                                 <button class="btnDeleteGallery btn btn-danger" alt="@tooltip" title="@tooltip">
                                     <i class="fas fa-trash-can"></i>
@@ -255,10 +273,10 @@
                                 </button>
                             }
                         }
-                        else if (gallery.Type == GalleryType.Collection && userPermissions.Collection.HasFlag(CollectionPermissions.Delete))
+                        else if (gallery.Type == GalleryType.Collection)
                         {
                             var tooltip = _localizer["Delete"].Value;
-                            if (!gallery!.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))
+                            if (!gallery!.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase) && userPermissions.Collection.HasFlag(CollectionPermissions.Delete))
                             {
                                 <button class="btnDeleteCollection btn btn-danger" alt="@tooltip" title="@tooltip">
                                     <i class="fas fa-trash-can"></i>

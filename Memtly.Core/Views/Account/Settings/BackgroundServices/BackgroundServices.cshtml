@@ -3,7 +3,7 @@
 
 @if (Model != null && Model.Any())
 {
-    var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
+    var userPermissions = _identity.GetUserPermissions(User);
 
     <div class="setting-section">
         <div class="row mb-4 mb-lg-4 setting-container">

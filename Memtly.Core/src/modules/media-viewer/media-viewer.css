@@ -70,11 +70,24 @@
                 padding-top: 3px;
             }
 
+                #media-viewer-popup .media-viewer .media-viewer-description .media-viewer-author span {
+                    max-width: 650px;
+                }
+
+                #media-viewer-popup .media-viewer .media-viewer-description .media-viewer-author .media-viewer-state {
+                    font-weight: bold;
+                    padding-left: 10px
+                }
+
             @media (max-width: 576px) {
                 #media-viewer-popup .media-viewer .media-viewer-description .media-viewer-author {
                     font-size: 8pt;
                     padding-top: 6px;
                 }
+
+                    #media-viewer-popup .media-viewer .media-viewer-description .media-viewer-author span {
+                        max-width: 200px;
+                    }
             }
 
             #media-viewer-popup .media-viewer .media-viewer-description .media-viewer-likes .like-button {

@@ -5,7 +5,7 @@
 @inject Memtly.Core.Helpers.IUrlHelper _url
 
 @{
-    var userPermissions = User?.Identity?.GetUserPermissions() ?? new Permissions();
+    var userPermissions = _identity.GetUserPermissions(User);
 }
 
 @if (userPermissions.Gallery.HasFlag(GalleryPermissions.View) && Model.SharedGalleries != null && Model.SharedGalleries.Any())
@@ -34,7 +34,25 @@
 
                 <tr data-gallery-id="@galleryShare.GalleryId" data-gallery-identifier="@galleryShare.GalleryIdentifier" data-gallery-name="@galleryShare.GalleryName" data-gallery-username="@galleryShare.GalleryOwnerName" data-gallery-key="@galleryShare.SecretKey" data-gallery-type="@((int)galleryShare.GalleryType)">
                     <td class="text-capitalize">
-                        <i class="fa @(galleryShare.GalleryType == GalleryType.Basic ? "fa-image" : "fa-images")"></i> @galleryShare.GalleryName
+                        @{
+                            var icon = "fa-image";
+                            switch (galleryShare.GalleryType)
+                            {
+                                case GalleryType.Basic:
+                                    icon = "fa-image";
+                                    break;
+                                case GalleryType.Drop:
+                                    icon = "fa-droplet";
+                                    break;
+                                case GalleryType.Collection:
+                                    icon = "fa-images";
+                                    break;
+                                default:
+                                    icon = "fa-image";
+                                    break;
+                            }
+                        }
+                        <i class="fa @(icon)"></i> @galleryShare.GalleryName
                     </td>
                     <td class="d-none d-md-table-cell text-capitalize">@galleryShare.GalleryOwnerName</td>
                     <td>

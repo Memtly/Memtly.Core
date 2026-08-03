@@ -1,8 +1,3 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using Memtly.Core.Constants;
 using Memtly.Core.Controllers;
 using Memtly.Core.Enums;
@@ -10,6 +5,11 @@ using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Database;
 using Memtly.Core.Models.Database;
 using Memtly.Core.UnitTests.Helpers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 
 namespace Memtly.Core.UnitTests.Tests.Helpers
 {
@@ -20,6 +20,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         private readonly IDeviceDetector _deviceDetector = Substitute.For<IDeviceDetector>();
         private readonly IAuditHelper _audit = Substitute.For<IAuditHelper>();
         private readonly ILogger<HomeController> _logger = Substitute.For<ILogger<HomeController>>();
+        private readonly IIdentityHelper _identity = Substitute.For<IIdentityHelper>();
         private readonly IStringLocalizer<Memtly.Localization.Translations> _localizer = Substitute.For<IStringLocalizer<Memtly.Localization.Translations>>();
         
         public HomeControllerTests()
@@ -48,7 +49,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             });
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(singleGalleryMode);
 
-            var controller = new HomeController(_settings, _database, _deviceDetector, _audit, _logger, _localizer);
+            var controller = new HomeController(_settings, _database, _deviceDetector, _audit, _identity, _logger, _localizer);
             controller.ControllerContext.HttpContext = new DefaultHttpContext()
             {
                 Session = new MockSession()

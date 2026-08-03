@@ -17,6 +17,7 @@ namespace Memtly.Core.Configurations
             services.AddSingleton<IEncryptionHelper, EncryptionHelper>();
             services.AddSingleton<IUrlHelper, UrlHelper>();
             services.AddSingleton<IAuditHelper, AuditHelper>();
+            services.AddSingleton<IIdentityHelper, IdentityHelper>();
             services.AddSingleton<ILanguageHelper, LanguageHelper>();
         }
     }

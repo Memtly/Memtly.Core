@@ -42,14 +42,14 @@
                             else
                             {
                                 <input type="text" id="gallery-id" class="form-control" aria-describedby="gallery-id-help" placeholder="@_localizer["Gallery_Identifier_Placeholder"].Value" aria-label="@_localizer["Name"].Value" autofocus />
-                                @if (await _settings.GetOrDefault(MemtlyConfiguration.Basic.GuestGalleryCreation, false) || (User?.Identity != null && User.Identity.IsAuthenticated))
+                                @if (await _settings.GetOrDefault(MemtlyConfiguration.Basic.GuestGalleryCreation, false) || _identity.IsPrivilegedUser(User))
                                 {
                                     <input type="button" id="btnGenerateGalleryName" class="btn btn-primary-2" value="@_localizer["Generate"].Value" />
                                 }
                             }
                         </div>
                         <div id="gallery-id-help" class="form-text mb-4 mb-lg-5">
-                            @_localizer["Gallery_Identifier_Help"].Value
+                            @_localizer[galleryNameDropdown ? "Gallery_Selector_Help" : "Gallery_Identifier_Help"].Value
                         </div>
                     }
                     else

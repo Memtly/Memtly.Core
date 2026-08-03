@@ -1,13 +1,12 @@
 using System.Net;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Memtly.Core.Attributes;
 using Memtly.Core.Enums;
-using Memtly.Core.Extensions;
 using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Notifications;
 using Memtly.Core.Models.Notifications;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Memtly.Core.Controllers
 {
@@ -19,16 +18,18 @@ namespace Memtly.Core.Controllers
         private readonly IAuditHelper _audit;
         private readonly ILoggerFactory _loggerFactory;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IIdentityHelper _identity;
         private readonly ILogger _logger;
         private readonly IStringLocalizer<Localization.Translations> _localizer;
 
-        public NotificationController(ISettingsHelper settings, ISmtpClientWrapper smtpClientWrapper, IAuditHelper audit, IHttpClientFactory httpClientFactory, ILoggerFactory loggerFactory, IStringLocalizer<Localization.Translations> localizer)
+        public NotificationController(ISettingsHelper settings, ISmtpClientWrapper smtpClientWrapper, IAuditHelper audit, IHttpClientFactory httpClientFactory, IIdentityHelper identity, ILoggerFactory loggerFactory, IStringLocalizer<Localization.Translations> localizer)
             : base()
         {
             _settings = settings;
             _smtpClientWrapper = smtpClientWrapper;
             _audit = audit;
             _httpClientFactory = httpClientFactory;
+            _identity = identity;
             _loggerFactory = loggerFactory;
             _logger = loggerFactory.CreateLogger<NotificationController>();
             _localizer = localizer;
@@ -38,7 +39,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(SettingsPermission = SettingsPermissions.View)]
         public async Task<IActionResult> SendTestEmailNotification(EmailConfiguration config)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
@@ -48,7 +49,7 @@ namespace Memtly.Core.Controllers
                         creds = new NetworkCredential(config.Username, config.Password);
                     }
 
-                    await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_Sent_Test_Notification"].Value} - {_localizer["Email"].Value}", AuditSeverity.Verbose);
+                    await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_Sent_Test_Notification"].Value} - {_localizer["Email"].Value}", AuditSeverity.Verbose);
                     return Json(new
                     {
                         success = await new EmailHelper(_settings, _smtpClientWrapper, _loggerFactory.CreateLogger<EmailHelper>(), _localizer).SendTo(config?.Host ?? string.Empty, config?.Port ?? 587, config?.From ?? string.Empty, config?.DisplayName ?? string.Empty, config?.EnableSSL ?? true, creds, config?.Recipients ?? string.Empty, _localizer["Test"].Value, _localizer["Test_Message"].Value)
@@ -68,11 +69,11 @@ namespace Memtly.Core.Controllers
         [RequiresRole(SettingsPermission = SettingsPermissions.View)]
         public async Task<IActionResult> SendTestNtfyNotification(NtfyConfiguration config)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
-                    await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_Sent_Test_Notification"].Value} - {_localizer["Ntfy"].Value}", AuditSeverity.Verbose);
+                    await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_Sent_Test_Notification"].Value} - {_localizer["Ntfy"].Value}", AuditSeverity.Verbose);
                     return Json(new {
                         success = await new NtfyHelper(_settings, _httpClientFactory, _loggerFactory.CreateLogger<NtfyHelper>()).Send(config?.Endpoint ?? string.Empty, config?.Topic ?? string.Empty, config?.Token ?? string.Empty, config?.Priority ?? 4, _localizer["Test"].Value, _localizer["Test_Message"].Value)
                     });
@@ -91,11 +92,11 @@ namespace Memtly.Core.Controllers
         [RequiresRole(SettingsPermission = SettingsPermissions.View)]
         public async Task<IActionResult> SendTestGotifyNotification(GotifyConfiguration config)
         {
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (_identity.IsValid(User))
             {
                 try
                 {
-                    await _audit.LogAction(User?.Identity?.GetUserId(), $"{_localizer["Audit_Sent_Test_Notification"].Value} - {_localizer["Gotify"].Value}", AuditSeverity.Verbose);
+                    await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_Sent_Test_Notification"].Value} - {_localizer["Gotify"].Value}", AuditSeverity.Verbose);
                     return Json(new
                     {
                         success = await new GotifyHelper(_settings, _httpClientFactory, _loggerFactory.CreateLogger<GotifyHelper>()).Send(config?.Endpoint ?? string.Empty, config?.Token ?? string.Empty, config?.Priority ?? 4, _localizer["Test"].Value, _localizer["Test_Message"].Value)

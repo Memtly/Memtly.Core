@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using System.Web;
 using Memtly.Core.Attributes;
 using Memtly.Core.Constants;
 using Memtly.Core.Enums;
@@ -19,6 +20,7 @@ namespace Memtly.Core.Controllers
     {
         private readonly ISettingsHelper _settings;
         private readonly IDatabaseHelper _database;
+        private readonly IIdentityHelper _identity;
         private readonly ILogger _logger;
         private readonly IStringLocalizer<Localization.Translations> _localizer;
 
@@ -27,11 +29,12 @@ namespace Memtly.Core.Controllers
         private readonly string ThumbnailsDirectory;
         private readonly string CustomResourcesDirectory;
 
-        public MediaViewerController(ISettingsHelper settings, IDatabaseHelper database, ILogger<MediaViewerController> logger, IStringLocalizer<Localization.Translations> localizer)
+        public MediaViewerController(ISettingsHelper settings, IDatabaseHelper database, IIdentityHelper identity, ILogger<MediaViewerController> logger, IStringLocalizer<Localization.Translations> localizer)
             : base()
         {
             _settings = settings;
             _database = database;
+            _identity = identity;
             _logger = logger;
             _localizer = localizer;
 
@@ -55,7 +58,7 @@ namespace Memtly.Core.Controllers
                         var gallery = await _database.GetGallery(galleryItem.GalleryId);
                         if (gallery != null)
                         { 
-                            var user = User?.Identity != null && User.Identity.IsAuthenticated ? User.Identity : null;
+                            var user = _identity.IsValid(User) ? User.Identity : null;
                             var identityEnabled = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.Enabled, true);
                             var likesEnabled = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Likes, true, galleryItem.GalleryId);
 
@@ -68,7 +71,7 @@ namespace Memtly.Core.Controllers
                                 {
                                     builder.Append(galleryItem.UploadedBy);
 
-                                    if (!string.IsNullOrWhiteSpace(galleryItem?.UploaderEmailAddress) && (user?.IsPrivilegedUser() ?? false))
+                                    if (!string.IsNullOrWhiteSpace(galleryItem?.UploaderEmailAddress) && _identity.IsPrivilegedUser(User))
                                     {
                                         builder.Append($" - {galleryItem?.UploaderEmailAddress?.ToLower()}");
                                     }
@@ -85,18 +88,19 @@ namespace Memtly.Core.Controllers
                             {
                                 Id = id,
                                 Collection = gallery.Name,
-                                Source = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{galleryItem.Title}",
-                                Thumbnail = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(galleryItem.Title)}.webp",
+                                Source = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{(galleryItem!.State == GalleryItemState.Pending ? "Pending/" : string.Empty)}{HttpUtility.UrlEncode(galleryItem.Title)}",
+                                Thumbnail = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{HttpUtility.UrlEncode(Path.GetFileNameWithoutExtension(galleryItem.Title))}.webp",
                                 Author = author,
                                 Type = galleryItem.MediaType.ToString().ToLower(),
+                                State = galleryItem.State,
                                 Likes = new PhotoGalleryImageLikes()
                                 {
                                     Enabled = likesEnabled,
                                     CanUserLike = likesEnabled && user != null,
-                                    HasUserLiked = user != null ? await _database.CheckUserHasLikedGalleryItem(galleryItem.Id, user.GetUserId()) : false,
+                                    HasUserLiked = user != null ? await _database.CheckUserHasLikedGalleryItem(galleryItem.Id, _identity.GetUserId(User)) : false,
                                     Count = await _database.GetGalleryItemLikesCount(id)
                                 },
-                                DownloadEnabled = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Download, true, gallery.Id) || (user?.IsPrivilegedUser() ?? false)
+                                DownloadEnabled = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Download, true, gallery.Id) || _identity.IsPrivilegedUser(User)
                             });
                         }
                     }
@@ -122,13 +126,13 @@ namespace Memtly.Core.Controllers
                     var resource = await _database.GetCustomResource(id);
                     if (resource != null)
                     {
-                        var user = User?.Identity != null && User.Identity.IsAuthenticated ? User.Identity : null;
+                        var user = _identity.IsValid(User) ? User.Identity : null;
 
                         return PartialView("~/Views/MediaViewer/Popup.cshtml", new Popup()
                         {
                             Id = id,
                             Collection = "custom_resources",
-                            Source = $"/{CustomResourcesDirectory.Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{resource.FileName}",
+                            Source = $"/{CustomResourcesDirectory.Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{HttpUtility.UrlEncode(resource.FileName)}",
                             Title = resource.Title,
                             Author = $"{_localizer["Uploaded_By"].Value}: {(!string.IsNullOrWhiteSpace(resource?.OwnerName) ? resource.OwnerName : "Anonymous")}",
                             Type = MediaType.Image.ToString().ToLower(),
@@ -160,7 +164,7 @@ namespace Memtly.Core.Controllers
                         var gallery = await _database.GetGallery(galleryItem.GalleryId);
                         if (gallery != null)
                         {
-                            var user = User?.Identity != null && User.Identity.IsAuthenticated ? User.Identity : null;
+                            var user = _identity.IsValid(User) ? User.Identity : null;
                             var identityEnabled = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.Enabled, true);
                             var likesEnabled = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Likes, true, galleryItem.GalleryId);
 
@@ -173,7 +177,7 @@ namespace Memtly.Core.Controllers
                                 {
                                     builder.Append(galleryItem.UploadedBy);
 
-                                    if (!string.IsNullOrWhiteSpace(galleryItem?.UploaderEmailAddress) && (user?.IsPrivilegedUser() ?? false))
+                                    if (!string.IsNullOrWhiteSpace(galleryItem?.UploaderEmailAddress) && _identity.IsPrivilegedUser(User))
                                     {
                                         builder.Append($" - {galleryItem?.UploaderEmailAddress?.ToLower()}");
                                     }
@@ -190,8 +194,8 @@ namespace Memtly.Core.Controllers
                             {
                                 Id = id,
                                 Collection = gallery.Name,
-                                Source = $"/{Path.Combine(UploadsDirectory, gallery.Identifier, "Pending").Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{galleryItem.Title}",
-                                Thumbnail = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{Path.GetFileNameWithoutExtension(galleryItem.Title)}.webp",
+                                Source = $"/{Path.Combine(UploadsDirectory, gallery.Identifier, "Pending").Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{HttpUtility.UrlEncode(galleryItem.Title)}",
+                                Thumbnail = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{HttpUtility.UrlEncode(Path.GetFileNameWithoutExtension(galleryItem.Title))}.webp",
                                 Title = null,
                                 Description = null,
                                 Author = author,
@@ -221,7 +225,7 @@ namespace Memtly.Core.Controllers
                     var galleryItem = await _database.GetGalleryItem(id);
                     if (galleryItem != null)
                     {
-                        var userId = User?.Identity != null && User.Identity.IsAuthenticated ? User.Identity.GetUserId() : 0;
+                        var userId = _identity.IsValid(User) ? _identity.GetUserId(User) : 0;
 
                         long likes = 0;
                         switch (action.ToLower())

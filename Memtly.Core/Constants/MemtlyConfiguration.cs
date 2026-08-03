@@ -11,6 +11,7 @@
             public const string Type = "Memtly:Database:Type";
             public const string ConnectionString = "Memtly:Database:Connection_String";
             public const string SyncFromConfig = "Memtly:Database:Sync_From_Config";
+            public const string TakeMigrationBackup = "Memtly:Database:Take_Migration_Backup";
         }
 
         public class Security
@@ -120,6 +121,7 @@
             public const string AllowedFileTypes = "Memtly:Gallery:Allowed_File_Types";
             public const string CameraUploads = "Memtly:Gallery:Camera_Uploads";
             public const string ShowFilters = "Memtly:Gallery:Show_Filters";
+            public const string ShowPendingUploads = "Memtly:Gallery:Show_Pending_Uploads";
 
             public class QRCode
             {

@@ -17,6 +17,7 @@ namespace Memtly.Core.Helpers
         bool FileExists(string path);
         long FileSize(string path);
         bool DeleteFileIfExists(string path);
+        bool CopyFileIfExists(string source, string destination);
         bool MoveFileIfExists(string source, string destination);
         long GetDirectorySize(string path);
         Task<byte[]> ReadAllBytes(string path);
@@ -108,6 +109,18 @@ namespace Memtly.Core.Helpers
             if (FileExists(path))
             {
                 File.Delete(path);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool CopyFileIfExists(string source, string destination)
+        {
+            if (FileExists(source))
+            {
+                File.Copy(source, destination);
 
                 return true;
             }

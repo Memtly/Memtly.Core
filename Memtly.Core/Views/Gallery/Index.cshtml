@@ -65,7 +65,7 @@
                     <p class="small my-2">@(ViewBag.IsMobile ?? false ? _localizer["Click_To_Upload"].Value : _localizer["Drag_And_Drop"].Value)</p>
                     <p class="small my-2">(@string.Join(", ", allowedFileTypes).ToLower())</p>
 
-                    <input class="position-absolute invisible upload-input" data-post-collection-id="@(Model!.Gallery.Type == GalleryType.Collection ? Model.Gallery.Id : 0)" data-post-gallery-id="@(Model!.Gallery.Type == GalleryType.Basic ? Model.Gallery.Id : 0)" data-post-url="/Gallery/UploadImage" data-post-key="@Model?.SecretKey" data-post-allow-camera="@(((ViewBag.IsMobile ?? false) && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.CameraUploads, false)).ToString().ToLower())" type="file" multiple accept="image/*,video/*" />
+                    <input class="position-absolute invisible upload-input" data-post-collection-id="@(Model!.Gallery.Type == GalleryType.Collection ? Model.Gallery.Id : 0)" data-post-gallery-id="@(Model!.Gallery.Type != GalleryType.Collection ? Model.Gallery.Id : 0)" data-post-url="/Gallery/UploadImage" data-post-key="@Model?.SecretKey" data-post-allow-camera="@(((ViewBag.IsMobile ?? false) && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.CameraUploads, false)).ToString().ToLower())" type="file" multiple accept="image/*,video/*" />
                 </fieldset>
             </form>
         </div>
@@ -101,7 +101,7 @@
     </div>
 </section>
 
-@if (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.FullWidth, false, Model?.Gallery?.Id) && User?.Identity != null && User.Identity.IsAuthenticated && !Model.Gallery.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))
+@if (Model?.Gallery != null && await _settings.GetOrDefault(MemtlyConfiguration.Gallery.FullWidth, false, Model?.Gallery?.Id) && (_identity.IsOwner(User, Model!.Gallery.Owner) || _identity.IsPrivilegedUser(User)) && !Model!.Gallery!.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))
 {
     <!-- Settings Button -->
     <i id="btn-full-width-settings" class="fas fa-gear btnGallerySettings" data-gallery-name="@Model?.Gallery?.Name" data-gallery-id="@Model?.Gallery?.Id"></i>

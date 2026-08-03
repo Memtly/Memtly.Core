@@ -1,11 +1,11 @@
+using Memtly.Core.Attributes;
+using Memtly.Core.Enums;
+using Memtly.Core.Helpers;
+using Memtly.Core.Helpers.Database;
+using Memtly.Core.Models.Database;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using Memtly.Core.Attributes;
-using Memtly.Core.Enums;
-using Memtly.Core.Extensions;
-using Memtly.Core.Helpers.Database;
-using Memtly.Core.Models.Database;
 
 namespace Memtly.Core.Controllers
 {
@@ -13,13 +13,15 @@ namespace Memtly.Core.Controllers
     public class AuditController : BaseController
     {
         private readonly IDatabaseHelper _database;
+        private readonly IIdentityHelper _identity;
         private readonly ILogger _logger;
         private readonly IStringLocalizer<Localization.Translations> _localizer;
 
-        public AuditController(IDatabaseHelper database, ILogger<AuditController> logger, IStringLocalizer<Localization.Translations> localizer)
+        public AuditController(IDatabaseHelper database, IIdentityHelper identity, ILogger<AuditController> logger, IStringLocalizer<Localization.Translations> localizer)
             : base()
         {
             _database = database;
+            _identity = identity;
             _logger = logger;
             _localizer = localizer;
         }
@@ -28,7 +30,7 @@ namespace Memtly.Core.Controllers
         [RequiresRole(AuditPermission = AuditPermissions.View)]
         public async Task<IActionResult> AuditList(string term = "", AuditSeverity severity = AuditSeverity.Information, int limit = 10)
         {
-            if (User?.Identity == null || !User.Identity.IsAuthenticated)
+            if (!_identity.IsValid(User))
             {
                 return Redirect("/");
             }
@@ -37,12 +39,13 @@ namespace Memtly.Core.Controllers
 
             try
             {
-                var user = await _database.GetUser(User.Identity.GetUserId());
+                var userId = _identity.GetUserId(User);
+                var user = await _database.GetUser(userId);
                 if (user != null)
                 {
                     limit = limit >= 5 ? limit : 5;
 
-                    if (User?.Identity?.IsPrivilegedUser() ?? false)
+                    if (_identity.IsPrivilegedUser(User))
                     {
                         result = await _database.GetAuditLogs(null, term, severity, limit);
                     }
