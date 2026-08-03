@@ -88,8 +88,8 @@ namespace Memtly.Core.Controllers
                             {
                                 Id = id,
                                 Collection = gallery.Name,
-                                Source = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{(galleryItem!.State == GalleryItemState.Pending ? "Pending/" : string.Empty)}{HttpUtility.UrlEncode(galleryItem.Title)}",
-                                Thumbnail = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{HttpUtility.UrlEncode(Path.GetFileNameWithoutExtension(galleryItem.Title))}.webp",
+                                Source = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{(galleryItem!.State == GalleryItemState.Pending ? "Pending/" : string.Empty)}{Uri.EscapeDataString(galleryItem.Title)}",
+                                Thumbnail = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{Uri.EscapeDataString(Path.GetFileNameWithoutExtension(galleryItem.Title))}.webp",
                                 Author = author,
                                 Type = galleryItem.MediaType.ToString().ToLower(),
                                 State = galleryItem.State,
@@ -132,7 +132,7 @@ namespace Memtly.Core.Controllers
                         {
                             Id = id,
                             Collection = "custom_resources",
-                            Source = $"/{CustomResourcesDirectory.Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{HttpUtility.UrlEncode(resource.FileName)}",
+                            Source = $"/{CustomResourcesDirectory.Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{Uri.EscapeDataString(resource.FileName)}",
                             Title = resource.Title,
                             Author = $"{_localizer["Uploaded_By"].Value}: {(!string.IsNullOrWhiteSpace(resource?.OwnerName) ? resource.OwnerName : "Anonymous")}",
                             Type = MediaType.Image.ToString().ToLower(),
@@ -194,8 +194,8 @@ namespace Memtly.Core.Controllers
                             {
                                 Id = id,
                                 Collection = gallery.Name,
-                                Source = $"/{Path.Combine(UploadsDirectory, gallery.Identifier, "Pending").Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{HttpUtility.UrlEncode(galleryItem.Title)}",
-                                Thumbnail = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{HttpUtility.UrlEncode(Path.GetFileNameWithoutExtension(galleryItem.Title))}.webp",
+                                Source = $"/{Path.Combine(UploadsDirectory, gallery.Identifier, "Pending").Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{Uri.EscapeDataString(galleryItem!.Title)}",
+                                Thumbnail = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{Uri.EscapeDataString(Path.GetFileNameWithoutExtension(galleryItem.Title))}.webp",
                                 Title = null,
                                 Description = null,
                                 Author = author,

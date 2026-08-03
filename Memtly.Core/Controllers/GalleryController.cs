@@ -374,8 +374,8 @@ namespace Memtly.Core.Controllers
                                 UploaderEmailAddress = x.UploaderEmailAddress,
                                 UploadDate = x.UploadedDate,
                                 CaptureDate = x.DateTaken ?? x.UploadedDate,
-                                ImagePath = $"/{Path.Combine(UploadsDirectory, galleryIdentifier!.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{(x!.State == GalleryItemState.Pending ? "Pending/" : string.Empty)}{HttpUtility.UrlEncode(x.Title)}",
-                                ThumbnailPath = $"/{Path.Combine(ThumbnailsDirectory, galleryIdentifier!.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{HttpUtility.UrlEncode(Path.GetFileNameWithoutExtension(x.Title))}.webp",
+                                ImagePath = $"/{Path.Combine(UploadsDirectory, galleryIdentifier!.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{(x!.State == GalleryItemState.Pending ? "Pending/" : string.Empty)}{Uri.EscapeDataString(x.Title)}",
+                                ThumbnailPath = $"/{Path.Combine(ThumbnailsDirectory, galleryIdentifier!.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{Uri.EscapeDataString(Path.GetFileNameWithoutExtension(x.Title))}.webp",
                                 MediaType = x.MediaType,
                                 State = x.State
                             };
@@ -441,7 +441,20 @@ namespace Memtly.Core.Controllers
 
                     string uploadedBy = HttpContext.Session.GetString(SessionKey.Viewer.Identity)?.Trim() ?? "Anonymous";
                     string uploaderEmail = HttpContext.Session.GetString(SessionKey.Viewer.EmailAddress)?.Trim() ?? "Anonymous";
-                
+
+                    var loggedInUserId = _identity.GetUserId(User);
+                    var loggedInUser = loggedInUserId > 0 ? await _database.GetUser(loggedInUserId) : null;
+                    if (loggedInUser != null)
+                    {
+                        uploadedBy = $"{loggedInUser.Firstname} {loggedInUser.Lastname}".Trim();
+                        if (string.IsNullOrWhiteSpace(uploadedBy))
+                        {
+                            uploadedBy = loggedInUser.Username;
+                        }
+
+                        uploaderEmail = loggedInUser?.Email?.Trim() ?? string.Empty;
+                    }
+
                     var files = Request?.Form?.Files;
                     if (files != null && files.Count > 0)
                     {
@@ -509,19 +522,6 @@ namespace Memtly.Core.Controllers
                                             await _imageHelper.GenerateThumbnail(filePath, savePath, await _settings.GetOrDefault(MemtlyConfiguration.Basic.ThumbnailSize, 720));
 
                                             var fileCreated = _imageHelper.GetExifCreationDateTaken(filePath) ?? await _fileHelper.GetCreationDatetime(filePath);
-
-                                            var loggedInUserId = _identity.GetUserId(User);
-                                            var loggedInUser = loggedInUserId > 0 ? await _database.GetUser(loggedInUserId) : null;
-                                            if (loggedInUser != null)
-                                            {
-                                                uploadedBy = $"{loggedInUser.Firstname} {loggedInUser.Lastname}".Trim();
-                                                if (string.IsNullOrWhiteSpace(uploadedBy))
-                                                {
-                                                    uploadedBy = loggedInUser.Username;
-                                                }
-
-                                                uploaderEmail = loggedInUser?.Email?.Trim() ?? string.Empty;
-                                            }
 
                                             var item = await _database.AddGalleryItem(new GalleryItemModel()
                                             {

@@ -2863,8 +2863,8 @@ namespace Memtly.Core.Controllers
                                 UploaderEmailAddress = x.UploaderEmailAddress,
                                 UploadDate = x.UploadedDate,
                                 CaptureDate = x.DateTaken ?? x.UploadedDate,
-                                ImagePath = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/Pending/{HttpUtility.UrlEncode(x.Title)}",
-                                ThumbnailPath = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{HttpUtility.UrlEncode(Path.GetFileNameWithoutExtension(x.Title))}.webp",
+                                ImagePath = $"/{Path.Combine(UploadsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/Pending/{Uri.EscapeDataString(x.Title)}",
+                                ThumbnailPath = $"/{Path.Combine(ThumbnailsDirectory, gallery.Identifier).Remove(RootDirectory).Replace('\\', '/').TrimStart('/')}/{Uri.EscapeDataString(Path.GetFileNameWithoutExtension(x.Title))}.webp",
                                 MediaType = x.MediaType,
                                 State = x.State
                             })?.ToList(),
