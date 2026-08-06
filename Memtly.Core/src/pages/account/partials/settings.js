@@ -75,8 +75,8 @@ function bindTestNotificationButtons() {
                 username: $('input[data-setting-name="Memtly:Notifications:Smtp:Username"]').val(),
                 password: $('input[data-setting-name="Memtly:Notifications:Smtp:Password"]').val(),
                 from: $('input[data-setting-name="Memtly:Notifications:Smtp:From"]').val(),
-                display_name: $('input[data-setting-name="Memtly:Notifications:Smtp:DisplayName"]').val(),
-                enable_ssl: $('input[data-setting-name="Memtly:Notifications:Smtp:Use_SSL"]').val(),
+                displayname: $('input[data-setting-name="Memtly:Notifications:Smtp:DisplayName"]').val(),
+                enablessl: $('select[data-setting-name="Memtly:Notifications:Smtp:Use_SSL"]').val(),
             }
         })
             .done(data => {

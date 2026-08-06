@@ -12,7 +12,7 @@
     var currentPage = 1;
     try
     {
-        currentPage = int.Parse((Context.Request.Query.ContainsKey("page") && !string.IsNullOrWhiteSpace(Context.Request.Query["page"])) ? Context.Request.Query["page"].ToString().ToLower() : "1");
+        currentPage = int.Parse(_urlHelper!.ExtractQueryValue(Context.Request, "page", "1")!.ToLower());
     }
     catch { }
 }

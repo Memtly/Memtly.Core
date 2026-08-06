@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Security;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using Memtly.Core.Constants;
@@ -11,7 +12,7 @@ namespace Memtly.Core.Helpers
         public string GenerateBaseUrl(HttpRequest? ctx, string? path);
         public string GenerateQueryString(HttpRequest? ctx, List<KeyValuePair<string, string>>? append = null, List<string>? exclude = null);
         public string ExtractHost(string value);
-        public string ExtractQueryValue(HttpRequest? ctx, string key);
+        public string? ExtractQueryValue(HttpRequest? ctx, string key, string? defaultValue);
     }
 
     public class UrlHelper : IUrlHelper
@@ -80,18 +81,22 @@ namespace Memtly.Core.Helpers
             return string.Empty;
         }
 
-        public string ExtractQueryValue(HttpRequest? ctx, string key)
+        public string? ExtractQueryValue(HttpRequest? ctx, string key, string? defaultValue)
         {
             if (ctx?.Query != null)
-            { 
+            {
                 try
                 {
-                    return ctx.Query.FirstOrDefault(x => string.Equals(key, x.Key, StringComparison.OrdinalIgnoreCase)).Value.ToString();
+                    var value = ctx.Query.FirstOrDefault(x => string.Equals(key, x.Key, StringComparison.OrdinalIgnoreCase)).Value.ToString()?.Trim('/')?.Trim();
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        return value;
+                    }
                 }
                 catch { }
             }
 
-            return string.Empty;
+            return defaultValue;
         }
     }
 }

@@ -1,12 +1,11 @@
 ﻿@model IndexModel
-@using Memtly.Core.Helpers
 @using Memtly.Core.Views.Error
 
 @{
     var reasonCode = 400;
     try
     {
-        reasonCode = Context.Request.Query.ContainsKey("Reason") ? Convert.ToInt32(Context.Request.Query["Reason"]) : 400;
+        reasonCode = int.Parse(_urlHelper!.ExtractQueryValue(Context.Request, "Reason", "400")!.ToLower());
     }
     catch { }
     

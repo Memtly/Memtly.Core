@@ -17,17 +17,19 @@ namespace Memtly.Core.Attributes
 
                 var request = filterContext.HttpContext.Request;
                 var databaseHelper = filterContext.HttpContext.RequestServices.GetService<IDatabaseHelper>();
+                var urlHelper = filterContext.HttpContext.RequestServices.GetService<Helpers.IUrlHelper>();
+
                 if (databaseHelper != null)
-                { 
-                    var galleryIdentifier = (request.Query.ContainsKey("identifier") && !string.IsNullOrWhiteSpace(request.Query["identifier"])) ? request.Query["identifier"].ToString().ToLower() : null;
+                {
+                    var galleryIdentifier = urlHelper!.ExtractQueryValue(request, "identifier", null)?.ToLower();
                     if (!string.IsNullOrWhiteSpace(galleryIdentifier))
                     {
                         galleryId = databaseHelper.GetGalleryId(galleryIdentifier).Result;
                     }
 
                     if (galleryId == null)
-                    { 
-                        var galleryName = (request.Query.ContainsKey("id") && !string.IsNullOrWhiteSpace(request.Query["id"])) ? request.Query["id"].ToString().ToLower() : SystemGalleries.DefaultGallery.ToLower();
+                    {
+                        var galleryName = urlHelper!.ExtractQueryValue(request, "id", null)?.ToLower() ?? SystemGalleries.DefaultGallery.ToLower();
                         if (!string.IsNullOrWhiteSpace(galleryName))
                         { 
                             galleryId = (databaseHelper?.GetGalleryIdByName(galleryName)?.Result) ?? 1;
@@ -41,10 +43,11 @@ namespace Memtly.Core.Attributes
                         { 
                             var encryptionHelper = filterContext.HttpContext.RequestServices.GetService<IEncryptionHelper>();
                             if (encryptionHelper != null)
-                            { 
-                                var key = request.Query.ContainsKey("key") ? request.Query["key"].ToString() : string.Empty;
+                            {
+                                var key = urlHelper!.ExtractQueryValue(request, "key", string.Empty);
+                                var enc = urlHelper!.ExtractQueryValue(request, "enc", "false")!.ToLower();
 
-                                var isEncrypted = request.Query.ContainsKey("enc") ? bool.Parse(request.Query["enc"].ToString().ToLower()) : false;
+                                var isEncrypted = bool.Parse(enc);
                                 if (!isEncrypted && !string.IsNullOrWhiteSpace(key) && encryptionHelper.IsEncryptionEnabled())
                                 {
                                     var queryString = HttpUtility.ParseQueryString(request.QueryString.ToString());
