@@ -1,10 +1,8 @@
 using System.Net;
 using System.Reflection;
 using System.Text;
-using System.Web;
 using Memtly.Core.Attributes;
 using Memtly.Core.Constants;
-using Memtly.Core.EntityFramework.Models;
 using Memtly.Core.Enums;
 using Memtly.Core.Extensions;
 using Memtly.Core.Helpers;
@@ -229,7 +227,7 @@ namespace Memtly.Core.Controllers
                     var currentPage = 1;
                     try
                     {
-                        currentPage = int.Parse((Request.Query.ContainsKey("page") && !string.IsNullOrWhiteSpace(Request.Query["page"])) ? Request.Query["page"].ToString().ToLower() : "1");
+                        currentPage = int.Parse(_urlHelper!.ExtractQueryValue(Request, "page", "1")!.ToLower());
                     }
                     catch { }
 

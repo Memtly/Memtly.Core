@@ -22,10 +22,10 @@ namespace Memtly.Core.Models.Notifications
         [JsonPropertyName("from")]
         public string? From { get; set; }
 
-        [JsonPropertyName("display_name")]
+        [JsonPropertyName("displayname")]
         public string? DisplayName { get; set; }
 
-        [JsonPropertyName("enable_ssl")]
+        [JsonPropertyName("enablessl")]
         public bool EnableSSL { get; set; } = true;
     }
 }

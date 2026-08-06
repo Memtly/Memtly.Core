@@ -129,7 +129,7 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             mockContext.Request.Host = new HostString("unit.test.com");
             mockContext.Request.QueryString = new QueryString(queryString);
 
-            var actual = new UrlHelper(_settings).ExtractQueryValue(mockContext?.Request, key);
+            var actual = new UrlHelper(_settings).ExtractQueryValue(mockContext?.Request, key, string.Empty);
             Assert.That(actual, Is.EqualTo(expected));
         }
     }

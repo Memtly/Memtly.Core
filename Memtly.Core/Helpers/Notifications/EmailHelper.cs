@@ -1,9 +1,11 @@
 ﻿using System.Net;
-using System.Net.Mail;
 using Microsoft.Extensions.Localization;
 using Razor.Templating.Core;
 using Memtly.Core.Resources.Templates.Email;
 using Memtly.Core.Constants;
+using MimeKit;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 
 namespace Memtly.Core.Helpers.Notifications
 {
@@ -52,8 +54,7 @@ namespace Memtly.Core.Helpers.Notifications
                     var port = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Port, 587);
                     var from = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.From, string.Empty);
                     var displayName = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.DisplayName, "Memtly");
-                    var enableSSL = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.UseSSL, false);
-
+                    
                     var username = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Username, string.Empty);
                     var password = await _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Password, string.Empty);
 
@@ -63,7 +64,7 @@ namespace Memtly.Core.Helpers.Notifications
                         credentials = new NetworkCredential(username, password);
                     }
 
-                    return await SendTo(host, port, from, displayName, enableSSL, credentials, recipients, title, message);
+                    return await SendTo(host, port, from, displayName, credentials, recipients, title, message);
                 }
                 catch (Exception ex)
                 {
@@ -74,9 +75,9 @@ namespace Memtly.Core.Helpers.Notifications
             return false;
         }
 
-        public async Task<bool> SendTo(string host, int port, string from, string displayName, bool enableSSL, NetworkCredential? credentials, string recipients, string title, string message)
+        public async Task<bool> SendTo(string host, int port, string from, string displayName, NetworkCredential? credentials, string recipients, string title, string message)
         {
-            var addressList = recipients?.Split(new char[] { ';', ',' }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)?.Select(x => new MailAddress(x));
+            var addressList = recipients?.Split(new char[] { ';', ',' }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)?.Select(x => new MailboxAddress("Recipient", x));
             
             if (addressList != null && addressList.Any())
             { 
@@ -87,28 +88,29 @@ namespace Memtly.Core.Helpers.Notifications
                         if (!string.IsNullOrWhiteSpace(from))
                         {
                             var sentToAll = true;
-                            using (var smtp = new SmtpClient(host, port))
+                            using (var smtp = new SmtpClient())
                             {
+                                var sender = new MailboxAddress(displayName, from);
+                                
+                                var msg = new MimeMessage();
+                                msg.From.Add(sender);
+                                msg.Subject = title;
+                                msg.Body = new TextPart("html") { Text = message };
+
+                                await _client.ConnectAsync(smtp, host, port, SecureSocketOptions.Auto);
                                 if (!string.IsNullOrWhiteSpace(credentials?.UserName) && !string.IsNullOrWhiteSpace(credentials?.Password))
                                 {
-                                    smtp.UseDefaultCredentials = false;
-                                    smtp.Credentials = credentials;
+                                    await _client.AuthenticateAsync(smtp, credentials);
                                 }
 
-                                smtp.EnableSsl = enableSSL;
-
-                                var sender = new MailAddress(from, displayName);
                                 foreach (var to in addressList)
                                 {
                                     try
                                     {
-                                        await _client.SendMailAsync(smtp, new MailMessage(sender, to)
-                                        {
-                                            Sender = sender,
-                                            Subject = title,
-                                            Body = message,
-                                            IsBodyHtml = true,
-                                        });
+                                        msg.To.Clear();
+                                        msg.To.Add(to);
+
+                                        await _client.SendAsync(smtp, msg);
                                     }
                                     catch (Exception ex)
                                     {
@@ -116,6 +118,8 @@ namespace Memtly.Core.Helpers.Notifications
                                         sentToAll = false;
                                     }
                                 }
+
+                                await _client.DisconnectAsync(smtp, true);
                             }
                 
                             return sentToAll;

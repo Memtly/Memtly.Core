@@ -1,9 +1,12 @@
-using System.Net.Mail;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
+using System.Net;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using Memtly.Core.Constants;
 using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Notifications;
-using Memtly.Core.Constants;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
+using MimeKit;
 
 namespace Memtly.Core.UnitTests.Tests.Helpers
 {
@@ -21,7 +24,10 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
         [SetUp]
         public void Setup()
         {
-            _smtp.SendMailAsync(Arg.Any<SmtpClient>(), Arg.Any<MailMessage>()).Returns(Task.FromResult(true));
+            _smtp.ConnectAsync(Arg.Any<SmtpClient>(), Arg.Any<string>(), Arg.Any<int>(), Arg.Any<SecureSocketOptions>()).Returns(Task.FromResult(true));
+            _smtp.AuthenticateAsync(Arg.Any<SmtpClient>(), Arg.Any<NetworkCredential>()).Returns(Task.FromResult(true));
+            _smtp.SendAsync(Arg.Any<SmtpClient>(), Arg.Any<MimeMessage>()).Returns(Task.FromResult(true));
+            _smtp.DisconnectAsync(Arg.Any<SmtpClient>(), Arg.Any<bool>()).Returns(Task.FromResult(true));
 
             _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Enabled, Arg.Any<bool>()).Returns(true);
             _settings.GetOrDefault(MemtlyConfiguration.Notifications.Smtp.Recipient, Arg.Any<string>()).Returns("unit@test.com");

@@ -52,7 +52,7 @@ namespace Memtly.Core.Controllers
                     await _audit.LogAction(_identity.GetUserId(User), $"{_localizer["Audit_Sent_Test_Notification"].Value} - {_localizer["Email"].Value}", AuditSeverity.Verbose);
                     return Json(new
                     {
-                        success = await new EmailHelper(_settings, _smtpClientWrapper, _loggerFactory.CreateLogger<EmailHelper>(), _localizer).SendTo(config?.Host ?? string.Empty, config?.Port ?? 587, config?.From ?? string.Empty, config?.DisplayName ?? string.Empty, config?.EnableSSL ?? true, creds, config?.Recipients ?? string.Empty, _localizer["Test"].Value, _localizer["Test_Message"].Value)
+                        success = await new EmailHelper(_settings, _smtpClientWrapper, _loggerFactory.CreateLogger<EmailHelper>(), _localizer).SendTo(config?.Host ?? string.Empty, config?.Port ?? 587, config?.From ?? string.Empty, config?.DisplayName ?? string.Empty, creds, config?.Recipients ?? string.Empty, _localizer["Test"].Value, _localizer["Test_Message"].Value)
                     });
                 }
                 catch (Exception ex)
