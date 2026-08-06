@@ -45,7 +45,13 @@ namespace Memtly.Core.Helpers
         public bool CreateDirectoryIfNotExists(string path)
         {
             if (!DirectoryExists(path))
-            { 
+            {
+                if (FileExists(path))
+                {
+                    _logger.LogWarning($"Failed to create directory '{path}' as a file with the same name already exists. If this is Linux you should delete this file to allow the directory creation.");
+                    return false;
+                }
+
                 Directory.CreateDirectory(path);
 
                 return true;
