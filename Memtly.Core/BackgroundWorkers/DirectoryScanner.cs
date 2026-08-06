@@ -101,6 +101,8 @@ namespace Memtly.Core.BackgroundWorkers
 
                             foreach (var galleryDir in galleryDirs)
                             {
+                                var identifier = string.Empty;
+
                                 try
                                 {
                                     if (galleryDir.StartsWith(Path.Combine(uploadsDirectory, SystemGalleries.AllGallery), StringComparison.OrdinalIgnoreCase))
@@ -109,12 +111,11 @@ namespace Memtly.Core.BackgroundWorkers
                                     }
 
                                     var galleryName = Path.GetFileName(galleryDir).ToLower();
-                                    var identifier = galleryName;
+                                    identifier = galleryName;
 
                                     var galleryId = await db.GetGalleryId(identifier);
-                                    if (galleryId == null && await db.GetGalleryCount() < await _settingsHelper.GetOrDefault(MemtlyConfiguration.Basic.MaxGalleryCount, 1000000))
+                                    if (galleryId == null && GalleryHelper.IsValidGalleryIdentifier(identifier) && await db.GetGalleryCount() < await _settingsHelper.GetOrDefault(MemtlyConfiguration.Basic.MaxGalleryCount, 1000000))
                                     {
-                                        identifier = GalleryHelper.IsValidGalleryIdentifier(galleryName) ? galleryName : GalleryHelper.GenerateGalleryIdentifier();
                                         galleryId = (await db.AddGallery(new GalleryModel()
                                         {
                                             Identifier = identifier,
@@ -228,7 +229,7 @@ namespace Memtly.Core.BackgroundWorkers
                                                         }
                                                         catch (Exception ex)
                                                         {
-                                                            _logger.LogError(ex, $"An error occurred while scanning file '{file}'");
+                                                            _logger.LogError(ex, $"An error occurred while scanning file '{file}' for gallery '{identifier}'");
                                                         }
                                                     }
                                                 }
@@ -264,7 +265,7 @@ namespace Memtly.Core.BackgroundWorkers
                                                             }
                                                             catch (Exception ex)
                                                             {
-                                                                _logger.LogError(ex, $"An error occurred while scanning file '{file}'");
+                                                                _logger.LogError(ex, $"An error occurred while scanning file '{file}' for gallery '{identifier}'");
                                                             }
                                                         }
                                                     }
@@ -275,7 +276,7 @@ namespace Memtly.Core.BackgroundWorkers
                                 }
                                 catch (Exception ex)
                                 {
-                                    _logger.LogError(ex, $"An error occurred while scanning directory '{galleryDir}'");
+                                    _logger.LogError(ex, $"An error occurred while scanning directory '{galleryDir}' with identifier '{identifier}'");
                                 }
                             }
                         }
