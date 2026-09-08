@@ -9,6 +9,7 @@ body {
 }
 
 .lbl-like-count {
+    font-size: 12px;
     min-width: 25px;
 }
 
@@ -45,6 +46,7 @@ body {
 }
 
 .highlight {
+    color: rgba(var(--primary-3), 1.0);
     outline: 1px solid;
     outline-color: rgba(var(--primary-3), 1.0);
     background-color: rgba(var(--primary-3), 0.04);

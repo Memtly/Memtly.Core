@@ -396,12 +396,16 @@ class MediaViewer {
             let width = $('.media-viewer-content img').innerWidth();
             if (type === 'video') {
                 let height = $('.media-viewer-content img').innerHeight();
-                $('.media-viewer-content').html(`
+                $('.media-viewer-content').prepend(`
                     <video width="${width}" height="${height}" controls autoplay>
                         <source src="${source}" type="video/mp4">
                         ${localization.translate('Browser_Does_Not_Support')}
                     </video>
                 `);
+                $('.media-viewer-content img').remove();
+                $('.media-viewer-content .media-viewer-actions').css({
+                    'bottom': '40px'
+                });
             }
 
             $('.media-viewer-row').css({

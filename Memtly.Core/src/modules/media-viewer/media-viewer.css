@@ -83,6 +83,10 @@
                     left: 0px;
                 }
 
+                #media-viewer-wrapper .media-viewer-popup .media-viewer .media-viewer-content:hover:has(video) .media-viewer-actions {
+                    bottom: 100px !important;
+                }
+
                     #media-viewer-wrapper .media-viewer-popup .media-viewer .media-viewer-content .media-viewer-actions .col-6 {
                         margin: 0px;
                         padding: 0px;
@@ -97,8 +101,9 @@
                         }
 
                         #media-viewer-wrapper .media-viewer-popup .media-viewer .media-viewer-content .media-viewer-actions .col-6 .btn {
-                            height: 26px;
                             font-size: 12px;
+                            line-height: 12px;
+                            height: 26px;
                         }
 
                     #media-viewer-wrapper .media-viewer-popup .media-viewer .media-viewer-content .media-viewer-actions .input-group {
@@ -178,6 +183,7 @@
         }
 
         #media-viewer-wrapper .media-viewer-popup .media-viewer .media-viewer-comments .media-viewer-write-comment p {
+            font-size: 12px;
             text-align: center;
             margin: 0px;
             padding: 5px;
