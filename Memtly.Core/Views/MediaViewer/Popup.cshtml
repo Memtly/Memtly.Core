@@ -12,7 +12,7 @@
                 <img class="media-viewer-image" src="@(Model.Type.Equals("Image", StringComparison.OrdinalIgnoreCase) ? Model.Source : Model.Thumbnail)" onerror="this.onerror=null; this.src='/_content/Memtly.Core/images/@(Model.Type.Equals("Image", StringComparison.OrdinalIgnoreCase) ? "BrokenImage.webp" : "BrokenVideo.webp")';" />
                 <div class="media-viewer-actions row">
                     <div class="col-6">
-                        @if (Model.Likes != null)
+                        @if (Model.Likes != null && Model.Likes.Enabled)
                         {
                             <div class="media-viewer-like-button input-group input-group-xs">
                                 <div class="input-group-text text-primary-2 border-primary-2">
@@ -25,7 +25,7 @@
                         }
                     </div>
                     <div class="col-6">
-                        @if (Model.Comments != null)
+                        @if (Model.Comments != null && Model.Comments.Enabled)
                         {
                             <button class="btn btn-sm btn-primary-2 @(Model!.Comments!.HasUserCommented ? "comment-button-active" : string.Empty) comment-button" data-comment-id="@Model.Id" title="@(_localizer["Comment"].Value)">
                                 <i class="fa fa-comment-dots"></i>
@@ -46,7 +46,7 @@
             {
                 <div class="media-viewer-row media-viewer-description mt-2">@Model.Description</div>
             }
-            @if (Model.Comments != null)
+            @if (Model.Comments != null && Model.Comments.Enabled)
             {
                 <div class="media-viewer-row media-viewer-comments d-none">
                     <h5>@(_localizer["Comments"].Value)</h5>
