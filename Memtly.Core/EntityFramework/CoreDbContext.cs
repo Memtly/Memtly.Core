@@ -15,6 +15,7 @@ namespace Memtly.Core.EntityFramework
         public DbSet<Gallery> Galleries { get; set; }
         public DbSet<GalleryItem> GalleryItems { get; set; }
         public DbSet<GalleryLike> GalleryLikes { get; set; }
+        public DbSet<GalleryComment> GalleryComments { get; set; }
         public DbSet<GallerySetting> GallerySettings { get; set; }
         public DbSet<GalleryCollection> GalleryCollections { get; set; }
         public DbSet<GalleryHistory> GalleryHistory { get; set; }
@@ -179,6 +180,25 @@ namespace Memtly.Core.EntityFramework
 
                 e.HasOne(x => x.GalleryItem)
                  .WithMany(gi => gi.Likes)
+                 .HasForeignKey(x => x.GalleryItemId)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(x => x.User)
+                 .WithMany()
+                 .HasForeignKey(x => x.UserId)
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            mb.Entity<GalleryComment>(e =>
+            {
+                e.Property(x => x.Value).HasMaxLength(5000);
+                e.Property(x => x.CreatedAt).HasConversion(
+                    v => v.UtcTicks,
+                    v => new DateTimeOffset(v, TimeSpan.Zero)
+                );
+
+                e.HasOne(x => x.GalleryItem)
+                 .WithMany(gi => gi.Comments)
                  .HasForeignKey(x => x.GalleryItemId)
                  .OnDelete(DeleteBehavior.Cascade);
 

@@ -14,12 +14,14 @@ namespace Memtly.Core.Views.MediaViewer
         public string? Collection { get; set; }
         public string? Source { get; set; }
         public string? Thumbnail { get; set; }
-        public string? Author { get; set; }
+        public string? AuthorName { get; set; }
+        public string? AuthorEmailAddress { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
         public string Type { get; set; } = "Image";
         public GalleryItemState State { get; set; } = GalleryItemState.Unknown;
         public bool DownloadEnabled { get; set; } = false;
         public PhotoGalleryImageLikes? Likes { get; set; } = null;
+        public PhotoGalleryImageComments? Comments { get; set; } = null;
     }
 }

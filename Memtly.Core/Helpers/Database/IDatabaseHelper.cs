@@ -52,6 +52,19 @@ namespace Memtly.Core.Helpers.Database
         Task DeleteAllGalleryItemLikes();
         #endregion
 
+        #region Gallery Item Comments
+        Task<long> GetGalleryItemCommentsCount(int galleryItemId);
+        Task<IEnumerable<GalleryItemCommentModel>> GetGalleryItemComments(int galleryItemId);
+        Task<GalleryItemCommentModel?> GetGalleryItemComment(int id);
+        Task<IEnumerable<GalleryItemCommentModel>> GetUsersGalleryItemComments(int userId);
+        Task<IEnumerable<GalleryItemCommentModel>> GetUnassignedGalleryItemComments();
+        Task<bool> CheckUserHasCommentedGalleryItem(int galleryItemId, int userId);
+        Task<GalleryItemCommentModel?> AddGalleryItemComment(GalleryItemCommentModel model);
+        Task WipeGalleryItemComments(int galleryItemId);
+        Task DeleteGalleryItemComment(GalleryItemCommentModel model);
+        Task DeleteAllGalleryItemComments();
+        #endregion
+
         #region Gallery Collections
         Task<GalleryCollectionModel?> GetCollection(int id);
         Task<List<GalleryCollectionModel>> GetCollections(int? userId = null, int? collectionId = null);

@@ -1,4 +1,5 @@
 import './media-viewer.css';
+import { displayMessage } from '@modules/message-box';
 import { displayLoader, hideLoader } from '@modules/loader';
 import { loadGalleryPage } from '@pages/gallery/gallery';
 
@@ -11,6 +12,7 @@ class MediaViewer {
         this.lastSelected = null;
         this.page = 1;
         this.maxScroll = 0;
+        this.maxCharacterCount = 2000;
     }
 
     init() {
@@ -34,10 +36,11 @@ class MediaViewer {
     }
 
     bindPopupEventHandlers() {
+        this.bindCommentButtons();
+        this.bindDownloadButton();
         this.bindSwipe();
         this.bindArrowKeys();
         this.bindLikeButton();
-        this.bindDownloadButton();
     }
 
     bindOpenPopup() {
@@ -88,13 +91,15 @@ class MediaViewer {
         });
 
         $(document).off('keydown.selectAll').on('keydown.selectAll', (e) => {
-            if (e.ctrlKey && e.key.toLowerCase() === 'a') {
-                preventDefaults(e);
+            if (!$('#media-viewer-post').is(':focus')) {
+                if (e.ctrlKey && e.key.toLowerCase() === 'a') {
+                    preventDefaults(e);
 
-                const deselectedCount = $('.btn-multi-select.fa-square').length;
-                $('.btn-multi-select').each((_, elem) => {
-                    this.setMultiSelectOption($(elem), deselectedCount > 0);
-                });
+                    const deselectedCount = $('.btn-multi-select.fa-square').length;
+                    $('.btn-multi-select').each((_, elem) => {
+                        this.setMultiSelectOption($(elem), deselectedCount > 0);
+                    });
+                }
             }
         });
 
@@ -116,7 +121,7 @@ class MediaViewer {
     }
 
     bindSwipe() {
-        $(document).off('click touchstart touchend mousedown mouseup', '.media-viewer .media-viewer-content').on('click touchstart touchend mousedown mouseup', '.media-viewer .media-viewer-content', (e) => {
+        $(document).off('click touchstart touchend mousedown mouseup', '.media-viewer .media-viewer-content .media-viewer-image').on('click touchstart touchend mousedown mouseup', '.media-viewer .media-viewer-content .media-viewer-image', (e) => {
             //e.preventDefault();
             e.stopPropagation();
 
@@ -136,10 +141,10 @@ class MediaViewer {
                 } else if (e.originalEvent.type === 'touchend' || e.originalEvent.type === 'mouseup') {
                     const touchEndPosX = e.changedTouches ? e.changedTouches[0].screenX : e.screenX;
                     const touchEndPosY = e.changedTouches ? e.changedTouches[0].screenY : e.screenY;
-                   
+
                     const touchDiffX = Math.abs(this.touchStartPosX - touchEndPosX);
                     const touchDiffY = Math.abs(this.touchStartPosY - touchEndPosY);
-                   
+
                     if (touchDiffX > 100) {
                         if (touchEndPosX < this.touchStartPosX) {
                             this.moveSlide(1);
@@ -147,10 +152,12 @@ class MediaViewer {
                             this.moveSlide(-1);
                         }
                     } else if (touchDiffY > 100) {
-                        if (touchEndPosY < this.touchStartPosY) {
-                            this.moveSlide(1);
-                        } else if (touchEndPosY > this.touchStartPosY) {
-                            this.moveSlide(-1);
+                        if ($('.media-viewer-comments').hasClass('d-none')) {
+                            if (touchEndPosY < this.touchStartPosY) {
+                                this.moveSlide(1);
+                            } else if (touchEndPosY > this.touchStartPosY) {
+                                this.moveSlide(-1);
+                            }
                         }
                     } else {
                         const pageX = e.changedTouches ? e.changedTouches[0].pageX : e.pageX;
@@ -170,22 +177,22 @@ class MediaViewer {
 
     bindArrowKeys() {
         $(document).on('keyup', (e) => {
-            if ($('.media-viewer .media-viewer-content').is(':visible')) {
-                if (e.key === 'Escape') {
-                    this.hideMediaViewer();
-                } else if (e.key === 'ArrowLeft') {
-                    this.moveSlide(-1);
-                } else if (e.key === 'ArrowRight') {
-                    this.moveSlide(1);
-                } else if (e.key === 'd') {
-                    this.download();
+            if (!$('#media-viewer-post').is(':focus')) {
+                if ($('.media-viewer .media-viewer-content').is(':visible') && $('.media-viewer-comments').hasClass('d-none')) {
+                    if (e.key === 'Escape') {
+                        this.hideMediaViewer();
+                    } else if (e.key === 'ArrowLeft') {
+                        this.moveSlide(-1);
+                    } else if (e.key === 'ArrowRight') {
+                        this.moveSlide(1);
+                    }
                 }
             }
         });
     }
 
     bindClosePopup() {
-        $(document).off('click', 'div#media-viewer-popup').on('click', 'div#media-viewer-popup', (e) => {
+        $(document).off('click', 'div#media-viewer-wrapper').on('click', 'div#media-viewer-wrapper', (e) => {
             e.preventDefault();
             e.stopPropagation();
             this.hideMediaViewer();
@@ -204,10 +211,70 @@ class MediaViewer {
     }
 
     bindLikeButton() {
-        $(document).off('click', '.like-button').on('click', '.like-button', () => {
+        $(document).off('click', '.like-button').on('click', '.like-button', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
             const id = $('.media-viewer-like-button button').attr('data-like-id');
             const action = $('.media-viewer-like-button button').attr('data-action');
             this.like(id, action);
+        });
+    }
+
+    bindCommentButtons() {
+        $(document).off('click', '.comment-button').on('click', '.comment-button', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const element = $(e.currentTarget);
+            const popup = element.closest('.media-viewer-popup');
+            const viewer = popup.find('.media-viewer');
+
+            if ($('.media-viewer-comments').hasClass('d-none')) {
+                viewer.css({ 'margin-bottom': popup[0].style.top });
+                $('.media-viewer-comments').removeClass('d-none');
+            } else {
+                viewer.css({ 'margin-bottom': '0px' });
+                $('.media-viewer-comments').addClass('d-none');
+            }
+        });
+
+        $(document).off('click', '#btn-post-media-comment').on('click', '#btn-post-media-comment', (e) => {
+            const element = $(e.currentTarget);
+            if (!element.hasClass('btn-disabled')) {
+                const id = element.attr('data-gallery-item-id');
+                const comment = $('#media-viewer-post').val()?.trim();
+
+                if (comment !== undefined && comment.length > 0) {
+                    this.comment(id, comment);
+                }
+            }
+        });
+
+        $(document).off('keyup', '#media-viewer-post').on('keyup', '#media-viewer-post', (e) => {
+            let comment = $(e.currentTarget).val()?.trim();
+            if (comment.length > this.maxCharacterCount) {
+                comment = comment.substring(0, this.maxCharacterCount);
+                $('#media-viewer-post').val(comment);
+            }
+
+            if (comment !== undefined && comment.length > 0) {
+                $('#btn-post-media-comment').removeClass('btn-disabled');
+                $('#btn-post-media-comment').addClass('btn-primary-2');
+            } else {
+                $('#btn-post-media-comment').removeClass('btn-primary-2');
+                $('#btn-post-media-comment').addClass('btn-disabled');
+            }
+
+            $('.media-viewer-post-character-count').text(`${comment.length} / ${this.maxCharacterCount}`);
+        });
+
+        $(document).off('click', '.btn-delete-comment').on('click', '.btn-delete-comment', (e) => {
+            const element = $(e.currentTarget);
+            if (!element.hasClass('btn-disabled')) {
+                const id = element.closest('.media-viewer-comment').attr('data-comment-id');
+                this.deleteComment(id);
+            }
         });
     }
 
@@ -277,8 +344,8 @@ class MediaViewer {
                 success: (response) => {
                     hideLoader();
                     $('body').append(response);
-                    $('#media-viewer-popup .media-viewer').attr('data-media-viewer-index', `${index}`);
-                    $('#media-viewer-popup .media-viewer').attr('data-media-viewer-collection', `${collection}`);
+                    $('#media-viewer-wrapper .media-viewer-popup .media-viewer').attr('data-media-viewer-index', `${index}`);
+                    $('#media-viewer-wrapper .media-viewer-popup .media-viewer').attr('data-media-viewer-collection', `${collection}`);
 
                     this.bindLoadEvent();
                 },
@@ -291,17 +358,17 @@ class MediaViewer {
     }
 
     hideMediaViewer() {
-        $('div#media-viewer-popup').hide();
-        $('div#media-viewer-popup').remove();
+        $('div#media-viewer-wrapper').hide();
+        $('div#media-viewer-wrapper').remove();
     }
 
     initMediaViewImage(type, source) {
-        this.resizeMediaViewer(1, $('#media-viewer-popup'), type, source);
+        this.resizeMediaViewer(1, $('#media-viewer-wrapper'), type, source);
         this.bindPopupEventHandlers();
     }
 
     resizeMediaViewer(iteration, popup, type, source) {
-        let container = popup.find('.media-viewer');
+        let container = popup.find('.media-viewer-popup');
         let mediaContainer = container.find('.media-viewer-content');
         let media = mediaContainer.find('img');
 
@@ -326,8 +393,8 @@ class MediaViewer {
                 'left': `${(popup.innerWidth() - container.outerWidth()) / 2}px`
             });
 
+            let width = $('.media-viewer-content img').innerWidth();
             if (type === 'video') {
-                let width = $('.media-viewer-content img').innerWidth();
                 let height = $('.media-viewer-content img').innerHeight();
                 $('.media-viewer-content').html(`
                     <video width="${width}" height="${height}" controls autoplay>
@@ -336,6 +403,10 @@ class MediaViewer {
                     </video>
                 `);
             }
+
+            $('.media-viewer-row').css({
+                'max-width': `${width}px`
+            });
 
             popup.fadeTo(500, 1.0);
         }
@@ -356,6 +427,59 @@ class MediaViewer {
                         $('.media-viewer-like-button button').removeClass('like-button-active');
                         $('.media-viewer-like-button button').attr('data-action', 'like')
                     }
+                }
+            }
+        });
+    }
+
+    comment(id, value) {
+        if (value === undefined || value.length <= 0) {
+            displayMessage(localization.translate('Post_Comment'), localization.translate('Comment_Empty_Value'));
+        } else if (value.length > this.maxCharacterCount) {
+            displayMessage(localization.translate('Post_Comment'), localization.translate('Comment_Value_Too_Long'));
+        } else {
+            const maxCharacterCount = this.maxCharacterCount;
+            $.ajax({
+                url: '/MediaViewer/Comment',
+                type: 'POST',
+                data: { id, value },
+                success: function (response) {
+                    if (response !== undefined && response.success) {
+                        const comments = $('.media-viewer-comments');
+                        comments.append(`
+                            <div class="media-viewer-comment" data-comment-id="${response.id}">
+                                <h6 class="text-truncate">${response.username}</h6>
+                                <p class="comment-message">${response.value}</p>
+                                <p class="comment-timestamp" title="${response.timestamp_full}">${localization.translate(response.timestamp)}</p>
+                                <i class="btn-delete-comment fa-solid fa-trash-can"></i>
+                            </div>
+                        `);
+                        $('#media-viewer-post').val('');
+                        $('.media-viewer-post-character-count').text(`0 / ${maxCharacterCount}`);
+                        $('#btn-post-media-comment').removeClass('btn-primary-2');
+                        $('#btn-post-media-comment').addClass('btn-disabled');
+                    } else if (response.message !== undefined) {
+                        displayMessage(localization.translate('Post_Comment'), response.message);
+                    } else {
+                        displayMessage(localization.translate('Post_Comment'), localization.translate('Unexpected_Error_Occurred'));
+                    }
+                }
+            });
+        }
+    }
+
+    deleteComment(id) {
+        $.ajax({
+            url: '/MediaViewer/DeleteComment',
+            type: 'DELETE',
+            data: { id },
+            success: function (response) {
+                if (response !== undefined && response.success) {
+                    $(`.media-viewer-comment[data-comment-id='${id}']`).remove();
+                } else if (response.message !== undefined) {
+                    displayMessage(localization.translate('Delete_Comment'), response.message);
+                } else {
+                    displayMessage(localization.translate('Delete_Comment'), localization.translate('Unexpected_Error_Occurred'));
                 }
             }
         });

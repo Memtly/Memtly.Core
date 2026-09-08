@@ -158,6 +158,37 @@ namespace Memtly.Core.Migrations.SqlServer.Migrations
                     b.ToTable("GalleryCollections");
                 });
 
+            modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<long>("CreatedAt")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("GalleryItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GalleryItemId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("GalleryComments");
+                });
+
             modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryHistory", b =>
                 {
                     b.Property<int>("Id")
@@ -509,6 +540,23 @@ namespace Memtly.Core.Migrations.SqlServer.Migrations
                     b.Navigation("Gallery");
                 });
 
+            modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryComment", b =>
+                {
+                    b.HasOne("Memtly.Core.EntityFramework.Models.GalleryItem", "GalleryItem")
+                        .WithMany("Comments")
+                        .HasForeignKey("GalleryItemId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Memtly.Core.EntityFramework.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("GalleryItem");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryHistory", b =>
                 {
                     b.HasOne("Memtly.Core.EntityFramework.Models.Gallery", "Gallery")
@@ -605,6 +653,8 @@ namespace Memtly.Core.Migrations.SqlServer.Migrations
 
             modelBuilder.Entity("Memtly.Core.EntityFramework.Models.GalleryItem", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Likes");
                 });
 #pragma warning restore 612, 618
