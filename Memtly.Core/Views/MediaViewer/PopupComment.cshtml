@@ -1,0 +1,11 @@
+﻿@model Memtly.Core.Models.Database.GalleryItemCommentModel
+
+<div class="media-viewer-comment" data-comment-id="@Model.Id">
+    <h6 class="text-truncate">@Model.Username</h6>
+    <p class="comment-message">@Model.Value</p>
+    <p class="comment-timestamp" title="@Model.TimestampStringFull">@(_localizer[Model.TimestampString].Value)</p>
+    @if (_identity.IsValid(User) && (_identity.GetUserId(User) == Model.UserId || _identity.IsPrivilegedUser(User)))
+    {
+        <i class="btn-delete-comment fa-solid fa-trash-can"></i>
+    }
+</div>

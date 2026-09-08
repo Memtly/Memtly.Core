@@ -1,68 +1,83 @@
 ﻿@using System.Web
 @model Memtly.Core.Views.MediaViewer.Popup
 
-<div id="media-viewer-popup" style="opacity: 0;">
-    <div class="media-viewer" data-media-viewer-index="1" data-media-viewer-collection="@Model.Collection" data-type="@Model.Type.ToLower()" data-source="@Model.Source">
-        @if (!string.IsNullOrWhiteSpace(Model.Title))
-        {
-            <div class="media-viewer-title">@Model.Title</div>
-        }
-        <div class="media-viewer-content">
-            <img class="media-viewer-image" src="@(Model.Type.Equals("Image", StringComparison.OrdinalIgnoreCase) ? Model.Source : Model.Thumbnail)" onerror="this.onerror=null; this.src='/_content/Memtly.Core/images/@(Model.Type.Equals("Image", StringComparison.OrdinalIgnoreCase) ? "BrokenImage.webp" : "BrokenVideo.webp")';" />
-        </div>
-        <div class="media-viewer-description mt-1 mx-0">
-            <div class="row">
-                <div class="col-7 col-lg-8 media-viewer-author">
-                    <span class="mx-1 d-block text-truncate">@HttpUtility.HtmlDecode(Model.Author)</span>
-                </div>
-                <div class="col-5 col-lg-4 media-viewer-likes">
-                    @if (Model.Likes != null)
-                    {
-                        <div class="float-end">
+<div id="media-viewer-wrapper" style="opacity: 0;">
+    <div class="media-viewer-popup">
+        <div class="media-viewer" data-media-viewer-index="1" data-media-viewer-collection="@Model.Collection" data-type="@Model.Type.ToLower()" data-source="@Model.Source">
+            @if (!string.IsNullOrWhiteSpace(Model.Title))
+            {
+                <div class="media-viewer-title">@Model.Title</div>
+            }
+            <div class="media-viewer-row media-viewer-content">
+                <img class="media-viewer-image" src="@(Model.Type.Equals("Image", StringComparison.OrdinalIgnoreCase) ? Model.Source : Model.Thumbnail)" onerror="this.onerror=null; this.src='/_content/Memtly.Core/images/@(Model.Type.Equals("Image", StringComparison.OrdinalIgnoreCase) ? "BrokenImage.webp" : "BrokenVideo.webp")';" />
+                <div class="media-viewer-actions row">
+                    <div class="col-6">
+                        @if (Model.Likes != null)
+                        {
                             <div class="media-viewer-like-button input-group input-group-xs">
                                 <div class="input-group-text text-primary-2 border-primary-2">
-                                    <span class="lbl-like-count w-px-30 text-center">@Model.Likes.Count</span>
+                                    <span class="lbl-like-count text-center">@Model.Likes.Count</span>
                                 </div>
-                                <button class="btn btn-primary-2 @(Model.Likes.HasUserLiked ? "like-button-active" : string.Empty) @(Model.Likes.CanUserLike ? "like-button" : "login-prompt")" data-action="@(Model.Likes.HasUserLiked ? "unlike" : "like")" data-like-id="@Model.Id">
+                                <button class="btn btn-primary-2 @(Model.Likes.HasUserLiked ? "like-button-active" : string.Empty) @(Model.Likes.CanUserLike ? "like-button" : "login-prompt")" data-action="@(Model.Likes.HasUserLiked ? "unlike" : "like")" data-like-id="@Model.Id" title="@(_localizer["Like"].Value)">
                                     <i class="fa fa-thumbs-up"></i>
                                 </button>
                             </div>
-                        </div>
-                    }
+                        }
+                    </div>
+                    <div class="col-6">
+                        @if (Model.Comments != null)
+                        {
+                            <button class="btn btn-sm btn-primary-2 @(Model!.Comments!.HasUserCommented ? "comment-button-active" : string.Empty) comment-button" data-comment-id="@Model.Id" title="@(_localizer["Comment"].Value)">
+                                <i class="fa fa-comment-dots"></i>
+                            </button>
+                        }
+                    </div>
                 </div>
             </div>
-           @*  <div class="row">
-                <div class="col-12 media-viewer-comments">
-                    <h5>Comments</h5>
-                    <div class="media-viewer-comment">
-                        <h6 class="text-truncate">Billy Bob</h6>
-                        <p>Wow, such a lovely dress</p>
-                    </div>
-                    <div class="media-viewer-comment">
-                        <h6 class="text-truncate">Billy Bob</h6>
-                        <p>Wow, such a lovely dress</p>
-                    </div>
-                    <div class="media-viewer-comment">
-                        <h6 class="text-truncate">Billy Bob</h6>
-                        <p>Wow, such a lovely dress</p>
-                    </div>
-                    <div class="media-viewer-comment">
-                        <h6 class="text-truncate">Billy Bob</h6>
-                        <p>Wow, such a lovely dress</p>
-                    </div>
-                </div>
-            </div> *@
-        </div>
-        @if (!string.IsNullOrWhiteSpace(Model.Description))
-        {
-            <div class="media-viewer-description mt-2">@Model.Description</div>
-        }
-        <div class="media-viewer-options">
-            @if (Model.DownloadEnabled)
+            @if (!string.IsNullOrWhiteSpace(Model.AuthorName))
             {
-                <i class="media-viewer-download fas fa-download"></i>
+                <div class="media-viewer-row media-viewer-author mt-1"><b>@(_localizer["Uploaded_By"].Value):</b> @HttpUtility.HtmlDecode(Model.AuthorName)</div>
             }
-            <i class="media-viewer-close fas fa-close"></i>
+            @if (!string.IsNullOrWhiteSpace(Model.AuthorEmailAddress))
+            {
+                <div class="media-viewer-row media-viewer-author mt-1"><b>@(_localizer["EmailAddress"].Value):</b> @HttpUtility.HtmlDecode(Model.AuthorEmailAddress)</div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Description))
+            {
+                <div class="media-viewer-row media-viewer-description mt-2">@Model.Description</div>
+            }
+            @if (Model.Comments != null)
+            {
+                <div class="media-viewer-row media-viewer-comments d-none">
+                    <h5>@(_localizer["Comments"].Value)</h5>
+                    <div class="media-viewer-write-comment">
+                        @if (Model.Comments.CanUserComment)
+                        {
+                            <textarea id="media-viewer-post" class="highlight" rows="4"></textarea>
+                            <span class="media-viewer-post-character-count">0 / 5000</span>
+                            <button id="btn-post-media-comment" class="btn btn-sm btn-disabled" data-gallery-item-id="@Model.Id">Post</button>
+                        }
+                        else
+                        {
+                            <p class="highlight">@(_localizer["Login_To_Comment"].Value)</p>
+                        }
+                    </div>
+                    @if (Model.Comments?.Comments != null && Model.Comments.Comments.Any())
+                    {
+                        foreach (var comment in Model.Comments.Comments)
+                        {
+                            <partial name="~/Views/MediaViewer/PopupComment.cshtml" model="comment" />
+                        }
+                    }
+                </div>
+            }
+            <div class="media-viewer-row media-viewer-options">
+                @if (Model.DownloadEnabled)
+                {
+                    <i class="media-viewer-download fas fa-download"></i>
+                }
+                <i class="media-viewer-close fas fa-close"></i>
+            </div>
         </div>
     </div>
 </div>

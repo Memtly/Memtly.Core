@@ -21,5 +21,6 @@ namespace Memtly.Core.EntityFramework.Models
         public DateTimeOffset CreatedAt { get; set; }
 
         public ICollection<GalleryLike> Likes { get; set; } = new List<GalleryLike>();
+        public ICollection<GalleryComment> Comments { get; set; } = new List<GalleryComment>();
     }
 }

@@ -48,7 +48,8 @@ namespace Memtly.Core.Models
             Gallery =
                 GalleryPermissions.View
                 | GalleryPermissions.Update
-                | GalleryPermissions.Share;
+                | GalleryPermissions.Share
+                | GalleryPermissions.Comment;
             Users =
                 UserPermissions.Login
                 | UserPermissions.View
@@ -86,6 +87,7 @@ namespace Memtly.Core.Models
                 | GalleryPermissions.Upload
                 | GalleryPermissions.Download
                 | GalleryPermissions.Share
+                | GalleryPermissions.Comment
                 | GalleryPermissions.Wipe;
             Users =
                 UserPermissions.Login
@@ -150,6 +152,7 @@ namespace Memtly.Core.Models
                 | GalleryPermissions.Update
                 | GalleryPermissions.Upload
                 | GalleryPermissions.Share
+                | GalleryPermissions.Comment
                 | GalleryPermissions.Download;
             Users =
                 UserPermissions.Login
@@ -194,7 +197,8 @@ namespace Memtly.Core.Models
                 | GalleryPermissions.Download
                 | GalleryPermissions.Wipe
                 | GalleryPermissions.Relink
-                | GalleryPermissions.Share;
+                | GalleryPermissions.Share
+                | GalleryPermissions.Comment;
             Users =
                 UserPermissions.Login
                 | UserPermissions.View

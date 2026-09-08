@@ -729,6 +729,125 @@ namespace Memtly.Core.Helpers.Database
         }
         #endregion
 
+        #region Gallery Item Comments
+        public async Task<long> GetGalleryItemCommentsCount(int galleryItemId)
+        {
+            return await _db.GalleryComments
+                .CountAsync(gl => gl.GalleryItemId == galleryItemId);
+        }
+
+        public async Task<IEnumerable<GalleryItemCommentModel>> GetGalleryItemComments(int galleryItemId)
+        {
+            return await _db.GalleryComments
+                .Include(x => x!.User)
+                .Where(gl => gl.GalleryItemId == galleryItemId)
+                .Select(gl => new GalleryItemCommentModel()
+                {
+                    Id = gl.Id,
+                    GalleryId = gl!.GalleryItem!.GalleryId ?? 0,
+                    GalleryItemId = gl!.GalleryItemId ?? 0,
+                    UserId = gl!.UserId ?? 0,
+                    Username = gl!.User!.Username ?? "Unknown",
+                    Value = gl!.Value,
+                    Timestamp = gl.CreatedAt
+                })
+                .ToListAsync();
+        }
+
+        public async Task<GalleryItemCommentModel?> GetGalleryItemComment(int id)
+        {
+            return await _db.GalleryComments
+                .Include(x => x!.User)
+                .Select(gl => new GalleryItemCommentModel()
+                {
+                    Id = gl.Id,
+                    GalleryId = gl!.GalleryItem!.GalleryId ?? 0,
+                    GalleryItemId = gl!.GalleryItemId ?? 0,
+                    UserId = gl!.UserId ?? 0,
+                    Username = gl!.User!.Username ?? "Unknown",
+                    Value = gl!.Value,
+                    Timestamp = gl.CreatedAt
+                })
+                .FirstOrDefaultAsync(gi => gi.Id == id);
+        }
+
+        public async Task<IEnumerable<GalleryItemCommentModel>> GetUsersGalleryItemComments(int userId)
+        {
+            return await _db.GalleryComments
+                .Include(x => x!.User)
+                .Where(gl => gl.UserId == userId)
+                .Select(gl => new GalleryItemCommentModel()
+                {
+                    Id = gl.Id,
+                    GalleryId = gl!.GalleryItem!.GalleryId ?? 0,
+                    GalleryItemId = gl!.GalleryItemId ?? 0,
+                    UserId = gl!.UserId ?? 0,
+                    Username = gl!.User!.Username ?? "Unknown",
+                    Value = gl!.Value,
+                    Timestamp = gl.CreatedAt
+                })
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<GalleryItemCommentModel>> GetUnassignedGalleryItemComments()
+        {
+            return await _db.GalleryComments
+                .Include(x => x!.User)
+                .Where(gl => (gl!.GalleryItem!.GalleryId ?? 0) == 0)
+                .Select(gl => new GalleryItemCommentModel()
+                {
+                    Id = gl.Id,
+                    GalleryId = gl!.GalleryItem!.GalleryId ?? 0,
+                    GalleryItemId = gl!.GalleryItemId ?? 0,
+                    UserId = gl!.UserId ?? 0,
+                    Username = gl!.User!.Username ?? "Unknown",
+                    Value = gl!.Value,
+                    Timestamp = gl.CreatedAt
+                })
+                .ToListAsync();
+        }
+
+        public async Task<bool> CheckUserHasCommentedGalleryItem(int galleryItemId, int userId)
+        {
+            return (await _db.GalleryComments
+                .CountAsync(gl => gl.GalleryItemId == galleryItemId && gl.UserId == userId)) > 0;
+        }
+
+        public async Task<GalleryItemCommentModel?> AddGalleryItemComment(GalleryItemCommentModel model)
+        {
+            var galleryItemCommentEntry = await _db.GalleryComments.AddAsync(new GalleryComment()
+            {
+                GalleryItemId = model.GalleryItemId,
+                UserId = model.UserId,
+                Value = model.Value.GetDbSafeValue(),
+                CreatedAt = DateTimeOffset.UtcNow
+            });
+            await _db.SaveChangesAsync();
+
+            return await GetGalleryItemComment(galleryItemCommentEntry.Entity.Id);
+        }
+
+        public async Task WipeGalleryItemComments(int galleryItemId)
+        {
+            await _db.GalleryComments
+                .Where(gl => gl.GalleryItemId == galleryItemId)
+                .ExecuteDeleteAsync();
+        }
+
+        public async Task DeleteGalleryItemComment(GalleryItemCommentModel model)
+        {
+            await _db.GalleryComments
+                .Where(gc => gc.Id == model.Id)
+                .ExecuteDeleteAsync();
+        }
+
+        public async Task DeleteAllGalleryItemComments()
+        {
+            await _db.GalleryComments
+                .ExecuteDeleteAsync();
+        }
+        #endregion
+
         #region Gallery Collections
         public async Task<GalleryCollectionModel?> GetCollection(int id)
         {
@@ -1905,6 +2024,7 @@ namespace Memtly.Core.Helpers.Database
             await DeleteAllGalleryHistory();
             await DeleteAllGalleryShares();
             await DeleteAllGalleryItemLikes();
+            await DeleteAllGalleryItemComments();
             await DeleteAllGalleryItems();
             await DeleteAllGalleries();
             //await DeleteAllSettings();

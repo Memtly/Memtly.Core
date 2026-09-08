@@ -105,6 +105,7 @@
             public const string FullWidth = "Memtly:Gallery:Full_Width";
             public const string RetainRejectedItems = "Memtly:Gallery:Retain_Rejected_Items";
             public const string Likes = "Memtly:Gallery:Likes";
+            public const string Comments = "Memtly:Gallery:Comments";
             public const string Upload = "Memtly:Gallery:Upload";
             public const string Download = "Memtly:Gallery:Download";
             public const string RequireReview = "Memtly:Gallery:Require_Review";

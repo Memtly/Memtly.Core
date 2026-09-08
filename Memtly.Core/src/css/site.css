@@ -8,13 +8,19 @@ body {
     overflow-y: auto;
 }
 
+.lbl-like-count {
+    min-width: 25px;
+}
+
 @media (max-width: 700px) {
     .fa-2x {
         font-size: 1.5em !important;
     }
 
     .lbl-like-count {
-        font-size: 12px;
+        font-size: 10px;
+        max-width: 25px;
+        margin-top: 2px;
     }
 }
 
@@ -36,6 +42,12 @@ body {
 
 .text-link, .text-link:hover, .text-link:active {
     text-decoration: none;
+}
+
+.highlight {
+    outline: 1px solid;
+    outline-color: rgba(var(--primary-3), 1.0);
+    background-color: rgba(var(--primary-3), 0.04);
 }
 
 .display-6 .fa-solid {

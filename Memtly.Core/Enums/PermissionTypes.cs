@@ -43,7 +43,8 @@
         Wipe = 64,
         ViewAllGallery = 128,
         Relink = 256,
-        Share = 512
+        Share = 512,
+        Comment = 1024
     }
 
     [Flags]

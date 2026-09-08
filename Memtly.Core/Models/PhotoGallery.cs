@@ -76,4 +76,32 @@ namespace Memtly.Core.Models
         [JsonPropertyName("count")]
         public long Count { get; set; } = 0;
     }
+
+    public class PhotoGalleryImageComments
+    {
+        public PhotoGalleryImageComments()
+        {
+        }
+
+        [JsonPropertyName("enabled")]
+        public bool Enabled { get; set; } = false;
+
+        [JsonPropertyName("can_comment")]
+        public bool CanUserComment { get; set; } = false;
+
+        [JsonPropertyName("has_commented")]
+        public bool HasUserCommented { get; set; } = false;
+
+        [JsonPropertyName("comments")]
+        public IEnumerable<GalleryItemCommentModel>? Comments { get; set; }
+        
+        [JsonPropertyName("count")]
+        public long Count 
+        {
+            get 
+            {
+                return this.Comments?.Count() ?? 0;
+            }
+        }
+    }
 }
