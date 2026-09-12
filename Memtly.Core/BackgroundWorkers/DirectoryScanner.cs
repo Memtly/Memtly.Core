@@ -140,7 +140,7 @@ namespace Memtly.Core.BackgroundWorkers
                                             }
 
                                             var allowedFileTypes = _settingsHelper.GetOrDefault(MemtlyConfiguration.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", galleryItem?.Id).Result.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-                                            var galleryItems = await db.GetGalleryItems(null, galleryItem!.Id);
+                                            var galleryItems = await db.GetGalleryItems(string.Empty, null, galleryItem!.Id);
 
                                             if (Path.Exists(galleryPath))
                                             {

@@ -163,7 +163,7 @@ namespace Memtly.Core.Controllers
         [HttpGet]
         [RequiresSecretKey]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public async Task<IActionResult> Index(string? identifier, string? key = null, ViewMode? mode = null, GalleryGroup? group = null, GalleryOrder? order = null, GalleryFilter? filter = null, string? culture = null, bool partial = false, bool pagination = false)
+        public async Task<IActionResult> Index(string? identifier, string? key = null, ViewMode? mode = null, GalleryGroup? group = null, GalleryOrder? order = null, GalleryFilter? filter = null, string? culture = null, bool partial = false, bool pagination = false, string term = "")
         {
             int? galleryId = null;
 
@@ -280,11 +280,11 @@ namespace Memtly.Core.Controllers
 
                     if (gallery!.Type == GalleryType.Collection && !gallery!.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))
                     {
-                        galleryItems = await _database.GetCollectionItems(null, gallery?.Id, state, mediaType, orientation, galleryGroup, galleryOrder, currentPage, itemsPerPage);
+                        galleryItems = await _database.GetCollectionItems(term, null, gallery?.Id, state, mediaType, orientation, galleryGroup, galleryOrder, currentPage, itemsPerPage);
                     }
                     else
                     {
-                        galleryItems = await _database.GetGalleryItems(null, gallery?.Id, state, mediaType, orientation, galleryGroup, galleryOrder, currentPage, itemsPerPage);
+                        galleryItems = await _database.GetGalleryItems(term, null, gallery?.Id, state, mediaType, orientation, galleryGroup, galleryOrder, currentPage, itemsPerPage);
                     }
 
                     var items = galleryItems?.Where(x => allowedFileTypes.Any(y => string.Equals(Path.GetExtension(x.Title).Trim('.'), y.Trim('.'), StringComparison.OrdinalIgnoreCase)));
@@ -345,11 +345,11 @@ namespace Memtly.Core.Controllers
                     IDictionary<string, int> itemCounts;
                     if (gallery!.Type == GalleryType.Collection)
                     {
-                        itemCounts = await _database.GetCollectionItemCount(userId, gallery?.Id, GalleryItemState.All, mediaType, orientation);
+                        itemCounts = await _database.GetCollectionItemCount(term, userId, gallery?.Id, GalleryItemState.All, mediaType, orientation);
                     }
                     else
                     {
-                        itemCounts = await _database.GetGalleryItemCount(userId, gallery?.Id, GalleryItemState.All, mediaType, orientation);
+                        itemCounts = await _database.GetGalleryItemCount(term, userId, gallery?.Id, GalleryItemState.All, mediaType, orientation);
                     }
 
                     var galleryIdentifiers = gallery!.Type != GalleryType.Collection ? new Dictionary<int, GalleryIdentifierModel?>() { { gallery.Id, new GalleryIdentifierModel(gallery.Id, gallery.Identifier, gallery.Name) } } : items?.GroupBy(x => x.GalleryId)?.Select(x => new KeyValuePair<int, GalleryIdentifierModel?>(x.Key, _database.GetGalleryIdentifier(x.Key).Result))?.ToDictionary();
@@ -826,11 +826,11 @@ namespace Memtly.Core.Controllers
                                         IEnumerable<GalleryItemModel>? galleryItems;
                                         if (gallery!.Type == GalleryType.Collection && !gallery!.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))
                                         {
-                                            galleryItems = await _database.GetCollectionItems(null, id, state);
+                                            galleryItems = await _database.GetCollectionItems(string.Empty, null, id, state);
                                         }
                                         else
                                         {
-                                            galleryItems = await _database.GetGalleryItems(null, id, state);
+                                            galleryItems = await _database.GetGalleryItems(string.Empty, null, id, state);
                                         }
 
                                         if (_identity.IsBasicUser(User) && !_identity.IsOwner(User, gallery!.Owner))

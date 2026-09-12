@@ -255,6 +255,7 @@ namespace Memtly.Core.Configurations
                     await database.DeleteAllSettings();
                 }
 
+                await CleanupMaliciousGalleries(database, logger);
                 await MigrateSettings(database, logger);
                 await ImportSettings(config, database, logger);
 
@@ -437,7 +438,7 @@ namespace Memtly.Core.Configurations
             }
             catch (Exception ex)
             {
-                logger.LogError($"Failed to migrate '${MemtlyConfiguration.Themes.ColourOverrides.BaseKey}' settings at startup - {ex?.Message}", ex);
+                logger.LogError($"Failed to migrate '{MemtlyConfiguration.Themes.ColourOverrides.BaseKey}' settings at startup - {ex?.Message}", ex);
             }
         }
 
@@ -463,7 +464,47 @@ namespace Memtly.Core.Configurations
             }
             catch (Exception ex)
             {
-                logger.LogError($"Failed to migrate '${MemtlyConfiguration.Gallery.Thumbnails.Size}' settings at startup - {ex?.Message}", ex);
+                logger.LogError($"Failed to migrate '{MemtlyConfiguration.Gallery.Thumbnails.Size}' settings at startup - {ex?.Message}", ex);
+            }
+        }
+        #endregion
+
+        #region Cleanup
+        private static async Task CleanupMaliciousGalleries(IDatabaseHelper database, ILogger logger)
+        {
+            try
+            {
+                var galleryNames = await database.GetGalleryNames(showGalleryNames: false, showGalleryIdentifiers: true, showUsernames: false, GalleryType.All);
+                if (galleryNames != null && galleryNames.Any())
+                {
+                    var maliciousIdentifiers = galleryNames.Where(x => !GalleryHelper.IsValidGalleryIdentifier(x.Key))?.Select(x => x.Key);
+                    if (maliciousIdentifiers != null && maliciousIdentifiers.Any())
+                    {
+                        foreach (var identifier in maliciousIdentifiers)
+                        {
+                            try
+                            {
+                                var galleryId = await database.GetGalleryId(identifier);
+                                if (galleryId != null && galleryId > 0)
+                                {
+                                    var gallery = await database.GetGallery(galleryId.Value);
+                                    if (gallery != null)
+                                    {
+                                        await database.DeleteGallery(gallery);
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.LogError($"Failed to delete malicious gallery '{identifier}' at startup - {ex?.Message}", ex);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Failed to delete malicious galleries at startup - {ex?.Message}", ex);
             }
         }
         #endregion

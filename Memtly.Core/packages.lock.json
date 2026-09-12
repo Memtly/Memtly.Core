@@ -13,9 +13,9 @@
       },
       "Memtly.Localization": {
         "type": "Direct",
-        "requested": "[1.0.5.15, )",
-        "resolved": "1.0.5.15",
-        "contentHash": "Pm+AMm2h/tbstG0T528tstmUQUXqasngc1kVQFN6DD/MZDTCe86g7dfdZRNiYv9BFdKcjsU2K/lz9YPcRCZgOw=="
+        "requested": "[1.0.5.16, )",
+        "resolved": "1.0.5.16",
+        "contentHash": "RxIpgSgSSy4HycW/Wj3w81DjIpXS3WuACXkHjDEdXLO3vesAvyN7rWr+Phigs3LLfRkMiBa70zTlb2HALHGSSg=="
       },
       "MetadataExtractor": {
         "type": "Direct",
