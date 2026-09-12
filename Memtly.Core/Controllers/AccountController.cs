@@ -602,7 +602,7 @@ namespace Memtly.Core.Controllers
                         if (model.ActiveTab == AccountTabs.Reviews)
                         {
                             model.PendingRequests = await GetPendingReviews(null, page, limit);
-                            model.TotalItems = (await _database.GetGalleryItemCount(null, null, GalleryItemState.Pending))[GalleryItemState.Pending.ToString()];
+                            model.TotalItems = (await _database.GetGalleryItemCount(string.Empty, null, null, GalleryItemState.Pending))[GalleryItemState.Pending.ToString()];
                         }
                         else if (model.ActiveTab == AccountTabs.Galleries)
                         {
@@ -644,7 +644,7 @@ namespace Memtly.Core.Controllers
                         if (model.ActiveTab == AccountTabs.Reviews)
                         {
                             model.PendingRequests = await GetPendingReviews(user.Id, page, limit);
-                            model.TotalItems = (await _database.GetGalleryItemCount(user.Id, null, GalleryItemState.Pending))[$"User{GalleryItemState.Pending.ToString()}"];
+                            model.TotalItems = (await _database.GetGalleryItemCount(string.Empty, user.Id, null, GalleryItemState.Pending))[$"User{GalleryItemState.Pending.ToString()}"];
                         }
                         else if (model.ActiveTab == AccountTabs.Galleries)
                         {
@@ -799,12 +799,12 @@ namespace Memtly.Core.Controllers
                     if (_identity.IsPrivilegedUser(User))
                     {
                         result.PendingRequests = await GetPendingReviews(null, page, limit);
-                        result.TotalItems = (await _database.GetGalleryItemCount(null, null, GalleryItemState.Pending))[GalleryItemState.Pending.ToString()];
+                        result.TotalItems = (await _database.GetGalleryItemCount(string.Empty, null, null, GalleryItemState.Pending))[GalleryItemState.Pending.ToString()];
                     }
                     else
                     {
                         result.PendingRequests = await GetPendingReviews(user.Id, page, limit);
-                        result.TotalItems = (await _database.GetGalleryItemCount(user.Id, null, GalleryItemState.Pending))[$"User{GalleryItemState.Pending.ToString()}"];
+                        result.TotalItems = (await _database.GetGalleryItemCount(string.Empty, user.Id, null, GalleryItemState.Pending))[$"User{GalleryItemState.Pending.ToString()}"];
                     }
                 }
             }
@@ -2872,7 +2872,7 @@ namespace Memtly.Core.Controllers
         {
             var galleries = new List<PhotoGallery>();
 
-            var items = await _database.GetGalleryItems(userId, state: GalleryItemState.Pending, page: page, limit: limit);
+            var items = await _database.GetGalleryItems(term: string.Empty, userId, state: GalleryItemState.Pending, page: page, limit: limit);
             if (items != null)
             {
                 foreach (var galleryGroup in items.GroupBy(x => x.GalleryId))

@@ -157,6 +157,7 @@
 
 
         #media-viewer-wrapper .media-viewer-popup .media-viewer .media-viewer-comments .media-viewer-write-comment textarea {
+            color: #000000;
             background-color: #FCFCFC;
             resize: none;
             width: 100%;

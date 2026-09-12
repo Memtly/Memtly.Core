@@ -1,5 +1,4 @@
 ﻿using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using Memtly.Core.Extensions;
 
@@ -26,6 +25,7 @@ namespace Memtly.Core.Helpers
         Task<DateTime> GetCreationDatetime(string path);
         string BytesToHumanReadable(long bytes, int decimalPlaces = 0);
         string SanitizeFilename(string filename);
+        bool IsCleanPath(string path);
     }
 
     public class FileHelper : IFileHelper
@@ -39,12 +39,12 @@ namespace Memtly.Core.Helpers
 
         public bool DirectoryExists(string path)
         {
-            return Directory.Exists(path);
+            return IsCleanPath(path) && Directory.Exists(path);
         }
 
         public bool CreateDirectoryIfNotExists(string path)
         {
-            if (!DirectoryExists(path))
+            if (IsCleanPath(path) && !DirectoryExists(path))
             {
                 if (FileExists(path))
                 {
@@ -62,7 +62,7 @@ namespace Memtly.Core.Helpers
 
         public bool MoveDirectoryIfExists(string path, string newPath)
         {
-            if (DirectoryExists(path))
+            if (IsCleanPath(path) && IsCleanPath(newPath) && DirectoryExists(path))
             {
                 Directory.Move(path, newPath);
 
@@ -74,7 +74,7 @@ namespace Memtly.Core.Helpers
 
         public bool DeleteDirectoryIfExists(string path, bool recursive = true)
         {
-            if (DirectoryExists(path))
+            if (IsCleanPath(path) && DirectoryExists(path))
             {
                 Directory.Delete(path, recursive);
 
@@ -86,33 +86,58 @@ namespace Memtly.Core.Helpers
 
         public bool PurgeDirectory(string path)
         {
-            DeleteDirectoryIfExists(path);
-            return CreateDirectoryIfNotExists(path);
+            if (IsCleanPath(path))
+            { 
+                DeleteDirectoryIfExists(path);
+                return CreateDirectoryIfNotExists(path);
+            }
+
+            return false;
         }
 
         public string[] GetDirectories(string path, string pattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
         {
-            return Directory.GetDirectories(path, pattern, searchOption);
+            if (IsCleanPath(path))
+            {
+                return Directory.GetDirectories(path, pattern, searchOption);
+            }
+
+            return new string[0];
         }
 
         public string[] GetFiles(string path, string pattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
         {
-            return Directory.GetFiles(path, pattern, searchOption);
+            if (IsCleanPath(path))
+            {
+                return Directory.GetFiles(path, pattern, searchOption);
+            }
+
+            return new string[0];
         }
 
         public bool FileExists(string path)
         {
-            return File.Exists(path);
+            if (IsCleanPath(path))
+            {
+                return File.Exists(path);
+            }
+
+            return false;
         }
 
         public long FileSize(string path)
         {
-            return new FileInfo(path).Length;
+            if (IsCleanPath(path))
+            {
+                return new FileInfo(path).Length;
+            }
+
+            return 0;
         }
 
         public bool DeleteFileIfExists(string path)
         {
-            if (FileExists(path))
+            if (IsCleanPath(path) && FileExists(path))
             {
                 File.Delete(path);
 
@@ -124,7 +149,7 @@ namespace Memtly.Core.Helpers
 
         public bool CopyFileIfExists(string source, string destination)
         {
-            if (FileExists(source))
+            if (IsCleanPath(source) && IsCleanPath(destination) && FileExists(source))
             {
                 File.Copy(source, destination);
 
@@ -136,7 +161,7 @@ namespace Memtly.Core.Helpers
 
         public bool MoveFileIfExists(string source, string destination)
         {
-            if (FileExists(source))
+            if (IsCleanPath(source) && IsCleanPath(destination) && FileExists(source))
             {
                 File.Move(source, destination);
 
@@ -150,7 +175,7 @@ namespace Memtly.Core.Helpers
         {
             long size = 0;
 
-            if (DirectoryExists(path))
+            if (IsCleanPath(path) && DirectoryExists(path))
             {
                 var info = new DirectoryInfo(path);
                 
@@ -170,57 +195,75 @@ namespace Memtly.Core.Helpers
 
         public async Task<byte[]> ReadAllBytes(string path)
         {
-            return await File.ReadAllBytesAsync(path);
+            if (IsCleanPath(path))
+            {
+                return await File.ReadAllBytesAsync(path);
+            }
+
+            return await Task.FromResult(new byte[0]);
         }
 
         public async Task SaveFile(IFormFile file, string path, FileMode mode)
         {
-			using (var fs = new FileStream(path, mode))
-			{
-				await file.CopyToAsync(fs);
-			}
+            if (IsCleanPath(path))
+            {
+			    using (var fs = new FileStream(path, mode))
+			    {
+				    await file.CopyToAsync(fs);
+			    }
+            }
 		}
 
         public async Task<string> GetChecksum(string path)
         {
-            return await Task.Run(() => 
+            if (!IsCleanPath(path))
             {
-                var checksum = string.Empty;
-
-                try
+                return await Task.Run(() => 
                 {
-                    using (var sha256 = SHA256.Create())
-                    using (var stream = File.OpenRead(path))
+                    var checksum = string.Empty;
+
+                    try
                     {
-                        var hashBytes = sha256.ComputeHash(stream);
-                        checksum = Convert.ToHexString(hashBytes).ToLowerInvariant();
+                        using (var sha256 = SHA256.Create())
+                        using (var stream = File.OpenRead(path))
+                        {
+                            var hashBytes = sha256.ComputeHash(stream);
+                            checksum = Convert.ToHexString(hashBytes).ToLowerInvariant();
+                        }
                     }
-                }
-                catch (Exception ex) 
-                {
-                    _logger.LogWarning(ex, $"Failed to compute MD5 checksum for file '{path}'");
-                }
+                    catch (Exception ex) 
+                    {
+                        _logger.LogWarning(ex, $"Failed to compute MD5 checksum for file '{path}'");
+                    }
 
-                return checksum.RemoveNullBytes();
-            });
+                    return checksum.RemoveNullBytes();
+                });
+            }
+
+            return await Task.FromResult(string.Empty);
         }
 
         public async Task<DateTime> GetCreationDatetime(string path)
         {
-            return await Task.Run(() =>
+            if (IsCleanPath(path))
             {
-                try
+                return await Task.Run(() =>
                 {
-                    var fsTime = File.GetLastWriteTimeUtc(path);
-                    var creationTime = File.GetCreationTimeUtc(path);
+                    try
+                    {
+                        var fsTime = File.GetLastWriteTimeUtc(path);
+                        var creationTime = File.GetCreationTimeUtc(path);
 
-                    return creationTime < fsTime ? creationTime : fsTime;
-                }
-                catch
-                {
-                    return DateTime.UtcNow;
-                }
-            });
+                        return creationTime < fsTime ? creationTime : fsTime;
+                    }
+                    catch
+                    {
+                        return DateTime.UtcNow;
+                    }
+                });
+            }
+
+            return await Task.FromResult(DateTime.UtcNow);
         }
 
         public string BytesToHumanReadable(long bytes, int decimalPlaces = 0)
@@ -256,6 +299,29 @@ namespace Memtly.Core.Helpers
             var regex = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
 
             return Regex.Replace(filename, regex, string.Empty, RegexOptions.Compiled);
+        }
+
+        public bool IsCleanPath(string path)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(path)
+                    || path.Contains("..")
+                    || path.Contains('\0')
+                    || path.EndsWith('.')
+                    || path.EndsWith(' ')
+                ) {
+                    _logger.LogWarning($"A file action was blocked as it attempted to access a dirty path. Path: '{path}'");
+                    return false;
+                }
+            }
+            catch 
+            {
+                _logger.LogWarning($"An exception was thrown while checking if a file path was malicious. For safety the action was rejected. Path: '{path}'");
+                return false;
+            }
+
+            return true;
         }
     }
 }
