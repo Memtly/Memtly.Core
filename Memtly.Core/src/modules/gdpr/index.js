@@ -20,17 +20,17 @@ function bindAcceptCookiePolicyButton() {
 }
 
 function acceptCookieConcent() {
-    let consent = getCookie('.AspNet.Consent');
-    if (consent === undefined || consent.toLowerCase() === 'no') {
+    const consent = getCookie('.AspNet.Consent');
+    if (consent === undefined || consent.trim().length === 0 || consent.toLowerCase() === 'no') {
         document.cookie = $('.cookie-consent').data('cookie-string');
 
         $('.cookie-consent-wrapper').remove();
         $('.cookie-consent-alert').remove();
 
         $.ajax({
-        url: '/Home/LogCookieApproval',
-        method: 'POST'
-    });
+            url: '/Home/LogCookieApproval',
+            method: 'POST'
+        });
     }
 }
 
