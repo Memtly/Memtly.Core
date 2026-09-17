@@ -8,6 +8,7 @@ import MediaViewer from '@modules/media-viewer';
 import Slideshow from '@modules/slideshow';
 import { default as initSettings } from '@pages/account/partials/settings';
 import { bindCollectionSettingsButton, bindGallerySettingsButton } from '@pages/account/partials/gallery'
+import { getQueryParam } from '@utilities/urls';
 
 let resizeTimeout = null;
 let idleTimeout = null;
@@ -34,6 +35,7 @@ function init() {
 }
 
 function bindEventHandlers() {
+    bindSearchBox();
     bindShareButton();
     bindQRCodeSave();
     bindDownloadGroup();
@@ -43,6 +45,19 @@ function bindEventHandlers() {
     bindPageResizeEvent();
     bindCollectionSettingsButton();
     bindGallerySettingsButton();
+}
+
+function bindSearchBox() {
+    $(document).off('keyup', 'input#gallery-item-search-term').on('keyup', 'input#gallery-item-search-term', function (e) {
+        const term = $('input#gallery-item-search-term').val();
+        const url = new URL(window.location.href);
+        url.searchParams.set('term', term);
+        url.searchParams.set('page', '1');
+
+        history.pushState({}, '', url);
+
+        loadGalleryPage(1, false);
+    });
 }
 
 function bindPageResizeEvent() {
@@ -334,41 +349,38 @@ export function loadGalleryPage(page, append, callback) {
         return;
     }
 
+    isPageLoading = true;
+
     page = page !== undefined ? page : 1;
     append = append !== undefined ? append : false;
-    isPageLoading = true;
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('page', page);
+    url.searchParams.set('partial', 'true');
+    url.searchParams.set('pagination', append);
+
+    history.pushState({}, '', url);
 
     $.ajax({
         type: 'GET',
-        url: `${window.location.pathname}${window.location.search}&page=${page}&partial=true&pagination=${append}`,
+        url: `${window.location.pathname}${window.location.search}`,
         success: (data) => {
             if (append) {
                 $('.gallery-container-wrapper').append(data);
 
                 ['pending', 'approved'].forEach((type) => {
-                    console.log(`Checking: .gallery-container-${type}`);
-
                     $(`.gallery-container-wrapper .gallery-container-${type}:gt(0)`).addClass('d-none');
-
                     $(`.gallery-container-wrapper .gallery-container-${type}`).each(function (galleryContainerIndex, galleryContainer) {
-                        console.log(`Gallery Container (${type}) Index: ${galleryContainerIndex}`);
                         if (galleryContainerIndex > 0) {
                             $(galleryContainer).find('.image-group').each(function (imageGroupIndex, imageGroup) {
-                                console.log(`Image Group (${type}) Index: ${imageGroupIndex}`);
-
                                 const key = $(imageGroup).data('key');
-                                console.log(`Image Group (${type}) Key: ${key}`);
-
                                 const originalGalleryContainer = $(`.gallery-container-wrapper .gallery-container-${type}:first`);
                                 const originalImageGroup = originalGalleryContainer.find(`.image-group-${key}`);
                                 if (originalImageGroup === undefined) {
-                                    console.log(`Adding new group`);
                                     $(imageGroup).appendTo(originalGalleryContainer);
                                 } else {
-                                    console.log(`Appending to existing group`);
                                     const originalImageGroupContainer = originalImageGroup.find(`.image-container`);
                                     $(imageGroup).find('.image-tile').each(function (imageTileIndex, imageTile) {
-                                        console.log(`Image Tile (${type}) Index: ${imageTileIndex}`);
                                         $(imageTile).appendTo(originalImageGroupContainer);
                                     });
                                 }

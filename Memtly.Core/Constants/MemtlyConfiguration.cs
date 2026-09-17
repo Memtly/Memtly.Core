@@ -110,6 +110,7 @@
             public const string Download = "Memtly:Gallery:Download";
             public const string RequireReview = "Memtly:Gallery:Require_Review";
             public const string ReviewCounter = "Memtly:Gallery:Review_Counter";
+            public const string SearchBar = "Memtly:Gallery:Search_Bar";
             public const string PreventDuplicates = "Memtly:Gallery:Prevent_Duplicates";
             public const string IdleRefreshMins = "Memtly:Gallery:Idle_Refresh_Mins";
             public const string MaxSizeMB = "Memtly:Gallery:Max_Size_MB";
@@ -149,6 +150,7 @@
             public const string Fade = "Memtly:Slideshow:Fade";
             public const string Limit = "Memtly:Slideshow:Limit";
             public const string IncludeShareSlide = "Memtly:Slideshow:Include_Share_Slide";
+            public const string IncludeVideoSlides = "Memtly:Slideshow:Include_Video_Slides";
         }
         
         public class Alerts

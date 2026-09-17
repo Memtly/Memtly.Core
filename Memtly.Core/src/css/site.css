@@ -138,7 +138,7 @@ tr td {
 .qrcode canvas {
     background-color: #FFFFFF;
     padding: 5px;
-    border-radius: 5px;
+    border-radius: 9px;
 }
 
 .upload_svg {
@@ -255,6 +255,13 @@ tr td {
     }
 
         .slideshow .slideshow-slide .slideshow-slide-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            overflow: hidden;
+        }
+
+        .slideshow .slideshow-slide .slideshow-slide-video {
             width: 100%;
             height: 100%;
             object-fit: contain;

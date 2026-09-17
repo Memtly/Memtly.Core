@@ -39,7 +39,8 @@
                 this.elem.find('.slideshow-slide[data-slide-index="0"]').show();
 
                 clearInterval(this.slidetimer);
-                this.slidetimer = setInterval(() => {
+
+                const advanceSlide = () => {
                     this.currentSlide++;
 
                     if (this.currentSlide >= slideCount) {
@@ -51,8 +52,33 @@
                     this.transitionTimer = setTimeout(() => {
                         const slide = this.elem.find(`.slideshow-slide[data-slide-index="${this.currentSlide}"]`);
                         slide.fadeIn(this.fadeInterval);
+
+                        const mediaType = slide.data('media-type');
+                        let nextDelay = this.slideInterval;
+
+                        if (mediaType === 'video') {
+                            const videoEl = slide.find('.slideshow-slide-video')[0];
+                            videoEl.currentTime = 0;
+                            videoEl.play().catch(err => console.warn('Video play failed:', err));
+
+                            const scheduleWithDuration = () => {
+                                const maxVideoPlaybackDuration = 60;
+                                nextDelay = (videoEl.duration < maxVideoPlaybackDuration ? videoEl.duration : maxVideoPlaybackDuration) * 1000;
+                                this.slidetimer = setTimeout(advanceSlide, nextDelay);
+                            };
+
+                            if (videoEl.readyState >= 1) {
+                                scheduleWithDuration();
+                            } else {
+                                videoEl.addEventListener('loadedmetadata', scheduleWithDuration, { once: true });
+                            }
+                        } else {
+                            this.slidetimer = setTimeout(advanceSlide, nextDelay);
+                        }
                     }, this.fadeInterval);
-                }, this.slideInterval);
+                };
+
+                this.slidetimer = setTimeout(advanceSlide, this.slideInterval);
             }
         }
     }
