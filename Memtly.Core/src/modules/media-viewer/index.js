@@ -91,7 +91,7 @@ class MediaViewer {
         });
 
         $(document).off('keydown.selectAll').on('keydown.selectAll', (e) => {
-            if (!$('#media-viewer-post').is(':focus')) {
+            if (!$('input,textarea').is(':focus')) {
                 if (e.ctrlKey && e.key.toLowerCase() === 'a') {
                     preventDefaults(e);
 
