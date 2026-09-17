@@ -1,7 +1,7 @@
 ﻿@model Memtly.Core.Models.PhotoGallery
 
+@using System.Web
 @using Memtly.Core.Constants
-@using Memtly.Core.Views.Gallery.Modes
 
 @{
     var slideshowSlideInterval = TimeSpan.FromSeconds(await _settings.GetOrDefault(MemtlyConfiguration.Slideshow.Interval, 10)).TotalMilliseconds;
@@ -14,11 +14,22 @@
         <div id="gallery-slideshow" class="slideshow col-12">
             @foreach (var image in Model.Images.Take(slideLimit))
             {
-                <div class="slideshow-slide">
-                    <img src="@image.ImagePath" class="slideshow-slide-img shadow-1-strong" loading="lazy" />
+                <div class="slideshow-slide" data-media-type="@image.MediaType.ToString().ToLower()">
+                    @if (image.MediaType == MediaType.Video)
+                    {
+                        <video class="slideshow-slide-video shadow-1-strong" autoplay muted>
+                            <source src="@image.ImagePath" type="video/mp4">
+                            @(_localizer["Browser_Does_Not_Support"].Value)
+                        </video>
+                    }
+                    else
+                    {
+                        <img src="@image.ImagePath" class="slideshow-slide-img shadow-1-strong" loading="lazy" />
+                    }
+
                     @if (identityEnabled)
                     {
-                        <h6 class="credits text-contrast">@_localizer["Uploaded_By"].Value: @(!string.IsNullOrWhiteSpace(image?.UploadedBy) ? image.UploadedBy : "Anonymous")</h6>
+                        <h6 class="credits text-contrast">@_localizer["Uploaded_By"].Value: @(!string.IsNullOrWhiteSpace(image?.UploadedBy) ? HttpUtility.HtmlDecode(image.UploadedBy) : "Anonymous")</h6>
                     }
                 </div>
             }

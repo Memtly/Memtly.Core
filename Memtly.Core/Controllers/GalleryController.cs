@@ -232,13 +232,10 @@ namespace Memtly.Core.Controllers
                     var galleryGroup = group ?? (GalleryGroup)(await _settings.GetOrDefault(MemtlyConfiguration.Gallery.DefaultGroup, (int)GalleryGroup.None, gallery?.Id));
                     var galleryOrder = order ?? (GalleryOrder)(await _settings.GetOrDefault(MemtlyConfiguration.Gallery.DefaultOrder, (int)GalleryOrder.Descending, gallery?.Id));
                     var galleryFilter = filter ?? (GalleryFilter)(await _settings.GetOrDefault(MemtlyConfiguration.Gallery.DefaultFilter, (int)GalleryFilter.All, gallery?.Id));
+                    var includeVideoSlides = await _settings.GetOrDefault(MemtlyConfiguration.Slideshow.IncludeVideoSlides, true, gallery?.Id);
 
                     var mediaType = MediaType.All;
-                    if (mode == ViewMode.Slideshow)
-                    {
-                        mediaType = MediaType.Image;
-                    }
-                    else
+                    if (includeVideoSlides)
                     {
                         switch (galleryFilter)
                         {
@@ -252,6 +249,10 @@ namespace Memtly.Core.Controllers
                                 mediaType = MediaType.All;
                                 break;
                         }
+                    }
+                    else
+                    {
+                        mediaType = MediaType.Image;
                     }
 
                     var orientation = ImageOrientation.All;

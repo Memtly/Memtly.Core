@@ -81,6 +81,29 @@
 }
 
 <section class="py-1 py-lg-4">
+    @if (Model!.ViewMode != ViewMode.Slideshow)
+    {
+        if (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.SearchBar, true, Model?.Gallery?.Id))
+        {
+            var searchTerm = string.Empty;
+            try
+            {
+                searchTerm = _urlHelper!.ExtractQueryValue(Context!.Request, "term", string.Empty);
+            }
+            catch { }
+
+            <div class="row my-1">
+                <div class="col-12 col-lg-2 d-none d-lg-block"></div>
+                <div class="col-12 col-lg-8 px-4">
+                    <label>@_localizer["SearchTerm_Label"].Value</label>
+                    <input id="gallery-item-search-term" class="form-control" type="text" placeholder="" value="@searchTerm" />
+                    <div class="form-text">@_localizer["SearchTerm_Help"].Value</div>
+                </div>
+                <div class="col-12 col-lg-2 d-none d-lg-block"></div>
+            </div>
+        }
+    }
+
     <div class="row mt-3 mt-lg-0">
         @if (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.FullWidth, false, Model?.Gallery?.Id))
         {

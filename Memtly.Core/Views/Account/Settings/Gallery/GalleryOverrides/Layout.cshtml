@@ -64,6 +64,26 @@
 
         <div class="row mb-4 mb-lg-4 setting-container">
             <div class="col-12">
+                <label class="setting-label">@_localizer["Settings_Gallery_SearchBar_Label"].Value</label>
+                <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.SearchBar">
+                    @foreach (var option in ViewOptions.YesNo)
+                    {
+                        if (Model.Settings.GetValue(MemtlyConfiguration.Gallery.SearchBar.ToUpper(), "true").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                        {
+                            <option value="@option.Value" selected="selected">@option.Key</option>
+                        }
+                        else
+                        {
+                            <option value="@option.Value">@option.Key</option>
+                        }
+                    }
+                </select>
+                <div class="setting-hint form-text">@_localizer["Settings_Gallery_SearchBar_Help"].Value</div>
+            </div>
+        </div>
+
+        <div class="row mb-4 mb-lg-4 setting-container">
+            <div class="col-12">
                 <label class="setting-label">@_localizer["Settings_Gallery_ShowTitle_Label"].Value</label>
                 <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Gallery.ShowTitle">
                     @foreach (var option in ViewOptions.YesNo)
