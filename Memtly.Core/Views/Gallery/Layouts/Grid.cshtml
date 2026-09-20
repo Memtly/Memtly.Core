@@ -164,7 +164,7 @@
                             var fallbackImage = image.MediaType == MediaType.Video ? "" : "";
 
                             <div class="media-viewer-card image-tile image-tile-@(image.Orientation.ToString().ToLower())">
-                                <a href="@image.ImagePath" class="media-viewer-item" data-media-viewer-id="@image.Id" data-media-viewer-collection="@imageGroup.Key" data-media-viewer-type="gallery_item">
+                                <a href="@image.ImagePath" class="media-viewer-item" data-media-viewer-id="@image.Id" data-media-viewer-secret-key="@Model?.Gallery?.SecretKey" data-media-viewer-collection="@imageGroup.Key" data-media-viewer-type="gallery_item">
                                     <img src="@image?.ThumbnailPath" class="shadow-1-strong" loading="lazy" onerror="this.onerror=null; this.src='@(image!.FallbackImagePath)'; this.closest('.media-viewer-item').querySelector('.media-viewer-play')?.remove();"/>
                                     @if (image?.MediaType == MediaType.Video)
                                     {

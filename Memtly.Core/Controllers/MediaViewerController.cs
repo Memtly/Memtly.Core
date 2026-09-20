@@ -1,8 +1,7 @@
+using System.Net;
 using System.Reflection;
-using System.Text;
 using Memtly.Core.Attributes;
 using Memtly.Core.Constants;
-using Memtly.Core.EntityFramework.Models;
 using Memtly.Core.Enums;
 using Memtly.Core.Extensions;
 using Memtly.Core.Helpers;
@@ -46,7 +45,7 @@ namespace Memtly.Core.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GalleryItem(int id)
+        public async Task<IActionResult> GalleryItem(int id, string? secretKey)
         {
             if (id > 0)
             {
@@ -57,7 +56,15 @@ namespace Memtly.Core.Controllers
                     {
                         var gallery = await _database.GetGallery(galleryItem.GalleryId);
                         if (gallery != null)
-                        { 
+                        {
+                            secretKey = secretKey ?? string.Empty;
+
+                            if (!string.IsNullOrWhiteSpace(gallery.SecretKey) && !secretKey.Equals(gallery.SecretKey))
+                            {
+                                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                                return Json(new { success = false, message = _localizer["Gallery_Invalid_Secret_Key"].Value });
+                            }
+
                             var user = _identity.IsValid(User) ? User.Identity : null;
                             var identityEnabled = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.Enabled, true);
                             var likesEnabled = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Likes, true, galleryItem.GalleryId);
@@ -152,7 +159,7 @@ namespace Memtly.Core.Controllers
         [Authorize]
         [HttpGet]
         [RequiresRole(ReviewPermission = ReviewPermissions.View)]
-        public async Task<IActionResult> ReviewItem(int id)
+        public async Task<IActionResult> ReviewItem(int id, string? secretKey)
         {
             if (id > 0)
             {
@@ -164,6 +171,14 @@ namespace Memtly.Core.Controllers
                         var gallery = await _database.GetGallery(galleryItem.GalleryId);
                         if (gallery != null)
                         {
+                            secretKey = secretKey ?? string.Empty;
+
+                            if (!string.IsNullOrWhiteSpace(gallery.SecretKey) && !secretKey.Equals(gallery.SecretKey))
+                            {
+                                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                                return Json(new { success = false, message = _localizer["Gallery_Invalid_Secret_Key"].Value });
+                            }
+
                             var user = _identity.IsValid(User) ? User.Identity : null;
                             var identityEnabled = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.Enabled, true);
                             var likesEnabled = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Likes, true, galleryItem.GalleryId);
@@ -206,7 +221,7 @@ namespace Memtly.Core.Controllers
             return PartialView("~/Views/MediaViewer/Popup.cshtml", new Popup() { Id = id });
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Like(int id, string action)
         {

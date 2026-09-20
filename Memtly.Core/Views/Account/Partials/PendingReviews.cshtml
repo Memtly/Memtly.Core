@@ -37,7 +37,7 @@
                         {
                             <div class="pending-approval">
                                 <div class="card media-viewer-card image-tile image-tile--landscape">
-                                    <a href="@review.ImagePath" class="media-viewer-item" data-media-viewer-id="@review.Id" data-media-viewer-collection="pending_reviews" data-media-viewer-type="pending_review" onerror="this.onerror=null; this.src='@(review!.FallbackImagePath)'; this.closest('.media-viewer-item').querySelector('.media-viewer-play')?.remove();">
+                                    <a href="@review.ImagePath" class="media-viewer-item" data-media-viewer-id="@review.Id" data-media-viewer-secret-key="@gallery?.Gallery?.SecretKey" data-media-viewer-collection="pending_reviews" data-media-viewer-type="pending_review" onerror="this.onerror=null; this.src='@(review!.FallbackImagePath)'; this.closest('.media-viewer-item').querySelector('.media-viewer-play')?.remove();">
                                         <img src="@review.ThumbnailPath" loading="lazy" />
                                         @if (review?.MediaType == MediaType.Video)
                                         {

@@ -312,15 +312,16 @@ class MediaViewer {
     }
 
     openMediaViewer(e) {
-        let id = $(e).data('media-viewer-id');
-        let index = $(e).data('media-viewer-index');
-        let type = $(e).data('media-viewer-type');
-        let collection = $(e).data('media-viewer-collection');
+        const id = $(e).data('media-viewer-id');
+        const index = $(e).data('media-viewer-index');
+        const type = $(e).data('media-viewer-type');
+        const collection = $(e).data('media-viewer-collection');
+        const secretKey = $(e).data('media-viewer-secret-key');
 
-        this.displayMediaViewer(id, index, type, collection);
+        this.displayMediaViewer(id, index, type, collection, secretKey);
     }
 
-    displayMediaViewer(id, index, type, collection) {
+    displayMediaViewer(id, index, type, collection, secretKey) {
         this.hideMediaViewer();
 
         displayLoader(localization.translate('Loading'));
@@ -340,7 +341,7 @@ class MediaViewer {
             $.ajax({
                 url: url,
                 type: 'GET',
-                data: { id },
+                data: { id, secretKey },
                 success: (response) => {
                     hideLoader();
                     $('body').append(response);
