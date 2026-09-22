@@ -2824,7 +2824,7 @@ namespace Memtly.Core.Controllers
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                var timeoutMins = await _settings.GetOrDefault(MemtlyConfiguration.Security.Sessions.TimeoutMins, 15);
+                var timeoutMins = await _settings.GetOrDefault(MemtlyConfiguration.Security.Sessions.TimeoutMins, 1440);
                 var persistIdentity = await _settings.GetOrDefault(MemtlyConfiguration.Security.Sessions.PersistIdentity, false);
                 await ctx.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), new AuthenticationProperties
                 {

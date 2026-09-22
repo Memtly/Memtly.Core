@@ -68,7 +68,7 @@ namespace Memtly.Core.Extensions
             });
 
             var settings = services.BuildServiceProvider().GetRequiredService<ISettingsHelper>();
-            var timeoutMins = settings.GetOrDefault(MemtlyConfiguration.Security.Sessions.TimeoutMins, 15).Result;
+            var timeoutMins = settings.GetOrDefault(MemtlyConfiguration.Security.Sessions.TimeoutMins, 1440).Result;
             var persistIdentity = settings.GetOrDefault(MemtlyConfiguration.Security.Sessions.PersistIdentity, false).Result;
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
