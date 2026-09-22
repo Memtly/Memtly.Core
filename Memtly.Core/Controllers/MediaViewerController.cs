@@ -66,6 +66,13 @@ namespace Memtly.Core.Controllers
                             }
 
                             var user = _identity.IsValid(User) ? User.Identity : null;
+
+                            if (galleryItem.State != GalleryItemState.Approved && !_identity.CanEdit(User, ReviewPermissions.View, galleryItem.UserId))
+                            {
+                                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                                return Json(new { success = false, message = _localizer["Access_Denied"].Value });
+                            }
+
                             var identityEnabled = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.Enabled, true);
                             var likesEnabled = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Likes, true, galleryItem.GalleryId);
                             var commentsEnabled = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Comments, true, galleryItem.GalleryId);
@@ -135,6 +142,12 @@ namespace Memtly.Core.Controllers
                     {
                         var user = _identity.IsValid(User) ? User.Identity : null;
 
+                        if (!_identity.CanEdit(User, ReviewPermissions.View, resource.Owner))
+                        {
+                            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                            return Json(new { success = false, message = _localizer["Access_Denied"].Value });
+                        }
+
                         return PartialView("~/Views/MediaViewer/Popup.cshtml", new Popup()
                         {
                             Id = id,
@@ -180,6 +193,13 @@ namespace Memtly.Core.Controllers
                             }
 
                             var user = _identity.IsValid(User) ? User.Identity : null;
+
+                            if (!_identity.CanEdit(User, ReviewPermissions.View, galleryItem.UserId))
+                            {
+                                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                                return Json(new { success = false, message = _localizer["Access_Denied"].Value });
+                            }
+
                             var identityEnabled = await _settings.GetOrDefault(MemtlyConfiguration.IdentityCheck.Enabled, true);
                             var likesEnabled = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Likes, true, galleryItem.GalleryId);
 

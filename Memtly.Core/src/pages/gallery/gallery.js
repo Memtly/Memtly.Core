@@ -355,62 +355,70 @@ export function loadGalleryPage(page, append, callback) {
     append = append !== undefined ? append : false;
 
     const url = new URL(window.location.href);
-    url.searchParams.set('page', page);
-    url.searchParams.set('partial', 'true');
-    url.searchParams.set('pagination', append);
-
-    history.pushState({}, '', url);
+    url.searchParams.delete('partial');
+    url.searchParams.delete('pagination');
+    if (append) {
+        url.searchParams.delete('page');
+    } else {
+        url.searchParams.set('page', page);
+    }
 
     $.ajax({
         type: 'GET',
-        url: `${window.location.pathname}${window.location.search}`,
+        url: `${url.pathname}${url.search}&page=${page}&partial=true&pagination=${append}`,
         success: (data) => {
-            if (append) {
-                $('.gallery-container-wrapper').append(data);
+            data = data.trim();
 
-                ['pending', 'approved'].forEach((type) => {
-                    $(`.gallery-container-wrapper .gallery-container-${type}:gt(0)`).addClass('d-none');
-                    $(`.gallery-container-wrapper .gallery-container-${type}`).each(function (galleryContainerIndex, galleryContainer) {
-                        if (galleryContainerIndex > 0) {
-                            $(galleryContainer).find('.image-group').each(function (imageGroupIndex, imageGroup) {
-                                const key = $(imageGroup).data('key');
-                                const originalGalleryContainer = $(`.gallery-container-wrapper .gallery-container-${type}:first`);
-                                const originalImageGroup = originalGalleryContainer.find(`.image-group-${key}`);
-                                if (originalImageGroup === undefined) {
-                                    $(imageGroup).appendTo(originalGalleryContainer);
-                                } else {
-                                    const originalImageGroupContainer = originalImageGroup.find(`.image-container`);
-                                    $(imageGroup).find('.image-tile').each(function (imageTileIndex, imageTile) {
-                                        $(imageTile).appendTo(originalImageGroupContainer);
-                                    });
-                                }
-                            });
+            if (data !== undefined && data.length > 0) {
+                history.pushState({}, '', url);
+
+                if (append) {
+                    $('.gallery-container-wrapper').append(data);
+
+                    ['pending', 'approved'].forEach((type) => {
+                        $(`.gallery-container-wrapper .gallery-container-${type}:gt(0)`).addClass('d-none');
+                        $(`.gallery-container-wrapper .gallery-container-${type}`).each(function (galleryContainerIndex, galleryContainer) {
+                            if (galleryContainerIndex > 0) {
+                                $(galleryContainer).find('.image-group').each(function (imageGroupIndex, imageGroup) {
+                                    const key = $(imageGroup).data('key');
+                                    const originalGalleryContainer = $(`.gallery-container-wrapper .gallery-container-${type}:first`);
+                                    const originalImageGroup = originalGalleryContainer.find(`.image-group-${key}`);
+                                    if (originalImageGroup === undefined) {
+                                        $(imageGroup).appendTo(originalGalleryContainer);
+                                    } else {
+                                        const originalImageGroupContainer = originalImageGroup.find(`.image-container`);
+                                        $(imageGroup).find('.image-tile').each(function (imageTileIndex, imageTile) {
+                                            $(imageTile).appendTo(originalImageGroupContainer);
+                                        });
+                                    }
+                                });
+                            }
+                        });
+
+                        const itemCount = $(`.gallery-container-wrapper .gallery-container-${type}:first .image-tile`).length;
+                        if (itemCount > 0) {
+                            $(`.gallery-container-wrapper .gallery-container-${type}:first`).removeClass('d-none');
+                        } else {
+                            $(`.gallery-container-wrapper .gallery-container-${type}:first`).addClass('d-none');
                         }
+
+                        $(`.gallery-container-wrapper .gallery-container-${type}:gt(0)`).remove();
                     });
 
-                    const itemCount = $(`.gallery-container-wrapper .gallery-container-${type}:first .image-tile`).length;
-                    if (itemCount > 0) {
-                        $(`.gallery-container-wrapper .gallery-container-${type}:first`).removeClass('d-none');
-                    } else {
-                        $(`.gallery-container-wrapper .gallery-container-${type}:first`).addClass('d-none');
-                    }
+                    $(`.gallery-container-wrapper .gallery-container .image-group`).each(function (index, el) {
+                        if ($(el).find('.image-tile').length == 0) {
+                            $(el).remove();
+                        }
+                    });
+                } else {
+                    $('#main-gallery').html(data);
+                }
 
-                    $(`.gallery-container-wrapper .gallery-container-${type}:gt(0)`).remove();
-                });
+                mediaViewer.init();
 
-                $(`.gallery-container-wrapper .gallery-container .image-group`).each(function (index, el) {
-                    if ($(el).find('.image-tile').length == 0) {
-                        $(el).remove();
-                    }
-                });
-            } else {
-                $('#main-gallery').html(data);
-            }
-
-            mediaViewer.init();
-
-            if (typeof callback === 'function') {
-                callback();
+                if (typeof callback === 'function') {
+                    callback();
+                }
             }
         },
         complete: () => {
