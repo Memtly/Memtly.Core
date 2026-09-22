@@ -54,6 +54,34 @@
 
         <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
             <div class="col-12">
+                <label class="setting-label">@_localizer["Settings_Sessions_TimeoutMins_Label"].Value</label>
+                <input class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Security.Sessions.TimeoutMins" placeholder="15" value="@Model.Settings.GetValue(MemtlyConfiguration.Security.Sessions.TimeoutMins.ToUpper(), "15")" type="number" min="15" step="1" />
+                <div class="setting-hint form-text">@_localizer["Settings_Sessions_TimeoutMins_Help"].Value</div>
+            </div>
+        </div>
+
+        <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
+            <div class="col-12">
+                <label class="setting-label">@_localizer["Settings_Sessions_PersistIdentity_Label"].Value</label>
+                <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Security.Sessions.PersistIdentity">
+                    @foreach (var option in ViewOptions.YesNo)
+                    {
+                        if (Model.Settings.GetValue(MemtlyConfiguration.Security.Sessions.PersistIdentity.ToUpper(), "false").Equals(option.Value, StringComparison.OrdinalIgnoreCase))
+                        {
+                            <option value="@option.Value" selected="selected">@option.Key</option>
+                        }
+                        else
+                        {
+                            <option value="@option.Value">@option.Key</option>
+                        }
+                    }
+                </select>
+                <div class="setting-hint form-text">@_localizer["Settings_Sessions_PersistIdentity_Help"].Value</div>
+            </div>
+        </div>
+
+        <div class="row mb-4 mb-lg-4 setting-container setting-advanced">
+            <div class="col-12">
                 <label class="setting-label">@_localizer["Settings_Basic_ForceHttps_Label"].Value</label>
                 <select class="setting-field form-control" data-setting-name="@MemtlyConfiguration.Basic.ForceHttps">
                     @foreach (var option in ViewOptions.YesNo)

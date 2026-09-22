@@ -67,18 +67,21 @@ namespace Memtly.Core.Extensions
                 x.MemoryBufferThreshold = Int32.MaxValue;
             });
 
+            var settings = services.BuildServiceProvider().GetRequiredService<ISettingsHelper>();
+            var timeoutMins = settings.GetOrDefault(MemtlyConfiguration.Security.Sessions.TimeoutMins, 15).Result;
+            var persistIdentity = settings.GetOrDefault(MemtlyConfiguration.Security.Sessions.PersistIdentity, false).Result;
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
                     options.Cookie.HttpOnly = false;
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(timeoutMins);
 
                     options.LoginPath = "/Account/Login";
                     options.AccessDeniedPath = $"/Error?Reason={ErrorCode.Unauthorized}";
                     options.SlidingExpiration = true;
                 });
             services.AddSession(options => {
-                options.IdleTimeout = TimeSpan.FromMinutes(10);
+                options.IdleTimeout = TimeSpan.FromMinutes(timeoutMins);
                 options.Cookie.Name = ".Memtly.Session";
                 options.Cookie.IsEssential = true;
             });

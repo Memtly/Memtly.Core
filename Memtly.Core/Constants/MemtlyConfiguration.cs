@@ -41,6 +41,12 @@
             { 
                 public const string AllowInsecureGalleries = "Memtly:Security:Hardening:Allow_Insecure_Galleries";
             }
+
+            public class Sessions
+            {
+                public const string TimeoutMins = "Memtly:Security:Sessions:Timeout_Mins";
+                public const string PersistIdentity = "Memtly:Security:Sessions:Persist_Identity";
+            }
         }
 
         public class Basic

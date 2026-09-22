@@ -32,15 +32,15 @@ namespace Memtly.Core.Attributes
  
                 var pemissions = filterContext.HttpContext?.User?.Identity?.GetUserPermissions() ?? new Permissions();
                 if (
-                    (pemissions.Review != ReviewPermissions.None && !pemissions.Review.HasFlag(this.ReviewPermission))
-                    || (pemissions.Collection != CollectionPermissions.None && !pemissions.Collection.HasFlag(this.CollectionPermission))
-                    || (pemissions.Gallery != GalleryPermissions.None && !pemissions.Gallery.HasFlag(this.GalleryPermission))
-                    || (pemissions.Users != UserPermissions.None && !pemissions.Users.HasFlag(this.UserPermission))
-                    || (pemissions.CustomResources != CustomResourcePermissions.None && !pemissions.CustomResources.HasFlag(this.CustomResourcePermission))
-                    || (pemissions.Settings != SettingsPermissions.None && !pemissions.Settings.HasFlag(this.SettingsPermission))
-                    || (pemissions.Audit != AuditPermissions.None && !pemissions.Audit.HasFlag(this.AuditPermission))
-                    || (pemissions.Data != DataPermissions.None && !pemissions.Data.HasFlag(this.DataPermission))
-                    || (pemissions.BackgroundWorkerPermissions != BackgroundWorkerPermissions.None && !pemissions.BackgroundWorkerPermissions.HasFlag(this.BackgroundWorkerPermissions))
+                    (this.ReviewPermission != ReviewPermissions.None && !pemissions.Review.HasFlag(this.ReviewPermission))
+                    || (this.CollectionPermission != CollectionPermissions.None && !pemissions.Collection.HasFlag(this.CollectionPermission))
+                    || (this.GalleryPermission != GalleryPermissions.None && !pemissions.Gallery.HasFlag(this.GalleryPermission))
+                    || (this.UserPermission != UserPermissions.None && !pemissions.Users.HasFlag(this.UserPermission))
+                    || (this.CustomResourcePermission != CustomResourcePermissions.None && !pemissions.CustomResources.HasFlag(this.CustomResourcePermission))
+                    || (this.SettingsPermission != SettingsPermissions.None && !pemissions.Settings.HasFlag(this.SettingsPermission))
+                    || (this.AuditPermission != AuditPermissions.None && !pemissions.Audit.HasFlag(this.AuditPermission))
+                    || (this.DataPermission != DataPermissions.None && !pemissions.Data.HasFlag(this.DataPermission))
+                    || (this.BackgroundWorkerPermissions != BackgroundWorkerPermissions.None && !pemissions.BackgroundWorkerPermissions.HasFlag(this.BackgroundWorkerPermissions))
                 )
                 {
                     filterContext.Result = new RedirectToActionResult("Index", "Error", new { Reason = ErrorCode.Unauthorized }, false);
