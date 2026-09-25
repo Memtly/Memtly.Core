@@ -1,5 +1,4 @@
-﻿using Memtly.Core.EntityFramework.Models;
-using Memtly.Core.Enums;
+﻿using Memtly.Core.Enums;
 using Memtly.Core.Models;
 using Memtly.Core.Models.Database;
 
@@ -28,12 +27,10 @@ namespace Memtly.Core.Helpers.Database
         #endregion
 
         #region Gallery Items
-        Task<IDictionary<string, int>> GetCollectionItemCount(string term = "", int? userId = null, int? collectionId = null, GalleryItemState state = GalleryItemState.All, MediaType type = MediaType.All, ImageOrientation orientation = ImageOrientation.All);
-        Task<IDictionary<string, int>> GetGalleryItemCount(string term = "", int? userId = null, int? galleryId = null, GalleryItemState state = GalleryItemState.All, MediaType type = MediaType.All, ImageOrientation orientation = ImageOrientation.All);
+        Task<IDictionary<string, int>> GetGalleryItemCount(GalleryItemSearch search);
         Task<GalleryItemModel?> GetGalleryItem(int id);
         Task<GalleryItemModel?> GetGalleryItemByChecksum(int galleryId, string checksum);
-        Task<List<GalleryItemModel>> GetCollectionItems(string term = "", int? userId = null, int? collectionId = null, GalleryItemState state = GalleryItemState.All, MediaType type = MediaType.All, ImageOrientation orientation = ImageOrientation.All, GalleryGroup group = GalleryGroup.None, GalleryOrder order = GalleryOrder.Descending, int page = 1, int limit = int.MaxValue);
-        Task<List<GalleryItemModel>> GetGalleryItems(string term = "", int? userId = null, int? galleryId = null, GalleryItemState state = GalleryItemState.All, MediaType type = MediaType.All, ImageOrientation orientation = ImageOrientation.All, GalleryGroup group = GalleryGroup.None, GalleryOrder order = GalleryOrder.Descending, int page = 1, int limit = int.MaxValue);
+        Task<List<GalleryItemModel>> GetGalleryItems(GalleryItemSearch search);
         Task<GalleryItemModel?> AddGalleryItem(GalleryItemModel model);
         Task<GalleryItemModel?> EditGalleryItem(GalleryItemModel model);
         Task DeleteGalleryItem(GalleryItemModel model);

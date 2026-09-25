@@ -1,10 +1,11 @@
 ﻿using System.Text;
-using Microsoft.Extensions.Localization;
-using NCrontab;
 using Memtly.Core.Constants;
 using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Database;
 using Memtly.Core.Helpers.Notifications;
+using Memtly.Core.Models.Database;
+using Microsoft.Extensions.Localization;
+using NCrontab;
 
 namespace Memtly.Core.BackgroundWorkers
 {
@@ -84,11 +85,19 @@ namespace Memtly.Core.BackgroundWorkers
                     {
                         var db = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
 
-                        var pendingItems = await db.GetGalleryItems();
+                        var pendingItems = await db.GetGalleryItems(new GalleryItemSearch()
+                        {
+                            ItemState = new GalleryItemStateFilter()
+                            {
+                                Pending = ItemOwner.All,
+                                Approved = ItemOwner.None
+                            }
+                        });
+
                         if (pendingItems != null && pendingItems.Any())
                         {
                             var builder = new StringBuilder();
-                            builder.AppendLine($"<h1>You have items pending review!</h1>");
+                            builder.AppendLine($"<h1>{_localizer["Pending_Items_Report_Heading"].Value}</h1>");
 
                             foreach (var item in pendingItems.GroupBy(x => x.GalleryId).OrderByDescending(x => x.Count()))
                             {
@@ -97,7 +106,7 @@ namespace Memtly.Core.BackgroundWorkers
                                 {
                                     try
                                     {
-                                        builder.AppendLine($"<p style=\"font-size: 16pt;\">{gallery.Name} - Pending Items ({item.Count()})</p>");
+                                        builder.AppendLine($"<p style=\"font-size: 16pt;\">{gallery.Name} - {_localizer["Pending_Uploads"].Value} ({item.Count()})</p>");
                                     }
                                     catch (Exception ex)
                                     {
@@ -106,7 +115,7 @@ namespace Memtly.Core.BackgroundWorkers
                                 }
                             }
 
-                            var sent = await new EmailHelper(_settingsHelper, _smtpHelper, _emailLogger, _localizer).Send("Pending Items Report", builder.ToString());
+                            var sent = await new EmailHelper(_settingsHelper, _smtpHelper, _emailLogger, _localizer).Send(_localizer["Pending_Items_Report_Subject"].Value, builder.ToString());
                             if (!sent)
                             {
                                 _notificationLogger.LogWarning($"Failed to send notification report");

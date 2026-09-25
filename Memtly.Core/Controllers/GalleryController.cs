@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text;
 using Memtly.Core.Attributes;
 using Memtly.Core.Constants;
+using Memtly.Core.EntityFramework.Models;
 using Memtly.Core.Enums;
 using Memtly.Core.Extensions;
 using Memtly.Core.Helpers;
@@ -273,34 +274,42 @@ namespace Memtly.Core.Controllers
                     }
 
                     var itemsPerPage = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.ItemsPerPage, 50, gallery?.Id);
-                    var allowedFileTypes = (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", gallery?.Id)).Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                    var allowedFileTypes = (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", gallery?.Id)).Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
                     var showPendingUploads = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.ShowPendingUploads, true, gallery?.Id);
 
-                    List<GalleryItemModel>? galleryItems = null;
-                    var state = showPendingUploads ? (_identity.IsValid(User) ? GalleryItemState.All : GalleryItemState.Approved) : GalleryItemState.Approved;
-
-                    if (gallery!.Type == GalleryType.Collection && !gallery!.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))
+                    var search = new GalleryItemSearch()
                     {
-                        galleryItems = await _database.GetCollectionItems(term, null, gallery?.Id, state, mediaType, orientation, galleryGroup, galleryOrder, currentPage, itemsPerPage);
-                    }
-                    else
-                    {
-                        galleryItems = await _database.GetGalleryItems(term, null, gallery?.Id, state, mediaType, orientation, galleryGroup, galleryOrder, currentPage, itemsPerPage);
-                    }
-
-                    var items = galleryItems?.Where(x => allowedFileTypes.Any(y => string.Equals(Path.GetExtension(x.Title).Trim('.'), y.Trim('.'), StringComparison.OrdinalIgnoreCase)));
-                    if (_identity.IsBasicUser(User) && !_identity.IsOwner(User, gallery!.Owner))
-                    {
-                        if (gallery.Type == GalleryType.Drop)
+                        UserId = userId,
+                        SearchTerm = term,
+                        CollectionIds = gallery!.Type == GalleryType.Collection ? new List<int>() { gallery!.Id } : null,
+                        GalleryIds = gallery!.Type != GalleryType.Collection ? new List<int>() { gallery!.Id } : null,
+                        ItemState = new GalleryItemStateFilter()
                         {
-                            items = items?.Where(x => x.UserId != null && x.UserId == userId);
-                        }
-                        else
-                        {
-                            items = items?.Where(x => x.State == GalleryItemState.Approved || (x.State == GalleryItemState.Pending && x.UserId != null && x.UserId == userId));
-                        }
+                            Pending = showPendingUploads && _identity.IsValid(User) ? (_identity.IsPrivilegedUser(User) ? ItemOwner.All : ItemOwner.UserOnly) : ItemOwner.None,
+                            Approved = gallery!.Type == GalleryType.Drop ? (_identity.IsPrivilegedUser(User) ? ItemOwner.All : ItemOwner.UserOnly) : ItemOwner.All
+                        },
+                        MediaType = mediaType,
+                        ImageOrientation = orientation,
+                        GroupBy = galleryGroup,
+                        OrderBy = galleryOrder,
+                        Page = currentPage,
+                        Limit = itemsPerPage,
+                        AllowedFileExtensions = allowedFileTypes
+                    };
+
+                    var items = await _database.GetGalleryItems(search);
+                    search.ItemState = new GalleryItemStateFilter()
+                    {
+                        Pending = gallery!.Type == GalleryType.Drop ? (_identity.IsPrivilegedUser(User) ? ItemOwner.All : ItemOwner.UserOnly) : ItemOwner.All,
+                        Approved = gallery!.Type == GalleryType.Drop ? (_identity.IsPrivilegedUser(User) ? ItemOwner.All : ItemOwner.UserOnly) : ItemOwner.All
+                    };
+                    var itemCounts = await _database.GetGalleryItemCount(search);
+
+                    if (_identity.IsBasicUser(User) && userId != gallery!.Owner)
+                    {
+                        items = items.Where(x => (gallery!.Type != GalleryType.Drop && x.State == GalleryItemState.Approved) || (x.UserId != null && x.UserId == userId)).ToList();
                     }
-                    
+
                     var uploadActvated = !gallery!.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase) && (_identity.IsOwner(User, gallery.Owner) || _identity.IsPrivilegedUser(User) || await _settings.GetOrDefault(MemtlyConfiguration.Gallery.Upload, true, gallery?.Id));
                     if (uploadActvated)
                     {
@@ -343,16 +352,6 @@ namespace Memtly.Core.Controllers
                         }
                     }
 
-                    IDictionary<string, int> itemCounts;
-                    if (gallery!.Type == GalleryType.Collection)
-                    {
-                        itemCounts = await _database.GetCollectionItemCount(term, userId, gallery?.Id, GalleryItemState.All, mediaType, orientation);
-                    }
-                    else
-                    {
-                        itemCounts = await _database.GetGalleryItemCount(term, userId, gallery?.Id, GalleryItemState.All, mediaType, orientation);
-                    }
-
                     var galleryIdentifiers = gallery!.Type != GalleryType.Collection ? new Dictionary<int, GalleryIdentifierModel?>() { { gallery.Id, new GalleryIdentifierModel(gallery.Id, gallery.Identifier, gallery.Name) } } : items?.GroupBy(x => x.GalleryId)?.Select(x => new KeyValuePair<int, GalleryIdentifierModel?>(x.Key, _database.GetGalleryIdentifier(x.Key).Result))?.ToDictionary();
                     var model = new PhotoGallery()
                     {
@@ -382,8 +381,6 @@ namespace Memtly.Core.Controllers
                         CurrentPage = currentPage,
                         ApprovedCount = itemCounts.ContainsKey("Approved") ? (int)itemCounts["Approved"] : 0,
                         PendingCount = itemCounts.ContainsKey("Pending") ? (int)itemCounts["Pending"] : 0,
-                        UserApprovedCount = _identity.IsPrivilegedUser(User) || _identity.IsOwner(User, gallery!.Owner) ? (itemCounts.ContainsKey("Approved") ? (int)itemCounts["Approved"] : 0) : (itemCounts.ContainsKey("UserApproved") ? (int)itemCounts["UserApproved"] : 0),
-                        UserPendingCount = _identity.IsPrivilegedUser(User) || _identity.IsOwner(User, gallery!.Owner) ? (itemCounts.ContainsKey("Pending") ? (int)itemCounts["Pending"] : 0) : (itemCounts.ContainsKey("UserPending") ? (int)itemCounts["UserPending"] : 0),
                         ItemsPerPage = itemsPerPage,
                         UploadActivated = uploadActvated,
                         ViewMode = (ViewMode)ViewBag.ViewMode,
@@ -793,8 +790,10 @@ namespace Memtly.Core.Controllers
                             var filterDropItems = gallery!.Type == GalleryType.Drop && _identity.IsBasicUser(User) && userId != gallery!.Owner;
                             if (filterDropItems && string.IsNullOrWhiteSpace(group))
                             {
-                                group = $"{(int)GalleryGroup.None}|DropItemsOnly|{GalleryItemState.All}";
+                                group = $"{(int)GalleryGroup.None}|DropItemsOnly|{GalleryItemState.Approved}";
                             }
+
+                            var showPendingUploads = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.ShowPendingUploads, true, gallery?.Id);
 
                             if (!string.IsNullOrWhiteSpace(group))
                             {
@@ -806,49 +805,29 @@ namespace Memtly.Core.Controllers
                                         var tempFilter = fileFilter;
                                         fileFilter = new List<string>();
 
-                                        GalleryItemState state = GalleryItemState.Approved;
+                                        var allowedFileTypes = (await _settings.GetOrDefault(MemtlyConfiguration.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", gallery?.Id)).Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
 
-                                        var showPendingUploads = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.ShowPendingUploads, true, gallery?.Id);
-                                        if (showPendingUploads)
+                                        IEnumerable<GalleryItemModel>? galleryItems = await _database.GetGalleryItems(new GalleryItemSearch()
                                         {
-                                            if (_identity.IsValid(User))
+                                            UserId = userId,
+                                            //SearchTerm = term,
+                                            CollectionIds = gallery!.Type == GalleryType.Collection ? new List<int>() { gallery!.Id } : null,
+                                            GalleryIds = gallery!.Type != GalleryType.Collection ? new List<int>() { gallery!.Id } : null,
+                                            ItemState = new GalleryItemStateFilter()
                                             {
-                                                foreach (GalleryItemState s in Enum.GetValues(typeof(GalleryItemState)))
-                                                {
-                                                    if (string.Equals(groupParts[2], s.ToString(), StringComparison.OrdinalIgnoreCase))
-                                                    {
-                                                        state = s;
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        }
+                                                Pending = showPendingUploads && _identity.IsValid(User) ? (_identity.IsPrivilegedUser(User) ? ItemOwner.All : ItemOwner.UserOnly) : ItemOwner.None,
+                                                Approved = gallery!.Type == GalleryType.Drop ? ItemOwner.UserOnly : ItemOwner.All
+                                            },
+                                            //MediaType = mediaType,
+                                            //ImageOrientation = orientation,
+                                            //GroupBy = galleryGroup,
+                                            //OrderBy = galleryOrder,
+                                            AllowedFileExtensions = allowedFileTypes
+                                        });
 
-                                        IEnumerable<GalleryItemModel>? galleryItems;
-                                        if (gallery!.Type == GalleryType.Collection && !gallery!.Identifier.Equals(SystemGalleries.AllGallery, StringComparison.OrdinalIgnoreCase))
+                                        if (_identity.IsBasicUser(User) && userId != gallery!.Owner)
                                         {
-                                            galleryItems = await _database.GetCollectionItems(string.Empty, null, id, state);
-                                        }
-                                        else
-                                        {
-                                            galleryItems = await _database.GetGalleryItems(string.Empty, null, id, state);
-                                        }
-
-                                        if (_identity.IsBasicUser(User) && !_identity.IsOwner(User, gallery!.Owner))
-                                        {
-                                            if (gallery.Type == GalleryType.Drop)
-                                            {
-                                                galleryItems = galleryItems?.Where(x => x.UserId != null && x.UserId == userId);
-                                            }
-                                            else
-                                            {
-                                                galleryItems = galleryItems?.Where(x => x.State == GalleryItemState.Approved || (x.State == GalleryItemState.Pending && x.UserId != null && x.UserId == userId));
-                                            }
-                                        }
-
-                                        if (filterDropItems)
-                                        {
-                                            galleryItems = galleryItems.Where(x => x.UserId != null && x.UserId == userId).ToList();
+                                            galleryItems = galleryItems.Where(x => (gallery!.Type != GalleryType.Drop && x.State == GalleryItemState.Approved) || (x.UserId != null && x.UserId == userId)).ToList();
                                         }
 
                                         if (((int)GalleryGroup.None).ToString().Equals(groupParts[0]))
@@ -923,41 +902,28 @@ namespace Memtly.Core.Controllers
                             var archieveName = $"{gallery!.Identifier ?? "Memtly"}_{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}.zip";
 
                             var listing = new List<ZipListing>();
+                            var scanners = new List<ZipListingScanner>();
 
-                            if (_identity.IsOwner(User, gallery.Owner) || _identity.IsPrivilegedUser(User))
+                            foreach (var galleryDir in galleryDirs)
                             {
-                                var scanners = new List<ZipListingScanner>();
+                                scanners.Add(new ZipListingScanner("Approved", galleryDir, SearchOption.TopDirectoryOnly));
 
-                                foreach (var galleryDir in galleryDirs)
+                                if (_identity.IsOwner(User, gallery.Owner) || _identity.IsPrivilegedUser(User))
                                 {
-                                    scanners.Add(new ZipListingScanner("Approved", galleryDir, SearchOption.TopDirectoryOnly));
-                                    scanners.Add(new ZipListingScanner("Pending", Path.Combine(galleryDir, "Pending"), SearchOption.AllDirectories));
-                                    scanners.Add(new ZipListingScanner("Rejected", Path.Combine(galleryDir, "Rejected"), SearchOption.AllDirectories));
+                                    scanners.Add(new ZipListingScanner("Pending", Path.Combine(galleryDir, "Pending"), SearchOption.TopDirectoryOnly));
+                                    scanners.Add(new ZipListingScanner("Rejected", Path.Combine(galleryDir, "Rejected"), SearchOption.TopDirectoryOnly));
                                 }
-
-                                foreach (var scanner in scanners)
+                                else if (showPendingUploads)
                                 {
-                                    try
-                                    {
-                                        var files = Directory.GetFiles(scanner.Path, "*", scanner.SearchOption);
-                                        if (fileFilter != null && fileFilter.Any())
-                                        {
-                                            files = files.Where(x => fileFilter.Exists(y => Path.GetFileName(y).Equals(Path.GetFileName(x), StringComparison.OrdinalIgnoreCase))).ToArray();
-                                        }
-
-                                        if (files != null && files.Any())
-                                        {
-                                            listing.Add(new ZipListing(scanner.Path, files, scanner.Name));
-                                        }
-                                    }
-                                    catch { }
+                                    scanners.Add(new ZipListingScanner("Pending", Path.Combine(galleryDir, "Pending"), SearchOption.TopDirectoryOnly));
                                 }
                             }
-                            else
+
+                            foreach (var scanner in scanners)
                             {
-                                foreach (var galleryDir in galleryDirs)
+                                try
                                 {
-                                    var files = Directory.GetFiles(galleryDir, "*", SearchOption.TopDirectoryOnly);
+                                    var files = Directory.GetFiles(scanner.Path, "*", scanner.SearchOption);
                                     if (fileFilter != null && fileFilter.Any())
                                     {
                                         files = files.Where(x => fileFilter.Exists(y => Path.GetFileName(y).Equals(Path.GetFileName(x), StringComparison.OrdinalIgnoreCase))).ToArray();
@@ -965,9 +931,10 @@ namespace Memtly.Core.Controllers
 
                                     if (files != null && files.Any())
                                     {
-                                        listing.Add(new ZipListing(galleryDir, files));
+                                        listing.Add(new ZipListing(scanner.Path, files, scanner.Name));
                                     }
                                 }
+                                catch { }
                             }
 
                             if (listing != null && listing.Count > 0)

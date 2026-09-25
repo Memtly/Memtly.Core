@@ -90,7 +90,7 @@
         @if (paginationStyle != PaginationStyle.ScrollLoading && Model!.Pagination && Model.ViewMode != ViewMode.Slideshow)
         {
             <div class="col-12">
-                <partial name="~/Views/Shared/_Pagination.cshtml" model="new PaginationModel() { CurrentPage = Model.CurrentPage, TotalItems = ((Model?.ApprovedCount ?? 0) + (Model?.UserPendingCount ?? 0)), ItemsPerPage = Model?.ItemsPerPage ?? 50 }" />
+                <partial name="~/Views/Shared/_Pagination.cshtml" model="new PaginationModel() { CurrentPage = Model.CurrentPage, TotalItems = ((Model?.ApprovedCount ?? 0) + (Model?.PendingCount ?? 0)), ItemsPerPage = Model?.ItemsPerPage ?? 50 }" />
             </div>
         }
     </div>

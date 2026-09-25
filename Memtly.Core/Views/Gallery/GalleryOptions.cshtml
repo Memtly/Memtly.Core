@@ -5,7 +5,7 @@
 @{
     var userPermissions = _identity.GetUserPermissions(User);
     var qrCodeEnabled = await _settings.GetOrDefault(MemtlyConfiguration.Gallery.QRCode.Enabled, true, Model?.Gallery?.Id);
-    var excludeFromUrls = new List<string>() { "partial" };
+    var excludeFromUrls = new List<string>() { "partial", "page" };
 }
 
 @if (qrCodeEnabled)

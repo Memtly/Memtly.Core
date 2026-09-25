@@ -364,32 +364,37 @@ namespace Memtly.Core.Helpers.Database
         #endregion
 
         #region Gallery Items
-        public async Task<IDictionary<string, int>> GetCollectionItemCount(string term = "", int? userId = null, int? collectionId = null, GalleryItemState state = GalleryItemState.All, MediaType type = MediaType.All, ImageOrientation orientation = ImageOrientation.All)
+        public async Task<IDictionary<string, int>> GetGalleryItemCount(GalleryItemSearch search)
         {
-            if (collectionId != null && collectionId >= 0)
+            search = search != null ? search : new GalleryItemSearch();
+            search.CollectionIds = search.CollectionIds != null ? search.CollectionIds : new List<int>();
+            search.GalleryIds = search.GalleryIds != null ? search.GalleryIds : new List<int>();
+
+            if (search.CollectionIds.Any())
             {
-                var galleryIds = collectionId > 0 ? (await GetCollections(collectionId))?.Select(ci => ci.GalleryId)?.ToList() : new List<int>();
-                return await GetGalleryItemCount(term, userId, galleryIds, state, type, orientation);
+                foreach (var collectionId in search.CollectionIds)
+                {
+                    var galleryIds = (await GetCollections(collectionId))?.Select(ci => ci.GalleryId)?.ToList();
+                    if (galleryIds != null && galleryIds.Any())
+                    {
+                        search.GalleryIds.AddRange(galleryIds);
+                    }
+                }
             }
 
-            return new Dictionary<string, int>();
-        }
+            search.GalleryIds = search.GalleryIds.Distinct().ToList();
 
-        public async Task<IDictionary<string, int>> GetGalleryItemCount(string term = "", int? userId = null, int? galleryId = null, GalleryItemState state = GalleryItemState.All, MediaType type = MediaType.All, ImageOrientation orientation = ImageOrientation.All)
-        {
-            var galleryIds = galleryId != null ? new List<int> { (int)galleryId } : null;
-            return await GetGalleryItemCount(term, userId, galleryIds, state, type, orientation);
-        }
-
-        private async Task<IDictionary<string, int>> GetGalleryItemCount(string term = "", int? userId = null, List<int>? galleryIds = null, GalleryItemState state = GalleryItemState.All, MediaType type = MediaType.All, ImageOrientation orientation = ImageOrientation.All)
-        {
             var counts = await _db.GalleryItems
                 .Where(gi =>
-                    (string.IsNullOrWhiteSpace(term) || gi.Title.ToLower().Contains(term.ToLower()))
-                    && (galleryIds == null || !galleryIds.Any() || galleryIds.Contains(gi.GalleryId ?? 0))
-                    && (state == GalleryItemState.All || gi.State == state)
-                    && (type == MediaType.All || gi.Type == type)
-                    && (orientation == ImageOrientation.All || gi.Orientation == orientation)
+                    (string.IsNullOrWhiteSpace(search.SearchTerm) || gi.Title.ToLower().Contains(search.SearchTerm.ToLower()))
+                    && (search.GalleryIds == null || !search.GalleryIds.Any() || search.GalleryIds.Contains(gi.GalleryId ?? 0))
+                    && (
+                        (gi.State == GalleryItemState.Approved && (search.ItemState.Approved == ItemOwner.All || (search.ItemState.Approved == ItemOwner.UserOnly && (search.UserId == gi.UserId || search.UserId == gi.Gallery!.UserId))))
+                        || (gi.State == GalleryItemState.Pending && (search.ItemState.Pending == ItemOwner.All || (search.ItemState.Pending == ItemOwner.UserOnly && (search.UserId == gi.UserId || search.UserId == gi.Gallery!.UserId))))
+                    )
+                    && (search.MediaType == MediaType.All || search.MediaType == gi.Type)
+                    && (search.ImageOrientation == ImageOrientation.All || search.ImageOrientation == gi.Orientation)
+                    && (search.AllowedFileExtensions == null || !search.AllowedFileExtensions.Any() || search.AllowedFileExtensions.Any(x => x.StartsWith(".") && gi.Title.ToLower().EndsWith(x.ToLower())))
                 )
                  .GroupBy(gi => gi.State)
                 .Select(g => new { State = g.Key, Count = g.Count() })
@@ -404,107 +409,82 @@ namespace Memtly.Core.Helpers.Database
                 }
             }
 
-            if (userId != null && userId > 0)
-            {
-                var userCounts = await _db.GalleryItems
-                    .Where(gi =>
-                        (string.IsNullOrWhiteSpace(term) || gi.Title.ToLower().Contains(term.ToLower()))
-                        && gi.UserId == userId
-                        && (galleryIds == null || !galleryIds.Any() || galleryIds.Contains(gi.GalleryId ?? 0))
-                        && (state == GalleryItemState.All || gi.State == state)
-                        && (type == MediaType.All || gi.Type == type)
-                        && (orientation == ImageOrientation.All || gi.Orientation == orientation)
-                    )
-                     .GroupBy(gi => gi.State)
-                    .Select(g => new { State = g.Key, Count = g.Count() })
-                    .ToDictionaryAsync(x => x.State!.ToString(), x => x.Count);
-
-                foreach (var s in Enum.GetNames(typeof(GalleryItemState)))
-                {
-                    try
-                    {
-                        var key = $"User{s.ToString()}";
-                        if (!counts.ContainsKey(key))
-                        {
-                            counts.Add(key, userCounts.ContainsKey(s) ? userCounts[s] : 0);
-                        }
-                    }
-                    catch { }
-                }
-            }
-
             return counts;
         }
 
-        public async Task<List<GalleryItemModel>> GetCollectionItems(string term = "", int? userId = null, int? collectionId = null, GalleryItemState state = GalleryItemState.All, MediaType type = MediaType.All, ImageOrientation orientation = ImageOrientation.All, GalleryGroup group = GalleryGroup.None, GalleryOrder order = GalleryOrder.Descending, int page = 1, int limit = int.MaxValue)
+        public async Task<List<GalleryItemModel>> GetGalleryItems(GalleryItemSearch search)
         {
-            if (collectionId != null && collectionId > 0)
+            search = search != null ? search : new GalleryItemSearch();
+            search.CollectionIds = search.CollectionIds != null ? search.CollectionIds : new List<int>();
+            search.GalleryIds = search.GalleryIds != null ? search.GalleryIds : new List<int>();
+
+            if (search.CollectionIds.Any())
             {
-                var galleryIds = (await GetCollections(collectionId))?.Select(ci => ci.GalleryId)?.ToList();
-                return await GetGalleryItems(term, userId, galleryIds, state, type, orientation, group, order, page, limit);
+                foreach (var collectionId in search.CollectionIds)
+                {
+                    var galleryIds = (await GetCollections(collectionId))?.Select(ci => ci.GalleryId)?.ToList();
+                    if (galleryIds != null && galleryIds.Any())
+                    {
+                        search.GalleryIds.AddRange(galleryIds);
+                    }
+                }
             }
 
-            return new List<GalleryItemModel>();
-        }
+            search.GalleryIds = search.GalleryIds.Distinct().ToList();
 
-        public async Task<List<GalleryItemModel>> GetGalleryItems(string term = "", int? userId = null, int? galleryId = null, GalleryItemState state = GalleryItemState.All, MediaType type = MediaType.All, ImageOrientation orientation = ImageOrientation.All, GalleryGroup group = GalleryGroup.None, GalleryOrder order = GalleryOrder.Descending, int page = 1, int limit = int.MaxValue)
-        {
-            var galleryIds = galleryId != null && galleryId > 0 ? new List<int> { (int)galleryId } : null;
-            return await GetGalleryItems(term, userId, galleryIds, state, type, orientation, group, order, page, limit);
-        }
-
-        private async Task<List<GalleryItemModel>> GetGalleryItems(string term = "", int? userId = null, List<int>? galleryIds = null, GalleryItemState state = GalleryItemState.All, MediaType type = MediaType.All, ImageOrientation orientation = ImageOrientation.All, GalleryGroup group = GalleryGroup.None, GalleryOrder order = GalleryOrder.Descending, int page = 1, int limit = int.MaxValue)
-        {
             var query = _db.GalleryItems
                 .Include(gi => gi.Gallery)
                 .Where(gi =>
-                    (string.IsNullOrWhiteSpace(term) || gi.Title.ToLower().Contains(term.ToLower()))
-                    && (userId == null || gi.UserId == userId || gi.Gallery!.UserId == userId)
-                    && (galleryIds == null || !galleryIds.Any() || galleryIds.Contains(gi.GalleryId ?? 0))
-                    && (state == GalleryItemState.All || gi.State == state)
-                    && (type == MediaType.All || gi.Type == type)
-                    && (orientation == ImageOrientation.All || gi.Orientation == orientation)
+                    (string.IsNullOrWhiteSpace(search.SearchTerm) || gi.Title.ToLower().Contains(search.SearchTerm.ToLower()))
+                    && (search.GalleryIds == null || !search.GalleryIds.Any() || search.GalleryIds.Contains(gi.GalleryId ?? 0))
+                    && (
+                        (gi.State == GalleryItemState.Approved && (search.ItemState.Approved == ItemOwner.All || (search.ItemState.Approved == ItemOwner.UserOnly && (search.UserId == gi.UserId || search.UserId == gi.Gallery!.UserId))))
+                        || (gi.State == GalleryItemState.Pending && (search.ItemState.Pending == ItemOwner.All || (search.ItemState.Pending == ItemOwner.UserOnly && (search.UserId == gi.UserId || search.UserId == gi.Gallery!.UserId))))
+                    )
+                    && (search.MediaType == MediaType.All || search.MediaType == gi.Type)
+                    && (search.ImageOrientation == ImageOrientation.All || search.ImageOrientation == gi.Orientation)
+                    && (search.AllowedFileExtensions == null || !search.AllowedFileExtensions.Any() || search.AllowedFileExtensions.Any(x => x.StartsWith(".") && gi.Title.ToLower().EndsWith(x.ToLower())))
                 )
                 .OrderBy(gi => gi.State == GalleryItemState.Pending ? 0 : 1);
 
-            switch (group)
+            switch (search.GroupBy)
             {
                 case GalleryGroup.Gallery:
-                    query = order == GalleryOrder.Ascending ? query.ThenBy(gi => gi.Gallery.Name) : query.ThenByDescending(gi => gi.Gallery.Name);
+                    query = search.OrderBy == GalleryOrder.Ascending ? query.ThenBy(gi => gi.Gallery.Name) : query.ThenByDescending(gi => gi.Gallery.Name);
                     break;
                 case GalleryGroup.DateUploaded:
-                    query = order == GalleryOrder.Ascending ? query.ThenBy(gi => gi.CreatedAt) : query.ThenByDescending(gi => gi.CreatedAt);
+                    query = search.OrderBy == GalleryOrder.Ascending ? query.ThenBy(gi => gi.CreatedAt) : query.ThenByDescending(gi => gi.CreatedAt);
                     break;
                 case GalleryGroup.DateTaken:
-                    query = order == GalleryOrder.Ascending ? query.ThenBy(gi => gi.DateTaken ?? gi.CreatedAt) : query.ThenByDescending(gi => gi.DateTaken ?? gi.CreatedAt);
+                    query = search.OrderBy == GalleryOrder.Ascending ? query.ThenBy(gi => gi.DateTaken ?? gi.CreatedAt) : query.ThenByDescending(gi => gi.DateTaken ?? gi.CreatedAt);
                     break;
                 case GalleryGroup.MediaType:
-                    query = order == GalleryOrder.Ascending ? query.ThenBy(gi => gi.Type) : query.ThenByDescending(gi => gi.Type);
+                    query = search.OrderBy == GalleryOrder.Ascending ? query.ThenBy(gi => gi.Type) : query.ThenByDescending(gi => gi.Type);
                     break;
                 case GalleryGroup.Uploader:
-                    query = order == GalleryOrder.Ascending ? query.ThenBy(gi => gi.UploadedBy) : query.ThenByDescending(gi => gi.UploadedBy);
+                    query = search.OrderBy == GalleryOrder.Ascending ? query.ThenBy(gi => gi.UploadedBy) : query.ThenByDescending(gi => gi.UploadedBy);
                     break;
                 case GalleryGroup.None:
-                    switch (order)
+                    switch (search.OrderBy)
                     {
                         case GalleryOrder.Random:
                             query = query.ThenBy(gi => EF.Functions.Random());
                             break;
                         default:
-                            query = order == GalleryOrder.Ascending ? query.ThenBy(gi => gi.CreatedAt) : query.ThenByDescending(gi => gi.CreatedAt);
+                            query = search.OrderBy == GalleryOrder.Ascending ? query.ThenBy(gi => gi.CreatedAt) : query.ThenByDescending(gi => gi.CreatedAt);
                             break;
                     }
                     break;
                 default:
-                    query = order == GalleryOrder.Ascending ? query.ThenBy(gi => gi.CreatedAt) : query.ThenByDescending(gi => gi.CreatedAt);
+                    query = search.OrderBy == GalleryOrder.Ascending ? query.ThenBy(gi => gi.CreatedAt) : query.ThenByDescending(gi => gi.CreatedAt);
                     break;
             }
 
             return await query
                 .Include(g => g.Gallery)
                 .Include(g => g.User)
-                .Skip((page - 1) * limit)
-                .Take(limit)
+                .Skip((search.Page - 1) * search.Limit)
+                .Take(search.Limit)
                 .Select(gi => new GalleryItemModel()
                 {
                     Id = gi.Id,
