@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
 using NSubstitute.ReturnsExtensions;
 
 namespace Memtly.Core.UnitTests.Tests.Helpers
@@ -58,6 +57,12 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _database.GetGalleryIdByName("drop_test").Returns(Task.FromResult<int?>(mockData["drop_test"].Id));
             _database.GetGalleryIdByName("missing").Returns(Task.FromResult<int?>(null));
 
+            _database.GetGalleryIdentifier(Arg.Any<int>()).Returns(paramArr => {
+                var id = paramArr.Arg<int>();
+                var data = mockData.FirstOrDefault(x => x.Value.Id == id).Value;
+                return data != null ? new GalleryIdentifierModel() { Id = data.Id, Identifier = data.Identifier, Name = data.Name } : null;
+            });
+
             _database.AddGallery(Arg.Any<GalleryModel>()).Returns(Task.FromResult<GalleryModel?>(new GalleryModel()
             {
                 Id = 101,
@@ -70,9 +75,39 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             }));
             _database.AddGalleryItem(Arg.Any<GalleryItemModel>()).Returns(Task.FromResult<GalleryItemModel?>(MockData.MockGalleryItem()));
 
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<int>(), GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(MockData.MockGalleryItems(10, 1, GalleryItemState.All)));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<int>(), GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(MockData.MockGalleryItems(10, 1, GalleryItemState.Pending)));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<int>(), GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(MockData.MockGalleryItems(10, 1, GalleryItemState.Approved)));
+            _database.GetGalleryItems(Arg.Any<GalleryItemSearch>()).Returns(paramArr =>
+            {
+                var search = paramArr.Arg<GalleryItemSearch>() ?? new GalleryItemSearch();
+
+                var galleryId = search.GalleryIds?.FirstOrDefault() ?? 1;
+                var gallery = mockData.FirstOrDefault(x => x.Value.Id == galleryId).Value;
+
+                var mockApprovedItems = MockData.MockGalleryItems(5, gallery.Id, GalleryItemState.Approved, ".jpg");
+                var mockPendingItems = MockData.MockGalleryItems(5, gallery.Id, GalleryItemState.Pending, ".jpg");
+
+                var mockItems = new List<GalleryItemModel>();
+
+                if (search.ItemState.Approved == ItemOwner.All)
+                {
+                    mockItems.AddRange(mockApprovedItems);
+                }
+                else if (search.ItemState.Approved == ItemOwner.UserOnly)
+                {
+                    mockItems.AddRange(mockApprovedItems.Where(x => x.UserId == search.UserId || gallery.Owner == search.UserId));
+                }
+
+                if (search.ItemState.Pending == ItemOwner.All)
+                {
+                    mockItems.AddRange(mockPendingItems);
+                }
+                else if (search.ItemState.Pending == ItemOwner.UserOnly)
+                {
+                    mockItems.AddRange(mockPendingItems.Where(x => x.UserId == search.UserId || gallery.Owner == search.UserId));
+                }
+
+                return Task.FromResult(mockItems);
+            });
+
             _database.GetGalleryItemByChecksum(Arg.Any<int>(), Arg.Any<string>()).ReturnsNull();
 
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.Upload, Arg.Any<bool>(), Arg.Any<int>()).Returns(true);
@@ -85,6 +120,8 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.MaxSizeMB, Arg.Any<long>(), Arg.Any<int>()).Returns(1024);
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.MaxFileSizeMB, Arg.Any<long>(), Arg.Any<int>()).Returns(10);
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.ShowPendingUploads, Arg.Any<bool>(), Arg.Any<int>()).Returns(false);
+            _settings.GetOrDefault(MemtlyConfiguration.Gallery.ItemsPerPage, Arg.Any<int>(), Arg.Any<int>()).Returns(50);
+            _settings.GetOrDefault(MemtlyConfiguration.Slideshow.IncludeVideoSlides, Arg.Any<bool>(), Arg.Any<int>()).Returns(true);
 
             _file.GetChecksum(Arg.Any<string>()).Returns(Guid.NewGuid().ToString());
 
@@ -233,13 +270,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             var mockGallery = GetMockGalleryData().FirstOrDefault(x => x.Value.Type == type).Value;
             mockGallery.Owner = 1;
 
-            var mockApprovedItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Approved, "jpg");
-            var mockPendingItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Pending, "jpg");
-
-            var mockItems = new List<GalleryItemModel>();
-            mockItems.AddRange(mockApprovedItems);
-            mockItems.AddRange(mockPendingItems);
-
             _identity.GetUserId(Arg.Any<ClaimsPrincipal>()).Returns(2);
             _identity.IsValid(Arg.Any<ClaimsPrincipal>()).Returns(true);
             _identity.IsBasicUser(Arg.Any<ClaimsPrincipal>()).Returns(true);
@@ -249,15 +279,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(DeviceType.Desktop);
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(true);
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.ShowPendingUploads, Arg.Any<bool>(), Arg.Any<int>()).Returns(false);
-
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-
-            _database.GetGalleryIdentifier(Arg.Any<int>()).Returns(new GalleryIdentifierModel() { Id = mockGallery.Id, Identifier = mockGallery.Identifier, Name = mockGallery.Name });
 
             var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _identity, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
@@ -282,13 +303,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             var mockGallery = GetMockGalleryData().FirstOrDefault(x => x.Value.Type == type).Value;
             mockGallery.Owner = 1;
 
-            var mockApprovedItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Approved, "jpg");
-            var mockPendingItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Pending, "jpg");
-
-            var mockItems = new List<GalleryItemModel>();
-            mockItems.AddRange(mockApprovedItems);
-            mockItems.AddRange(mockPendingItems);
-
             _identity.GetUserId(Arg.Any<ClaimsPrincipal>()).Returns(2);
             _identity.IsValid(Arg.Any<ClaimsPrincipal>()).Returns(true);
             _identity.IsBasicUser(Arg.Any<ClaimsPrincipal>()).Returns(false);
@@ -298,15 +312,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(DeviceType.Desktop);
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(true);
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.ShowPendingUploads, Arg.Any<bool>(), Arg.Any<int>()).Returns(false);
-
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-
-            _database.GetGalleryIdentifier(Arg.Any<int>()).Returns(new GalleryIdentifierModel() { Id = mockGallery.Id, Identifier = mockGallery.Identifier, Name = mockGallery.Name });
 
             var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _identity, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
@@ -331,13 +336,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             var mockGallery = GetMockGalleryData().FirstOrDefault(x => x.Value.Type == type).Value;
             mockGallery.Owner = 1;
 
-            var mockApprovedItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Approved, "jpg");
-            var mockPendingItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Pending, "jpg");
-
-            var mockItems = new List<GalleryItemModel>();
-            mockItems.AddRange(mockApprovedItems);
-            mockItems.AddRange(mockPendingItems);
-
             _identity.GetUserId(Arg.Any<ClaimsPrincipal>()).Returns(2);
             _identity.IsValid(Arg.Any<ClaimsPrincipal>()).Returns(true);
             _identity.IsBasicUser(Arg.Any<ClaimsPrincipal>()).Returns(true);
@@ -347,15 +345,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(DeviceType.Desktop);
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(true);
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.ShowPendingUploads, Arg.Any<bool>(), Arg.Any<int>()).Returns(true);
-
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-
-            _database.GetGalleryIdentifier(Arg.Any<int>()).Returns(new GalleryIdentifierModel() { Id = mockGallery.Id, Identifier = mockGallery.Identifier, Name = mockGallery.Name });
 
             var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _identity, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
@@ -380,13 +369,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             var mockGallery = GetMockGalleryData().FirstOrDefault(x => x.Value.Type == type).Value;
             mockGallery.Owner = 1;
 
-            var mockApprovedItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Approved, "jpg");
-            var mockPendingItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Pending, "jpg");
-
-            var mockItems = new List<GalleryItemModel>();
-            mockItems.AddRange(mockApprovedItems);
-            mockItems.AddRange(mockPendingItems);
-
             _identity.GetUserId(Arg.Any<ClaimsPrincipal>()).Returns(2);
             _identity.IsValid(Arg.Any<ClaimsPrincipal>()).Returns(true);
             _identity.IsBasicUser(Arg.Any<ClaimsPrincipal>()).Returns(false);
@@ -396,15 +378,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(DeviceType.Desktop);
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(true);
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.ShowPendingUploads, Arg.Any<bool>(), Arg.Any<int>()).Returns(true);
-
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-
-            _database.GetGalleryIdentifier(Arg.Any<int>()).Returns(new GalleryIdentifierModel() { Id = mockGallery.Id, Identifier = mockGallery.Identifier, Name = mockGallery.Name });
 
             var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _identity, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
@@ -429,13 +402,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             var mockGallery = GetMockGalleryData().FirstOrDefault(x => x.Value.Type == type).Value;
             mockGallery.Owner = 1;
 
-            var mockApprovedItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Approved, "jpg");
-            var mockPendingItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Pending, "jpg");
-
-            var mockItems = new List<GalleryItemModel>();
-            mockItems.AddRange(mockApprovedItems);
-            mockItems.AddRange(mockPendingItems);
-
             _identity.GetUserId(Arg.Any<ClaimsPrincipal>()).Returns(1);
             _identity.IsValid(Arg.Any<ClaimsPrincipal>()).Returns(true);
             _identity.IsBasicUser(Arg.Any<ClaimsPrincipal>()).Returns(true);
@@ -445,15 +411,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(DeviceType.Desktop);
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(true);
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.ShowPendingUploads, Arg.Any<bool>(), Arg.Any<int>()).Returns(false);
-
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-
-            _database.GetGalleryIdentifier(Arg.Any<int>()).Returns(new GalleryIdentifierModel() { Id = mockGallery.Id, Identifier = mockGallery.Identifier, Name = mockGallery.Name });
 
             var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _identity, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
@@ -478,13 +435,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             var mockGallery = GetMockGalleryData().FirstOrDefault(x => x.Value.Type == type).Value;
             mockGallery.Owner = 1;
 
-            var mockApprovedItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Approved, "jpg");
-            var mockPendingItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Pending, "jpg");
-
-            var mockItems = new List<GalleryItemModel>();
-            mockItems.AddRange(mockApprovedItems);
-            mockItems.AddRange(mockPendingItems);
-
             _identity.GetUserId(Arg.Any<ClaimsPrincipal>()).Returns(1);
             _identity.IsValid(Arg.Any<ClaimsPrincipal>()).Returns(true);
             _identity.IsBasicUser(Arg.Any<ClaimsPrincipal>()).Returns(true);
@@ -494,15 +444,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(DeviceType.Desktop);
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(true);
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.ShowPendingUploads, Arg.Any<bool>(), Arg.Any<int>()).Returns(true);
-
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-
-            _database.GetGalleryIdentifier(Arg.Any<int>()).Returns(new GalleryIdentifierModel() { Id = mockGallery.Id, Identifier = mockGallery.Identifier, Name = mockGallery.Name });
 
             var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _identity, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
@@ -527,13 +468,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             var mockGallery = GetMockGalleryData().FirstOrDefault(x => x.Value.Type == type).Value;
             mockGallery.Owner = 1;
 
-            var mockApprovedItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Approved, "jpg");
-            var mockPendingItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Pending, "jpg");
-
-            var mockItems = new List<GalleryItemModel>();
-            mockItems.AddRange(mockApprovedItems);
-            mockItems.AddRange(mockPendingItems);
-
             _identity.GetUserId(Arg.Any<ClaimsPrincipal>()).Returns(20);
             _identity.IsValid(Arg.Any<ClaimsPrincipal>()).Returns(true);
             _identity.IsBasicUser(Arg.Any<ClaimsPrincipal>()).Returns(true);
@@ -543,15 +477,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(DeviceType.Desktop);
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(true);
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.ShowPendingUploads, Arg.Any<bool>(), Arg.Any<int>()).Returns(false);
-
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-
-            _database.GetGalleryIdentifier(Arg.Any<int>()).Returns(new GalleryIdentifierModel() { Id = mockGallery.Id, Identifier = mockGallery.Identifier, Name = mockGallery.Name });
 
             var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _identity, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
@@ -576,13 +501,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             var mockGallery = GetMockGalleryData().FirstOrDefault(x => x.Value.Type == type).Value;
             mockGallery.Owner = 1;
 
-            var mockApprovedItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Approved, "jpg");
-            var mockPendingItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Pending, "jpg");
-
-            var mockItems = new List<GalleryItemModel>();
-            mockItems.AddRange(mockApprovedItems);
-            mockItems.AddRange(mockPendingItems);
-
             _identity.GetUserId(Arg.Any<ClaimsPrincipal>()).Returns(20);
             _identity.IsValid(Arg.Any<ClaimsPrincipal>()).Returns(true);
             _identity.IsBasicUser(Arg.Any<ClaimsPrincipal>()).Returns(true);
@@ -592,15 +510,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(DeviceType.Desktop);
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(true);
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.ShowPendingUploads, Arg.Any<bool>(), Arg.Any<int>()).Returns(true);
-
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-
-            _database.GetGalleryIdentifier(Arg.Any<int>()).Returns(new GalleryIdentifierModel() { Id = mockGallery.Id, Identifier = mockGallery.Identifier, Name = mockGallery.Name });
 
             var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _identity, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
@@ -625,13 +534,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             var mockGallery = GetMockGalleryData().FirstOrDefault(x => x.Value.Type == type).Value;
             mockGallery.Owner = 1;
 
-            var mockApprovedItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Approved, "jpg");
-            var mockPendingItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Pending, "jpg");
-
-            var mockItems = new List<GalleryItemModel>();
-            mockItems.AddRange(mockApprovedItems);
-            mockItems.AddRange(mockPendingItems);
-
             _identity.GetUserId(Arg.Any<ClaimsPrincipal>()).Returns(-1);
             _identity.IsValid(Arg.Any<ClaimsPrincipal>()).Returns(false);
             _identity.IsBasicUser(Arg.Any<ClaimsPrincipal>()).Returns(true);
@@ -641,15 +543,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(DeviceType.Desktop);
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(true);
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.ShowPendingUploads, Arg.Any<bool>(), Arg.Any<int>()).Returns(false);
-
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-
-            _database.GetGalleryIdentifier(Arg.Any<int>()).Returns(new GalleryIdentifierModel() { Id = mockGallery.Id, Identifier = mockGallery.Identifier, Name = mockGallery.Name });
 
             var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _identity, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();
@@ -674,13 +567,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             var mockGallery = GetMockGalleryData().FirstOrDefault(x => x.Value.Type == type).Value;
             mockGallery.Owner = 1;
 
-            var mockApprovedItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Approved, "jpg");
-            var mockPendingItems = MockData.MockGalleryItems(5, mockGallery.Id, GalleryItemState.Pending, "jpg");
-
-            var mockItems = new List<GalleryItemModel>();
-            mockItems.AddRange(mockApprovedItems);
-            mockItems.AddRange(mockPendingItems);
-
             _identity.GetUserId(Arg.Any<ClaimsPrincipal>()).Returns(-1);
             _identity.IsValid(Arg.Any<ClaimsPrincipal>()).Returns(false);
             _identity.IsBasicUser(Arg.Any<ClaimsPrincipal>()).Returns(true);
@@ -690,15 +576,6 @@ namespace Memtly.Core.UnitTests.Tests.Helpers
             _deviceDetector.ParseDeviceType(Arg.Any<string>()).Returns(DeviceType.Desktop);
             _settings.GetOrDefault(MemtlyConfiguration.Basic.SingleGalleryMode, Arg.Any<bool>()).Returns(true);
             _settings.GetOrDefault(MemtlyConfiguration.Gallery.ShowPendingUploads, Arg.Any<bool>(), Arg.Any<int>()).Returns(true);
-
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetGalleryItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.All, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Approved, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockApprovedItems));
-            _database.GetCollectionItems(Arg.Any<string>(), Arg.Any<int?>(), mockGallery.Id, GalleryItemState.Pending, Arg.Any<MediaType>(), Arg.Any<ImageOrientation>(), Arg.Any<GalleryGroup>(), Arg.Any<GalleryOrder>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(mockPendingItems));
-
-            _database.GetGalleryIdentifier(Arg.Any<int>()).Returns(new GalleryIdentifierModel() { Id = mockGallery.Id, Identifier = mockGallery.Identifier, Name = mockGallery.Name });
 
             var controller = new GalleryController(_settings, _database, _file, _deviceDetector, _image, _notification, _encryption, _url, _identity, _logger, _localizer);
             controller.ControllerContext.HttpContext = MockData.MockHttpContext();

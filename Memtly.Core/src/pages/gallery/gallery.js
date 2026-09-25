@@ -12,6 +12,7 @@ import { getQueryParam } from '@utilities/urls';
 
 let resizeTimeout = null;
 let idleTimeout = null;
+let searchTimeout = null;
 
 let mediaViewer = null;
 let slideshow = null;
@@ -49,14 +50,17 @@ function bindEventHandlers() {
 
 function bindSearchBox() {
     $(document).off('keyup', 'input#gallery-item-search-term').on('keyup', 'input#gallery-item-search-term', function (e) {
-        const term = $('input#gallery-item-search-term').val();
-        const url = new URL(window.location.href);
-        url.searchParams.set('term', term);
-        url.searchParams.set('page', '1');
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            const term = $('input#gallery-item-search-term').val();
+            const url = new URL(window.location.href);
+            url.searchParams.set('term', term);
+            url.searchParams.set('page', '1');
 
-        history.pushState({}, '', url);
+            history.pushState({}, '', url);
 
-        loadGalleryPage(1, false);
+            loadGalleryPage(1, false);
+        }, 500);
     });
 }
 

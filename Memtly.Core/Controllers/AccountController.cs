@@ -602,7 +602,15 @@ namespace Memtly.Core.Controllers
                         if (model.ActiveTab == AccountTabs.Reviews)
                         {
                             model.PendingRequests = await GetPendingReviews(null, page, limit);
-                            model.TotalItems = (await _database.GetGalleryItemCount(string.Empty, null, null, GalleryItemState.Pending))[GalleryItemState.Pending.ToString()];
+                            model.TotalItems = (await _database.GetGalleryItemCount(new GalleryItemSearch()
+                            {
+                                ItemState = new GalleryItemStateFilter()
+                                {
+                                    Pending = ItemOwner.All,
+                                    Approved = ItemOwner.None
+                                }
+                            })
+                            )[GalleryItemState.Pending.ToString()];
                         }
                         else if (model.ActiveTab == AccountTabs.Galleries)
                         {
@@ -644,7 +652,15 @@ namespace Memtly.Core.Controllers
                         if (model.ActiveTab == AccountTabs.Reviews)
                         {
                             model.PendingRequests = await GetPendingReviews(user.Id, page, limit);
-                            model.TotalItems = (await _database.GetGalleryItemCount(string.Empty, user.Id, null, GalleryItemState.Pending))[$"User{GalleryItemState.Pending.ToString()}"];
+                            model.TotalItems = (await _database.GetGalleryItemCount(new GalleryItemSearch()
+                            {
+                                UserId = user.Id,
+                                ItemState = new GalleryItemStateFilter()
+                                {
+                                    Pending = ItemOwner.UserOnly,
+                                    Approved = ItemOwner.None
+                                }
+                            }))[$"User{GalleryItemState.Pending.ToString()}"];
                         }
                         else if (model.ActiveTab == AccountTabs.Galleries)
                         {
@@ -799,12 +815,27 @@ namespace Memtly.Core.Controllers
                     if (_identity.IsPrivilegedUser(User))
                     {
                         result.PendingRequests = await GetPendingReviews(null, page, limit);
-                        result.TotalItems = (await _database.GetGalleryItemCount(string.Empty, null, null, GalleryItemState.Pending))[GalleryItemState.Pending.ToString()];
+                        result.TotalItems = (await _database.GetGalleryItemCount(new GalleryItemSearch()
+                        {
+                            ItemState = new GalleryItemStateFilter()
+                            {
+                                Pending = ItemOwner.All,
+                                Approved = ItemOwner.None
+                            }
+                        }))[GalleryItemState.Pending.ToString()];
                     }
                     else
                     {
                         result.PendingRequests = await GetPendingReviews(user.Id, page, limit);
-                        result.TotalItems = (await _database.GetGalleryItemCount(string.Empty, user.Id, null, GalleryItemState.Pending))[$"User{GalleryItemState.Pending.ToString()}"];
+                        result.TotalItems = (await _database.GetGalleryItemCount(new GalleryItemSearch()
+                        {
+                            UserId = user.Id,
+                            ItemState = new GalleryItemStateFilter()
+                            {
+                                Pending = ItemOwner.UserOnly,
+                                Approved = ItemOwner.None
+                            }
+                        }))[GalleryItemState.Pending.ToString()];
                     }
                 }
             }
@@ -1029,7 +1060,19 @@ namespace Memtly.Core.Controllers
             {
                 try
                 {
-                    var items = (await _database.GetGalleryItems())?.Where(x => ids == null || ids.Length == 0 || ids.Contains(x.Id));
+                    var userId = _identity.GetUserId(User);
+                    var isBasicUser = _identity.IsBasicUser(User);
+
+                    var items = (await _database.GetGalleryItems(new GalleryItemSearch()
+                    {
+                        UserId = userId,
+                        ItemState = new GalleryItemStateFilter()
+                        {
+                            Pending = isBasicUser ? ItemOwner.UserOnly : ItemOwner.All,
+                            Approved = ItemOwner.None
+                        }
+                    }))?.Where(x => ids == null || ids.Length == 0 || ids.Contains(x.Id));
+
                     if (items != null && items.Any())
                     {
                         foreach (var galleryGroup in items.GroupBy(x => x.GalleryId))
@@ -2878,7 +2921,18 @@ namespace Memtly.Core.Controllers
         {
             var galleries = new List<PhotoGallery>();
 
-            var items = await _database.GetGalleryItems(term: string.Empty, userId, state: GalleryItemState.Pending, page: page, limit: limit);
+            var items = await _database.GetGalleryItems(new GalleryItemSearch()
+            {
+                UserId = userId,
+                ItemState = new GalleryItemStateFilter()
+                {
+                    Pending = userId != null ? ItemOwner.UserOnly : ItemOwner.All,
+                    Approved = ItemOwner.None
+                },
+                Page = page,
+                Limit = limit
+            });
+
             if (items != null)
             {
                 foreach (var galleryGroup in items.GroupBy(x => x.GalleryId))

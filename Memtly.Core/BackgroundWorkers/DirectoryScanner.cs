@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Memtly.Core.Constants;
-using Memtly.Core.EntityFramework.Models;
 using Memtly.Core.Enums;
 using Memtly.Core.Helpers;
 using Memtly.Core.Helpers.Database;
@@ -140,7 +139,15 @@ namespace Memtly.Core.BackgroundWorkers
                                             }
 
                                             var allowedFileTypes = _settingsHelper.GetOrDefault(MemtlyConfiguration.Gallery.AllowedFileTypes, ".jpg,.jpeg,.png,.mp4,.mov", galleryItem?.Id).Result.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-                                            var galleryItems = await db.GetGalleryItems(string.Empty, null, galleryItem!.Id);
+                                            var galleryItems = await db.GetGalleryItems(new GalleryItemSearch()
+                                            {
+                                                GalleryIds = new List<int>() { galleryItem!.Id },
+                                                ItemState = new GalleryItemStateFilter()
+                                                {
+                                                    Pending = ItemOwner.All,
+                                                    Approved = ItemOwner.All
+                                                }
+                                            });
 
                                             if (Path.Exists(galleryPath))
                                             {

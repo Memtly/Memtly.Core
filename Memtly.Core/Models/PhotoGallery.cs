@@ -18,8 +18,6 @@ namespace Memtly.Core.Models
         public GalleryItemState FilterStateBy { get; set; } = GalleryItemState.All;
         public int ApprovedCount { get; set; } = 0;
         public int PendingCount { get; set; } = 0;
-        public int UserApprovedCount { get; set; } = 0;
-        public int UserPendingCount { get; set; } = 0;
         public int ItemsPerPage { get; set; } = 50;
         public int CurrentPage { get; set; } = 1;
         public bool Pagination { get; set; } = true;

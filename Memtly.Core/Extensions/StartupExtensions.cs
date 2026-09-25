@@ -69,7 +69,6 @@ namespace Memtly.Core.Extensions
 
             var settings = services.BuildServiceProvider().GetRequiredService<ISettingsHelper>();
             var timeoutMins = settings.GetOrDefault(MemtlyConfiguration.Security.Sessions.TimeoutMins, 1440).Result;
-            var persistIdentity = settings.GetOrDefault(MemtlyConfiguration.Security.Sessions.PersistIdentity, false).Result;
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
@@ -82,6 +81,7 @@ namespace Memtly.Core.Extensions
                 });
             services.AddSession(options => {
                 options.IdleTimeout = TimeSpan.FromMinutes(timeoutMins);
+                options.Cookie.MaxAge = TimeSpan.FromMinutes(timeoutMins);
                 options.Cookie.Name = ".Memtly.Session";
                 options.Cookie.IsEssential = true;
             });
