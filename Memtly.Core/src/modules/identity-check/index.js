@@ -63,7 +63,9 @@ export function displayIdentityCheckPopup(name, email, nameRequired, emailRequir
                                 callbackFn();
                             } else {
                                 $('.change-identity').attr('data-identity-name', name ?? '');
-                                $('.change-identity').attr('data-identity-email', email ?? '');
+                                if ($('.change-identity').attr('data-identity-email') !== undefined) {
+                                    $('.change-identity').attr('data-identity-email', email ?? '');
+                                }
                             }
                         } else if (data.reason == 1) {
                             displayMessage(localization.translate('Invalid_Name'), localization.translate('Invalid_Name_Msg'), null, () => {
@@ -108,7 +110,9 @@ export function displayIdentityCheckPopup(name, email, nameRequired, emailRequir
                             });
                         } else if (data.success) {
                             $('.change-identity').attr('data-identity-name', name ?? '');
-                            $('.change-identity').attr('data-identity-email', email ?? '');
+                            if ($('.change-identity').attr('data-identity-email') !== undefined) {
+                                $('.change-identity').attr('data-identity-email', email ?? '');
+                            }
                         } else if (data.reason == 1) {
                             displayMessage(localization.translate('Invalid_Name'), localization.translate('Invalid_Name_Msg'), null, () => {
                                 displayIdentityCheckPopup(name, email, nameRequired, emailRequired, callbackFn);
@@ -199,7 +203,9 @@ function displayIdentityCheckChangePopup(name, email, emailRequired) {
                                 });
                             } else if (data.success) {
                                 $('.change-identity').attr('data-identity-name', name ?? '');
-                                $('.change-identity').attr('data-identity-email', email ?? '');
+                                if ($('.change-identity').attr('data-identity-email') !== undefined) {
+                                    $('.change-identity').attr('data-identity-email', email ?? '');
+                                }
                             } else if (data.reason == 1) {
                                 displayMessage(localization.translate('Invalid_Name'), localization.translate('Invalid_Name_Msg'), null, () => {
                                     displayIdentityCheckChangePopup(name, email, emailRequired);
