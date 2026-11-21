@@ -27,7 +27,7 @@ namespace Memtly.Core.Helpers
 
         public async Task SendAsync(SmtpClient client, MimeMessage message)
         {
-            await client.SendAsync(message);
+            await client.SendAsync(new SmtpSendRequest(message));
         }
 
         public async Task DisconnectAsync(SmtpClient client, bool quit = true)
